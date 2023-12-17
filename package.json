@@ -1,0 +1,15 @@
+{
+	"private": true,
+	"scripts": {
+		"fonts": "postcss fonts.css -d controller/static/css"
+	},
+	"dependencies": {
+		"@fontsource/merriweather-sans": "^5.0.8",
+		"@fontsource/source-sans-pro": "^5.0.8",
+		"@fontsource/source-serif-pro": "^5.0.8",
+		"@fontsource/titillium-web": "^5.0.17",
+		"postcss-cli": "^10.1.0",
+		"postcss-import": "^15.1.0",
+		"postcss-url": "^10.1.3"
+	}
+}

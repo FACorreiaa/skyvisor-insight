@@ -1,0 +1,74 @@
+{{ define "body" }}
+<div class="settings-page">
+	<div class="container page">
+		<div class="row">
+			<div class="col-md-6 offset-md-3 col-xs-12">
+				<h1 class="text-xs-center">Your Settings</h1>
+
+				{{ if .Updated }}
+				<div class="alert alert-success">
+					Settings saved successfully.
+				</div>
+				{{ end }}
+
+				{{ if .Errors }}
+				<ul class="error-messages">
+					{{ range .Errors }}
+					<li>{{ . }}</li>
+					{{ end }}
+				</ul>
+				{{ end }}
+
+				<form method="post" enctype="multipart/form-data">
+					<fieldset>
+						<fieldset class="form-group">
+							<input class="form-control" type="file" name="image" accept="image/*" />
+						</fieldset>
+						<fieldset class="form-group">
+							<input
+								class="form-control form-control-lg"
+								type="text"
+								placeholder="Username"
+								name="username"
+								required
+								value="{{ .User.Username }}"
+							/>
+						</fieldset>
+						<fieldset class="form-group">
+							<textarea
+								class="form-control form-control-lg"
+								rows="8"
+								placeholder="Short bio about you"
+								name="bio"
+								required
+							>{{ .User.Bio }}</textarea>
+						</fieldset>
+						<fieldset class="form-group">
+							<input
+								class="form-control form-control-lg"
+								type="text"
+								placeholder="Email"
+								name="email"
+								value="{{ .User.Email }}"
+							/>
+						</fieldset>
+						<fieldset class="form-group">
+							<input
+								class="form-control form-control-lg"
+								type="password"
+								placeholder="New Password"
+								name="password"
+							/>
+						</fieldset>
+						<button type="submit" class="btn btn-lg btn-primary pull-xs-right">Update Settings</button>
+					</fieldset>
+				</form>
+				<hr />
+				<form method="post" action="/logout">
+					<button type="submit" class="btn btn-outline-danger">Or click here to logout.</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}

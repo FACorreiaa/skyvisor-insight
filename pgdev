@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -e
+
+DATA_DIR=$PWD/.data
+PG_DATA_DIR=$DATA_DIR/pg
+
+case $1 in
+  init)
+    mkdir -p "$PG_DATA_DIR"
+    initdb -D "$PG_DATA_DIR"
+    pg_ctl -D "$PG_DATA_DIR" -l "$DATA_DIR"/pg.log -o "--unix_socket_directories=${DATA_DIR}" start
+    createuser -h "$DATA_DIR" postgres -ds
+    createdb -h "$DATA_DIR" -U postgres gollama-assistant
+    ;;
+  start)
+    pg_ctl -D "$PG_DATA_DIR" -l "$DATA_DIR"/pg.log -o "--unix_socket_directories=${DATA_DIR}" start
+    ;;
+  stop)
+    pg_ctl -D "$PG_DATA_DIR" -l "$DATA_DIR"/pg.log -o "--unix_socket_directories=${DATA_DIR}" stop
+    ;;
+  *)
+    echo "Usage: $0 {init|start|stop}"
+    exit 1
+    ;;
+esac

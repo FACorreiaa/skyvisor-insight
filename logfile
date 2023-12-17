@@ -1,0 +1,2 @@
+2023-11-14 22:50:17.997 CET [90685] FATAL:  lock file "postmaster.pid" already exists
+2023-11-14 22:50:17.997 CET [90685] HINT:  Is another postmaster (PID 90506) running in data directory "/Users/fc/Documents/Projects/go-ollama/.data/pg"?

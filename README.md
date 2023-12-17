@@ -1,14 +1,5 @@
-# G-ollama
+# Aviation Tracker
 
-Project structure with Go, Gorilla Mux, GORM and HTMX
+Scrapping API of https://aviationstack.com/
 
-Objective is to build the ollama project and show a PoC with Go and HTMX
-
-https://ollama.ai/
-
-run with docker docker compose up -d
-
-or
-
-make
-# Aviation-tracker
+Storing data over time using Go, Echo, Templ, HTMX and Postgres

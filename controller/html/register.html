@@ -1,0 +1,69 @@
+{{ define "body" }}
+<div class="auth-page">
+	<div class="container page">
+		<div class="row">
+			<div class="col-md-6 offset-md-3 col-xs-12">
+				<h1 class="text-xs-center">Sign up</h1>
+				<p class="text-xs-center">
+					<a href="/login">Have an account?</a>
+				</p>
+
+				{{ if .Errors }}
+				<ul class="error-messages">
+					{{ range .Errors }}
+					<li>{{ . }}</li>
+					{{ end }}
+				</ul>
+				{{ end }}
+
+				<form method="post">
+					<fieldset class="form-group">
+						<input
+							class="form-control form-control-lg"
+							type="text"
+							placeholder="Username"
+							required
+							name="username"
+							autocomplete="username"
+							id="username"
+							value="{{ .Values.Username }}"
+						/>
+					</fieldset>
+					<fieldset class="form-group">
+						<input
+							class="form-control form-control-lg"
+							type="email"
+							placeholder="Email"
+							required
+							name="email"
+							id="email"
+							value="{{ .Values.Email }}"
+						/>
+					</fieldset>
+					<fieldset class="form-group">
+						<input
+							class="form-control form-control-lg"
+							type="password"
+							placeholder="Password"
+							required
+							name="password"
+							autocomplete="new-password"
+						/>
+					</fieldset>
+					<fieldset class="form-group">
+						<input
+							class="form-control form-control-lg"
+							type="password"
+							placeholder="Confirm Password"
+							required
+							name="password_confirm"
+							autocomplete="new-password"
+						/>
+					</fieldset>
+					<button type="submit" class="btn btn-lg btn-primary pull-xs-right">Sign up</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}

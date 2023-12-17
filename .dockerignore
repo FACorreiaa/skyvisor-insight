@@ -1,0 +1,6 @@
+.direnv
+.data
+node_modules
+controller/static/fonts/*
+!controller/static/fonts/ionicons*
+controller/static/css/fonts.css

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{{ .Title }} - Conduit</title>
+		<link rel="stylesheet" href="/static/css/ionicons.min.css" />
+		<link rel="stylesheet" href="/static/css/fonts.css" />
+		<link rel="stylesheet" href="/static/css/main.css" />
+	</head>
+	<body hx-boost="true">
+		<nav class="navbar navbar-light">
+			<div class="container">
+				<a class="navbar-brand" href="/">conduit</a>
+				<ul class="nav navbar-nav pull-xs-right">
+					{{ range .Nav }}
+						<li class="nav-item">
+							<a href="{{ .Path }}" class="nav-link {{ if eq ($.ActiveNav) .Path }} active {{ end }}">
+								{{ if .Icon }}
+									<i class="{{ .Icon }}"></i>
+								{{ end }}
+								{{ .Label }}
+							</a>
+						</li>
+					{{ end }}
+
+					{{ if .User }}
+						<li class="nav-item">
+							<a href="/profile/{{ .User.Username }}" class="nav-link">
+								{{ if .User.Image }}
+									<img src="{{ .User.Image }}" class="user-pic">
+								{{ end }}
+								{{ .User.Username }}
+							</a>
+						</li>
+					{{ end }}
+				</ul>
+			</div>
+		</nav>
+
+		{{ template "body" .Page }}
+
+		<footer>
+			<div class="container">
+				<a href="/" class="logo-font text-3xl font-bold underline">City Helper!</a>
+				<span class="attribution">
+					An interactive learning project from <a href="https://thinkster.io">Thinkster</a>. Code &amp;
+					design licensed under MIT.
+				</span>
+			</div>
+		</footer>
+	</body>
+</html>

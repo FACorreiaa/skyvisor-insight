@@ -2,4 +2,7 @@
 
 Scrapping API of https://aviationstack.com/
 
-Storing data over time using Go, Echo, Templ, HTMX and Postgres
+Storing data over time using Go, HTMX, Tailwind and Postgres.
+
+TODO:
+ - Use Templ (eventually)

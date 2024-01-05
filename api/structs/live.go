@@ -76,10 +76,10 @@ type LiveFlights struct {
 		LiveUpdated         string  `json:"updated"`
 		LiveLatitude        float32 `json:"latitude,omitempty"`
 		LiveLongitude       float32 `json:"longitude,omitempty"`
-		LiveAltitude        int     `json:"altitude"`
+		LiveAltitude        float32 `json:"altitude"`
 		LiveDirection       float32 `json:"direction"`
-		LiveSpeedHorizontal int     `json:"speed_horizontal"`
-		LiveSpeedVertical   int     `json:"speed_vertical"`
+		LiveSpeedHorizontal float32 `json:"speed_horizontal"`
+		LiveSpeedVertical   float32 `json:"speed_vertical"`
 		LiveIsGround        bool    `json:"is_ground"`
 	} `json:"live,omitempty"`
 	CreatedAt CustomTime `json:"created_at"`

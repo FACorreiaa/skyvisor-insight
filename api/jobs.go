@@ -195,7 +195,6 @@ func (s *ServiceJob) insertNewCities() error {
 
 	// Identify new data that is not already in the database
 	newDataMap := s.findNewCityData(apiRes.Data, existingData)
-	println(len(newDataMap))
 	// Insert only the new data into the database
 	if len(newDataMap) > 0 {
 

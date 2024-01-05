@@ -1,6 +1,15 @@
 version: "3.9"
 
 services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: dev
+    ports:
+      - "6969:6969"
+    expose:
+      - "6969"
   postgres:
     hostname: postgres
     image: postgres:alpine

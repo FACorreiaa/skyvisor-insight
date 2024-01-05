@@ -1,9 +1,13 @@
 .PHONY: build clean
-project_name = gollama-assistant
-image_name = gollama-assistant
+project_name = aviation-client
+image_name = aviation-client
+
+templ:
+	@templ generate
 
 build:
 	npm run fonts
+	templ generate
 	go build -o server-exe
 
 clean:
@@ -12,7 +16,8 @@ clean:
 	rm server-exe
 
 run-local:
-	go run main.go
+	@templ generate
+	@go run main.go
 
 requirements:
 	make clean-packages
@@ -52,6 +57,12 @@ compose-up:
 	make delete-container-if-exist
 	docker-compose up -d
 
+compose-down:
+	@docker compose down \
+  @docker volume rm postgres_db \
+  @docker compose up -d \
+  @rm-rf .data
+
 stop:
 	docker stop $(project_name)
 
@@ -73,4 +84,9 @@ run-app:
 run-tidy:
 	docker compose run --rm app go mod tidy
 
+watch-tcss:
+	./tailwindcss -i controller/static/css/input.css -o controller/static/css/output.css --watch
+
+build-tcss:
+	./tailwindcss -i controller/static/css/input.css -o controller/static/css/output.css --minify
 

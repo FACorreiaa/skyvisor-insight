@@ -23,7 +23,6 @@ func Init(connectionURL string) (*pgxpool.Pool, error) {
 	if err != nil {
 		return nil, err
 	}
-	println(connectionURL)
 	cfg.AfterConnect = func(_ context.Context, conn *pgx.Conn) error {
 		uuid.Register(conn.TypeMap())
 		return nil

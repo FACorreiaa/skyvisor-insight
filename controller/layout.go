@@ -37,7 +37,10 @@ func CreateLayout[T any](r *http.Request, title string, data T) Layout[T] {
 	} else {
 		nav = []NavItem{
 			{Path: "/", Label: "Home"},
-			{Path: "/editor", Label: "New Article", Icon: "ion-compose"},
+			{Path: "/airlines", Label: "Airlines", Icon: "ion-paper-airplane"},
+			{Path: "/airports", Label: "Airports", Icon: "ion-paper-airplane"},
+			{Path: "/flights", Label: "Flights", Icon: "ion-paper-airplane"},
+			{Path: "/locations", Label: "Locations", Icon: "ion-flag"},
 			{Path: "/settings", Label: "Settings", Icon: "ion-gear-a"},
 		}
 	}

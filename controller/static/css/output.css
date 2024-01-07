@@ -771,6 +771,40 @@ select {
   display: inline-block;
 }
 
+.flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+.flex-none {
+  flex: none;
+}
+
+.grid-flow-col {
+  grid-auto-flow: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
 .rounded {
   border-radius: 0.25rem;
 }
@@ -790,6 +824,11 @@ select {
   padding-bottom: 3rem;
 }
 
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .pb-3 {
   padding-bottom: 0.75rem;
 }
@@ -804,6 +843,10 @@ select {
 
 .text-center {
   text-align: center;
+}
+
+.text-right {
+  text-align: right;
 }
 
 .text-5xl {
@@ -834,11 +877,6 @@ select {
 
 .tracking-tight {
   letter-spacing: -0.025em;
-}
-
-.text-blue {
-  --tw-text-opacity: 1;
-  color: rgb(31 182 255 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -909,6 +947,14 @@ select {
     margin-right: 0.5rem;
   }
 
+  .md\:place-self-center {
+    place-self: center;
+  }
+
+  .md\:justify-self-end {
+    justify-self: end;
+  }
+
   .md\:px-12 {
     padding-left: 3rem;
     padding-right: 3rem;
@@ -921,11 +967,6 @@ select {
 }
 
 @media (prefers-color-scheme: dark) {
-  .dark\:text-blue {
-    --tw-text-opacity: 1;
-    color: rgb(31 182 255 / var(--tw-text-opacity));
-  }
-
   .dark\:shadow-\[0_4px_9px_-4px_rgba\(59\2c 113\2c 202\2c 0\.5\)\] {
     --tw-shadow: 0 4px 9px -4px rgba(59,113,202,0.5);
     --tw-shadow-colored: 0 4px 9px -4px var(--tw-shadow-color);

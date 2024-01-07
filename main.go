@@ -16,6 +16,8 @@ import (
 )
 
 func main() {
+	//go:generate npx tailwindcss build -c tailwind.config.js -o ./controller/static/css/style.css --
+
 	cfg, err := config.NewConfig()
 	if err != nil {
 		fmt.Println(err)

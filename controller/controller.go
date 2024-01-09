@@ -71,6 +71,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	optAuth := r.NewRoute().Subrouter()
 	optAuth.Use(h.authMiddleware)
 	optAuth.HandleFunc("/", handler(h.homePage)).Methods(http.MethodGet)
+	optAuth.HandleFunc("/templ", handler(h.homePageTempl)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users
 	noAuth := r.NewRoute().Subrouter()

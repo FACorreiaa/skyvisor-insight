@@ -1,28 +1,20 @@
 package controller
 
 import (
-	"github.com/FACorreiaa/go-ollama/core/account"
-	"html/template"
 	"log/slog"
 	"net/http"
+
+	"context"
+
+	pages "github.com/FACorreiaa/go-ollama/controller/html/pages"
+	"github.com/FACorreiaa/go-ollama/controller/models"
+	"github.com/FACorreiaa/go-ollama/core/account"
 )
 
-var settingsPageTmpl = template.Must(template.ParseFS(
-	htmlFS,
-	"html/layout.html",
-	"html/settings.html",
-))
-
-type SettingsPage struct {
-	Updated bool
-	Errors  []string
-	User    *account.User
-}
-
 func (h *Handlers) settingsPage(w http.ResponseWriter, r *http.Request) error {
-	data := CreateLayout[SettingsPage](r, "Settings", SettingsPage{})
-	data.Page.User = data.User
-	return settingsPageTmpl.Execute(w, data)
+	settings := pages.SettingsPage(models.SettingsPage{})
+	data := h.CreateLayout(w, r, "Settings", settings).Render(context.Background(), w)
+	return data
 }
 
 func (h *Handlers) logout(w http.ResponseWriter, r *http.Request) error {

@@ -1,26 +1,18 @@
 package controller
 
 import (
+	"context"
 	"fmt"
-	"github.com/FACorreiaa/go-ollama/core/account"
-	"html/template"
 	"net/http"
+
+	"github.com/FACorreiaa/go-ollama/controller/html/pages"
+	"github.com/FACorreiaa/go-ollama/controller/models"
+	"github.com/FACorreiaa/go-ollama/core/account"
 )
 
-var registerPageTmpl = template.Must(template.ParseFS(
-	htmlFS,
-	"html/layout.html",
-	"html/register.html",
-))
-
-type RegisterPage struct {
-	Errors []string
-	Values map[string]string
-}
-
 func (h *Handlers) registerPage(w http.ResponseWriter, r *http.Request) error {
-	data := CreateLayout[RegisterPage](r, "Sign up", RegisterPage{})
-	return registerPageTmpl.Execute(w, data)
+	register := pages.RegisterPage(models.RegisterPage{})
+	return h.CreateLayout(w, r, "Sign up", register).Render(context.Background(), w)
 }
 
 func (h *Handlers) registerPost(w http.ResponseWriter, r *http.Request) error {
@@ -38,12 +30,8 @@ func (h *Handlers) registerPost(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if err != nil {
-		return registerPageTmpl.Execute(
-			w,
-			CreateLayout[RegisterPage](r, "Sign up", RegisterPage{
-				Errors: h.formErrors(err),
-			}),
-		)
+		register := pages.RegisterPage(models.RegisterPage{Errors: h.formErrors(err)})
+		return h.CreateLayout(w, r, "Sign up", register).Render(context.Background(), w)
 	}
 
 	session, _ := h.sessions.Get(r, "auth")

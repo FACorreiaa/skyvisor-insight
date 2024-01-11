@@ -3,6 +3,9 @@ package controller
 import (
 	"embed"
 	"errors"
+	"log/slog"
+	"net/http"
+
 	"github.com/FACorreiaa/go-ollama/core/account"
 	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
@@ -13,8 +16,6 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
-	"log/slog"
-	"net/http"
 )
 
 //go:embed static
@@ -71,7 +72,6 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	optAuth := r.NewRoute().Subrouter()
 	optAuth.Use(h.authMiddleware)
 	optAuth.HandleFunc("/", handler(h.homePage)).Methods(http.MethodGet)
-	optAuth.HandleFunc("/templ", handler(h.homePageTempl)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users
 	noAuth := r.NewRoute().Subrouter()

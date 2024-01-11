@@ -1,19 +1,13 @@
 package controller
 
 import (
-	"html/template"
+	"context"
 	"net/http"
+
+	pages "github.com/FACorreiaa/go-ollama/controller/html/pages"
 )
 
-type LiveFlightsPage struct{}
-
-var liveFightsPageTmpl = template.Must(template.ParseFS(
-	htmlFS,
-	"html/layout.html",
-	"html/live.html",
-))
-
 func (h *Handlers) liveFlightsPage(w http.ResponseWriter, r *http.Request) error {
-	data := CreateLayout[LiveFlightsPage](r, "Home", LiveFlightsPage{})
-	return liveFightsPageTmpl.Execute(w, data)
+	flights := pages.LiveFlightsPage()
+	return h.CreateLayout(w, r, "Live Flights", flights).Render(context.Background(), w)
 }

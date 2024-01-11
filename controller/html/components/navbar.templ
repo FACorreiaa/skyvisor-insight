@@ -1,0 +1,38 @@
+package components
+
+import (
+	"github.com/FACorreiaa/go-ollama/core/account"
+	"github.com/FACorreiaa/go-ollama/controller/models"
+)
+
+templ NavbarTempl(nav []models.NavItem, user *account.User, activeNav string) {
+	<nav class="bg-gray-800 navbar">
+		<div class="container">
+			<div class="flex-1">
+				<a class="navbar-brand" href="/">Aviation Tracker</a>
+			</div>
+			<div class="flex-none">
+				<ul class="nav navbar-nav pull-xs-right">
+					for _, item := range nav {
+						<li class="nav-item">
+							<a href={ templ.URL(item.Path) } class={ "nav-link active", templ.KV(activeNav, item.Path) }>
+								<i class={ item.Icon }></i>
+								{ item.Label }
+							</a>
+						</li>
+					}
+					if user != nil {
+						<li class="nav-item">
+							<a href={ templ.SafeURL("/profile/" + user.Username) } class="nav-link">
+								if user.Image != nil {
+									<img src={ templ.EscapeString(*user.Image) } class="user-pic"/>
+								}
+								{ user.Username }
+							</a>
+						</li>
+					}
+				</ul>
+			</div>
+		</div>
+	</nav>
+}

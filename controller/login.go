@@ -1,28 +1,22 @@
 package controller
 
 import (
+	"context"
 	"fmt"
-	"github.com/FACorreiaa/go-ollama/core/account"
-	"html/template"
 	"net/http"
+
+	"github.com/FACorreiaa/go-ollama/controller/html/pages"
+	"github.com/FACorreiaa/go-ollama/controller/models"
+	"github.com/FACorreiaa/go-ollama/core/account"
 )
 
-type LoginPage struct {
-	Errors []string
-}
-
-var loginPageTmpl = template.Must(template.ParseFS(
-	htmlFS,
-	"html/layout.html",
-	"html/login.html",
-))
-
 func (h *Handlers) loginPage(w http.ResponseWriter, r *http.Request) error {
-	data := CreateLayout[LoginPage](r, "Sign in", LoginPage{})
-	return loginPageTmpl.Execute(w, data)
+	login := pages.LoginPage(models.LoginPage{})
+	return h.CreateLayout(w, r, "Login", login).Render(context.Background(), w)
 }
 
 func (h *Handlers) loginPost(w http.ResponseWriter, r *http.Request) error {
+
 	if err := r.ParseForm(); err != nil {
 		return err
 	}
@@ -36,12 +30,9 @@ func (h *Handlers) loginPost(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if err != nil {
-		return loginPageTmpl.Execute(
-			w,
-			CreateLayout[LoginPage](r, "Sign in", LoginPage{
-				Errors: h.formErrors(err),
-			}),
-		)
+		login := pages.LoginPage(models.LoginPage{Errors: h.formErrors(err)})
+
+		return h.CreateLayout(w, r, "Sign In", login).Render(context.Background(), w)
 	}
 
 	session, _ := h.sessions.Get(r, "auth")

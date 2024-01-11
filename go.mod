@@ -3,7 +3,7 @@ module github.com/FACorreiaa/go-ollama
 go 1.21.0
 
 require (
-	github.com/a-h/templ v0.2.476
+	github.com/a-h/templ v0.2.513
 	github.com/go-playground/form/v4 v4.2.1
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
@@ -34,6 +34,6 @@ require (
 	github.com/stretchr/testify v1.8.4 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 )

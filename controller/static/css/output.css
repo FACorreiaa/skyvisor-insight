@@ -795,20 +795,12 @@ select {
   flex: none;
 }
 
-.grid-flow-col {
-  grid-auto-flow: column;
-}
-
 .items-center {
   align-items: center;
 }
 
 .justify-between {
   justify-content: space-between;
-}
-
-.gap-4 {
-  gap: 1rem;
 }
 
 .space-x-4 > :not([hidden]) ~ :not([hidden]) {
@@ -859,6 +851,10 @@ select {
 
 .text-right {
   text-align: right;
+}
+
+.font-lato {
+  font-family: Lato, sans-serif;
 }
 
 .text-5xl {
@@ -965,14 +961,6 @@ select {
 
   .md\:mr-2 {
     margin-right: 0.5rem;
-  }
-
-  .md\:place-self-center {
-    place-self: center;
-  }
-
-  .md\:justify-self-end {
-    justify-self: end;
   }
 
   .md\:px-12 {

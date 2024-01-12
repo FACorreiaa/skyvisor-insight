@@ -21,9 +21,6 @@ import (
 //go:embed static
 var staticFS embed.FS
 
-//go:embed html
-var htmlFS embed.FS
-
 type core struct {
 	accounts *account.Accounts
 }

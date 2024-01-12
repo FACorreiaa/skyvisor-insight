@@ -85,8 +85,7 @@ run-tidy:
 	docker compose run --rm app go mod tidy
 
 watch-tcss:
-	./tailwindcss -i controller/static/css/input.css -o controller/static/css/output.css --watch
+	./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --watch
 
 build-tcss:
-	./tailwindcss -i controller/static/css/input.css -o controller/static/css/output.css --minify
-
+	./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify

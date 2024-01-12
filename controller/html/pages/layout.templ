@@ -14,7 +14,6 @@ templ LayoutPage(layout models.LayoutTempl) {
 			<title>{ layout.Title } - AviTracker</title>
 			<link rel="stylesheet" href="/static/css/ionicons.min.css"/>
 			<link rel="stylesheet" href="/static/css/fonts.css"/>
-			<link rel="stylesheet" href="/static/css/main.css"/>
 			<link rel="stylesheet" href="/static/css/output.css"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -23,11 +22,13 @@ templ LayoutPage(layout models.LayoutTempl) {
 			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		</head>
 		<body hx-boost="true">
-			@components.NavbarTempl(layout.Nav, layout.User, layout.ActiveNav)
-			<div class="font-lato" id="contents">
-				@layout.Content
+			<div class="flex flex-col h-screen font-lato" id="contents">
+				@components.NavbarComponent(layout.Nav, layout.User, layout.ActiveNav)
+				<div class="h-full">
+					@layout.Content
+				</div>
+				@components.FooterComponent()
 			</div>
-			@components.FooterTempl()
 		</body>
 	</html>
 }

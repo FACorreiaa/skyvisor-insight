@@ -23,7 +23,7 @@ func BannerComponent() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"#\" class=\"flex flex-col items-center w-full text-center rounded-lg shadow bg-blue md:flex-row hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700\"><div class=\"container\"><img class=\"object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg\" src=\"/docs/images/blog/image-4.jpg\" alt=\"\"><div class=\"flex flex-col justify-between p-4 leading-normal\"><h5 class=\"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"#\" class=\"flex flex-col items-center w-full text-center rounded-lg shadow bg-blue md:flex-row hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700\"><div class=\"container mx-auto\"><img class=\"object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg\" src=\"/docs/images/blog/image-4.jpg\" alt=\"\"><div class=\"flex flex-col justify-between p-4 leading-normal\"><h5 class=\"mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -88,7 +88,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	auth.HandleFunc("/logout", handler(h.logout)).Methods(http.MethodPost)
 	auth.HandleFunc("/settings", handler(h.settingsPage)).Methods(http.MethodGet)
 	auth.HandleFunc("/flights", handler(h.liveFlightsPage)).Methods(http.MethodGet)
-
+	auth.HandleFunc("/airports", handler(h.airportPage)).Methods(http.MethodGet)
 	return r
 }
 

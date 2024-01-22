@@ -6,7 +6,7 @@ import (
 
 	"context"
 
-	pages "github.com/FACorreiaa/go-ollama/controller/html/pages"
+	"github.com/FACorreiaa/go-ollama/controller/html/pages"
 	"github.com/FACorreiaa/go-ollama/controller/models"
 	"github.com/FACorreiaa/go-ollama/core/account"
 )

@@ -3,6 +3,7 @@ package controller
 import (
 	"embed"
 	"errors"
+	"github.com/FACorreiaa/go-ollama/core/airport"
 	"log/slog"
 	"net/http"
 
@@ -23,6 +24,7 @@ var staticFS embed.FS
 
 type core struct {
 	accounts *account.Accounts
+	airports *airport.Airports
 }
 
 type Handlers struct {
@@ -54,6 +56,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 		redisClient: redisClient,
 		core: &core{
 			accounts: account.NewAccounts(pool, redisClient, validate),
+			airports: airport.NewAirports(pool),
 		},
 	}
 

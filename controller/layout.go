@@ -3,7 +3,7 @@ package controller
 import (
 	"net/http"
 
-	pages "github.com/FACorreiaa/go-ollama/controller/html/pages"
+	"github.com/FACorreiaa/go-ollama/controller/html/pages"
 	"github.com/FACorreiaa/go-ollama/controller/models"
 	"github.com/a-h/templ"
 

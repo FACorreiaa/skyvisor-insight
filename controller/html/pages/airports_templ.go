@@ -10,9 +10,12 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/FACorreiaa/go-ollama/controller/html/components"
+import (
+	"github.com/FACorreiaa/go-ollama/controller/html/components"
+	"github.com/FACorreiaa/go-ollama/controller/models"
+)
 
-func AirportPage() templ.Component {
+func AirportPage(column []string, airports []models.Airport) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -45,7 +48,7 @@ func AirportPage() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.TableComponent().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.TableDaisyComponent(column, airports).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

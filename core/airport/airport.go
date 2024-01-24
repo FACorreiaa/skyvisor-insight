@@ -2,29 +2,30 @@ package airport
 
 import (
 	"context"
+
+	"github.com/FACorreiaa/go-ollama/controller/models"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"time"
 )
 
 // Structs
 
-type Airport struct {
-	ID           string      `json:"id"`
-	GMT          string      `json:"gmt"`
-	AirportId    int         `json:"airport_id,string,omitempty"`
-	IataCode     string      `json:"iata_code"`
-	CityIataCode string      `json:"city_iata_code"`
-	IcaoCode     string      `json:"icao_code"`
-	CountryISO2  string      ` json:"country_iso2"`
-	GeonameID    string      `json:"geoname_id,omitempty"`
-	Latitude     float64     `json:"latitude,string,omitempty"`
-	Longitude    float64     `json:"longitude,string,omitempty"`
-	AirportName  string      `json:"airport_name"`
-	CountryName  string      ` json:"country_name"`
-	PhoneNumber  interface{} ` json:"phone_number"`
-	Timezone     string      ` json:"timezone"`
-	CreatedAt    time.Time   `db:"created_at" json:"created_at"`
-}
+// type Airport struct {
+// 	ID           string      `json:"id"`
+// 	GMT          string      `json:"gmt"`
+// 	AirportId    int         `json:"airport_id,string,omitempty"`
+// 	IataCode     string      `json:"iata_code"`
+// 	CityIataCode string      `json:"city_iata_code"`
+// 	IcaoCode     string      `json:"icao_code"`
+// 	CountryISO2  string      ` json:"country_iso2"`
+// 	GeonameID    string      `json:"geoname_id,omitempty"`
+// 	Latitude     float64     `json:"latitude,string,omitempty"`
+// 	Longitude    float64     `json:"longitude,string,omitempty"`
+// 	AirportName  string      `json:"airport_name"`
+// 	CountryName  string      ` json:"country_name"`
+// 	PhoneNumber  interface{} ` json:"phone_number"`
+// 	Timezone     string      ` json:"timezone"`
+// 	CreatedAt    time.Time   `db:"created_at" json:"created_at"`
+// }
 
 type Airports struct {
 	pgpool *pgxpool.Pool
@@ -39,8 +40,8 @@ func NewAirports(
 	}
 }
 
-func (r *Airports) GetAirports(ctx context.Context) ([]Airport, error) {
-	var airport []Airport
+func (r *Airports) GetAirports(ctx context.Context) ([]models.Airport, error) {
+	var airport []models.Airport
 
 	rows, err := r.pgpool.Query(ctx, `SELECT id, gmt, airport_id, iata_code,
        										city_iata_code, icao_code, country_iso2,
@@ -54,7 +55,7 @@ func (r *Airports) GetAirports(ctx context.Context) ([]Airport, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var a Airport
+		var a models.Airport
 		err := rows.Scan(
 			&a.ID, &a.GMT, &a.AirportId, &a.IataCode,
 			&a.CityIataCode, &a.IcaoCode, &a.CountryISO2,

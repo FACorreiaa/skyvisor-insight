@@ -1,0 +1,41 @@
+package components
+
+import (
+	"github.com/FACorreiaa/go-ollama/controller/models"
+	"fmt"
+)
+
+templ TableDaisyComponent(column []string, airports []models.Airport) {
+	<div class="overflow-x-auto">
+		<table class="table table-zebra">
+			<!-- head -->
+			<thead>
+				<tr>
+					for _, col := range column {
+						<th>{ col }</th>
+					}
+				</tr>
+			</thead>
+			<!-- rows -->
+			<tbody>
+				for _, airport := range airports {
+					<tr>
+						<td>{ airport.AirportName }</td>
+						<td>{ airport.CountryName }</td>
+						if airport.PhoneNumber.Valid {
+							<td>{ fmt.Sprintf("%s", airport.PhoneNumber.String) }</td>
+						} else {
+							<td>
+								Phone not available
+							</td>
+						}
+						<td>{ airport.Timezone }</td>
+						<td>{ airport.GMT }</td>
+						<td>{ fmt.Sprintf("%f", airport.Latitude) }</td>
+						<td>{ fmt.Sprintf("%f", airport.Longitude) }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}

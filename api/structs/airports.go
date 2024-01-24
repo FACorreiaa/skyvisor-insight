@@ -14,7 +14,7 @@ type Airport struct {
 	Longitude    float64     `json:"longitude,string,omitempty"`
 	AirportName  string      `json:"airport_name"`
 	CountryName  string      ` json:"country_name"`
-	PhoneNumber  interface{} ` json:"phone_number"`
+	PhoneNumber  interface{} ` json:"phone_number,string,omitempty"`
 	Timezone     string      ` json:"timezone"`
 	CreatedAt    CustomTime  `db:"created_at" json:"created_at"`
 }

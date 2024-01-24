@@ -32,7 +32,7 @@ func NavbarComponent(nav []models.NavItem, user *account.User, activeNav string)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var2 := `Aviation Tracker`
+		templ_7745c5c3_Var2 := `SkyVisor Insight`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/FACorreiaa/go-ollama/controller/models"
 	"fmt"
+	"strconv"
 )
 
 script goToNextPage(page int) {
@@ -58,11 +59,11 @@ templ TableDaisyComponent(airport models.AirportTable) {
 						hx-swap="outerHTML"
 						hx-trigger="click"
 					>First</button>
-					<button type="submit" class="join-item btn" hx-get="/airports?page={prevPage}">«</button>
-					<button class="join-item btn disabled">{ fmt.Sprintf("%d", airport.Page) }</button>
+					<button type="submit" class="join-item btn" hx-get="/airports?page={airport.PrevPage}">«</button>
+					<button class="join-item btn disabled">{ strconv.Itoa(airport.Page) }</button>
 					<button
 						class="join-item btn"
-						hx-get="/airports?page={NextPage}"
+						hx-get="/airports?page={airport.NextPage}"
 						hx-select="#renderTable"
 						hx-swap="outerHTML"
 						hx-boost="true"

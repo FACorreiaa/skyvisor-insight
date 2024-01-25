@@ -12,25 +12,32 @@ import (
 	"github.com/FACorreiaa/go-ollama/controller/models"
 )
 
-func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	columnNames := []string{"Airport Name", "Country Name", "Phone Number",
-		"Timezone", "GMT", "Latitude", "Longitude",
-	}
-
+func (h *Handlers) getAirports(w http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
+	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
-	pageSize := 15
-
-	nextPage := page + 1
-	prevPage := page - 1
 
 	airports, err := h.core.airports.GetAirports(context.Background(), page, pageSize)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
+
+	return page, airports, nil
+
+}
+
+func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
+	columnNames := []string{"Airport Name", "Country Name", "Phone Number",
+		"Timezone", "GMT", "Latitude", "Longitude",
+	}
+
+	page, airports, _ := h.getAirports(w, r)
+
+	nextPage := page + 1
+	prevPage := page - 1
 
 	airport := models.AirportTable{
 		Column:   columnNames,

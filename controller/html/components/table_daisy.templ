@@ -5,37 +5,59 @@ import (
 	"fmt"
 )
 
-templ TableDaisyComponent(column []string, airports []models.Airport) {
-	<div class="overflow-x-auto">
-		<table class="table table-zebra">
-			<!-- head -->
-			<thead>
-				<tr>
-					for _, col := range column {
-						<th>{ col }</th>
-					}
-				</tr>
-			</thead>
-			<!-- rows -->
-			<tbody>
-				for _, airport := range airports {
+script goToNextPage(page int) {
+  console.log('page', page)
+  return page + 1
+}
+
+script returnToPreviousPage(page int) {
+  console.log('page', page)
+  return page - 1
+}
+
+templ TableDaisyComponent(column []string, airports []models.Airport, prevPage, nextPage, page int) {
+	<div class="flex flex-col items-center">
+		<div class="overflow-x-auto">
+			<table class="table table-zebra">
+				<!-- head -->
+				<thead>
 					<tr>
-						<td>{ airport.AirportName }</td>
-						<td>{ airport.CountryName }</td>
-						if airport.PhoneNumber.Valid {
-							<td>{ fmt.Sprintf("%s", airport.PhoneNumber.String) }</td>
-						} else {
-							<td>
-								Phone not available
-							</td>
+						for _, col := range column {
+							<th>{ col }</th>
 						}
-						<td>{ airport.Timezone }</td>
-						<td>{ airport.GMT }</td>
-						<td>{ fmt.Sprintf("%f", airport.Latitude) }</td>
-						<td>{ fmt.Sprintf("%f", airport.Longitude) }</td>
 					</tr>
-				}
-			</tbody>
-		</table>
+				</thead>
+				<!-- rows -->
+				<tbody>
+					for _, airport := range airports {
+						<tr>
+							<td>{ airport.AirportName }</td>
+							<td>{ airport.CountryName }</td>
+							if airport.PhoneNumber.Valid {
+								<td>{ fmt.Sprintf("%s", airport.PhoneNumber.String) }</td>
+							} else {
+								<td>
+									Phone not available
+								</td>
+							}
+							<td>{ airport.Timezone }</td>
+							<td>{ airport.GMT }</td>
+							<td>{ fmt.Sprintf("%f", airport.Latitude) }</td>
+							<td>{ fmt.Sprintf("%f", airport.Longitude) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<!-- paginator -->
+			<div class="mt-10">
+				<div class="join">
+					<div class="join">
+						<button class="join-item btn" onclick={ goToNextPage(page) }>«</button>
+						<button class="join-item btn">{ fmt.Sprintf("%d", page) }</button>
+						<button class="join-item btn" onclick={ returnToPreviousPage(page) }>»</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 }

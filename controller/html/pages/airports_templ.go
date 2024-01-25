@@ -15,7 +15,7 @@ import (
 	"github.com/FACorreiaa/go-ollama/controller/models"
 )
 
-func AirportPage(column []string, airports []models.Airport) templ.Component {
+func AirportPage(column []string, airports []models.Airport, prevPage, nextPage, page int) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -48,7 +48,7 @@ func AirportPage(column []string, airports []models.Airport) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.TableDaisyComponent(column, airports).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.TableDaisyComponent(column, airports, prevPage, nextPage, page).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -5,7 +5,7 @@ import (
 	"github.com/FACorreiaa/go-ollama/controller/models"
 )
 
-templ AirportPage(column []string, airports []models.Airport) {
+templ AirportPage(column []string, airports []models.Airport, prevPage, nextPage, page int) {
 	<div>
 		@components.BannerComponent("Airports", "Check location of your favourite airports")
 		<div class="container flex mx-auto my-24 md:px-6">
@@ -14,7 +14,7 @@ templ AirportPage(column []string, airports []models.Airport) {
 			</div>
 			<div class="w-2/3">
 				<div class="container mx-auto my-24 md:px-6">
-					@components.TableDaisyComponent(column, airports)
+					@components.TableDaisyComponent(column, airports, prevPage, nextPage, page)
 				</div>
 			</div>
 		</div>

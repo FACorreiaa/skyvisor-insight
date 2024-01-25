@@ -40,15 +40,18 @@ func NewAirports(
 	}
 }
 
-func (r *Airports) GetAirports(ctx context.Context) ([]models.Airport, error) {
+func (r *Airports) GetAirports(ctx context.Context, page, pageSize int) ([]models.Airport, error) {
 	var airport []models.Airport
 
+	offset := (page - 1) * pageSize
 	rows, err := r.pgpool.Query(ctx, `SELECT id, gmt, airport_id, iata_code,
        										city_iata_code, icao_code, country_iso2,
        										geoname_id, latitude, longitude, airport_name,
        										country_name, phone_number, timezone,
        										created_at
-       								FROM airport ORDER BY id`)
+       								FROM airport ORDER BY id
+       								OFFSET $1 LIMIT $2`,
+		offset, pageSize)
 	if err != nil {
 		return nil, err
 	}

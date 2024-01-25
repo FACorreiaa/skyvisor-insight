@@ -125,18 +125,18 @@ func WaitForDB(pgpool *pgxpool.Pool) {
 	}
 }
 
-func WaitForRedis(redis *redis.Client) {
-	ctx := context.Background()
-
-	for attempts := 1; ; attempts++ {
-		if attempts > 25 {
-			break
-		}
-
-		if err := redis.Ping(ctx); err == nil {
-			break
-		}
-
-		time.Sleep(time.Duration(attempts) * 100 * time.Millisecond)
-	}
-}
+//func WaitForRedis(redis *redis.Client) {
+//	ctx := context.Background()
+//
+//	for attempts := 1; ; attempts++ {
+//		if attempts > 25 {
+//			break
+//		}
+//
+//		if err := redis.Ping(ctx); err == nil {
+//			break
+//		}
+//
+//		time.Sleep(time.Duration(attempts) * 100 * time.Millisecond)
+//	}
+//}

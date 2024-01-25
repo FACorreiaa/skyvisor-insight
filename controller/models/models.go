@@ -66,3 +66,11 @@ func (a *Airport) GetPhoneNumber() string {
 	}
 	return a.PhoneNumber.String
 }
+
+type AirportTable struct {
+	Column   []string
+	Airports []Airport
+	PrevPage int
+	NextPage int
+	Page     int
+}

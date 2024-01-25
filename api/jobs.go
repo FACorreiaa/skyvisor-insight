@@ -709,7 +709,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 		cron.Recover(cron.DefaultLogger), // or use cron.DefaultLogger
 	))
 	slog.Info("Insert api check job")
-	_, err := c.AddFunc("@weekly", func() {
+	_, err := c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewCities()
 		slog.Info("City job finished in: ", time.Since(startTime))
@@ -717,7 +717,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@weekly", func() {
+	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewCountries()
 		slog.Info("Country job finished in: ", time.Since(startTime))
@@ -725,7 +725,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@weekly", func() {
+	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewAirports()
 		slog.Info("Airport job finished in: ", time.Since(startTime))
@@ -733,7 +733,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@weekly", func() {
+	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewAirplanes()
 		slog.Info("Airplane job finished in: ", time.Since(startTime))
@@ -741,7 +741,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@weekly", func() {
+	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewTax()
 		slog.Info("Tax job finished in: ", time.Since(startTime))
@@ -749,16 +749,23 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@weekly", func() {
+	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewAirline()
 		slog.Info("Airline job finished in: ", time.Since(startTime))
 		handleError(err, "Error checking for new airline")
 	})
-	_, err = c.AddFunc("@daily", func() {
+	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewAircraft()
 		slog.Info("Aircraft job finished in: ", time.Since(startTime))
+		handleError(err, "Error checking for new aircraft")
+	})
+
+	_, err = c.AddFunc("@hourly", func() {
+		startTime := time.Now()
+		err := s.insertNewFlight()
+		slog.Info("Live flights job finished in: ", time.Since(startTime))
 		handleError(err, "Error checking for new aircraft")
 	})
 	handleError(err, "Error running cron job")

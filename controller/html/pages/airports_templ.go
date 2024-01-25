@@ -12,10 +12,9 @@ import "bytes"
 
 import (
 	"github.com/FACorreiaa/go-ollama/controller/html/components"
-	"github.com/FACorreiaa/go-ollama/controller/models"
 )
 
-func AirportPage(column []string, airports []models.Airport, prevPage, nextPage, page int) templ.Component {
+func AirportPage(table templ.Component) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -44,15 +43,15 @@ func AirportPage(column []string, airports []models.Airport, prevPage, nextPage,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-2/3\"><div class=\"container mx-auto my-24 md:px-6\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-2/3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.TableDaisyComponent(column, airports, prevPage, nextPage, page).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = table.Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

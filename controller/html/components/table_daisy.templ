@@ -15,21 +15,21 @@ script returnToPreviousPage(page int) {
   return page - 1
 }
 
-templ TableDaisyComponent(column []string, airports []models.Airport, prevPage, nextPage, page int) {
+templ TableDaisyComponent(airport models.AirportTable) {
 	<div class="flex flex-col items-center">
 		<div class="overflow-x-auto">
 			<table class="table table-zebra">
 				<!-- head -->
 				<thead>
 					<tr>
-						for _, col := range column {
+						for _, col := range airport.Column {
 							<th>{ col }</th>
 						}
 					</tr>
 				</thead>
 				<!-- rows -->
-				<tbody>
-					for _, airport := range airports {
+				<tbody id="renderTable">
+					for _, airport := range airport.Airports {
 						<tr>
 							<td>{ airport.AirportName }</td>
 							<td>{ airport.CountryName }</td>
@@ -51,11 +51,22 @@ templ TableDaisyComponent(column []string, airports []models.Airport, prevPage, 
 			<!-- paginator -->
 			<div class="mt-10">
 				<div class="join">
-					<div class="join">
-						<button class="join-item btn" onclick={ goToNextPage(page) }>«</button>
-						<button class="join-item btn">{ fmt.Sprintf("%d", page) }</button>
-						<button class="join-item btn" onclick={ returnToPreviousPage(page) }>»</button>
-					</div>
+					<button
+						class="join-item btn"
+						hx-get="/airports"
+						hx-select="#renderTable"
+						hx-swap="outerHTML"
+						hx-trigger="click"
+					>First</button>
+					<button type="submit" class="join-item btn" hx-get="/airports?page={prevPage}">«</button>
+					<button class="join-item btn disabled">{ fmt.Sprintf("%d", airport.Page) }</button>
+					<button
+						class="join-item btn"
+						hx-get="/airports?page={NextPage}"
+						hx-select="#renderTable"
+						hx-swap="outerHTML"
+						hx-boost="true"
+					>»</button>
 				</div>
 			</div>
 		</div>

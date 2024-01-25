@@ -43,7 +43,7 @@ func main() {
 	}
 	defer pool.Close()
 
-	//db.WaitForDB(pool)
+	db.WaitForDB(pool)
 
 	redisClient, err := db.InitRedis(cfg.Redis.Host, cfg.Redis.Password, cfg.Redis.DB)
 	if err != nil {

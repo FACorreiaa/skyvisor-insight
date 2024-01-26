@@ -29,7 +29,7 @@ templ TableDaisyComponent(airport models.AirportTable) {
 					</tr>
 				</thead>
 				<!-- rows -->
-				<tbody id="renderTable">
+				<tbody >
 					for _, airport := range airport.Airports {
 						<tr>
 							<td>{ airport.AirportName }</td>
@@ -51,24 +51,22 @@ templ TableDaisyComponent(airport models.AirportTable) {
 			</table>
 			<!-- paginator -->
 			<div class="mt-10">
-				<div class="join">
-					<button
+				<form class="join" hx-boost="true" method="get">
+					<a
 						class="join-item btn"
 						hx-get="/airports"
 						hx-select="#renderTable"
 						hx-swap="outerHTML"
 						hx-trigger="click"
-					>First</button>
+					>First</a>
 					<button type="submit" class="join-item btn" hx-get="/airports?page={airport.PrevPage}">«</button>
 					<button class="join-item btn disabled">{ strconv.Itoa(airport.Page) }</button>
-					<button
+					<a
 						class="join-item btn"
-						hx-get="/airports?page={airport.NextPage}"
-						hx-select="#renderTable"
-						hx-swap="outerHTML"
-						hx-boost="true"
-					>»</button>
-				</div>
+						href={ templ.URL(fmt.Sprintf("/airports?page=%d", airport.NextPage)) }
+
+					>»</a>
+				</form>
 			</div>
 		</div>
 	</div>

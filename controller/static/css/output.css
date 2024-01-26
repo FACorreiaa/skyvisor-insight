@@ -1014,6 +1014,10 @@ select {
   background-color: rgb(31 182 255 / var(--tw-bg-opacity));
 }
 
+.stroke-2 {
+  stroke-width: 2;
+}
+
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;

@@ -28,5 +28,8 @@ module.exports = {
 			},
 		},
 	},
+	daisyui: {
+		themes: ['light', 'dark', 'nord'],
+	},
 	plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 };

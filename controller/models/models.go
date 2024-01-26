@@ -73,4 +73,5 @@ type AirportTable struct {
 	PrevPage int
 	NextPage int
 	Page     int
+	LastPage int
 }

@@ -26,7 +26,14 @@ func (h *Handlers) getAirports(w http.ResponseWriter, r *http.Request) (int, []m
 	}
 
 	return page, airports, nil
+}
 
+func (h *Handlers) getTotalAirports(w http.ResponseWriter, r *http.Request) (int, error) {
+	total, err := h.core.airports.GetSum(context.Background())
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
 }
 
 func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
@@ -38,13 +45,21 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 
 	nextPage := page + 1
 	prevPage := page - 1
+	if prevPage < 1 {
+		prevPage = 1
+	}
 
+	lastPage, err := h.getTotalAirports(w, r)
+	if err != nil {
+		return nil, err
+	}
 	airport := models.AirportTable{
 		Column:   columnNames,
 		Airports: airports,
 		PrevPage: prevPage,
 		NextPage: nextPage,
 		Page:     page,
+		LastPage: lastPage,
 	}
 	airportTable := components.TableDaisyComponent(airport)
 

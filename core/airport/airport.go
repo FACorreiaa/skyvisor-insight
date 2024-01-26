@@ -79,3 +79,12 @@ func (r *Airports) GetAirports(ctx context.Context, page, pageSize int) ([]model
 
 	return airport, nil
 }
+
+func (r *Airports) GetSum(ctx context.Context) (int, error) {
+	var count int
+	row := r.pgpool.QueryRow(ctx, `SELECT Count(id) FROM airport`)
+	if err := row.Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}

@@ -11,8 +11,8 @@ import "io"
 import "bytes"
 
 import (
-	"github.com/FACorreiaa/go-ollama/controller/models"
-	"github.com/FACorreiaa/go-ollama/core/account"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
 
 func NavbarComponent(nav []models.NavItem, user *account.User, activeNav string) templ.Component {

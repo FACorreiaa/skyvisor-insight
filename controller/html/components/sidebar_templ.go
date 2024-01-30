@@ -11,7 +11,7 @@ import "io"
 import "bytes"
 
 import (
-	"github.com/FACorreiaa/go-ollama/controller/html/svg"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/svg"
 )
 
 func SidebarComponent() templ.Component {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/FACorreiaa/go-ollama/controller/html/pages"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/pages"
 )
 
 func (h *Handlers) liveFlightsPage(w http.ResponseWriter, r *http.Request) error {

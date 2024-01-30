@@ -2,7 +2,7 @@ package controller
 
 import (
 	"context"
-	"github.com/FACorreiaa/go-ollama/core/account"
+	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"net/http"
 )
 

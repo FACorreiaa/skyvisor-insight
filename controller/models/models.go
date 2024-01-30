@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/FACorreiaa/go-ollama/core/account"
+	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"github.com/a-h/templ"
 )
 

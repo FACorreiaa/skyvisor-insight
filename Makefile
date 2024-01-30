@@ -1,6 +1,6 @@
 .PHONY: build clean
-project_name = aviation-client
-image_name = aviation-client
+project_name = skyvisor-container
+image_name = skyvisor-container
 
 compose-up:
 	make delete-container-if-exist

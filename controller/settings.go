@@ -6,9 +6,9 @@ import (
 
 	"context"
 
-	"github.com/FACorreiaa/go-ollama/controller/html/pages"
-	"github.com/FACorreiaa/go-ollama/controller/models"
-	"github.com/FACorreiaa/go-ollama/core/account"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/pages"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
 
 func (h *Handlers) settingsPage(w http.ResponseWriter, r *http.Request) error {

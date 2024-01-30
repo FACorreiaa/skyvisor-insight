@@ -7,9 +7,9 @@ import (
 
 	"github.com/a-h/templ"
 
-	"github.com/FACorreiaa/go-ollama/controller/html/components"
-	"github.com/FACorreiaa/go-ollama/controller/html/pages"
-	"github.com/FACorreiaa/go-ollama/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/pages"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
 func (h *Handlers) getAirports(w http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {

@@ -11,7 +11,7 @@ import "io"
 import "bytes"
 
 import (
-	"github.com/FACorreiaa/go-ollama/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
 func LoginPage(login models.LoginPage) templ.Component {

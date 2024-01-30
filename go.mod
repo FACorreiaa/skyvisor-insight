@@ -1,4 +1,4 @@
-module github.com/FACorreiaa/go-ollama
+module github.com/FACorreiaa/Aviation-tracker
 
 go 1.21.0
 

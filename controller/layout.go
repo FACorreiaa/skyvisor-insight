@@ -3,11 +3,11 @@ package controller
 import (
 	"net/http"
 
-	"github.com/FACorreiaa/go-ollama/controller/html/pages"
-	"github.com/FACorreiaa/go-ollama/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/pages"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/a-h/templ"
 
-	"github.com/FACorreiaa/go-ollama/core/account"
+	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
 
 func (h *Handlers) CreateLayout(w http.ResponseWriter, r *http.Request, title string, data templ.Component) templ.Component {

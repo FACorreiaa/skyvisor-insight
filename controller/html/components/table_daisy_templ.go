@@ -12,7 +12,7 @@ import "bytes"
 
 import (
 	"fmt"
-	"github.com/FACorreiaa/go-ollama/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"strconv"
 )
 

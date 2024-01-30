@@ -1,23 +1,24 @@
 version: "3.9"
 
 services:
-  app:
-    build:
-      dockerfile: Dockerfile
-      context: .
-      target: dev
-    ports:
-      - "6969:6969"
-    expose:
-      - "6969"
-    networks:
-      - aviation-client
-    depends_on:
-      - postgres
-      - redis
+#  app:
+#    build:
+#      dockerfile: Dockerfile
+#      context: .
+#      target: dev
+#    ports:
+#      - "6969:6969"
+#    expose:
+#      - "6969"
+#    networks:
+#      - skyvisor-container
+#    depends_on:
+#      - postgres
+#      - redis
   postgres:
     hostname: postgres
     image: postgres:alpine
+    container_name: skyvisor-pg
     environment:
       POSTGRES_HOST: ${DB_HOST}
       POSTGRES_USER: ${DB_USER}
@@ -30,9 +31,9 @@ services:
     volumes:
       - ./.data/docker-postgres:/var/lib/postgresql/data
     networks:
-      - aviation-client
+      - skyvisor-container
   pgweb:
-    container_name: pgweb  # optional
+    container_name: skyvisor-pgweb
     restart: always  # optional
     image: sosedoff/pgweb
     ports:
@@ -48,7 +49,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
 
   redis:
-    container_name: redis
+    container_name: skyvisor-redis
     hostname: redis
     image: redis:latest
     command: redis-server --port 6380
@@ -64,10 +65,10 @@ services:
       - ./.data/docker-redis:/var/lib/redis/data
 
     networks:
-      - aviation-client
+      - skyvisor-container
 
   redis-commander:
-    container_name: redis-commander
+    container_name: skyvisor-redis-commander
     hostname: redis-commander
     image: rediscommander/redis-commander:latest
     platform: linux/amd64
@@ -80,7 +81,7 @@ services:
     expose:
       - "8082"
     networks:
-      - aviation-client
+      - skyvisor-container
     depends_on:
       - redis
 
@@ -100,4 +101,4 @@ services:
 #      - 6969:6969
 
 networks:
-  aviation-client:
+  skyvisor-container:

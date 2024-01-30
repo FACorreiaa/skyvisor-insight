@@ -11,8 +11,8 @@ import "io"
 import "bytes"
 
 import (
-	"github.com/FACorreiaa/go-ollama/controller/html/components"
-	"github.com/FACorreiaa/go-ollama/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
 func LayoutPage(layout models.LayoutTempl) templ.Component {

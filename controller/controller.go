@@ -3,11 +3,11 @@ package controller
 import (
 	"embed"
 	"errors"
-	"github.com/FACorreiaa/go-ollama/core/airport"
+	"github.com/FACorreiaa/Aviation-tracker/core/airport"
 	"log/slog"
 	"net/http"
 
-	"github.com/FACorreiaa/go-ollama/core/account"
+	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"

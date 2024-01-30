@@ -11,7 +11,7 @@ import "io"
 import "bytes"
 
 import (
-	"github.com/FACorreiaa/go-ollama/controller/html/components"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
 )
 
 func AirportPage(table templ.Component) templ.Component {

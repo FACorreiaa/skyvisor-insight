@@ -7,40 +7,20 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// Structs
-
-// type Airport struct {
-// 	ID           string      `json:"id"`
-// 	GMT          string      `json:"gmt"`
-// 	AirportId    int         `json:"airport_id,string,omitempty"`
-// 	IataCode     string      `json:"iata_code"`
-// 	CityIataCode string      `json:"city_iata_code"`
-// 	IcaoCode     string      `json:"icao_code"`
-// 	CountryISO2  string      ` json:"country_iso2"`
-// 	GeonameID    string      `json:"geoname_id,omitempty"`
-// 	Latitude     float64     `json:"latitude,string,omitempty"`
-// 	Longitude    float64     `json:"longitude,string,omitempty"`
-// 	AirportName  string      `json:"airport_name"`
-// 	CountryName  string      ` json:"country_name"`
-// 	PhoneNumber  interface{} ` json:"phone_number"`
-// 	Timezone     string      ` json:"timezone"`
-// 	CreatedAt    time.Time   `db:"created_at" json:"created_at"`
-// }
-
-type Airports struct {
+type AirportRepository struct {
 	pgpool *pgxpool.Pool
 }
 
 func NewAirports(
 	pgpool *pgxpool.Pool,
 
-) *Airports {
-	return &Airports{
+) *AirportRepository {
+	return &AirportRepository{
 		pgpool: pgpool,
 	}
 }
 
-func (r *Airports) GetAirports(ctx context.Context, page, pageSize int) ([]models.Airport, error) {
+func (r *AirportRepository) GetAirports(ctx context.Context, page, pageSize int) ([]models.Airport, error) {
 	var airport []models.Airport
 
 	offset := (page - 1) * pageSize
@@ -80,7 +60,7 @@ func (r *Airports) GetAirports(ctx context.Context, page, pageSize int) ([]model
 	return airport, nil
 }
 
-func (r *Airports) GetSum(ctx context.Context) (int, error) {
+func (r *AirportRepository) GetSum(ctx context.Context) (int, error) {
 	var count int
 	row := r.pgpool.QueryRow(ctx, `SELECT Count(id) FROM airport`)
 	if err := row.Scan(&count); err != nil {

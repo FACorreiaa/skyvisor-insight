@@ -63,3 +63,6 @@ setup-local: tools
 
 run:
 	@air -c .air.toml --build.cmd "go build -ldflags \"$(LDFLAGS)\" -o ./tmp/main ."
+
+stop:
+	@docker compose down

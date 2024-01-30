@@ -42,7 +42,7 @@ services:
     ports:
       - "4001:4001"
     volumes:
-      - ./app  # Adjust the path as needed
+      - ${PWD}/app:/app  # Adjust the path as needed
     environment:
       - APP_ENV=development
     command: [ "air", "-c", ".air.toml" ]

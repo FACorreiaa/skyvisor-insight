@@ -71,7 +71,7 @@ func (h *Handlers) renderSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg.HomeIcon()},
 		{Path: "/airports", Label: "Airports", Icon: svg.ArrowRightIcon()},
-		{Path: "/airports/map", Label: "Show Airports", Icon: svg.MapIcon()},
+		{Path: "/airports/locations", Label: "Show Airports", Icon: svg.MapIcon()},
 		{Path: "/settings", Label: "Settings", Icon: svg.SettingsIcon()},
 		{Path: "/log-out", Label: "Log out", Icon: svg.LogoutIcon()},
 	}
@@ -86,4 +86,11 @@ func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
 	}
 	airport := pages.AirportPage(airportTable, sidebar)
 	return h.CreateLayout(w, r, "Airport Page", airport).Render(context.Background(), w)
+}
+
+func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) error {
+	sidebar := h.renderSidebar()
+
+	airport := pages.AirportLocationsPage(sidebar)
+	return h.CreateLayout(w, r, "Airport Locations Page", airport).Render(context.Background(), w)
 }

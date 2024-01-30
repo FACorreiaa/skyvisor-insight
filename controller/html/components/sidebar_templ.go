@@ -27,12 +27,12 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"sidebar-multi-level-sidebar\" class=\"fixed left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0\" aria-label=\"Sidebar\"><div class=\"h-full px-3 bg-gray-50 dark:bg-gray-800\"><ul class=\"space-y-6 font-normal\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"sidebar-multi-level-sidebar\" class=\"fixed left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0\" aria-label=\"Sidebar\"><div class=\"h-full px-3 bg-gray-50 dark:bg-gray-800\"><ul class=\"menu space-y-6 font-normal\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, item := range sidebar {
-			var templ_7745c5c3_Var2 = []any{templ.KV(item.ActivePath, item.Path)}
+			var templ_7745c5c3_Var2 = []any{templ.KV(item.ActivePath, item.Path), "active:text-gray-200"}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

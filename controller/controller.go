@@ -24,7 +24,7 @@ var staticFS embed.FS
 
 type core struct {
 	accounts *account.Accounts
-	airports *airport.Airports
+	airports *airport.AirportRepository
 }
 
 type Handlers struct {
@@ -92,6 +92,8 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	auth.HandleFunc("/settings", handler(h.settingsPage)).Methods(http.MethodGet)
 	auth.HandleFunc("/flights", handler(h.liveFlightsPage)).Methods(http.MethodGet)
 	auth.HandleFunc("/airports", handler(h.airportPage)).Methods(http.MethodGet)
+	auth.HandleFunc("/airports/locations", handler(h.airportLocationPage)).Methods(http.MethodGet)
+
 	return r
 }
 

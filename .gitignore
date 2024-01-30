@@ -23,3 +23,18 @@ Modelfile
 dump.rdb
 main.tfvars
 api/data
+*.o
+*.a
+*.so
+*.test
+*.prof
+*.out
+
+vendor/
+tmp/
+
+# IDE specific files
+.vscode
+
+# build output
+air

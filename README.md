@@ -13,3 +13,13 @@ The main stack of this project contains:
 
 This project uses [Docker](https://www.docker.com/) to deploy and test the website
 
+## What this repo will never handle
+- Deployment beyond simple Dockerfile
+- Testing
+
+## Prerequisites
+- [Air](https://github.com/cosmtrek/air)
+- [Docker](https://docs.docker.com/get-started/)
+
+## Getting Started
+Create `.env` file (see `env.sample`), then run `make local-setup` and `make run`. That's it :)

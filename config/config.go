@@ -146,9 +146,9 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 }
 
 func NewRedisConfig() (*RedisConfig, error) {
-	host := GetEnv("DB_HOST", "localhost:6380")
-	pass := GetEnv("DB_HOST", "qwerty")
-
+	host := GetEnv("REDIS_HOST", "redis:6380")
+	pass := GetEnv("REDIS_PASS", "qwerty")
+	println(host)
 	//rdb := redis.NewClient(&redis.Options{
 	//	Addr:     host,
 	//	Password: pass, // no password set

@@ -1,26 +1,11 @@
 version: "3.9"
 
 services:
-#  app:
-#    build:
-#      dockerfile: Dockerfile
-#      context: .
-#      target: dev
-#    ports:
-#      - "6969:6969"
-#    expose:
-#      - "6969"
-#    networks:
-#      - skyvisor-container
-#    depends_on:
-#      - postgres
-#      - redis
   postgres:
     hostname: postgres
     image: postgres:alpine
-    container_name: skyvisor-pg
     environment:
-      POSTGRES_HOST: ${DB_HOST}
+      POSTGRES_HOST: postgres
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
@@ -31,25 +16,9 @@ services:
     volumes:
       - ./.data/docker-postgres:/var/lib/postgresql/data
     networks:
-      - skyvisor-container
-  pgweb:
-    container_name: skyvisor-pgweb
-    restart: always  # optional
-    image: sosedoff/pgweb
-    ports:
-      - "8081:8081"
-    links:
-      - postgres:postgres  # my database container is called postgres, not db
-    depends_on:
-      - postgres
-    environment: &env
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_HOST_AUTH_METHOD: trust
-
+      - aviation-client
   redis:
-    container_name: skyvisor-redis
+    container_name: redis
     hostname: redis
     image: redis:latest
     command: redis-server --port 6380
@@ -57,33 +26,71 @@ services:
       - "6380:6380"
     expose:
       - "6380"
-#    environment:
-#      REDIS_HOST: ${REDIS_HOST}
-#      REDIS_PASSWORD: ${REDIS_PASSWORD}
-#      REDIS_DB: ${REDIS_DB}
+    #    environment:
+    #      REDIS_HOST: ${REDIS_HOST}
+    #      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    #      REDIS_DB: ${REDIS_DB}
     volumes:
       - ./.data/docker-redis:/var/lib/redis/data
 
     networks:
-      - skyvisor-container
+      - aviation-client
 
-  redis-commander:
-    container_name: skyvisor-redis-commander
-    hostname: redis-commander
-    image: rediscommander/redis-commander:latest
-    platform: linux/amd64
-    environment:
-      - REDIS_HOSTS=local:redis:6380
-      - HTTP_USER=root
-      - HTTP_PASSWORD=qwerty
+  app-dev:
+    build:
+      target: dev
     ports:
-      - "8082:8081"
-    expose:
-      - "8082"
+      - "4001:4001"
+    volumes:
+      - ./app  # Adjust the path as needed
+    environment:
+      - APP_ENV=development
+    command: [ "air", "-c", ".air.toml" ]
     networks:
-      - skyvisor-container
-    depends_on:
-      - redis
+      - aviation-client
+  app-release:
+      build:
+        target: release-stage
+      ports:
+        - "8080:8080"
+      environment:
+        - APP_ENV=production
+      networks:
+        - aviation-client
+#  redis-commander:
+#    container_name: redis-commander
+#    hostname: redis-commander
+#    image: rediscommander/redis-commander:latest
+#    platform: linux/amd64
+#    environment:
+#      - REDIS_HOSTS=local:redis:6380
+#      - HTTP_USER=root
+#      - HTTP_PASSWORD=qwerty
+#    ports:
+#      - "8082:8081"
+#    expose:
+#      - "8082"
+#    networks:
+#      - aviation-client
+#    depends_on:
+#      - redis
+#
+#  pgweb:
+#    container_name: pgweb  # optional
+#    restart: always  # optional
+#    image: sosedoff/pgweb
+#    ports:
+#      - "8081:8081"
+#    links:
+#      - postgres:postgres  # my database container is called postgres, not db
+#    depends_on:
+#      - postgres
+#    environment: &env
+#      POSTGRES_USER: ${DB_USER}
+#      POSTGRES_PASSWORD: ${DB_PASS}
+#      POSTGRES_DB: ${DB_NAME}
+#      POSTGRES_HOST_AUTH_METHOD: trust
+
 
 #  server:
 #    build: .
@@ -101,4 +108,4 @@ services:
 #      - 6969:6969
 
 networks:
-  skyvisor-container:
+  aviation-client:

@@ -32,6 +32,10 @@ func Init(connectionURL string) (*pgxpool.Pool, error) {
 }
 
 func InitRedis(host, password string, db int) (*redis.Client, error) {
+	println(host)
+	println(password)
+	println(db)
+
 	return redis.NewClient(&redis.Options{
 		Addr:     host,
 		Password: password,

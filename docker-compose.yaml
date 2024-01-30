@@ -10,11 +10,16 @@ services:
       - "6969:6969"
     expose:
       - "6969"
+    networks:
+      - aviation-client
+    depends_on:
+      - postgres
+      - redis
   postgres:
     hostname: postgres
     image: postgres:alpine
     environment:
-      POSTGRES_HOST: postgres
+      POSTGRES_HOST: ${DB_HOST}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}

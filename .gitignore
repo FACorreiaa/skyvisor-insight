@@ -19,7 +19,6 @@ Modelfile
 .project
 .settings
 .ruby-version
-.vscode/
 dump.rdb
 main.tfvars
 api/data
@@ -38,3 +37,5 @@ tmp/
 
 # build output
 air
+logfile
+post_cmd.txt

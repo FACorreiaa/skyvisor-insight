@@ -9,6 +9,7 @@ import (
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/pages"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/svg"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
@@ -66,11 +67,23 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 	return airportTable, nil
 }
 
+func (h *Handlers) renderSidebar() []models.SidebarItem {
+	sidebar := []models.SidebarItem{
+		{Path: "/", Label: "Home", Icon: svg.HomeIcon()},
+		{Path: "/airports", Label: "Airports", Icon: svg.ArrowRightIcon()},
+		{Path: "/airports/map", Label: "Show Airports", Icon: svg.MapIcon()},
+		{Path: "/settings", Label: "Settings", Icon: svg.SettingsIcon()},
+		{Path: "/log-out", Label: "Log out", Icon: svg.LogoutIcon()},
+	}
+	return sidebar
+}
+
 func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
 	airportTable, err := h.renderAirportTable(w, r)
+	sidebar := h.renderSidebar()
 	if err != nil {
 		return err
 	}
-	airport := pages.AirportPage(airportTable)
+	airport := pages.AirportPage(airportTable, sidebar)
 	return h.CreateLayout(w, r, "Airport Page", airport).Render(context.Background(), w)
 }

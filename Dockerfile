@@ -19,8 +19,11 @@ RUN CGO_ENABLED=0 go install github.com/go-delve/delve/cmd/dlv@latest
 COPY . .
 COPY go.mod go.sum ./
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -gcflags "all=-N -l" -o /entrypoint ./*.go
-CMD ["dlv", "--listen=127.0.0.1:40000", "--headless=true", "--api-version=2", "exec", "--accept-multiclient",  "/aviation-tracker"]
+COPY --from=build-stage /entrypoint /entrypoint-debug
+COPY --from=build-stage /app/controller/html /controller/html
+COPY --from=build-stage /app/controller/static /controller/static
+EXPOSE 40000
+CMD ["dlv", "--listen=127.0.0.1:40000", "--headless=true", "--api-version=2", "exec", "--accept-multiclient",  "/entrypoint-debug"]
 
 # release
 FROM gcr.io/distroless/static-debian11 AS release-stage

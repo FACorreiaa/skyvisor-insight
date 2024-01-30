@@ -14,6 +14,13 @@ type NavItem struct {
 	Label string
 }
 
+type SidebarItem struct {
+	Path       string
+	Icon       templ.Component
+	Label      string
+	ActivePath string
+}
+
 type LayoutTempl struct {
 	Title     string
 	Nav       []NavItem
@@ -65,6 +72,12 @@ func (a *Airport) GetPhoneNumber() string {
 
 	}
 	return a.PhoneNumber.String
+}
+
+type PageLayout struct {
+	Table     AirportTable
+	Sidebar   []SidebarItem
+	ActiveNav string
 }
 
 type AirportTable struct {

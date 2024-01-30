@@ -2,14 +2,15 @@ package pages
 
 import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
-templ AirportPage(table templ.Component) {
+templ AirportPage(table templ.Component, sidebar []models.SidebarItem) {
 	<div>
 		@components.BannerComponent("Airports", "Check location of your favourite airports")
 		<div class="container flex mx-auto my-24 md:px-6">
 			<div class="w-1/3">
-				@components.SidebarComponent()
+				@components.SidebarComponent(sidebar)
 			</div>
 			<div class="w-2/3">
 				@table

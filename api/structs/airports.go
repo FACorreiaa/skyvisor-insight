@@ -1,6 +1,7 @@
 package structs
 
 // create an intermediate type & then convert to a concrete one
+
 type Airport struct {
 	ID           string      `json:"id"`
 	GMT          string      `json:"gmt"`

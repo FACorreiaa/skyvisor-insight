@@ -5,7 +5,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
-templ AirportLocationsPage(sidebar []models.SidebarItem) {
+templ AirportLocationsPage(sidebar []models.SidebarItem, airports []models.Airport) {
 	<div>
 		@components.BannerComponent("Airports", "Check location of your favourite airports")
 		<div class="container flex mx-auto my-24 md:px-6">
@@ -13,7 +13,7 @@ templ AirportLocationsPage(sidebar []models.SidebarItem) {
 				@components.SidebarComponent(sidebar)
 			</div>
 			<div class="w-2/3">
-				 @components.AirportMap()
+				@components.AirportMap(airports)
 			</div>
 		</div>
 	</div>

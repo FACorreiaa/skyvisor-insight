@@ -673,7 +673,8 @@ func (s *ServiceJob) insertNewFlight() error {
 			"arrival_gate", "arrival_baggage", "arrival_delay", "arrival_scheduled", "arrival_estimated",
 			"arrival_actual", "arrival_estimated_runway", "arrival_actual_runway", "flight_number", "flight_iata",
 			"flight_icao", "codeshared_airline_name", "codeshared_airline_iata", "codeshared_airline_icao",
-			"codeshared_flight_number", "codeshared_flight_iata", "codeshared_flight_icao", "aircraft_id", "live", "created_at",
+			"codeshared_flight_number", "codeshared_flight_iata", "codeshared_flight_icao", "registration",
+			"icao24", "iata", "icao", "live", "created_at",
 		},
 		pgx.CopyFromSlice(len(res.Data), func(i int) ([]interface{}, error) {
 			id := uuid.New()
@@ -691,7 +692,9 @@ func (s *ServiceJob) insertNewFlight() error {
 				res.Data[i].Flight.Codeshared.AirlineName,
 				res.Data[i].Flight.Codeshared.AirlineIata, res.Data[i].Flight.Codeshared.AirlineIcao,
 				res.Data[i].Flight.Codeshared.FlightNumber, res.Data[i].Flight.Codeshared.FlightIata,
-				res.Data[i].Flight.Codeshared.FlightIcao, res.Data[i].Aircraft, res.Data[i].Live,
+				res.Data[i].Flight.Codeshared.FlightIcao, res.Data[i].Aircraft.AircraftRegistration,
+				res.Data[i].Aircraft.AircraftIcao24, res.Data[i].Aircraft.AircraftIata, res.Data[i].Aircraft.AircraftIcao,
+				res.Data[i].Live,
 				formatTime(time.Now()),
 			}, nil
 		}),

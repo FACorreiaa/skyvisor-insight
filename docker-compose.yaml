@@ -45,7 +45,7 @@ services:
       - ${PWD}/app:/app  # Adjust the path as needed
     environment:
       - APP_ENV=development
-    command: [ "air", "-c", ".air.toml" ]
+    #command: [ "air", "-c", ".air.toml" ]
     networks:
       - aviation-client
   app-release:

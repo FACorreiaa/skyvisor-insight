@@ -68,3 +68,45 @@ func (r *AirportRepository) GetSum(ctx context.Context) (int, error) {
 	}
 	return count, nil
 }
+
+func (r *AirportRepository) GetAirportsLocation(ctx context.Context) ([]models.Airport, error) {
+	var airport []models.Airport
+
+	rows, err := r.pgpool.Query(ctx, `SELECT a.id, a.gmt, a.latitude, a.longitude,
+       											 a.airport_name, c.city_name,
+												 a.country_name, a.phone_number, a.timezone
+												 FROM airport a
+												 LEFT JOIN
+    											 	City c ON a.city_iata_code = c.iata_code
+												 WHERE
+    												a.airport_name IS NOT NULL
+												    	AND c.city_name IS NOT NULL
+												  		AND a.country_name IS NOT NULL
+												 ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var a models.Airport
+		var c models.City
+		err := rows.Scan(
+			&a.ID, &a.GMT, &a.Latitude, &a.Longitude,
+			&a.AirportName, &c.CityName, &a.CountryName, &a.PhoneNumber,
+			&a.Timezone,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		airport = append(airport, a)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return airport, nil
+}

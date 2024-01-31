@@ -3,9 +3,10 @@ package controller
 import (
 	"embed"
 	"errors"
-	"github.com/FACorreiaa/Aviation-tracker/core/airport"
 	"log/slog"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/core/airport"
 
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"github.com/go-playground/form/v4"

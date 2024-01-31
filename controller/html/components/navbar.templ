@@ -53,7 +53,7 @@ templ NavbarComponent(nav []models.NavItem, user *account.User, activeNav string
 					}
 					if user != nil {
 						<li>
-							<a href={ templ.SafeURL("/profile/" + user.Username) } class="nav-link">
+							<a href={ templ.SafeURL("/profile/" + user.Username) } class="font-bold nav-link">
 								if user.Image != nil {
 									<img src={ templ.EscapeString(*user.Image) } class="user-pic"/>
 								}

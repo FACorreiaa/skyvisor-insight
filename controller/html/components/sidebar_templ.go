@@ -27,17 +27,17 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"sidebar-multi-level-sidebar\" class=\"fixed left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0\" aria-label=\"Sidebar\"><div class=\"h-full px-3 bg-gray-50 dark:bg-gray-800\"><ul class=\"menu space-y-6 font-normal\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"sidebar-multi-level-sidebar\" class=\"fixed left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0\" aria-label=\"Sidebar\"><div class=\"h-full px-3 bg-gray-50 dark:bg-gray-800\"><ul class=\"space-y-6 font-normal menu\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, item := range sidebar {
-			var templ_7745c5c3_Var2 = []any{templ.KV(item.ActivePath, item.Path), "active:text-gray-200"}
+			var templ_7745c5c3_Var2 = []any{"focus:text-blue focus:text-gray-200", templ.KV(item.ActivePath, item.Path)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li hx-boost=\"true\" class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -45,7 +45,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><a href=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><a hx-trigger=\"load delay:1s\" href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -69,7 +69,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/components/sidebar.templ`, Line: 15, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/components/sidebar.templ`, Line: 22, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

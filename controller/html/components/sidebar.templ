@@ -7,10 +7,17 @@ import (
 templ SidebarComponent(sidebar []models.SidebarItem) {
 	<aside id="sidebar-multi-level-sidebar" class="fixed left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
 		<div class="h-full px-3 bg-gray-50 dark:bg-gray-800">
-			<ul class="menu space-y-6 font-normal">
+			<ul class="space-y-6 font-normal menu">
 				for _, item := range sidebar {
-					<li class={ templ.KV(item.ActivePath, item.Path), "active:text-gray-200" }>
-						<a href={ templ.SafeURL(item.Path) } class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+					<li
+						hx-boost="true"
+						class={ "focus:text-blue focus:text-gray-200", templ.KV(item.ActivePath, item.Path) }
+					>
+						<a
+							hx-trigger="load delay:1s"
+							href={ templ.SafeURL(item.Path) }
+							class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+						>
 							@item.Icon
 							<span class="ms-3">
 								{ item.Label }

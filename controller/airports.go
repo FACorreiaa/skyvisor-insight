@@ -29,7 +29,17 @@ func (h *Handlers) getAirports(w http.ResponseWriter, r *http.Request) (int, []m
 	return page, airports, nil
 }
 
-func (h *Handlers) getTotalAirports(w http.ResponseWriter, r *http.Request) (int, error) {
+func (h *Handlers) getAirportsLocation() ([]models.Airport, error) {
+
+	airports, err := h.core.airports.GetAirportsLocation(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return airports, nil
+}
+
+func (h *Handlers) getTotalAirports() (int, error) {
 	total, err := h.core.airports.GetSum(context.Background())
 	if err != nil {
 		return 0, err
@@ -50,7 +60,7 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 		prevPage = 1
 	}
 
-	lastPage, err := h.getTotalAirports(w, r)
+	lastPage, err := h.getTotalAirports()
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +100,10 @@ func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
 
 func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) error {
 	sidebar := h.renderSidebar()
-
-	airport := pages.AirportLocationsPage(sidebar)
+	airportsLocations, err := h.getAirportsLocation()
+	if err != nil {
+		return err
+	}
+	airport := pages.AirportLocationsPage(sidebar, airportsLocations)
 	return h.CreateLayout(w, r, "Airport Locations Page", airport).Render(context.Background(), w)
 }

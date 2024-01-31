@@ -50,6 +50,7 @@ type Columns struct {
 
 type Airport struct {
 	ID           string         `json:"id"`
+	CityName     string         `json:"city_name"`
 	GMT          string         `json:"gmt"`
 	AirportId    int            `json:"airport_id,string,omitempty"`
 	IataCode     string         `json:"iata_code"`
@@ -64,6 +65,19 @@ type Airport struct {
 	PhoneNumber  sql.NullString ` json:"phone_number,omitempty"`
 	Timezone     string         ` json:"timezone"`
 	CreatedAt    time.Time      `db:"created_at" json:"created_at"`
+}
+
+type City struct {
+	ID          string  `json:"id"`
+	GMT         string  `json:"gmt,omitempty"`
+	CityID      int     `json:"city_id,string,omitempty"`
+	IataCode    string  `json:"iata_code"`
+	CountryISO2 string  `json:"country_iso2"`
+	GeonameID   string  `json:"geoname_id,omitempty"`
+	Latitude    float64 `json:"latitude,string,omitempty"`
+	Longitude   float64 `json:"longitude,string,omitempty"`
+	CityName    string  `json:"city_name"`
+	Timezone    string  `json:"timezone"`
 }
 
 func (a *Airport) GetPhoneNumber() string {

@@ -3,9 +3,10 @@ package controller
 import (
 	"embed"
 	"errors"
-	"github.com/FACorreiaa/Aviation-tracker/core/airline"
 	"log/slog"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/core/airline"
 
 	"github.com/FACorreiaa/Aviation-tracker/core/airport"
 

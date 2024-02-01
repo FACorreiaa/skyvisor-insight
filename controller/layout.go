@@ -1,9 +1,9 @@
 package controller
 
 import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
 	"net/http"
 
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/pages"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/a-h/templ"
 
@@ -36,7 +36,7 @@ func (h *Handlers) CreateLayout(w http.ResponseWriter, r *http.Request, title st
 		}
 	}
 
-	layout := models.LayoutTempl{
+	l := models.LayoutTempl{
 		Title:     title,
 		Nav:       nav,
 		User:      user,
@@ -44,5 +44,5 @@ func (h *Handlers) CreateLayout(w http.ResponseWriter, r *http.Request, title st
 		Content:   data,
 	}
 
-	return pages.LayoutPage(layout)
+	return layout.LayoutPage(l)
 }

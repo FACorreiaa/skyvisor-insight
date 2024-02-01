@@ -1,0 +1,20 @@
+package airline
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+)
+
+templ AirlineLayoutPage(title, description string, component templ.Component, sidebar []models.SidebarItem) {
+	<div>
+		@layout.BannerComponent(title, description)
+		<div class="container flex my-24 md:px-6">
+			<div class="w-1/6">
+				@layout.SidebarComponent(sidebar)
+			</div>
+			<div class="w-5/6">
+				@component
+			</div>
+		</div>
+	</div>
+}

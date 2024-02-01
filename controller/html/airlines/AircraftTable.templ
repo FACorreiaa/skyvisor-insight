@@ -1,0 +1,78 @@
+package airline
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"fmt"
+	"strconv"
+)
+
+templ AirlineAircraftTable(a models.AircraftTable) {
+	<div class="flex flex-col items-center">
+		<div class="overflow-x-auto">
+			<table class="table table-xs">
+				<!-- head -->
+				<thead>
+					<tr>
+						for _, col := range a.Column {
+							<th>{ col }</th>
+						}
+					</tr>
+				</thead>
+				<!-- rows -->
+				<tbody>
+					for _, aircraft := range a.Aircraft {
+						<tr>
+							<td>{ aircraft.AircraftName }</td>
+							<td>{ aircraft.ModelName }</td>
+							<td>{ aircraft.ConstructionNumber }</td>
+							<td>{ fmt.Sprintf("%d",aircraft.EnginesCount) }</td>
+							<td>{ aircraft.EnginesType }</td>
+							<td>{ aircraft.FirstFlightDate.GetTime().Format("2006-01-02") }</td>
+							if aircraft.LineNumber != nil {
+								<td>{ aircraft.LineNumber.(string) }</td>
+							} else {
+								<td></td>
+							}
+							<td>{ aircraft.ModelCode }</td>
+							<td>{ fmt.Sprintf("%d", aircraft.PlaneAge) }</td>
+							if aircraft.PlaneClass != nil {
+								<td>{ aircraft.PlaneClass.(string) }</td>
+							} else {
+								<td></td>
+							}
+							if aircraft.PlaneOwner != nil {
+								<td>{ aircraft.PlaneOwner.(string) }</td>
+							} else {
+								<td></td>
+							}
+							<td>{ aircraft.PlaneSeries }</td>
+							<td>{ aircraft.PlaneStatus }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<!-- paginator -->
+			<div class="flex justify-center mt-10">
+				<form class="join" hx-boost="true" method="get">
+					<a
+						class="join-item btn"
+						href={ templ.URL("/airlines/aircraft") }
+					>First Page</a>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/airlines/aircraft?page=%d", a.PrevPage)) }
+					>«</a>
+					<button class="join-item btn disabled">{ strconv.Itoa(a.Page) }</button>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/airlines/aircraft?page=%d", a.NextPage)) }
+					>»</a>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/airlines/aircraft?page=%d", a.LastPage)) }
+					>Last Page</a>
+				</form>
+			</div>
+		</div>
+	</div>
+}

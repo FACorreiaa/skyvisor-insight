@@ -16,7 +16,7 @@ script returnToPreviousPage(page int) {
   return page - 1
 }
 
-templ TableDaisyComponent(airport models.AirportTable) {
+templ AirportTableComponent(airport models.AirportTable) {
 	<div class="flex flex-col items-center">
 		<div class="overflow-x-auto">
 			<table class="table table-zebra">
@@ -50,7 +50,7 @@ templ TableDaisyComponent(airport models.AirportTable) {
 				</tbody>
 			</table>
 			<!-- paginator -->
-			<div class="mt-10 flex justify-center">
+			<div class="flex justify-center mt-10">
 				<form class="join" hx-boost="true" method="get">
 					<a
 						class="join-item btn"

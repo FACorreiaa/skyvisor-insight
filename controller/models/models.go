@@ -80,6 +80,16 @@ type City struct {
 	Timezone    string  `json:"timezone"`
 }
 
+type Tax struct {
+	ID          string `json:"id"`
+	TaxId       int    `json:"tax_id,string,omitempty"`
+	TaxName     string `json:"tax_name"`
+	IataCode    string `json:"iata_code"`
+	AirlineName string `json:"airline_name"`
+	CountryName string `json:"country_name"`
+	CityName    string `json:"city_name"`
+}
+
 func (a *Airport) GetPhoneNumber() string {
 	if !a.PhoneNumber.Valid {
 		return "Phone not available"
@@ -97,6 +107,15 @@ type PageLayout struct {
 type AirportTable struct {
 	Column   []string
 	Airports []Airport
+	PrevPage int
+	NextPage int
+	Page     int
+	LastPage int
+}
+
+type TaxTable struct {
+	Column   []string
+	Tax      []Tax
 	PrevPage int
 	NextPage int
 	Page     int

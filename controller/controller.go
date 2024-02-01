@@ -3,6 +3,7 @@ package controller
 import (
 	"embed"
 	"errors"
+	"github.com/FACorreiaa/Aviation-tracker/core/airline"
 	"log/slog"
 	"net/http"
 
@@ -26,6 +27,7 @@ var staticFS embed.FS
 type core struct {
 	accounts *account.Accounts
 	airports *airport.AirportRepository
+	airlines *airline.AirlineRepository
 }
 
 type Handlers struct {
@@ -58,6 +60,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 		core: &core{
 			accounts: account.NewAccounts(pool, redisClient, validate),
 			airports: airport.NewAirports(pool),
+			airlines: airline.NewAirports(pool),
 		},
 	}
 
@@ -93,6 +96,9 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	auth.HandleFunc("/settings", handler(h.settingsPage)).Methods(http.MethodGet)
 	auth.HandleFunc("/flights", handler(h.liveFlightsPage)).Methods(http.MethodGet)
 	auth.HandleFunc("/airports", handler(h.airportPage)).Methods(http.MethodGet)
+	auth.HandleFunc("/airlines", handler(h.airlinePage)).Methods(http.MethodGet)
+	auth.HandleFunc("/airlines/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
+
 	auth.HandleFunc("/airports/locations", handler(h.airportLocationPage)).Methods(http.MethodGet)
 
 	return r

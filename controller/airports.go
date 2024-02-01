@@ -2,10 +2,12 @@ package controller
 
 import (
 	"context"
-	airport "github.com/FACorreiaa/Aviation-tracker/controller/html/airports"
-	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
+	"math"
 	"net/http"
 	"strconv"
+
+	airport "github.com/FACorreiaa/Aviation-tracker/controller/html/airports"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 
 	"github.com/a-h/templ"
 
@@ -40,10 +42,12 @@ func (h *Handlers) getAirportsLocation() ([]models.Airport, error) {
 
 func (h *Handlers) getTotalAirports() (int, error) {
 	total, err := h.core.airports.GetSum(context.Background())
+	pageSize := 10
+	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
 	}
-	return total, nil
+	return lastPage, nil
 }
 
 func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {

@@ -76,7 +76,7 @@ func (r *AirportRepository) GetAirportsLocation(ctx context.Context) ([]models.A
        											 a.airport_name, c.city_name,
 												 a.country_name, a.phone_number, a.timezone
 												 FROM airport a
-												 LEFT JOIN
+												 INNER JOIN
     											 	City c ON a.city_iata_code = c.iata_code
 												 WHERE
     												a.airport_name IS NOT NULL

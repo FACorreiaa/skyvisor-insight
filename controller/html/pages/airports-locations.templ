@@ -9,10 +9,10 @@ templ AirportLocationsPage(sidebar []models.SidebarItem, airports []models.Airpo
 	<div>
 		@components.BannerComponent("Airports", "Check location of your favourite airports")
 		<div class="container flex mx-auto my-24 md:px-6">
-			<div class="w-1/3">
+			<div class="w-1/6">
 				@components.SidebarComponent(sidebar)
 			</div>
-			<div class="w-2/3">
+			<div class="w-full">
 				@components.AirportMap(airports)
 			</div>
 		</div>

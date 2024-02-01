@@ -60,8 +60,8 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 // iconFeature.setStyle(iconStyle);
 func mapContainer(data []models.Airport) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_c972`,
-		Function: `function __templ_mapContainer_c972(data){function createFeatureFromAirport(airport) {
+		Name: `__templ_mapContainer_e1e7`,
+		Function: `function __templ_mapContainer_e1e7(data){function createFeatureFromAirport(airport) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -126,8 +126,16 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
       }
    }
 
-   //refactor from using bootstrap to alpinejs later
-   //display popup on click
+   const tippyButton = document.getElementById('popup');
+    tippy(tippyButton, {
+      content: document.createElement('div'),
+      interactive: true,
+      trigger: 'click',
+      placement: 'top',
+      animation: 'scale'  ,
+      theme: 'translucent'
+    });
+
    map.on('click', function (evt) {
       const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
          return feature;
@@ -137,24 +145,24 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
          return;
       }
       popup.setPosition(evt.coordinate);
-      const content = ` + "`" + `
-        <div>
+
+         //show toolip
+      const contentDiv = document.createElement('div');
+      contentDiv.innerHTML = ` + "`" + `
             <strong>Airport:</strong> ${feature.get('airport')}<br>
             <strong>Location:</strong> ${feature.get('country')}<br>
             <strong>Timezone:</strong> ${feature.get('timezone')}<br>
             <strong>GMT:</strong> ${feature.get('gmt')}<br>
-        </div>
     ` + "`" + `;
 
-      popover = new bootstrap.Popover(element, {
-         placement: 'top',
-         html: true,
-         content: content,
-      });
-      popover.show();
+      console.log('element', element)
+      console.log('content', contentDiv)
+      tippyButton._tippy.setContent(contentDiv);
+      tippyButton._tippy.show();
    });
 
-   // change mouse cursor when over marker
+
+
    map.on('pointermove', function (e) {
       const pixel = map.getEventPixel(e.originalEvent);
       const hit = map.hasFeatureAtPixel(pixel);
@@ -162,7 +170,6 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
    });
 
 
-   // Close the popup when the map is moved
    map.on('movestart', disposePopover);
 
 
@@ -178,8 +185,8 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
       view.setZoom(zoom + 1);
    };
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_c972`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_c972`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_e1e7`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_e1e7`, data),
 	}
 }
 
@@ -196,7 +203,7 @@ func AirportMap(data []models.Airport) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n\t\t\t\t.map {\n\t\t\t\t\twidth: 600px;\n\t\t\t\t\theight: 500px;\n\t\t\t\t}\n\t\t\t\ta.skiplink {\n\t\t\t\t\tposition: absolute;\n\t\t\t\t\tclip: rect(1px, 1px, 1px, 1px);\n\t\t\t\t\tpadding: 0;\n\t\t\t\t\tborder: 0;\n\t\t\t\t\theight: 1px;\n\t\t\t\t\twidth: 1px;\n\t\t\t\t\toverflow: hidden;\n\t\t\t\t}\n\t\t\t\ta.skiplink:focus {\n\t\t\t\t\tclip: auto;\n\t\t\t\t\theight: auto;\n\t\t\t\t\twidth: auto;\n\t\t\t\t\tbackground-color: #fff;\n\t\t\t\t\tpadding: 0.3em;\n\t\t\t\t}\n\t\t\t\t#map:focus {\n\t\t\t\t\toutline: #4A74A8 solid 0.15em;\n\t\t\t\t}\n\t\t\t</style></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n\t\t\t\t.map {\n\t\t\t\t\twidth: 100%;\n\t\t\t\t\theight: 850px;\n\t\t\t\t}\n\t\t\t\ta.skiplink {\n\t\t\t\t\tposition: absolute;\n\t\t\t\t\tclip: rect(1px, 1px, 1px, 1px);\n\t\t\t\t\tpadding: 0;\n\t\t\t\t\tborder: 0;\n\t\t\t\t\theight: 1px;\n\t\t\t\t\twidth: 1px;\n\t\t\t\t\toverflow: hidden;\n\t\t\t\t}\n\t\t\t\ta.skiplink:focus {\n\t\t\t\t\tclip: auto;\n\t\t\t\t\theight: auto;\n\t\t\t\t\twidth: auto;\n\t\t\t\t\tbackground-color: #fff;\n\t\t\t\t\tpadding: 0.3em;\n\t\t\t\t}\n\t\t\t\t#map:focus {\n\t\t\t\t\toutline: #4A74A8 solid 0.15em;\n\t\t\t\t}\n\t\t\t</style></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -213,7 +220,7 @@ func AirportMap(data []models.Airport) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js\"></script><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css\"><script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js\"></script><a class=\"skiplink\" href=\"#map\">Go to map</a><div id=\"map\" class=\"w-full h-full map\" tabindex=\"0\"><div id=\"popup\" class=\"popup\"></div></div><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><a class=\"skiplink\" href=\"#map\">Go to map</a><div id=\"map\" class=\"w-full h-full map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

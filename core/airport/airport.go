@@ -29,7 +29,9 @@ func (r *AirportRepository) GetAirports(ctx context.Context, page, pageSize int)
        										geoname_id, latitude, longitude, airport_name,
        										country_name, phone_number, timezone,
        										created_at
-       								FROM airport ORDER BY id
+       								FROM airport
+       								WHERE  airport_name IS NOT NULL AND airport_name != ''
+       								ORDER BY id
        								OFFSET $1 LIMIT $2`,
 		offset, pageSize)
 	if err != nil {
@@ -62,7 +64,10 @@ func (r *AirportRepository) GetAirports(ctx context.Context, page, pageSize int)
 
 func (r *AirportRepository) GetSum(ctx context.Context) (int, error) {
 	var count int
-	row := r.pgpool.QueryRow(ctx, `SELECT Count(id) FROM airport`)
+	row := r.pgpool.QueryRow(ctx, `SELECT Count(id)
+										FROM airport
+										WHERE  airport_name IS NOT NULL AND airport_name != ''
+`)
 	if err := row.Scan(&count); err != nil {
 		return 0, err
 	}
@@ -79,9 +84,7 @@ func (r *AirportRepository) GetAirportsLocation(ctx context.Context) ([]models.A
 												 INNER JOIN
     											 	City c ON a.city_iata_code = c.iata_code
 												 WHERE
-    												a.airport_name IS NOT NULL
-												    	AND c.city_name IS NOT NULL
-												  		AND a.country_name IS NOT NULL
+    												a.airport_name IS NOT NULL AND a.airport_name != ''
 												 ORDER BY id`)
 	if err != nil {
 		return nil, err

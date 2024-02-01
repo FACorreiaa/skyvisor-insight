@@ -38,7 +38,7 @@ func returnToPreviousPage(page int) templ.ComponentScript {
 	}
 }
 
-func TableDaisyComponent(airport models.AirportTable) templ.Component {
+func AirportTableComponent(airport models.AirportTable) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -190,7 +190,7 @@ func TableDaisyComponent(airport models.AirportTable) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</tbody></table><!-- paginator --><div class=\"mt-10 flex justify-center\"><form class=\"join\" hx-boost=\"true\" method=\"get\"><a class=\"join-item btn\" href=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</tbody></table><!-- paginator --><div class=\"flex justify-center mt-10\"><form class=\"join\" hx-boost=\"true\" method=\"get\"><a class=\"join-item btn\" href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

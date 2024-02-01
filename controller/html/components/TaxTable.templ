@@ -1,0 +1,57 @@
+package components
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"fmt"
+	"strconv"
+)
+
+templ TaxTableComponent(tax models.TaxTable) {
+	<div class="flex flex-col items-center">
+		<div class="overflow-x-auto">
+			<table class="table table-zebra">
+				<!-- head -->
+				<thead>
+					<tr>
+						for _, col := range tax.Column {
+							<th>{ col }</th>
+						}
+					</tr>
+				</thead>
+				<!-- rows -->
+				<tbody>
+					for _, t := range tax.Tax {
+						<tr>
+							<td>{ t.TaxName }</td>
+							<td>{ t.AirlineName }</td>
+							<td>{ t.CountryName }</td>
+							<td>{ t.CityName }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<!-- paginator -->
+			<div class="flex justify-center mt-10">
+				<form class="join" hx-boost="true" method="get">
+					<a
+						class="join-item btn"
+						href={ templ.URL("/airlines/tax") }
+					>First Page</a>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/airlines/tax?page=%d", tax.PrevPage)) }
+					>«</a>
+					<button class="join-item btn disabled">{ strconv.Itoa(tax.Page) }</button>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/airlines/tax?page=%d", tax.NextPage)) }
+					>»</a>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/airlines/tax?page=%d", tax.LastPage)) }
+					>Last Page</a>
+				</form>
+			</div>
+		</div>
+	</div>
+}

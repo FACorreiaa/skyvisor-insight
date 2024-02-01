@@ -72,7 +72,7 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 		Page:     page,
 		LastPage: lastPage,
 	}
-	airportTable := components.TableDaisyComponent(airport)
+	airportTable := components.AirportTableComponent(airport)
 
 	return airportTable, nil
 }

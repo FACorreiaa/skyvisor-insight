@@ -3,15 +3,15 @@ package controller
 import (
 	"context"
 	"fmt"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/user"
 	"net/http"
 
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/pages"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
 
 func (h *Handlers) registerPage(w http.ResponseWriter, r *http.Request) error {
-	register := pages.RegisterPage(models.RegisterPage{})
+	register := user.RegisterPage(models.RegisterPage{})
 	return h.CreateLayout(w, r, "Sign up", register).Render(context.Background(), w)
 }
 
@@ -30,7 +30,7 @@ func (h *Handlers) registerPost(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if err != nil {
-		register := pages.RegisterPage(models.RegisterPage{Errors: h.formErrors(err)})
+		register := user.RegisterPage(models.RegisterPage{Errors: h.formErrors(err)})
 		return h.CreateLayout(w, r, "Sign up", register).Render(context.Background(), w)
 	}
 

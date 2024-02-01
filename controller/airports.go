@@ -2,14 +2,13 @@ package controller
 
 import (
 	"context"
+	airport "github.com/FACorreiaa/Aviation-tracker/controller/html/airports"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 	"net/http"
 	"strconv"
 
 	"github.com/a-h/templ"
 
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/pages"
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/svg"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
@@ -64,7 +63,7 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 	if err != nil {
 		return nil, err
 	}
-	airport := models.AirportTable{
+	a := models.AirportTable{
 		Column:   columnNames,
 		Airports: airports,
 		PrevPage: prevPage,
@@ -72,18 +71,18 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 		Page:     page,
 		LastPage: lastPage,
 	}
-	airportTable := components.AirportTableComponent(airport)
+	airportTable := airport.AirportTableComponent(a)
 
 	return airportTable, nil
 }
 
 func (h *Handlers) renderSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
-		{Path: "/", Label: "Home", Icon: svg.HomeIcon()},
-		{Path: "/airports", Label: "Airports", Icon: svg.ArrowRightIcon()},
-		{Path: "/airports/locations", Label: "Show Airports", Icon: svg.MapIcon()},
-		{Path: "/settings", Label: "Settings", Icon: svg.SettingsIcon()},
-		{Path: "/log-out", Label: "Log out", Icon: svg.LogoutIcon()},
+		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
+		{Path: "/airports", Label: "Airports", Icon: svg2.ArrowRightIcon()},
+		{Path: "/airports/locations", Label: "Show Airports", Icon: svg2.MapIcon()},
+		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
+		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
 	}
 	return sidebar
 }
@@ -94,8 +93,8 @@ func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	airport := pages.AirportPage(airportTable, sidebar)
-	return h.CreateLayout(w, r, "Airport Page", airport).Render(context.Background(), w)
+	a := airport.AirportPage(airportTable, sidebar)
+	return h.CreateLayout(w, r, "Airport Page", a).Render(context.Background(), w)
 }
 
 func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) error {
@@ -104,6 +103,6 @@ func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) e
 	if err != nil {
 		return err
 	}
-	airport := pages.AirportLocationsPage(sidebar, airportsLocations)
-	return h.CreateLayout(w, r, "Airport Locations Page", airport).Render(context.Background(), w)
+	a := airport.AirportLocationsPage(sidebar, airportsLocations)
+	return h.CreateLayout(w, r, "Airport Locations Page", a).Render(context.Background(), w)
 }

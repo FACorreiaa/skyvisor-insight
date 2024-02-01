@@ -2,16 +2,16 @@ package pages
 
 import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
 )
 
-templ LayoutPage(layout models.LayoutTempl) {
+templ LayoutPage(l models.LayoutTempl) {
 	<!DOCTYPE html>
 	<html lang="en" data-theme="nord">
 		<head>
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
-			<title>{ layout.Title } - AviTracker</title>
+			<title>{ l.Title } - AviTracker</title>
 			<link rel="stylesheet" href="/static/css/output.css"/>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -25,11 +25,11 @@ templ LayoutPage(layout models.LayoutTempl) {
 		</head>
 		<body hx-boost="true">
 			<div class="flex flex-col h-screen font-lato" id="contents">
-				@components.NavbarComponent(layout.Nav, layout.User, layout.ActiveNav)
+				@layout.NavbarComponent(l.Nav, l.User, l.ActiveNav)
 				<div class="h-full">
-					@layout.Content
+					@l.Content
 				</div>
-				@components.FooterComponent()
+				@layout.FooterComponent()
 			</div>
 		</body>
 	</html>

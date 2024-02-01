@@ -1,18 +1,18 @@
 package controller
 
 import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/user"
 	"log/slog"
 	"net/http"
 
 	"context"
 
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/pages"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
 
 func (h *Handlers) settingsPage(w http.ResponseWriter, r *http.Request) error {
-	settings := pages.SettingsPage(models.SettingsPage{})
+	settings := user.SettingsPage(models.SettingsPage{})
 	data := h.CreateLayout(w, r, "Settings", settings).Render(context.Background(), w)
 	return data
 }

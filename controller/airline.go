@@ -16,9 +16,10 @@ import (
 func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
-		{Path: "/airlines", Label: "Airlines", Icon: svg2.ArrowRightIcon()},
-		{Path: "/airlines/tax", Label: "Show Airline Tax", Icon: svg2.MapIcon()},
+		{Path: "/airlines", Label: "Airline", Icon: svg2.ArrowRightIcon()},
+		{Path: "/airlines/tax", Label: "Airline Tax", Icon: svg2.MapIcon()},
 		{Path: "/airlines/aircraft", Label: "Aircraft", Icon: svg2.MapIcon()},
+		{Path: "/airlines/airplane", Label: "Airplane", Icon: svg2.MapIcon()},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
 	}

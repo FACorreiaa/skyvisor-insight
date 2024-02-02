@@ -9,10 +9,10 @@ templ AirlineLayoutPage(title, description string, component templ.Component, si
 	<div>
 		@layout.BannerComponent(title, description)
 		<div class="container flex my-24 md:px-6">
-			<div class="w-1/6">
+			<div class="w-1/12">
 				@layout.SidebarComponent(sidebar)
 			</div>
-			<div class="w-5/6">
+			<div class="w-11/12">
 				@component
 			</div>
 		</div>

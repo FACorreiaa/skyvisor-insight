@@ -84,7 +84,7 @@ func (h *Handlers) renderSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
 		{Path: "/airports", Label: "Airports", Icon: svg2.ArrowRightIcon()},
-		{Path: "/locations", Label: "Show Airports", Icon: svg2.MapIcon()},
+		{Path: "/airports/locations", Label: "Show Airports", Icon: svg2.MapIcon()},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
 	}

@@ -142,6 +142,37 @@ type Airline struct {
 	CreatedAt            CustomTime `db:"created_at" json:"created_at"`
 }
 
+type Airplane struct {
+	ID                     string      `json:"id" `
+	AirlineName            string      `json:"airline_name"`
+	IataType               string      `json:"iata_type"`
+	AirplaneId             int         `json:"airplane_id,string"`
+	AirlineIataCode        string      `json:"airline_iata_code"`
+	IataCodeLong           string      `json:"iata_code_long"`
+	IataCodeShort          string      `json:"iata_code_short"`
+	AirlineIcaoCode        interface{} `json:"airline_icao_code"`
+	ConstructionNumber     string      `json:"construction_number"`
+	DeliveryDate           CustomTime  `json:"delivery_date"`
+	EnginesCount           int         `json:"engines_count,string"`
+	EnginesType            string      `json:"engines_type"`
+	FirstFlightDate        CustomTime  `json:"first_flight_date"`
+	IcaoCodeHex            string      `json:"icao_code_hex"`
+	LineNumber             interface{} `json:"line_number"`
+	ModelCode              string      `json:"model_code"`
+	RegistrationNumber     string      `json:"registration_number"`
+	TestRegistrationNumber interface{} `json:"test_registration_number"`
+	PlaneAge               int         `json:"plane_age,string"`
+	PlaneClass             interface{} `json:"plane_class"`
+	ModelName              string      `json:"model_name"`
+	PlaneOwner             interface{} `json:"plane_owner"`
+	PlaneSeries            string      `json:"plane_series"`
+	PlaneStatus            string      `json:"plane_status"`
+	ProductionLine         string      `json:"production_line"`
+	RegistrationDate       CustomTime  `json:"registration_date"`
+	RolloutDate            CustomTime  `json:"rollout_date"`
+	CreatedAt              CustomTime  `json:"created_at,string"`
+}
+
 func (a *Airport) GetPhoneNumber() string {
 	if !a.PhoneNumber.Valid {
 		return "Phone not available"
@@ -186,6 +217,15 @@ type AircraftTable struct {
 type AirlineTable struct {
 	Column   []string
 	Airline  []Airline
+	PrevPage int
+	NextPage int
+	Page     int
+	LastPage int
+}
+
+type AirplaneTable struct {
+	Column   []string
+	Airplane []Airplane
 	PrevPage int
 	NextPage int
 	Page     int

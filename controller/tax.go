@@ -19,12 +19,12 @@ func (h *Handlers) getAirlineTax(w http.ResponseWriter, r *http.Request) (int, [
 		page = 1
 	}
 
-	tax, err := h.core.airlines.GetTax(context.Background(), page, pageSize)
+	t, err := h.core.airlines.GetTax(context.Background(), page, pageSize)
 	if err != nil {
 		return 0, nil, err
 	}
 
-	return page, tax, nil
+	return page, t, nil
 }
 
 func (h *Handlers) getTotalTax() (int, error) {
@@ -40,7 +40,7 @@ func (h *Handlers) getTotalTax() (int, error) {
 func (h *Handlers) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
 	columnNames := []string{"Tax Name", "Airline Name", "Country Name", "City Name"}
 
-	page, tax, _ := h.getAirlineTax(w, r)
+	page, t, _ := h.getAirlineTax(w, r)
 	nextPage := page + 1
 	prevPage := page - 1
 	if prevPage < 1 {
@@ -53,7 +53,7 @@ func (h *Handlers) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request)
 	}
 	taxData := models.TaxTable{
 		Column:   columnNames,
-		Tax:      tax,
+		Tax:      t,
 		PrevPage: prevPage,
 		NextPage: nextPage,
 		Page:     page,
@@ -70,6 +70,6 @@ func (h *Handlers) airlineTaxPage(w http.ResponseWriter, r *http.Request) error 
 	if err != nil {
 		return err
 	}
-	airport := airline.AirlineLayoutPage("Airline Tax", "Check data about tax", taxTable, sidebar)
-	return h.CreateLayout(w, r, "Airline Tax Page", airport).Render(context.Background(), w)
+	t := airline.AirlineLayoutPage("Airline Tax", "Check data about tax", taxTable, sidebar)
+	return h.CreateLayout(w, r, "Airline Tax Page", t).Render(context.Background(), w)
 }

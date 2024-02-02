@@ -18,12 +18,12 @@ func (h *Handlers) getAirplane(w http.ResponseWriter, r *http.Request) (int, []m
 		page = 1
 	}
 
-	airplane, err := h.core.airlines.GetAirplanes(context.Background(), page, pageSize)
+	a, err := h.core.airlines.GetAirplanes(context.Background(), page, pageSize)
 	if err != nil {
 		return 0, nil, err
 	}
 
-	return page, airplane, nil
+	return page, a, nil
 }
 
 func (h *Handlers) getTotalAirplanes() (int, error) {

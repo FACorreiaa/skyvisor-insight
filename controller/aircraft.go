@@ -19,12 +19,12 @@ func (h *Handlers) getAirlineAircraft(w http.ResponseWriter, r *http.Request) (i
 		page = 1
 	}
 
-	aircraft, err := h.core.airlines.GetAircraft(context.Background(), page, pageSize)
+	a, err := h.core.airlines.GetAircraft(context.Background(), page, pageSize)
 	if err != nil {
 		return 0, nil, err
 	}
 
-	return page, aircraft, nil
+	return page, a, nil
 }
 
 func (h *Handlers) getTotalAircraft() (int, error) {
@@ -43,7 +43,7 @@ func (h *Handlers) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Req
 		"Plane Series", "Plane Status",
 	}
 
-	page, aircraft, _ := h.getAirlineAircraft(w, r)
+	page, a, _ := h.getAirlineAircraft(w, r)
 	nextPage := page + 1
 	prevPage := page - 1
 	if prevPage < 1 {
@@ -54,15 +54,15 @@ func (h *Handlers) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		return nil, err
 	}
-	aircraftData := models.AircraftTable{
+	data := models.AircraftTable{
 		Column:   columnNames,
-		Aircraft: aircraft,
+		Aircraft: a,
 		PrevPage: prevPage,
 		NextPage: nextPage,
 		Page:     page,
 		LastPage: lastPage,
 	}
-	taxTable := airline.AirlineAircraftTable(aircraftData)
+	taxTable := airline.AirlineAircraftTable(data)
 
 	return taxTable, nil
 }
@@ -73,6 +73,6 @@ func (h *Handlers) airlineAircraftPage(w http.ResponseWriter, r *http.Request) e
 	if err != nil {
 		return err
 	}
-	airport := airline.AirlineLayoutPage("Aircrafts", "Check models about aircrafts", taxTable, sidebar)
-	return h.CreateLayout(w, r, "Aircraft Tax Page", airport).Render(context.Background(), w)
+	a := airline.AirlineLayoutPage("Aircrafts", "Check models about aircrafts", taxTable, sidebar)
+	return h.CreateLayout(w, r, "Aircraft Tax Page", a).Render(context.Background(), w)
 }

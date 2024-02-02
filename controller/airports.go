@@ -22,22 +22,22 @@ func (h *Handlers) getAirports(w http.ResponseWriter, r *http.Request) (int, []m
 		page = 1
 	}
 
-	airports, err := h.core.airports.GetAirports(context.Background(), page, pageSize)
+	a, err := h.core.airports.GetAirports(context.Background(), page, pageSize)
 	if err != nil {
 		return 0, nil, err
 	}
 
-	return page, airports, nil
+	return page, a, nil
 }
 
 func (h *Handlers) getAirportsLocation() ([]models.Airport, error) {
 
-	airports, err := h.core.airports.GetAirportsLocation(context.Background())
+	a, err := h.core.airports.GetAirportsLocation(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	return airports, nil
+	return a, nil
 }
 
 func (h *Handlers) getTotalAirports() (int, error) {

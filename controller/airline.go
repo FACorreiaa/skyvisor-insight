@@ -2,10 +2,11 @@ package controller
 
 import (
 	"context"
-	"github.com/a-h/templ"
 	"math"
 	"net/http"
 	"strconv"
+
+	"github.com/a-h/templ"
 
 	airline "github.com/FACorreiaa/Aviation-tracker/controller/html/airlines"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
@@ -26,15 +27,6 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 	return sidebar
 }
 
-func (h *Handlers) airlinePage(w http.ResponseWriter, r *http.Request) error {
-	//airportTable, err := h.renderAirportTable(w, r)
-	sidebar := h.renderAirlineSidebar()
-
-	a, _ := h.renderAirlineTaxTable(w, r)
-	airport := airline.AirlineLayoutPage("Airline Page", "Check data about airlines", a, sidebar)
-	return h.CreateLayout(w, r, "Airline Page", airport).Render(context.Background(), w)
-}
-
 func (h *Handlers) getTotalAirline() (int, error) {
 	total, err := h.core.airlines.GetAirlineSum(context.Background())
 	pageSize := 10
@@ -53,12 +45,12 @@ func (h *Handlers) getAirline(w http.ResponseWriter, r *http.Request) (int, []mo
 		page = 1
 	}
 
-	aircraft, err := h.core.airlines.GetAirlines(context.Background(), page, pageSize)
+	a, err := h.core.airlines.GetAirlines(context.Background(), page, pageSize)
 	if err != nil {
 		return 0, nil, err
 	}
 
-	return page, aircraft, nil
+	return page, a, nil
 }
 
 func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
@@ -96,6 +88,6 @@ func (h *Handlers) airlineMainPage(w http.ResponseWriter, r *http.Request) error
 	if err != nil {
 		return err
 	}
-	airport := airline.AirlineLayoutPage("Airline", "Check models about aircrafts", taxTable, sidebar)
-	return h.CreateLayout(w, r, "Airline Tax Page", airport).Render(context.Background(), w)
+	a := airline.AirlineLayoutPage("Airline", "Check models about aircrafts", taxTable, sidebar)
+	return h.CreateLayout(w, r, "Airline Tax Page", a).Render(context.Background(), w)
 }

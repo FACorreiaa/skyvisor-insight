@@ -3,9 +3,10 @@ package controller
 import (
 	"embed"
 	"errors"
-	"github.com/FACorreiaa/Aviation-tracker/core/airline"
 	"log/slog"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/core/airline"
 
 	"github.com/FACorreiaa/Aviation-tracker/core/airport"
 
@@ -94,12 +95,19 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	auth.HandleFunc("/logout", handler(h.logout)).Methods(http.MethodPost)
 	auth.HandleFunc("/settings", handler(h.settingsPage)).Methods(http.MethodGet)
+
+	// Airlines Router
+	airlinesRouter := auth.PathPrefix("/airlines").Subrouter()
+	airlinesRouter.HandleFunc("", handler(h.airlinePage)).Methods(http.MethodGet)
+	airlinesRouter.HandleFunc("/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
+	airlinesRouter.HandleFunc("/aircraft", handler(h.airlineAircraftPage)).Methods(http.MethodGet)
+
+	// Airports router
+	airportsRouter := auth.PathPrefix("/airports").Subrouter()
+	airportsRouter.HandleFunc("", handler(h.airportPage)).Methods(http.MethodGet)
+	airportsRouter.HandleFunc("/locations", handler(h.airportLocationPage)).Methods(http.MethodGet)
+
 	auth.HandleFunc("/flights", handler(h.liveFlightsPage)).Methods(http.MethodGet)
-	auth.HandleFunc("/airports", handler(h.airportPage)).Methods(http.MethodGet)
-	auth.HandleFunc("/airlines", handler(h.airlinePage)).Methods(http.MethodGet)
-	auth.HandleFunc("/airlines/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
-	auth.HandleFunc("/airlines/aircraft", handler(h.airlineAircraftPage)).Methods(http.MethodGet)
-	auth.HandleFunc("/airports/locations", handler(h.airportLocationPage)).Methods(http.MethodGet)
 
 	return r
 }

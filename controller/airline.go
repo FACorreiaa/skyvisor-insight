@@ -2,7 +2,10 @@ package controller
 
 import (
 	"context"
+	"github.com/a-h/templ"
+	"math"
 	"net/http"
+	"strconv"
 
 	airline "github.com/FACorreiaa/Aviation-tracker/controller/html/airlines"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
@@ -26,19 +29,72 @@ func (h *Handlers) airlinePage(w http.ResponseWriter, r *http.Request) error {
 	//airportTable, err := h.renderAirportTable(w, r)
 	sidebar := h.renderAirlineSidebar()
 
-	//mock
-
 	a, _ := h.renderAirlineTaxTable(w, r)
 	airport := airline.AirlineLayoutPage("Airline Page", "Check data about airlines", a, sidebar)
-	return h.CreateLayout(w, r, "Airport Page", airport).Render(context.Background(), w)
+	return h.CreateLayout(w, r, "Airline Page", airport).Render(context.Background(), w)
 }
 
-func (h *Handlers) airlineAircraftPage(w http.ResponseWriter, r *http.Request) error {
-	taxTable, err := h.renderAirlineAircraftTable(w, r)
+func (h *Handlers) getTotalAirline() (int, error) {
+	total, err := h.core.airlines.GetAirlineSum(context.Background())
+	pageSize := 10
+	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
+	if err != nil {
+		return 0, err
+	}
+	return lastPage, nil
+}
+
+func (h *Handlers) getAirline(w http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
+	pageSize := 10
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	if err != nil {
+		// Handle error or set a default page number
+		page = 1
+	}
+
+	aircraft, err := h.core.airlines.GetAirlines(context.Background(), page, pageSize)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return page, aircraft, nil
+}
+
+func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
+	columnNames := []string{"Airline Name", "Date Founded", "Fleet Average Age", "Fleet Size",
+		"Call Sign", "Hub Code", "Status", "Type", "Country name",
+	}
+
+	page, al, _ := h.getAirline(w, r)
+	nextPage := page + 1
+	prevPage := page - 1
+	if prevPage < 1 {
+		prevPage = 1
+	}
+
+	lastPage, err := h.getTotalAirline()
+	if err != nil {
+		return nil, err
+	}
+	a := models.AirlineTable{
+		Column:   columnNames,
+		Airline:  al,
+		PrevPage: prevPage,
+		NextPage: nextPage,
+		Page:     page,
+		LastPage: lastPage,
+	}
+	airlineTable := airline.AirlineTable(a)
+
+	return airlineTable, nil
+}
+
+func (h *Handlers) airlineMainPage(w http.ResponseWriter, r *http.Request) error {
+	taxTable, err := h.renderAirlineTable(w, r)
 	sidebar := h.renderAirlineSidebar()
 	if err != nil {
 		return err
 	}
-	airport := airline.AirlineLayoutPage("Aircrafts", "Check models about aircrafts", taxTable, sidebar)
+	airport := airline.AirlineLayoutPage("Airline", "Check models about aircrafts", taxTable, sidebar)
 	return h.CreateLayout(w, r, "Airline Tax Page", airport).Render(context.Background(), w)
 }

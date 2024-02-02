@@ -66,3 +66,13 @@ func (h *Handlers) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Req
 
 	return taxTable, nil
 }
+
+func (h *Handlers) airlineAircraftPage(w http.ResponseWriter, r *http.Request) error {
+	taxTable, err := h.renderAirlineAircraftTable(w, r)
+	sidebar := h.renderAirlineSidebar()
+	if err != nil {
+		return err
+	}
+	airport := airline.AirlineLayoutPage("Aircrafts", "Check models about aircrafts", taxTable, sidebar)
+	return h.CreateLayout(w, r, "Aircraft Tax Page", airport).Render(context.Background(), w)
+}

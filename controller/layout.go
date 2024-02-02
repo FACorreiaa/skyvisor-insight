@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/a-h/templ"
@@ -28,7 +29,7 @@ func (h *Handlers) CreateLayout(w http.ResponseWriter, r *http.Request, title st
 	} else {
 		nav = []models.NavItem{
 			{Path: "/", Label: "Home"},
-			{Path: "/airlines/", Label: "Airlines", Icon: "ion-paper-airplane"},
+			{Path: "/airlines", Label: "Airlines", Icon: "ion-paper-airplane"},
 			{Path: "/airports", Label: "Airports", Icon: "ion-paper-airplane"},
 			{Path: "/flights", Label: "Flights", Icon: "ion-paper-airplane"},
 			{Path: "/locations", Label: "Locations", Icon: "ion-flag"},

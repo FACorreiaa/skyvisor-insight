@@ -1,0 +1,70 @@
+package airline
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"fmt"
+	"strconv"
+)
+
+templ AirlineTable(a models.AirlineTable) {
+	<div class="flex flex-col items-center">
+		<div class="overflow-x-auto">
+			<table class="table table-xs">
+				<!-- head -->
+				<thead>
+					<tr>
+						for _, col := range a.Column {
+							<th>{ col }</th>
+						}
+					</tr>
+				</thead>
+				<!-- rows -->
+				<tbody>
+					for _, airline := range a.Airline {
+						<tr>
+							<td>{ airline.AirlineName }</td>
+							if airline.DateFounded == 0 {
+								<td class="italic">Not available</td>
+							} else {
+								<td>{ fmt.Sprintf("%d",airline.DateFounded) }</td>
+							}
+							if airline.DateFounded == 0 {
+								<td class="italic">Not available</td>
+							} else {
+								<td>{ fmt.Sprintf("%.1f",airline.FleetAverageAge) }</td>
+							}
+							<td>{ fmt.Sprintf("%d",airline.FleetSize) }</td>
+							<td>{ airline.Callsign }</td>
+							<td>{ airline.HubCode }</td>
+							<td>{ airline.Status }</td>
+							<td>{ airline.Type }</td>
+							<td>{ airline.CountryName }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<!-- paginator -->
+			<div class="flex justify-center mt-10">
+				<form class="join" hx-boost="true" method="get">
+					<a
+						class="join-item btn"
+						href={ templ.URL("/airlines") }
+					>First Page</a>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/airlines?page=%d", a.PrevPage)) }
+					>«</a>
+					<button class="join-item btn disabled">{ strconv.Itoa(a.Page) }</button>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/airlines?page=%d", a.NextPage)) }
+					>»</a>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/airlines?page=%d", a.LastPage)) }
+					>Last Page</a>
+				</form>
+			</div>
+		</div>
+	</div>
+}

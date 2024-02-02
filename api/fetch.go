@@ -5,10 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/FACorreiaa/Aviation-tracker/api/structs"
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"io"
 	"log/slog"
 	"net/http"
@@ -16,6 +12,11 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/FACorreiaa/Aviation-tracker/api/structs"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, error) {

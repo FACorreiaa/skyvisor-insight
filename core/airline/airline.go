@@ -82,7 +82,7 @@ func (r *AirlineRepository) GetAircraft(ctx context.Context, page, pageSize int)
 											FROM
 																		aircraft ac
 											LEFT JOIN airplane ap ON ac.plane_type_id = ap.airplane_id
-											WHERE ac.plane_type_id != 0
+											WHERE ac.plane_type_id != 0 AND TRIM(UPPER(ac.aircraft_name)) != ''
 											ORDER BY ac.aircraft_name
        										OFFSET $1 LIMIT $2`,
 		offset, pageSize)
@@ -117,7 +117,58 @@ func (r *AirlineRepository) GetAircraftSum(ctx context.Context) (int, error) {
 	var count int
 	row := r.pgpool.QueryRow(ctx, `SELECT Count(id)
 										FROM aircraft
-										WHERE  aircraft_name != ''
+										WHERE  TRIM(UPPER(aircraft_name)) != ''
+`)
+	if err := row.Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// Airlines
+
+func (r *AirlineRepository) GetAirlines(ctx context.Context, page, pageSize int) ([]models.Airline, error) {
+	var aircraft []models.Airline
+
+	offset := (page - 1) * pageSize
+	rows, err := r.pgpool.Query(ctx, `select al.id, al.airline_name, al.date_founded, al.fleet_average_age, al.fleet_size,
+											al.callsign, al.hub_code, al.status, al.type, al.country_name
+											from  airline al
+											where al.airline_id != 0 AND TRIM(UPPER(al.airline_name)) != ''
+											order by al.airline_name
+       										OFFSET $1 LIMIT $2`,
+		offset, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var a models.Airline
+		err := rows.Scan(
+			&a.ID, &a.AirlineName, &a.DateFounded, &a.FleetAverageAge,
+			&a.FleetSize, &a.Callsign, &a.HubCode, &a.Status,
+			&a.Type, &a.CountryName,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		aircraft = append(aircraft, a)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return aircraft, nil
+}
+
+func (r *AirlineRepository) GetAirlineSum(ctx context.Context) (int, error) {
+	var count int
+	row := r.pgpool.QueryRow(ctx, `SELECT Count(id)
+										FROM airline
+										WHERE  TRIM(UPPER(airline_name)) != ''
 `)
 	if err := row.Scan(&count); err != nil {
 		return 0, err

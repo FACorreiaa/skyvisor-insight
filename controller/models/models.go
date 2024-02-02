@@ -123,6 +123,25 @@ type Aircraft struct {
 	RolloutDate            CustomTime  `json:"rollout_date"`
 }
 
+type Airline struct {
+	ID                   string     `json:"id"`
+	FleetAverageAge      float64    `json:"fleet_average_age,string"`
+	AirlineId            int        `json:"airline_id,string"`
+	Callsign             string     `json:"callsign"`
+	HubCode              string     `json:"hub_code"`
+	IataCode             string     `json:"iata_code"`
+	IcaoCode             string     `json:"icao_code"`
+	CountryISO2          string     `json:"country_iso2"`
+	DateFounded          int        `json:"date_founded,string"`
+	IataPrefixAccounting int        `json:"iata_prefix_accounting,string"`
+	AirlineName          string     `json:"airline_name"`
+	CountryName          string     `json:"country_name"`
+	FleetSize            int        `json:"fleet_size,string"`
+	Status               string     `json:"status"`
+	Type                 string     `json:"type"`
+	CreatedAt            CustomTime `db:"created_at" json:"created_at"`
+}
+
 func (a *Airport) GetPhoneNumber() string {
 	if !a.PhoneNumber.Valid {
 		return "Phone not available"
@@ -158,6 +177,15 @@ type TaxTable struct {
 type AircraftTable struct {
 	Column   []string
 	Aircraft []Aircraft
+	PrevPage int
+	NextPage int
+	Page     int
+	LastPage int
+}
+
+type AirlineTable struct {
+	Column   []string
+	Airline  []Airline
 	PrevPage int
 	NextPage int
 	Page     int

@@ -2,8 +2,9 @@ package controller
 
 import (
 	"context"
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/flights"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/flights"
 )
 
 // https://openlayers.org/en/latest/examples/feature-move-animation.html future feature

@@ -28,7 +28,7 @@ type CityApiData struct {
 	Data       []City     `json:"data"`
 }
 
-//countries
+// countries
 
 type Country struct {
 	ID                string     `json:"id"`

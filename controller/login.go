@@ -3,8 +3,9 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/user"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/user"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
@@ -16,7 +17,6 @@ func (h *Handlers) loginPage(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (h *Handlers) loginPost(w http.ResponseWriter, r *http.Request) error {
-
 	if err := r.ParseForm(); err != nil {
 		return err
 	}

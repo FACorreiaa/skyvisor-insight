@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
 	"log"
 	"log/slog"
 	"net/url"
@@ -10,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -148,7 +149,7 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 func NewRedisConfig() (*RedisConfig, error) {
 	host := GetEnv("REDIS_HOST", "redis:6380")
 	pass := GetEnv("REDIS_PASS", "qwerty")
-	//rdb := redis.NewClient(&redis.Options{
+	// rdb := redis.NewClient(&redis.Options{
 	//	Addr:     host,
 	//	Password: pass, // no password set
 	//	DB:       0,    // use default DB

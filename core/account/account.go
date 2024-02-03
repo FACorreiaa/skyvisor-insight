@@ -3,11 +3,12 @@ package account
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
-	"time"
 )
 
 const (
@@ -54,12 +55,12 @@ type UserToken struct {
 	User      *User
 }
 
-// Logout deletes the user token from the Redis store
-func (h *Accounts) Logout(ctx context.Context, token Token) error {
-	//userKey := REDIS_PREFIX + string(token)
+// Logout deletes the user token from the Redis store.
+func (a *Accounts) Logout(ctx context.Context, token Token) error {
+	// userKey := REDIS_PREFIX + string(token)
 
 	// Check if the token exists
-	exists, err := h.redisClient.Exists(ctx, token).Result()
+	exists, err := a.redisClient.Exists(ctx, token).Result()
 	if err != nil {
 		return fmt.Errorf("error checking token existence: %w", err)
 	}
@@ -70,7 +71,7 @@ func (h *Accounts) Logout(ctx context.Context, token Token) error {
 	}
 
 	// Delete the token
-	if err := h.redisClient.Del(ctx, token).Err(); err != nil {
+	if err = a.redisClient.Del(ctx, token).Err(); err != nil {
 		return fmt.Errorf("error deleting token: %w", err)
 	}
 

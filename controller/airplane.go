@@ -2,12 +2,13 @@ package controller
 
 import (
 	"context"
-	airline "github.com/FACorreiaa/Aviation-tracker/controller/html/airlines"
-	"github.com/FACorreiaa/Aviation-tracker/controller/models"
-	"github.com/a-h/templ"
 	"math"
 	"net/http"
 	"strconv"
+
+	airline "github.com/FACorreiaa/Aviation-tracker/controller/html/airlines"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"github.com/a-h/templ"
 )
 
 func (h *Handlers) getAirplane(w http.ResponseWriter, r *http.Request) (int, []models.Airplane, error) {

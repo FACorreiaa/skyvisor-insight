@@ -31,7 +31,6 @@ func (h *Handlers) getAirports(w http.ResponseWriter, r *http.Request) (int, []m
 }
 
 func (h *Handlers) getAirportsLocation() ([]models.Airport, error) {
-
 	a, err := h.core.airports.GetAirportsLocation(context.Background())
 	if err != nil {
 		return nil, err

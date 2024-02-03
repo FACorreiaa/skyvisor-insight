@@ -5,9 +5,10 @@ import (
 	"crypto/md5"
 	"embed"
 	"fmt"
-	"github.com/redis/go-redis/v9"
 	"log/slog"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,7 +18,7 @@ import (
 //go:embed migrations/*.sql
 var migrationFS embed.FS
 
-// Init Init
+// Init Init.
 func Init(connectionURL string) (*pgxpool.Pool, error) {
 	cfg, err := pgxpool.ParseConfig(connectionURL)
 	if err != nil {
@@ -40,7 +41,7 @@ func InitRedis(host, password string, db int) (*redis.Client, error) {
 }
 
 func Migrate(conn *pgxpool.Pool) error {
-	//migrate db
+	// migrate db
 	slog.Info("Running migrations")
 	ctx := context.Background()
 	files, err := migrationFS.ReadDir("migrations")
@@ -87,7 +88,7 @@ func Migrate(conn *pgxpool.Pool) error {
 		}
 
 		err = pgx.BeginFunc(ctx, conn, func(tx pgx.Tx) error {
-			if _, err := tx.Exec(ctx, string(contents)); err != nil {
+			if _, err = tx.Exec(ctx, string(contents)); err != nil {
 				return err
 			}
 
@@ -108,7 +109,7 @@ func Migrate(conn *pgxpool.Pool) error {
 	return nil
 }
 
-// WaitForDB Small hack to wait for database to start inside docker
+// WaitForDB Small hack to wait for database to start inside docker.
 func WaitForDB(pgpool *pgxpool.Pool) {
 	ctx := context.Background()
 
@@ -125,7 +126,7 @@ func WaitForDB(pgpool *pgxpool.Pool) {
 	}
 }
 
-//func WaitForRedis(redis *redis.Client) {
+// func WaitForRedis(redis *redis.Client) {
 //	ctx := context.Background()
 //
 //	for attempts := 1; ; attempts++ {

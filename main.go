@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/FACorreiaa/Aviation-tracker/api"
-	"github.com/FACorreiaa/Aviation-tracker/config"
-	"github.com/FACorreiaa/Aviation-tracker/controller"
-	"github.com/FACorreiaa/Aviation-tracker/db"
-	"github.com/redis/go-redis/v9"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/FACorreiaa/Aviation-tracker/api"
+	"github.com/FACorreiaa/Aviation-tracker/config"
+	"github.com/FACorreiaa/Aviation-tracker/controller"
+	"github.com/FACorreiaa/Aviation-tracker/db"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -51,13 +52,13 @@ func main() {
 		os.Exit(1)
 	}
 	defer func(redisClient *redis.Client) {
-		err := redisClient.Close()
+		err = redisClient.Close()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 	}(redisClient)
-	//db.WaitForRedis(redisClient)
+	// db.WaitForRedis(redisClient)
 
 	if err = db.Migrate(pool); err != nil {
 		fmt.Println(err)
@@ -108,7 +109,7 @@ func main() {
 
 	fmt.Println("This operation took: ", time.Since(startTime))
 
-	//if err = db.MigrateRedis(redisClient); err != nil {
+	// if err = db.MigrateRedis(redisClient); err != nil {
 	//	fmt.Println(err)
 	//	os.Exit(1)
 	//}
@@ -129,7 +130,7 @@ func main() {
 
 	go func() {
 		slog.Info("Starting server " + cfg.Server.Addr)
-		if err := srv.ListenAndServe(); err != nil {
+		if err = srv.ListenAndServe(); err != nil {
 			slog.Error("ListenAndServe", "error", err)
 		}
 	}()
@@ -138,7 +139,7 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 	<-c
 
-	//shutdown server
+	// shutdown server
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.GracefulTimeout)
 	defer cancel()
 	srv.Shutdown(ctx)

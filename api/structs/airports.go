@@ -9,14 +9,14 @@ type Airport struct {
 	IataCode     string      `json:"iata_code"`
 	CityIataCode string      `json:"city_iata_code"`
 	IcaoCode     string      `json:"icao_code"`
-	CountryISO2  string      ` json:"country_iso2"`
+	CountryISO2  string      `json:"country_iso2"`
 	GeonameID    string      `json:"geoname_id,omitempty"`
 	Latitude     float64     `json:"latitude,string,omitempty"`
 	Longitude    float64     `json:"longitude,string,omitempty"`
 	AirportName  string      `json:"airport_name"`
-	CountryName  string      ` json:"country_name"`
-	PhoneNumber  interface{} ` json:"phone_number,string,omitempty"`
-	Timezone     string      ` json:"timezone"`
+	CountryName  string      `json:"country_name"`
+	PhoneNumber  interface{} `json:"phone_number,omitempty"`
+	Timezone     string      `json:"timezone"`
 	CreatedAt    CustomTime  `db:"created_at" json:"created_at"`
 }
 
@@ -25,7 +25,7 @@ type AirportApiData struct {
 	Data       []Airport  `json:"data"`
 }
 
-//create an intermediate type & then convert to a concrete one
+// create an intermediate type & then convert to a concrete one
 // type Deez struct {
 //   Data map[string]string `json:".data"`
 // }

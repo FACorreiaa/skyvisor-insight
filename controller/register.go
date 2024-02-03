@@ -3,8 +3,9 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/user"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/user"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/FACorreiaa/Aviation-tracker/core/account"

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-//airline
+// airline
 
 type Airline struct {
 	ID                   string     `json:"id"`
@@ -28,7 +28,7 @@ type Airline struct {
 	CreatedAt            CustomTime `db:"created_at" json:"created_at"`
 }
 
-//aircrafts
+// aircrafts
 
 type Aircraft struct {
 	ID           string     `json:"id"`
@@ -38,7 +38,7 @@ type Aircraft struct {
 	CreatedAt    CustomTime `db:"created_at" json:"created_at"`
 }
 
-//airplanes
+// airplanes
 
 type Airplane struct {
 	ID                     string      `json:"id" `
@@ -67,7 +67,7 @@ type Airplane struct {
 	ProductionLine         string      `json:"production_line"`
 	RegistrationDate       CustomTime  `json:"registration_date"`
 	RolloutDate            CustomTime  `json:"rollout_date"`
-	CreatedAt              CustomTime  `json:"created_at,string"`
+	CreatedAt              CustomTime  `json:"created_at"`
 }
 
 type Tax struct {
@@ -131,13 +131,13 @@ func (ct *CustomTime) UnmarshalJSON(data []byte) error {
 
 //
 
-// Implement driver.Valuer interface
+// Implement driver.Valuer interface.
 func (ct CustomTime) Value() (driver.Value, error) {
 	// Return the underlying time value as a string in RFC3339 format
 	return ct.Time.Format(time.RFC3339), nil
 }
 
-// Implement sql.Scanner interface
+// Implement sql.Scanner interface.
 func (ct *CustomTime) Scan(value interface{}) error {
 	if value == nil {
 		// Handle NULL values by setting the time to the zero value

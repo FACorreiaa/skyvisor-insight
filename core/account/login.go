@@ -5,12 +5,13 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"github.com/jackc/pgx/v5"
-	"github.com/redis/go-redis/v9"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"log/slog"
 	"time"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/redis/go-redis/v9"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginForm struct {
@@ -54,7 +55,7 @@ func (a *Accounts) Login(ctx context.Context, form LoginForm) (*Token, error) {
 	}
 
 	tokenBytes := make([]byte, RAND_SIZE)
-	if _, err := rand.Read(tokenBytes); err != nil {
+	if _, err = rand.Read(tokenBytes); err != nil {
 		slog.Error("Error generating token", "err", err)
 		return nil, errors.New("internal server error")
 	}
@@ -62,7 +63,7 @@ func (a *Accounts) Login(ctx context.Context, form LoginForm) (*Token, error) {
 	token := Token(fmt.Sprintf("%x", tokenBytes))
 	log.Printf("Generated token: %s", token)
 
-	//if _, err := a.pgpool.Exec(
+	// if _, err := a.pgpool.Exec(
 	//	ctx,
 	//	`
 	//	insert into user_token (user_id, token, context)
@@ -77,7 +78,7 @@ func (a *Accounts) Login(ctx context.Context, form LoginForm) (*Token, error) {
 	//}
 
 	// Store the session token in Redis
-	//key := REDIS_PREFIX + string(token)
+	// key := REDIS_PREFIX + string(token)
 	err = a.redisClient.Set(ctx, string(token), (user.ID).String(), MAX_AGE).Err()
 	if err != nil {
 		log.Println("Error inserting token into Redis:", err)
@@ -89,7 +90,7 @@ func (a *Accounts) Login(ctx context.Context, form LoginForm) (*Token, error) {
 }
 
 func (a *Accounts) UserFromSessionToken(ctx context.Context, token Token) (*User, error) {
-	//key := REDIS_PREFIX + string(token)
+	// key := REDIS_PREFIX + string(token)
 	// Retrieve user ID from Redis
 	fmt.Println("Retrieving user ID from Redis for token:", token)
 	userID, err := a.redisClient.Get(ctx, token).Result()

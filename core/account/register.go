@@ -1,4 +1,4 @@
-//package account
+// package account
 //
 //import (
 //	"context"
@@ -156,13 +156,13 @@ func (a *Accounts) RegisterNewAccount(ctx context.Context, form RegisterForm) (*
 		}
 
 		tokenBytes := make([]byte, RAND_SIZE)
-		if _, err := rand.Read(tokenBytes); err != nil {
+		if _, err = rand.Read(tokenBytes); err != nil {
 			return fmt.Errorf("error generating token: %w", err)
 		}
 		token = Token(fmt.Sprintf("%x", tokenBytes))
 
 		// Store the session token in Redis
-		//redisKey := fmt.Sprintf("user_session:%s", token)
+		// redisKey := fmt.Sprintf("user_session:%s", token)
 		if err := a.redisClient.Set(ctx, token, user.ID, time.Hour*24*7).Err(); err != nil {
 			return fmt.Errorf("error inserting token into Redis: %w", err)
 		}

@@ -85,13 +85,13 @@ func FetchAndInsertCityData(conn *pgxpool.Pool) error {
 
 	res := new(structs.CityApiData)
 
-	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
 
-	//Insert data from the json
-	if _, err := conn.CopyFrom(
+	// Insert data from the json
+	if _, err = conn.CopyFrom(
 
 		context.Background(),
 		pgx.Identifier{"city"},
@@ -129,13 +129,13 @@ func FetchAndInsertCountryData(conn *pgxpool.Pool) error {
 		handleError(err, "error fetching data")
 		return err
 	}
-	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
 
-	//Insert data from the json
-	if _, err := conn.CopyFrom(
+	// Insert data from the json
+	if _, err = conn.CopyFrom(
 
 		context.Background(),
 		pgx.Identifier{"country"},
@@ -176,13 +176,13 @@ func FetchAndInsertAirportData(conn *pgxpool.Pool) error {
 		handleError(err, "error fetching data")
 		return err
 	}
-	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
 
-	//Insert data from the json
-	if _, err := conn.CopyFrom(
+	// Insert data from the json
+	if _, err = conn.CopyFrom(
 
 		context.Background(),
 		pgx.Identifier{"airport"},
@@ -215,13 +215,13 @@ func FetchAndInsertAirplaneData(conn *pgxpool.Pool) error {
 		return err
 	}
 	res := new(structs.AirplaneApiData)
-	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
 
-	//Insert data from the json
-	if _, err := conn.CopyFrom(
+	// Insert data from the json
+	if _, err = conn.CopyFrom(
 
 		context.Background(),
 		pgx.Identifier{"airplane"},
@@ -278,13 +278,13 @@ func FetchAndInsertTaxData(conn *pgxpool.Pool) error {
 		return err
 	}
 	res := new(structs.TaxApiData)
-	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
 
-	//Insert data from the json
-	if _, err := conn.CopyFrom(
+	// Insert data from the json
+	if _, err = conn.CopyFrom(
 
 		context.Background(),
 		pgx.Identifier{"tax"},
@@ -312,13 +312,13 @@ func FetchAndInsertAircraftData(conn *pgxpool.Pool) error {
 		return err
 	}
 
-	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
 
-	//Insert data from the json
-	if _, err := conn.CopyFrom(
+	// Insert data from the json
+	if _, err = conn.CopyFrom(
 
 		context.Background(),
 		pgx.Identifier{"aircraft"},
@@ -354,7 +354,7 @@ func FetchAndInsertAirlineData(conn *pgxpool.Pool) error {
 	}
 
 	// Insert data from the JSON
-	if _, err := conn.CopyFrom(
+	if _, err = conn.CopyFrom(
 		context.Background(),
 		pgx.Identifier{"airline"},
 		[]string{"fleet_average_age", "airline_id", "callsign", "hub_code", "iata_code", "icao_code", "country_iso2",
@@ -390,7 +390,7 @@ func FetchAndInsertAirlineData(conn *pgxpool.Pool) error {
 }
 
 func FetchAndInsertFlightData(conn *pgxpool.Pool) error {
-	//data, err := os.ReadFile("./api/data/flights.json")
+	// data, err := os.ReadFile("./api/data/flights.json")
 
 	data, err := fetchAviationStackData("flights", "limit=1000000")
 	if err != nil {
@@ -398,13 +398,13 @@ func FetchAndInsertFlightData(conn *pgxpool.Pool) error {
 		return err
 	}
 	res := new(structs.FlightApiData)
-	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
 
 	// Insert data from the JSON
-	if _, err := conn.CopyFrom(
+	if _, err = conn.CopyFrom(
 		context.Background(),
 		pgx.Identifier{"flights"},
 		[]string{"id", "flight_date", "flight_status", "departure_airport", "departure_timezone", "departure_iata",

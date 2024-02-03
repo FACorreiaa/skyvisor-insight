@@ -2,8 +2,9 @@ package controller
 
 import (
 	"context"
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
 )
 
 func (h *Handlers) homePage(w http.ResponseWriter, r *http.Request) error {

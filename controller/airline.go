@@ -29,7 +29,6 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 }
 
 func (h *Handlers) getAirlinesLocations() ([]models.Airline, error) {
-
 	a, err := h.core.airlines.GetAirlinesLocations(context.Background())
 	if err != nil {
 		return nil, err

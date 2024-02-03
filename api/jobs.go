@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"log/slog"
+	"slices"
+	"time"
+
 	"github.com/FACorreiaa/Aviation-tracker/api/structs"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/robfig/cron/v3"
-	"log/slog"
-	"slices"
-	"time"
 )
 
 type RepositoryJob struct {
@@ -38,7 +39,7 @@ func (model Model) GetID() int {
 	return model.City.CityID
 }
 
-// getExistingID retrieves existing table_id from the database
+// getExistingID retrieves existing table_id from the database.
 func (s *ServiceJob) getExistingID(query string, id int, tableData []int) ([]int, error) {
 	rows, err := s.repo.Conn.Query(context.Background(), query)
 	if err != nil {
@@ -47,20 +48,20 @@ func (s *ServiceJob) getExistingID(query string, id int, tableData []int) ([]int
 	}
 	defer rows.Close()
 
-	var existingIDs []int
+	// var existingIDs []int
 
 	for rows.Next() {
-		if err := rows.Scan(&id); err != nil {
+		if err = rows.Scan(&id); err != nil {
 			handleError(err, "Error scanning IDs")
 			return nil, err
 		}
-		existingIDs = append(existingIDs, id)
+		// existingIDs = append(existingIDs, id)
 	}
 
 	return tableData, nil
 }
 
-// findNewCityData slcies version
+// findNewCityData slcies version.
 func (s *ServiceJob) findNewCityData(apiData []structs.City, tableData []int) []structs.City {
 	var newData []structs.City
 
@@ -160,13 +161,12 @@ func (s *ServiceJob) findNewAircraftData(apiData []structs.Aircraft, tableData [
 }
 
 func (s *ServiceJob) insertNewCities() error {
-
 	apiData, err := fetchAviationStackData("cities")
 	query := `select city_id from city`
 	var tableData []int
 	var cityID int
 
-	//apiData, err := os.ReadFile("./api/data/cities.json")
+	// apiData, err := os.ReadFile("./api/data/cities.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -175,15 +175,15 @@ func (s *ServiceJob) insertNewCities() error {
 
 	// Unmarshal the API response
 	apiRes := new(structs.CityApiData)
-	if err := json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
 
-	var models []Model
-	for _, city := range apiRes.Data {
-		models = append(models, Model{City: city})
-	}
+	// var models []Model
+	// for _, city := range apiRes.Data {
+	// 	models = append(models, Model{City: city})
+	// }
 
 	// Check for existing data in the database
 	existingData, err := s.getExistingID(query, cityID, tableData)
@@ -197,8 +197,7 @@ func (s *ServiceJob) insertNewCities() error {
 	newDataMap := s.findNewCityData(apiRes.Data, existingData)
 	// Insert only the new data into the database
 	if len(newDataMap) > 0 {
-
-		if _, err := s.repo.Conn.CopyFrom(
+		if _, err = s.repo.Conn.CopyFrom(
 			context.Background(),
 			pgx.Identifier{"city"},
 			[]string{"gmt", "city_id", "iata_code", "country_iso2", "geoname_id",
@@ -233,13 +232,12 @@ func (s *ServiceJob) insertNewCities() error {
 }
 
 func (s *ServiceJob) insertNewCountries() error {
-
 	apiData, err := fetchAviationStackData("countries")
 	query := `select country_iso_numeric from country`
 	tableData := make([]int, 0)
 	var countryIsoNumeric int
 
-	//apiData, err := os.ReadFile("./api/data/countries.json")
+	// apiData, err := os.ReadFile("./api/data/countries.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -248,7 +246,7 @@ func (s *ServiceJob) insertNewCountries() error {
 
 	// Unmarshal the API response
 	apiRes := new(structs.CountryApiData)
-	if err := json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
@@ -266,8 +264,7 @@ func (s *ServiceJob) insertNewCountries() error {
 
 	// Insert only the new data into the database
 	if len(newDataMap) > 0 {
-
-		if _, err := s.repo.Conn.CopyFrom(
+		if _, err = s.repo.Conn.CopyFrom(
 			context.Background(),
 			pgx.Identifier{"country"},
 			[]string{"country_name", "country_iso2", "country_iso3", "country_iso_numeric", "population",
@@ -305,13 +302,12 @@ func (s *ServiceJob) insertNewCountries() error {
 }
 
 func (s *ServiceJob) insertNewAirports() error {
-
 	apiData, err := fetchAviationStackData("countries")
 	query := `select airport_id from airport`
 	tableData := make([]int, 0)
 	var airportID int
 
-	//apiData, err := os.ReadFile("./api/data/airports.json")
+	// apiData, err := os.ReadFile("./api/data/airports.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -320,7 +316,7 @@ func (s *ServiceJob) insertNewAirports() error {
 
 	// Unmarshal the API response
 	apiRes := new(structs.AirportApiData)
-	if err := json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
@@ -338,8 +334,7 @@ func (s *ServiceJob) insertNewAirports() error {
 
 	// Insert only the new data into the database
 	if len(newDataMap) > 0 {
-
-		if _, err := s.repo.Conn.CopyFrom(
+		if _, err = s.repo.Conn.CopyFrom(
 			context.Background(),
 			pgx.Identifier{"airport"},
 			[]string{"gmt", "airport_id", "iata_code", "city_iata_code", "icao_code",
@@ -370,13 +365,12 @@ func (s *ServiceJob) insertNewAirports() error {
 }
 
 func (s *ServiceJob) insertNewAirplanes() error {
-
 	apiData, err := fetchAviationStackData("countries")
 	query := `select airplane_id from airplane`
 	tableData := make([]int, 0)
 	var airplaneID int
 
-	//apiData, err := os.ReadFile("./api/data/airplane.json")
+	// apiData, err := os.ReadFile("./api/data/airplane.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -385,7 +379,7 @@ func (s *ServiceJob) insertNewAirplanes() error {
 
 	// Unmarshal the API response
 	apiRes := new(structs.AirplaneApiData)
-	if err := json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
@@ -403,8 +397,7 @@ func (s *ServiceJob) insertNewAirplanes() error {
 
 	// Insert only the new data into the database
 	if len(newDataMap) > 0 {
-
-		if _, err := s.repo.Conn.CopyFrom(
+		if _, err = s.repo.Conn.CopyFrom(
 			context.Background(),
 			pgx.Identifier{"airplane"},
 			[]string{"iata_type", "airplane_id", "airline_iata_code", "iata_code_long", "iata_code_short",
@@ -458,13 +451,12 @@ func (s *ServiceJob) insertNewAirplanes() error {
 }
 
 func (s *ServiceJob) insertNewTax() error {
-
 	apiData, err := fetchAviationStackData("countries")
 	query := `select tax_id from tax`
 	tableData := make([]int, 0)
 	var tax_id int
 
-	//apiData, err := os.ReadFile("./api/data/tax.json")
+	// apiData, err := os.ReadFile("./api/data/tax.json")
 	if err != nil {
 		handleError(err, "error fetching data")
 		return err
@@ -472,7 +464,7 @@ func (s *ServiceJob) insertNewTax() error {
 
 	// Unmarshal the API response
 	apiRes := new(structs.TaxApiData)
-	if err := json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
@@ -490,8 +482,7 @@ func (s *ServiceJob) insertNewTax() error {
 
 	// Insert only the new data into the database
 	if len(newDataMap) > 0 {
-
-		if _, err := s.repo.Conn.CopyFrom(
+		if _, err = s.repo.Conn.CopyFrom(
 			context.Background(),
 			pgx.Identifier{"tax"},
 			[]string{"tax_id", "tax_name", "iata_code", "created_at"},
@@ -516,13 +507,12 @@ func (s *ServiceJob) insertNewTax() error {
 }
 
 func (s *ServiceJob) insertNewAirline() error {
-
 	apiData, err := fetchAviationStackData("countries")
 	query := `select airline_id from airline`
 	tableData := make([]int, 0)
 	var airlineID int
 
-	//apiData, err := os.ReadFile("./api/data/airline.json")
+	// apiData, err := os.ReadFile("./api/data/airline.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -531,7 +521,7 @@ func (s *ServiceJob) insertNewAirline() error {
 
 	// Unmarshal the API response
 	apiRes := new(structs.AirlineApiData)
-	if err := json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
@@ -549,7 +539,6 @@ func (s *ServiceJob) insertNewAirline() error {
 
 	// Insert only the new data into the database
 	if len(newDataMap) > 0 {
-
 		if _, err := s.repo.Conn.CopyFrom(
 			context.Background(),
 			pgx.Identifier{"airline"},
@@ -590,13 +579,12 @@ func (s *ServiceJob) insertNewAirline() error {
 }
 
 func (s *ServiceJob) insertNewAircraft() error {
-
 	apiData, err := fetchAviationStackData("countries")
 	query := `select plane_type_id from aircraft`
 	tableData := make([]int, 0)
 	var planeTypeID int
 
-	//apiData, err := os.ReadFile("./api/data/aircraft.json")
+	// apiData, err := os.ReadFile("./api/data/aircraft.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -623,7 +611,6 @@ func (s *ServiceJob) insertNewAircraft() error {
 
 	// Insert only the new data into the database
 	if len(newDataMap) > 0 {
-
 		if _, err := s.repo.Conn.CopyFrom(
 			context.Background(),
 			pgx.Identifier{"aircraft"},
@@ -715,7 +702,9 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	_, err := c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewCities()
-		slog.Info("City job finished in: ", time.Since(startTime))
+		duration := time.Since(startTime)
+		valueFromDuration := slog.DurationValue(duration)
+		slog.Info("Cities job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
 		handleError(err, "Error checking for new cities")
 	})
 	handleError(err, "Error running cron job")
@@ -723,7 +712,9 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewCountries()
-		slog.Info("Country job finished in: ", time.Since(startTime))
+		duration := time.Since(startTime)
+		valueFromDuration := slog.DurationValue(duration)
+		slog.Info("Country job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
 		handleError(err, "Error checking for new countries")
 	})
 	handleError(err, "Error running cron job")
@@ -731,7 +722,9 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewAirports()
-		slog.Info("Airport job finished in: ", time.Since(startTime))
+		duration := time.Since(startTime)
+		valueFromDuration := slog.DurationValue(duration)
+		slog.Info("Airport job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
 		handleError(err, "Error checking for new airports")
 	})
 	handleError(err, "Error running cron job")
@@ -739,7 +732,9 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewAirplanes()
-		slog.Info("Airplane job finished in: ", time.Since(startTime))
+		duration := time.Since(startTime)
+		valueFromDuration := slog.DurationValue(duration)
+		slog.Info("Airplane job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
 		handleError(err, "Error checking for new airplanes")
 	})
 	handleError(err, "Error running cron job")
@@ -747,28 +742,36 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewTax()
-		slog.Info("Tax job finished in: ", time.Since(startTime))
+		duration := time.Since(startTime)
+		valueFromDuration := slog.DurationValue(duration)
+		slog.Info("Tax job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
 		handleError(err, "Error checking for new tax")
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@every 6h", func() {
+	_, _ = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewAirline()
-		slog.Info("Airline job finished in: ", time.Since(startTime))
+		duration := time.Since(startTime)
+		valueFromDuration := slog.DurationValue(duration)
+		slog.Info("Airline job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
 		handleError(err, "Error checking for new airline")
 	})
-	_, err = c.AddFunc("@every 6h", func() {
+	_, _ = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewAircraft()
-		slog.Info("Aircraft job finished in: ", time.Since(startTime))
+		duration := time.Since(startTime)
+		valueFromDuration := slog.DurationValue(duration)
+		slog.Info("Aircraft job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
 		handleError(err, "Error checking for new aircraft")
 	})
 
 	_, err = c.AddFunc("@hourly", func() {
 		startTime := time.Now()
 		err := s.insertNewFlight()
-		slog.Info("Live flights job finished in: ", time.Since(startTime))
+		duration := time.Since(startTime)
+		valueFromDuration := slog.DurationValue(duration)
+		slog.Info("Live flights job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
 		handleError(err, "Error checking for new aircraft")
 	})
 	handleError(err, "Error running cron job")

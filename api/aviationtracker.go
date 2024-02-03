@@ -2,10 +2,11 @@ package api
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"log/slog"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func handleError(err error, message string) {

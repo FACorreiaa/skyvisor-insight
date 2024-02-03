@@ -66,3 +66,6 @@ run:
 
 stop:
 	@docker compose down
+
+lint:
+	@golangci-lint run

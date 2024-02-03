@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/user"
 	"log/slog"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/user"
 
 	"context"
 

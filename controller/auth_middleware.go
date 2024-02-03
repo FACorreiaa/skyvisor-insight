@@ -2,8 +2,9 @@ package controller
 
 import (
 	"context"
-	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"net/http"
+
+	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
 
 type ctxKey int
@@ -13,7 +14,7 @@ const (
 )
 
 // Middleware to set the current logged in user in the context.
-// See `Handlers.requireAuth` or `Handlers.redirectIfAuth` middleware
+// See `Handlers.requireAuth` or `Handlers.redirectIfAuth` middleware.
 func (h *Handlers) authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.sessions.Get(r, "auth")

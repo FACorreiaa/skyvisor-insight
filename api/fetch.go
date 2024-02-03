@@ -58,7 +58,7 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 
 	response, err := http.Get(finalURL)
 	if err != nil {
-		return nil, fmt.Errorf("failed to make GET request: %v", err)
+		return nil, fmt.Errorf("failed to make GET request: %w", err)
 	}
 
 	if response.StatusCode >= http.StatusBadRequest {
@@ -68,7 +68,7 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 	body, err := io.ReadAll(response.Body)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %v", err)
+		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	defer response.Body.Close()

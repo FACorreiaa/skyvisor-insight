@@ -68,4 +68,5 @@ stop:
 	@docker compose down
 
 lint:
-	@golangci-lint run
+	@golangci-lint run -c .golangci.yml
+

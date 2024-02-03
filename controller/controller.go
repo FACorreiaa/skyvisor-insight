@@ -70,7 +70,10 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, _ *http.Request) {
 		file, _ := staticFS.ReadFile("static/favicon.ico")
 		w.Header().Set("Content-Type", "image/x-icon")
-		w.Write(file)
+		_, err := w.Write(file)
+		if err != nil {
+			return
+		}
 	})
 
 	// Public routes, authentication is optional

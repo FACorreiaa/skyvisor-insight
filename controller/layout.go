@@ -11,7 +11,9 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
 
-func (h *Handlers) CreateLayout(w http.ResponseWriter, r *http.Request, title string, data templ.Component) templ.Component {
+func (h *Handlers) CreateLayout(w http.ResponseWriter, r *http.Request, title string,
+	data templ.Component) templ.Component {
+
 	var user *account.User
 	userCtx := r.Context().Value(ctxKeyAuthUser)
 	if userCtx != nil {

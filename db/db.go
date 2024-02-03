@@ -18,6 +18,8 @@ import (
 //go:embed migrations/*.sql
 var migrationFS embed.FS
 
+const retries = 25
+
 // Init Init.
 func Init(connectionURL string) (*pgxpool.Pool, error) {
 	cfg, err := pgxpool.ParseConfig(connectionURL)
@@ -65,10 +67,14 @@ func Migrate(conn *pgxpool.Pool) error {
 	rows, _ := conn.Query(ctx, `select name, hash from _migrations order by created_at desc`)
 	var name, hash string
 	appliedMigrations := make(map[string]string)
-	pgx.ForEachRow(rows, []any{&name, &hash}, func() error {
+	_, err = pgx.ForEachRow(rows, []any{&name, &hash}, func() error {
 		appliedMigrations[name] = hash
 		return nil
 	})
+
+	if err != nil {
+		return err
+	}
 
 	for _, file := range files {
 		contents, err := migrationFS.ReadFile("migrations/" + file.Name())
@@ -114,7 +120,7 @@ func WaitForDB(pgpool *pgxpool.Pool) {
 	ctx := context.Background()
 
 	for attempts := 1; ; attempts++ {
-		if attempts > 25 {
+		if attempts > retries {
 			break
 		}
 

@@ -18,6 +18,7 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
 		{Path: "/airlines", Label: "Airline", Icon: svg2.ArrowRightIcon()},
+		{Path: "/airlines/map", Label: "Airline map temporary", Icon: svg2.MapIcon()},
 		{Path: "/airlines/tax", Label: "Airline Tax", Icon: svg2.MapIcon()},
 		{Path: "/airlines/aircraft", Label: "Aircraft", Icon: svg2.MapIcon()},
 		{Path: "/airlines/airplane", Label: "Airplane", Icon: svg2.MapIcon()},
@@ -25,6 +26,16 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
 	}
 	return sidebar
+}
+
+func (h *Handlers) getAirlinesLocations() ([]models.Airline, error) {
+
+	a, err := h.core.airlines.GetAirlinesLocations(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return a, nil
 }
 
 func (h *Handlers) getTotalAirline() (int, error) {
@@ -90,4 +101,14 @@ func (h *Handlers) airlineMainPage(w http.ResponseWriter, r *http.Request) error
 	}
 	a := airline.AirlineLayoutPage("Airline", "Check models about aircrafts", taxTable, sidebar)
 	return h.CreateLayout(w, r, "Airline Tax Page", a).Render(context.Background(), w)
+}
+
+func (h *Handlers) airlineLocationPage(w http.ResponseWriter, r *http.Request) error {
+	sidebar := h.renderAirlineSidebar()
+	airlines, err := h.getAirlinesLocations()
+	if err != nil {
+		return err
+	}
+	a := airline.AirlineLocationsPage(sidebar, airlines)
+	return h.CreateLayout(w, r, "Airline Locations Page", a).Render(context.Background(), w)
 }

@@ -140,6 +140,11 @@ type Airline struct {
 	Status               string     `json:"status"`
 	Type                 string     `json:"type"`
 	CreatedAt            CustomTime `db:"created_at" json:"created_at"`
+	CityName             string     `json:"city_name"`
+	AirportName          string     `json:"airport_name"`
+	Timezone             string     `json:"timezone"`
+	Latitude             float64    `json:"latitude,string,omitempty"`
+	Longitude            float64    `json:"longitude,string,omitempty"`
 }
 
 type Airplane struct {

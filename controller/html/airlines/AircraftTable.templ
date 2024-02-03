@@ -31,19 +31,19 @@ templ AirlineAircraftTable(a models.AircraftTable) {
 							if aircraft.LineNumber != nil {
 								<td>{ aircraft.LineNumber.(string) }</td>
 							} else {
-								<td></td>
+								<td class="italic">Not available</td>
 							}
 							<td>{ aircraft.ModelCode }</td>
 							<td>{ fmt.Sprintf("%d", aircraft.PlaneAge) }</td>
 							if aircraft.PlaneClass != nil {
 								<td>{ aircraft.PlaneClass.(string) }</td>
 							} else {
-								<td></td>
+								<td class="italic">Not available</td>
 							}
 							if aircraft.PlaneOwner != nil {
 								<td>{ aircraft.PlaneOwner.(string) }</td>
 							} else {
-								<td></td>
+								<td class="italic">Not available</td>
 							}
 							<td>{ aircraft.PlaneSeries }</td>
 							<td>{ aircraft.PlaneStatus }</td>

@@ -36,7 +36,7 @@ func AirlineLayoutPage(title, description string, component templ.Component, sid
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container flex my-24 md:px-6\"><div class=\"w-1/6\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div role=\"tablist\" class=\"tabs tabs-boxed\"><a role=\"tab\" class=\"tab\">Tab 1</a> <a role=\"tab\" class=\"tab tab-active\">Tab 2</a> <a role=\"tab\" class=\"tab\">Tab 3</a> <a role=\"tab\" class=\"tab\">Tab 3</a> <a role=\"tab\" class=\"tab\">Tab 3</a> <a role=\"tab\" class=\"tab\">Tab 3</a></div><div class=\"container flex my-24 md:px-6\"><div class=\"w-1/12\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -44,7 +44,7 @@ func AirlineLayoutPage(title, description string, component templ.Component, sid
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-5/6\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-11/12\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

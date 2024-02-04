@@ -17,7 +17,7 @@ import (
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	en_translations "github.com/go-playground/validator/v10/translations/en"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -47,7 +47,7 @@ type Handlers struct {
 func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client) http.Handler {
 	validate := validator.New()
 	translator, _ := ut.New(en.New(), en.New()).GetTranslator("en")
-	if err := en_translations.RegisterDefaultTranslations(validate, translator); err != nil {
+	if err := enTranslations.RegisterDefaultTranslations(validate, translator); err != nil {
 		slog.Error("Error registering translations", "error", err)
 	}
 
@@ -148,7 +148,10 @@ func (h *Handlers) formErrors(err error) []string {
 		return errs
 	}
 
-	validateErrors, isValidateError := err.(validator.ValidationErrors)
+	// validateErrors, isValidateError := err.(validator.ValidationErrors)
+
+	var validateErrors validator.ValidationErrors
+	isValidateError := errors.As(err, &validateErrors)
 	if isValidateError {
 		var errs []string
 		for _, validateError := range validateErrors {

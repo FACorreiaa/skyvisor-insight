@@ -95,7 +95,7 @@ func (s *ServiceJob) findNewAirportData(apiData []structs.Airport, tableData []i
 
 	for _, a := range apiData {
 		if hasKey := slices.ContainsFunc(tableData, func(airportID int) bool {
-			return airportID == a.AirportId
+			return airportID == a.AirportID
 		}); !hasKey {
 			newData = append(newData, a)
 		}
@@ -109,7 +109,7 @@ func (s *ServiceJob) findNewAirplaneData(apiData []structs.Airplane, tableData [
 
 	for _, a := range apiData {
 		if hasKey := slices.ContainsFunc(tableData, func(airplaneID int) bool {
-			return airplaneID == a.AirplaneId
+			return airplaneID == a.AirplaneID
 		}); !hasKey {
 			newData = append(newData, a)
 		}
@@ -123,7 +123,7 @@ func (s *ServiceJob) findNewTaxData(apiData []structs.Tax, tableData []int) []st
 
 	for _, a := range apiData {
 		if hasKey := slices.ContainsFunc(tableData, func(taxID int) bool {
-			return taxID == a.TaxId
+			return taxID == a.TaxID
 		}); !hasKey {
 			newData = append(newData, a)
 		}
@@ -137,7 +137,7 @@ func (s *ServiceJob) findNewAirlineData(apiData []structs.Airline, tableData []i
 
 	for _, a := range apiData {
 		if hasKey := slices.ContainsFunc(tableData, func(airlineID int) bool {
-			return airlineID == a.AirlineId
+			return airlineID == a.AirlineID
 		}); !hasKey {
 			newData = append(newData, a)
 		}
@@ -151,7 +151,7 @@ func (s *ServiceJob) findNewAircraftData(apiData []structs.Aircraft, tableData [
 
 	for _, a := range apiData {
 		if hasKey := slices.ContainsFunc(tableData, func(p int) bool {
-			return p == a.PlaneTypeId
+			return p == a.PlaneTypeID
 		}); !hasKey {
 			newData = append(newData, a)
 		}
@@ -174,7 +174,7 @@ func (s *ServiceJob) insertNewCities() error {
 	}
 
 	// Unmarshal the API response
-	apiRes := new(structs.CityApiData)
+	apiRes := new(structs.CityAPIData)
 	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -245,7 +245,7 @@ func (s *ServiceJob) insertNewCountries() error {
 	}
 
 	// Unmarshal the API response
-	apiRes := new(structs.CountryApiData)
+	apiRes := new(structs.CountryAPIData)
 	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -315,7 +315,7 @@ func (s *ServiceJob) insertNewAirports() error {
 	}
 
 	// Unmarshal the API response
-	apiRes := new(structs.AirportApiData)
+	apiRes := new(structs.AirportAPIData)
 	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -344,7 +344,7 @@ func (s *ServiceJob) insertNewAirports() error {
 			pgx.CopyFromSlice(len(newDataMap), func(i int) ([]interface{}, error) {
 				airport := newDataMap[i]
 				return []interface{}{
-					airport.GMT, airport.AirportId, airport.IataCode,
+					airport.GMT, airport.AirportID, airport.IataCode,
 					airport.CityIataCode, airport.IcaoCode, airport.CountryISO2,
 					airport.GeonameID, airport.Latitude, airport.Longitude,
 					airport.AirportName, airport.CountryName, airport.PhoneNumber,
@@ -378,7 +378,7 @@ func (s *ServiceJob) insertNewAirplanes() error {
 	}
 
 	// Unmarshal the API response
-	apiRes := new(structs.AirplaneApiData)
+	apiRes := new(structs.AirplaneAPIData)
 	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -410,7 +410,7 @@ func (s *ServiceJob) insertNewAirplanes() error {
 				airplane := newDataMap[i]
 				return []interface{}{
 					airplane.IataType,
-					airplane.AirplaneId,
+					airplane.AirplaneID,
 					airplane.AirlineIataCode,
 					airplane.IataCodeLong,
 					airplane.IataCodeShort,
@@ -463,7 +463,7 @@ func (s *ServiceJob) insertNewTax() error {
 	}
 
 	// Unmarshal the API response
-	apiRes := new(structs.TaxApiData)
+	apiRes := new(structs.TaxAPIData)
 	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -489,7 +489,7 @@ func (s *ServiceJob) insertNewTax() error {
 			pgx.CopyFromSlice(len(newDataMap), func(i int) ([]interface{}, error) {
 				tax := newDataMap[i]
 				return []interface{}{
-					tax.TaxId, tax.TaxName, tax.IataCode,
+					tax.TaxID, tax.TaxName, tax.IataCode,
 					formatTime(time.Now()),
 				}, nil
 			}),
@@ -520,7 +520,7 @@ func (s *ServiceJob) insertNewAirline() error {
 	}
 
 	// Unmarshal the API response
-	apiRes := new(structs.AirlineApiData)
+	apiRes := new(structs.AirlineAPIData)
 	if err = json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -549,7 +549,7 @@ func (s *ServiceJob) insertNewAirline() error {
 				airline := newDataMap[i]
 				return []interface{}{
 					airline.FleetAverageAge,
-					airline.AirlineId,
+					airline.AirlineID,
 					airline.Callsign,
 					airline.HubCode,
 					airline.IataCode,
@@ -592,7 +592,7 @@ func (s *ServiceJob) insertNewAircraft() error {
 	}
 
 	// Unmarshal the API response
-	apiRes := new(structs.AircraftApiData)
+	apiRes := new(structs.AircraftAPIData)
 	if err := json.NewDecoder(bytes.NewReader(apiData)).Decode(&apiRes); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -620,7 +620,7 @@ func (s *ServiceJob) insertNewAircraft() error {
 				return []interface{}{
 					aircraft.IataCode,
 					aircraft.AircraftName,
-					aircraft.PlaneTypeId,
+					aircraft.PlaneTypeID,
 					formatTime(time.Now()),
 				}, nil
 			}),
@@ -643,7 +643,7 @@ func (s *ServiceJob) insertNewFlight() error {
 		handleError(err, "error fetching data")
 		return err
 	}
-	res := new(structs.FlightApiData)
+	res := new(structs.FlightAPIData)
 	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -673,7 +673,8 @@ func (s *ServiceJob) insertNewFlight() error {
 				res.Data[i].Departure.EstimatedRunway, res.Data[i].Departure.ActualRunway,
 				res.Data[i].Arrival.Airport, res.Data[i].Arrival.Timezone, res.Data[i].Arrival.Iata,
 				res.Data[i].Arrival.Icao, res.Data[i].Arrival.Terminal, res.Data[i].Arrival.Gate,
-				res.Data[i].Arrival.Baggage, res.Data[i].Arrival.Delay, res.Data[i].Arrival.Scheduled, res.Data[i].Arrival.Estimated,
+				res.Data[i].Arrival.Baggage, res.Data[i].Arrival.Delay, res.Data[i].Arrival.Scheduled,
+				res.Data[i].Arrival.Estimated,
 				res.Data[i].Arrival.Actual, res.Data[i].Arrival.EstimatedRunway, res.Data[i].Arrival.ActualRunway,
 				res.Data[i].Flight.Number, res.Data[i].Flight.Iata, res.Data[i].Flight.Icao,
 				res.Data[i].Flight.Codeshared.AirlineName,

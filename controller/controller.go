@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/FACorreiaa/Aviation-tracker/core/location"
+
 	"github.com/FACorreiaa/Aviation-tracker/core/airline"
 
 	"github.com/FACorreiaa/Aviation-tracker/core/airport"
@@ -26,9 +28,10 @@ import (
 var staticFS embed.FS
 
 type core struct {
-	accounts *account.Accounts
-	airports *airport.AirportRepository
-	airlines *airline.AirlineRepository
+	accounts  *account.RepositoyAccount
+	airports  *airport.RepositoryAirport
+	airlines  *airline.RepositoryAirline
+	locations *location.RepositoryLocation
 }
 
 type Handlers struct {
@@ -59,9 +62,10 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 		sessions:    sessions.NewCookieStore(sessionSecret),
 		redisClient: redisClient,
 		core: &core{
-			accounts: account.NewAccounts(pool, redisClient, validate),
-			airports: airport.NewAirports(pool),
-			airlines: airline.NewAirports(pool),
+			accounts:  account.NewAccounts(pool, redisClient, validate),
+			airports:  airport.NewAirports(pool),
+			airlines:  airline.NewAirlines(pool),
+			locations: location.NewLocations(pool),
 		},
 	}
 
@@ -106,6 +110,13 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	airlinesRouter.HandleFunc("/aircraft", handler(h.airlineAircraftPage)).Methods(http.MethodGet)
 	airlinesRouter.HandleFunc("/airplane", handler(h.airlineAirplanePage)).Methods(http.MethodGet)
 	airlinesRouter.HandleFunc("/map", handler(h.airlineLocationPage)).Methods(http.MethodGet)
+
+	// locations
+	locationsRouter := auth.PathPrefix("/locations").Subrouter()
+	locationsRouter.HandleFunc("/city", handler(h.cityMainPage)).Methods(http.MethodGet)
+	locationsRouter.HandleFunc("/city/map", handler(h.cityLocationsPage)).Methods(http.MethodGet)
+	locationsRouter.HandleFunc("/country", handler(h.countryMainPage)).Methods(http.MethodGet)
+	locationsRouter.HandleFunc("/country/map", handler(h.countryLocationPage)).Methods(http.MethodGet)
 
 	// Airports router
 	airportsRouter := auth.PathPrefix("/airports").Subrouter()

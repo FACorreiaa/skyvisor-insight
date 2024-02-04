@@ -47,7 +47,7 @@ func (h *Handlers) getTotalAirline() (int, error) {
 	return lastPage, nil
 }
 
-func (h *Handlers) getAirline(w http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
+func (h *Handlers) getAirline(_ http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
 	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {

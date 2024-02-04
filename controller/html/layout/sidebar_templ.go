@@ -32,7 +32,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, item := range sidebar {
-			var templ_7745c5c3_Var2 = []any{"focus:text-blue focus:text-gray-200", templ.KV(item.ActivePath, item.Path)}
+			var templ_7745c5c3_Var2 = []any{"focus:text-blue focus:text-gray-200 active", templ.KV(item.ActivePath, item.Path)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

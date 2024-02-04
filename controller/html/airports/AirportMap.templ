@@ -2,53 +2,6 @@ package airport
 
 import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 
-// function createMarker(coordinates, name) {
-//     const iconFeature = new ol.Feature({
-//        geometry: new ol.geom.Point(ol.proj.fromLonLat(coordinates)),
-//        name: name || 'Marker',
-//     });
-
-//     const iconStyle = new ol.style.Style({
-//        image: new ol.style.Icon({
-//           anchor: [0.5, 46],
-//           anchorXUnits: 'fraction',
-//           anchorYUnits: 'pixels',
-//           src: '../static/icons/airport.png',
-//           scale: 0.7,
-//        }),
-//     });
-
-//     iconFeature.setStyle(iconStyle);
-
-//     return iconFeature;
-//  }
-
-//  const markers = [
-//     { coordinates: [38.736946, -9.142685], name: 'Marker 1' },
-//     { coordinates: [10, 10], name: 'Marker 2' },
-//     { coordinates: [41.530918, -8.780565], name: 'Marker 3' },
-
-//  ];
-
-//  const iconFeature = new ol.Feature({
-//     geometry: new ol.geom.Point([0, 0]),
-//     name: 'Null Island',
-//     population: 4000,
-//     rainfall: 500,
-//  });
-
-// const iconStyle = new ol.style.Style({
-//     image: new ol.style.Icon({
-//       anchor: [1, 46],
-//       anchorXUnits: 'fraction',
-//       anchorYUnits: 'pixels',
-//       src: '../static/icons/airport.png',
-//       scale: 0.5
-//     }),
-// });
-
-// iconFeature.setStyle(iconStyle);
-
 script mapContainer(data []models.Airport) {
   function createFeatureFromAirport(airport) {
 
@@ -70,6 +23,7 @@ script mapContainer(data []models.Airport) {
             country: airport.country_name,
             style: iconStyle,
         });
+
 
         feature.setStyle(iconStyle);
 
@@ -143,9 +97,6 @@ script mapContainer(data []models.Airport) {
             <strong>Timezone:</strong> ${feature.get('timezone')}<br>
             <strong>GMT:</strong> ${feature.get('gmt')}<br>
     `;
-
-      console.log('element', element)
-      console.log('content', contentDiv)
       tippyButton._tippy.setContent(contentDiv);
       tippyButton._tippy.show();
    });
@@ -205,7 +156,6 @@ templ AirportMap(data []models.Airport) {
 			</style>
 		</head>
 		<body onload={ mapContainer(data) }>
-			<a class="skiplink" href="#map">Go to map</a>
 			<div id="map" class="w-full h-full map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
 			<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
 			<button id="zoom-in" class="btn btn-secondary">Zoom in</button>

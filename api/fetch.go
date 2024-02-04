@@ -19,6 +19,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+const value = 2
+
 func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, error) {
 	accessKey := os.Getenv("AVIATION_STACK_API_KEY")
 	if accessKey == "" {
@@ -30,7 +32,7 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 	// Parse the base URL
 	parsedURL, err := url.Parse(baseURL)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse URL: %v", err)
+		return nil, fmt.Errorf("failed to parse URL: %w", err)
 	}
 
 	// Set the endpoint path
@@ -45,8 +47,8 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 	// Add additional query parameters
 	if len(queryParams) > 0 {
 		for _, param := range queryParams {
-			parts := strings.SplitN(param, "=", 2)
-			if len(parts) == 2 {
+			parts := strings.SplitN(param, "=", value)
+			if len(parts) == value {
 				query.Set(parts[0], parts[1])
 			}
 		}
@@ -83,7 +85,7 @@ func FetchAndInsertCityData(conn *pgxpool.Pool) error {
 		return err
 	}
 
-	res := new(structs.CityApiData)
+	res := new(structs.CityAPIData)
 
 	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
@@ -123,7 +125,7 @@ func FetchAndInsertCityData(conn *pgxpool.Pool) error {
 }
 
 func FetchAndInsertCountryData(conn *pgxpool.Pool) error {
-	res := new(structs.CountryApiData)
+	res := new(structs.CountryAPIData)
 	data, err := fetchAviationStackData("countries", "limit=1000000")
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -170,7 +172,7 @@ func FetchAndInsertCountryData(conn *pgxpool.Pool) error {
 }
 
 func FetchAndInsertAirportData(conn *pgxpool.Pool) error {
-	res := new(structs.AirportApiData)
+	res := new(structs.AirportAPIData)
 	data, err := fetchAviationStackData("airports", "limit=1000000")
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -192,7 +194,7 @@ func FetchAndInsertAirportData(conn *pgxpool.Pool) error {
 		},
 		pgx.CopyFromSlice(len(res.Data), func(i int) ([]interface{}, error) {
 			return []interface{}{
-				res.Data[i].GMT, res.Data[i].AirportId, res.Data[i].IataCode,
+				res.Data[i].GMT, res.Data[i].AirportID, res.Data[i].IataCode,
 				res.Data[i].CityIataCode, res.Data[i].IcaoCode, res.Data[i].CountryISO2,
 				res.Data[i].GeonameID, res.Data[i].Latitude, res.Data[i].Longitude,
 				res.Data[i].AirportName, res.Data[i].CountryName, res.Data[i].PhoneNumber,
@@ -214,7 +216,7 @@ func FetchAndInsertAirplaneData(conn *pgxpool.Pool) error {
 		handleError(err, "error fetching data")
 		return err
 	}
-	res := new(structs.AirplaneApiData)
+	res := new(structs.AirplaneAPIData)
 	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -234,7 +236,7 @@ func FetchAndInsertAirplaneData(conn *pgxpool.Pool) error {
 		pgx.CopyFromSlice(len(res.Data), func(i int) ([]interface{}, error) {
 			return []interface{}{
 				res.Data[i].IataType,
-				res.Data[i].AirplaneId,
+				res.Data[i].AirplaneID,
 				res.Data[i].AirlineIataCode,
 				res.Data[i].IataCodeLong,
 				res.Data[i].IataCodeShort,
@@ -277,7 +279,7 @@ func FetchAndInsertTaxData(conn *pgxpool.Pool) error {
 		handleError(err, "error fetching data")
 		return err
 	}
-	res := new(structs.TaxApiData)
+	res := new(structs.TaxAPIData)
 	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -291,7 +293,7 @@ func FetchAndInsertTaxData(conn *pgxpool.Pool) error {
 		[]string{"tax_id", "tax_name", "iata_code", "created_at"},
 		pgx.CopyFromSlice(len(res.Data), func(i int) ([]interface{}, error) {
 			return []interface{}{
-				res.Data[i].TaxId, res.Data[i].TaxName, res.Data[i].IataCode,
+				res.Data[i].TaxID, res.Data[i].TaxName, res.Data[i].IataCode,
 				formatTime(time.Now()),
 			}, nil
 		}),
@@ -305,7 +307,7 @@ func FetchAndInsertTaxData(conn *pgxpool.Pool) error {
 }
 
 func FetchAndInsertAircraftData(conn *pgxpool.Pool) error {
-	res := new(structs.AircraftApiData)
+	res := new(structs.AircraftAPIData)
 	data, err := fetchAviationStackData("aircraft_types", "limit=1000000")
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -327,7 +329,7 @@ func FetchAndInsertAircraftData(conn *pgxpool.Pool) error {
 			return []interface{}{
 				res.Data[i].IataCode,
 				res.Data[i].AircraftName,
-				res.Data[i].PlaneTypeId,
+				res.Data[i].PlaneTypeID,
 				formatTime(time.Now()),
 			}, nil
 		}),
@@ -347,7 +349,7 @@ func FetchAndInsertAirlineData(conn *pgxpool.Pool) error {
 		handleError(err, "error fetching data")
 		return err
 	}
-	res := new(structs.AirlineApiData)
+	res := new(structs.AirlineAPIData)
 	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err
@@ -364,7 +366,7 @@ func FetchAndInsertAirlineData(conn *pgxpool.Pool) error {
 		pgx.CopyFromSlice(len(res.Data), func(i int) ([]interface{}, error) {
 			return []interface{}{
 				res.Data[i].FleetAverageAge,
-				res.Data[i].AirlineId,
+				res.Data[i].AirlineID,
 				res.Data[i].Callsign,
 				res.Data[i].HubCode,
 				res.Data[i].IataCode,
@@ -397,7 +399,7 @@ func FetchAndInsertFlightData(conn *pgxpool.Pool) error {
 		handleError(err, "error fetching data")
 		return err
 	}
-	res := new(structs.FlightApiData)
+	res := new(structs.FlightAPIData)
 	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&res); err != nil {
 		handleError(err, "error unmarshaling API response")
 		return err

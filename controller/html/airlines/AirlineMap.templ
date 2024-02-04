@@ -158,9 +158,6 @@ script mapContainer(data []models.Airline) {
             <strong>Status:</strong> ${feature.get('status')}<br>
 
     `;
-
-      console.log('element', element)
-      console.log('content', contentDiv)
       tippyButton._tippy.setContent(contentDiv);
       tippyButton._tippy.show();
    });
@@ -220,7 +217,6 @@ templ AirlineMap(data []models.Airline) {
 			</style>
 		</head>
 		<body onload={ mapContainer(data) }>
-			<a class="skiplink" href="#map">Go to map</a>
 			<div id="map" class="w-full h-full map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
 			<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
 			<button id="zoom-in" class="btn btn-secondary">Zoom in</button>

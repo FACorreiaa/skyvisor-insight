@@ -85,7 +85,7 @@ type LiveFlights struct {
 	CreatedAt CustomTime `json:"created_at"`
 }
 
-type FlightApiData struct {
+type FlightAPIData struct {
 	Pagination Pagination    `json:"pagination"`
 	Data       []LiveFlights `json:"data"`
 }

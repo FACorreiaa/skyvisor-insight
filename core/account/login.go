@@ -19,7 +19,7 @@ type LoginForm struct {
 	Password string `form:"password" validate:"required"`
 }
 
-func (a *Accounts) Login(ctx context.Context, form LoginForm) (*Token, error) {
+func (a *RepositoyAccount) Login(ctx context.Context, form LoginForm) (*Token, error) {
 	if err := a.validator.Struct(form); err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (a *Accounts) Login(ctx context.Context, form LoginForm) (*Token, error) {
 	return &token, nil
 }
 
-func (a *Accounts) UserFromSessionToken(ctx context.Context, token Token) (*User, error) {
+func (a *RepositoyAccount) UserFromSessionToken(ctx context.Context, token Token) (*User, error) {
 	// key := REDIS_PREFIX + string(token)
 	// Retrieve user ID from Redis
 	fmt.Println("Retrieving user ID from Redis for token:", token)

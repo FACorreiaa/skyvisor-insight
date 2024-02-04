@@ -36,7 +36,7 @@ func AirlineLocationsPage(sidebar []models.SidebarItem, a []models.Airline) temp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container flex mx-auto my-24 md:px-6\"><div class=\"w-1/6\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container flex mx-auto mb-24 mr:px-6\"><div class=\"w-1/6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

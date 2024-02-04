@@ -18,11 +18,18 @@ type NavItem struct {
 	Label string
 }
 
+type TabItem struct {
+	Path  string
+	Icon  string
+	Label string
+}
+
 type SidebarItem struct {
 	Path       string
 	Icon       templ.Component
 	Label      string
 	ActivePath string
+	SubItems   []SidebarItem
 }
 
 type LayoutTempl struct {

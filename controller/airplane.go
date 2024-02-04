@@ -11,7 +11,7 @@ import (
 	"github.com/a-h/templ"
 )
 
-func (h *Handlers) getAirplane(w http.ResponseWriter, r *http.Request) (int, []models.Airplane, error) {
+func (h *Handlers) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []models.Airplane, error) {
 	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {

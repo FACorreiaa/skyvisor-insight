@@ -14,7 +14,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
-func (h *Handlers) getAirports(w http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
+func (h *Handlers) getAirports(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
 	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {

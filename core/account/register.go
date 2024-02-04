@@ -115,7 +115,7 @@ type RegisterForm struct {
 	PasswordConfirm string `form:"password_confirm" validate:"required,eqfield=Password"`
 }
 
-func (a *Accounts) RegisterNewAccount(ctx context.Context, form RegisterForm) (*Token, error) {
+func (a *RepositoyAccount) RegisterNewAccount(ctx context.Context, form RegisterForm) (*Token, error) {
 	if err := a.validator.Struct(form); err != nil {
 		slog.Warn("Validation error")
 		return nil, err

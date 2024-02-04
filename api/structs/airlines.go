@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -12,7 +13,7 @@ import (
 type Airline struct {
 	ID                   string     `json:"id"`
 	FleetAverageAge      float64    `json:"fleet_average_age,string"`
-	AirlineId            int        `json:"airline_id,string"`
+	AirlineID            int        `json:"airline_id,string"`
 	Callsign             string     `json:"callsign"`
 	HubCode              string     `json:"hub_code"`
 	IataCode             string     `json:"iata_code"`
@@ -34,7 +35,7 @@ type Aircraft struct {
 	ID           string     `json:"id"`
 	IataCode     string     `json:"iata_code"`
 	AircraftName string     `json:"aircraft_name"`
-	PlaneTypeId  int        `json:"plane_type_id,string"`
+	PlaneTypeID  int        `json:"plane_type_id,string"`
 	CreatedAt    CustomTime `db:"created_at" json:"created_at"`
 }
 
@@ -43,7 +44,7 @@ type Aircraft struct {
 type Airplane struct {
 	ID                     string      `json:"id" `
 	IataType               string      `json:"iata_type"`
-	AirplaneId             int         `json:"airplane_id,string"`
+	AirplaneID             int         `json:"airplane_id,string"`
 	AirlineIataCode        string      `json:"airline_iata_code"`
 	IataCodeLong           string      `json:"iata_code_long"`
 	IataCodeShort          string      `json:"iata_code_short"`
@@ -72,25 +73,25 @@ type Airplane struct {
 
 type Tax struct {
 	ID        string     `json:"id"`
-	TaxId     int        `json:"tax_id,string,omitempty"`
+	TaxID     int        `json:"tax_id,string,omitempty"`
 	TaxName   string     `json:"tax_name"`
 	IataCode  string     `json:"iata_code"`
 	CreatedAt CustomTime `db:"created_at" json:"created_at"`
 }
 
-type TaxApiData struct {
+type TaxAPIData struct {
 	Data []Tax `json:"data"`
 }
 
-type AircraftApiData struct {
+type AircraftAPIData struct {
 	Data []Aircraft `json:"data"`
 }
 
-type AirlineApiData struct {
+type AirlineAPIData struct {
 	Data []Airline `json:"data"`
 }
 
-type AirplaneApiData struct {
+type AirplaneAPIData struct {
 	Data []Airplane `json:"data"`
 }
 
@@ -102,7 +103,7 @@ func (ct *CustomTime) UnmarshalJSON(data []byte) error {
 	var dateStr string
 	err := json.Unmarshal(data, &dateStr)
 	if err != nil {
-		fmt.Println("Error parsing date: ", err)
+		log.Println("Error parsing date: ", err)
 		return err
 	}
 
@@ -121,7 +122,7 @@ func (ct *CustomTime) UnmarshalJSON(data []byte) error {
 	// Parse the date using the predefined time layout
 	t, err := time.Parse(time.RFC3339, dateStr)
 	if err != nil {
-		fmt.Println("Error parsing date: ", err)
+		log.Println("Error parsing date: ", err)
 		return err
 	}
 
@@ -132,12 +133,14 @@ func (ct *CustomTime) UnmarshalJSON(data []byte) error {
 //
 
 // Implement driver.Valuer interface.
+
 func (ct CustomTime) Value() (driver.Value, error) {
 	// Return the underlying time value as a string in RFC3339 format
 	return ct.Time.Format(time.RFC3339), nil
 }
 
 // Implement sql.Scanner interface.
+
 func (ct *CustomTime) Scan(value interface{}) error {
 	if value == nil {
 		// Handle NULL values by setting the time to the zero value

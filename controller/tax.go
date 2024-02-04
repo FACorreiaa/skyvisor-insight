@@ -11,7 +11,7 @@ import (
 	"github.com/a-h/templ"
 )
 
-func (h *Handlers) getAirlineTax(w http.ResponseWriter, r *http.Request) (int, []models.Tax, error) {
+func (h *Handlers) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, []models.Tax, error) {
 	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
@@ -38,7 +38,7 @@ func (h *Handlers) getTotalTax() (int, error) {
 }
 
 func (h *Handlers) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	columnNames := []string{"Tax Name", "Airline Name", "Country Name", "City Name"}
+	columnNames := []string{"Tax Name", "Airline Name", "Country Name"}
 
 	page, t, _ := h.getAirlineTax(w, r)
 	nextPage := page + 1

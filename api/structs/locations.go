@@ -23,7 +23,7 @@ type City struct {
 	CreatedAt   CustomTime `json:"created_at"`
 }
 
-type CityApiData struct {
+type CityAPIData struct {
 	Pagination Pagination `json:"pagination"`
 	Data       []City     `json:"data"`
 }
@@ -46,11 +46,7 @@ type Country struct {
 	CreatedAt         CustomTime `db:"created_at" json:"created_at"`
 }
 
-type CountryApiData struct {
+type CountryAPIData struct {
 	Pagination Pagination `json:"pagination"`
 	Data       []Country  `json:"data"`
-}
-
-func ExtractCityID(c City) int {
-	return c.CityID
 }

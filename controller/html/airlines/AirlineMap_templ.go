@@ -60,8 +60,8 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 // iconFeature.setStyle(iconStyle);
 func mapContainer(data []models.Airline) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_60d4`,
-		Function: `function __templ_mapContainer_60d4(data){function createFeatureFromAirline(airline) {
+		Name: `__templ_mapContainer_b2a7`,
+		Function: `function __templ_mapContainer_b2a7(data){function createFeatureFromAirline(airline) {
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
                 anchor: [1, 46],
@@ -169,9 +169,6 @@ func mapContainer(data []models.Airline) templ.ComponentScript {
             <strong>Status:</strong> ${feature.get('status')}<br>
 
     ` + "`" + `;
-
-      console.log('element', element)
-      console.log('content', contentDiv)
       tippyButton._tippy.setContent(contentDiv);
       tippyButton._tippy.show();
    });
@@ -200,8 +197,8 @@ func mapContainer(data []models.Airline) templ.ComponentScript {
       view.setZoom(zoom + 1);
    };
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_60d4`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_60d4`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_b2a7`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_b2a7`, data),
 	}
 }
 
@@ -235,7 +232,7 @@ func AirlineMap(data []models.Airline) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><a class=\"skiplink\" href=\"#map\">Go to map</a><div id=\"map\" class=\"w-full h-full map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"map\" class=\"w-full h-full map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

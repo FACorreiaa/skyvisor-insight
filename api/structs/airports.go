@@ -5,7 +5,7 @@ package structs
 type Airport struct {
 	ID           string      `json:"id"`
 	GMT          string      `json:"gmt"`
-	AirportId    int         `json:"airport_id,string,omitempty"`
+	AirportID    int         `json:"airport_id,string,omitempty"`
 	IataCode     string      `json:"iata_code"`
 	CityIataCode string      `json:"city_iata_code"`
 	IcaoCode     string      `json:"icao_code"`
@@ -20,7 +20,7 @@ type Airport struct {
 	CreatedAt    CustomTime  `db:"created_at" json:"created_at"`
 }
 
-type AirportApiData struct {
+type AirportAPIData struct {
 	Pagination Pagination `json:"pagination"`
 	Data       []Airport  `json:"data"`
 }

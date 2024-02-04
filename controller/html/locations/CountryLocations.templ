@@ -1,0 +1,20 @@
+package locations
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+)
+
+templ CountryLocations(sidebar []models.SidebarItem, c []models.Country, title string, description string) {
+	<div>
+		@layout.BannerComponent(title, description)
+		<div class="container flex mx-auto my-24 md:px-6">
+			<div class="w-1/6">
+				@layout.SidebarComponent(sidebar)
+			</div>
+			<div class="w-full">
+				@CountryMap(c)
+			</div>
+		</div>
+	</div>
+}

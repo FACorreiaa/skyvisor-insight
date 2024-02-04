@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
@@ -55,7 +56,7 @@ type Airport struct {
 	ID           string         `json:"id"`
 	CityName     string         `json:"city_name"`
 	GMT          string         `json:"gmt"`
-	AirportId    int            `json:"airport_id,string,omitempty"`
+	AirportID    int            `json:"airport_id,string,omitempty"`
 	IataCode     string         `json:"iata_code"`
 	CityIataCode string         `json:"city_iata_code"`
 	IcaoCode     string         `json:"icao_code"`
@@ -67,37 +68,61 @@ type Airport struct {
 	CountryName  string         ` json:"country_name"`
 	PhoneNumber  sql.NullString ` json:"phone_number,omitempty"`
 	Timezone     string         ` json:"timezone"`
-	CreatedAt    time.Time      `db:"created_at" json:"created_at"`
+	CreatedAt    CustomTime     `db:"created_at" json:"created_at"`
 }
 
 type City struct {
-	ID          string  `json:"id"`
-	GMT         string  `json:"gmt,omitempty"`
-	CityID      int     `json:"city_id,string,omitempty"`
-	IataCode    string  `json:"iata_code"`
-	CountryISO2 string  `json:"country_iso2"`
-	GeonameID   string  `json:"geoname_id,omitempty"`
-	Latitude    float64 `json:"latitude,string,omitempty"`
-	Longitude   float64 `json:"longitude,string,omitempty"`
-	CityName    string  `json:"city_name"`
-	Timezone    string  `json:"timezone"`
+	ID           string     `json:"id"`
+	GMT          string     `json:"gmt,omitempty"`
+	CityID       int        `json:"city_id,string,omitempty"`
+	IataCode     string     `json:"iata_code"`
+	CountryISO2  string     `json:"country_iso2"`
+	GeonameID    string     `json:"geoname_id,omitempty"`
+	Latitude     float64    `json:"latitude,string,omitempty"`
+	Longitude    float64    `json:"longitude,string,omitempty"`
+	CityName     string     `json:"city_name"`
+	Timezone     string     `json:"timezone"`
+	Continent    string     `json:"continent"`
+	CountryName  string     `json:"country_name"`
+	CurrencyName string     `json:"currency_name"`
+	PhonePrefix  string     `json:"phone_prefix"`
+	CreatedAt    CustomTime `db:"created_at" json:"created_at"`
+}
+
+type Country struct {
+	ID                string     `json:"id"`
+	CountryName       string     `json:"country_name"`
+	CountryISO2       string     `json:"country_iso2"`
+	CountryIso3       string     `json:"country_iso3"`
+	CountryIsoNumeric int        `json:"country_iso_numeric,string"`
+	Population        int        `json:"population,string"`
+	Capital           string     `json:"capital"`
+	Continent         string     `json:"continent"`
+	CurrencyName      string     `json:"currency_name"`
+	CurrencyCode      string     `json:"currency_code"`
+	FipsCode          string     `json:"fips_code"`
+	PhonePrefix       string     `json:"phone_prefix"`
+	Latitude          float64    `json:"latitude,string,omitempty"`
+	Longitude         float64    `json:"longitude,string,omitempty"`
+	CreatedAt         CustomTime `db:"created_at" json:"created_at"`
 }
 
 type Tax struct {
-	ID          string `json:"id"`
-	TaxId       int    `json:"tax_id,string,omitempty"`
-	TaxName     string `json:"tax_name"`
-	IataCode    string `json:"iata_code"`
-	AirlineName string `json:"airline_name"`
-	CountryName string `json:"country_name"`
-	CityName    string `json:"city_name"`
+	ID          string     `json:"id"`
+	TaxID       int        `json:"tax_id,string,omitempty"`
+	TaxName     string     `json:"tax_name"`
+	IataCode    string     `json:"iata_code"`
+	AirlineName string     `json:"airline_name"`
+	CountryName string     `json:"country_name"`
+	CityName    string     `json:"city_name"`
+	CreatedAt   CustomTime `db:"created_at" json:"created_at"`
 }
 
 type Aircraft struct {
 	ID                     string      `json:"id"`
 	AircraftName           string      `json:"aircraft_name"`
 	IataType               string      `json:"iata_type"`
-	AirplaneId             int         `json:"airplane_id,string"`
+	AirplaneID             int         `json:"airplane_id,string"`
 	AirlineIataCode        string      `json:"airline_iata_code"`
 	IataCodeLong           string      `json:"iata_code_long"`
 	IataCodeShort          string      `json:"iata_code_short"`
@@ -121,12 +146,13 @@ type Aircraft struct {
 	ProductionLine         string      `json:"production_line"`
 	RegistrationDate       CustomTime  `json:"registration_date"`
 	RolloutDate            CustomTime  `json:"rollout_date"`
+	CreatedAt              CustomTime  `db:"created_at" json:"created_at"`
 }
 
 type Airline struct {
 	ID                   string     `json:"id"`
 	FleetAverageAge      float64    `json:"fleet_average_age,string"`
-	AirlineId            int        `json:"airline_id,string"`
+	AirlineID            int        `json:"airline_id,string"`
 	Callsign             string     `json:"callsign"`
 	HubCode              string     `json:"hub_code"`
 	IataCode             string     `json:"iata_code"`
@@ -139,19 +165,19 @@ type Airline struct {
 	FleetSize            int        `json:"fleet_size,string"`
 	Status               string     `json:"status"`
 	Type                 string     `json:"type"`
-	CreatedAt            CustomTime `db:"created_at" json:"created_at"`
 	CityName             string     `json:"city_name"`
 	AirportName          string     `json:"airport_name"`
 	Timezone             string     `json:"timezone"`
 	Latitude             float64    `json:"latitude,string,omitempty"`
 	Longitude            float64    `json:"longitude,string,omitempty"`
+	CreatedAt            CustomTime `db:"created_at" json:"created_at"`
 }
 
 type Airplane struct {
 	ID                     string      `json:"id" `
 	AirlineName            string      `json:"airline_name"`
 	IataType               string      `json:"iata_type"`
-	AirplaneId             int         `json:"airplane_id,string"`
+	AirplaneID             int         `json:"airplane_id,string"`
 	AirlineIataCode        string      `json:"airline_iata_code"`
 	IataCodeLong           string      `json:"iata_code_long"`
 	IataCodeShort          string      `json:"iata_code_short"`
@@ -175,7 +201,7 @@ type Airplane struct {
 	ProductionLine         string      `json:"production_line"`
 	RegistrationDate       CustomTime  `json:"registration_date"`
 	RolloutDate            CustomTime  `json:"rollout_date"`
-	CreatedAt              CustomTime  `json:"created_at"`
+	CreatedAt              CustomTime  `db:"created_at" json:"created_at"`
 }
 
 func (a *Airport) GetPhoneNumber() string {
@@ -236,6 +262,24 @@ type AirplaneTable struct {
 	LastPage int
 }
 
+type CityTable struct {
+	Column   []string
+	City     []City
+	PrevPage int
+	NextPage int
+	Page     int
+	LastPage int
+}
+
+type CountryTable struct {
+	Column   []string
+	Country  []Country
+	PrevPage int
+	NextPage int
+	Page     int
+	LastPage int
+}
+
 type CustomTime struct {
 	time.Time
 }
@@ -252,7 +296,7 @@ func (ct *CustomTime) UnmarshalJSON(data []byte) error {
 	var dateStr string
 	err := json.Unmarshal(data, &dateStr)
 	if err != nil {
-		fmt.Println("Error parsing date: ", err)
+		log.Println("Error parsing date: ", err)
 		return err
 	}
 
@@ -271,7 +315,7 @@ func (ct *CustomTime) UnmarshalJSON(data []byte) error {
 	// Parse the date using the predefined time layout
 	t, err := time.Parse(time.RFC3339, dateStr)
 	if err != nil {
-		fmt.Println("Error parsing date: ", err)
+		log.Println("Error parsing date:", err)
 		return err
 	}
 

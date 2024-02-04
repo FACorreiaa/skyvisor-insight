@@ -12,56 +12,10 @@ import "bytes"
 
 import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 
-// function createMarker(coordinates, name) {
-//     const iconFeature = new ol.Feature({
-//        geometry: new ol.geom.Point(ol.proj.fromLonLat(coordinates)),
-//        name: name || 'Marker',
-//     });
-
-//     const iconStyle = new ol.style.Style({
-//        image: new ol.style.Icon({
-//           anchor: [0.5, 46],
-//           anchorXUnits: 'fraction',
-//           anchorYUnits: 'pixels',
-//           src: '../static/icons/airport.png',
-//           scale: 0.7,
-//        }),
-//     });
-
-//     iconFeature.setStyle(iconStyle);
-
-//     return iconFeature;
-//  }
-
-//  const markers = [
-//     { coordinates: [38.736946, -9.142685], name: 'Marker 1' },
-//     { coordinates: [10, 10], name: 'Marker 2' },
-//     { coordinates: [41.530918, -8.780565], name: 'Marker 3' },
-
-//  ];
-
-//  const iconFeature = new ol.Feature({
-//     geometry: new ol.geom.Point([0, 0]),
-//     name: 'Null Island',
-//     population: 4000,
-//     rainfall: 500,
-//  });
-
-// const iconStyle = new ol.style.Style({
-//     image: new ol.style.Icon({
-//       anchor: [1, 46],
-//       anchorXUnits: 'fraction',
-//       anchorYUnits: 'pixels',
-//       src: '../static/icons/airport.png',
-//       scale: 0.5
-//     }),
-// });
-
-// iconFeature.setStyle(iconStyle);
 func mapContainer(data []models.Airport) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_e1e7`,
-		Function: `function __templ_mapContainer_e1e7(data){function createFeatureFromAirport(airport) {
+		Name: `__templ_mapContainer_811e`,
+		Function: `function __templ_mapContainer_811e(data){function createFeatureFromAirport(airport) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -81,6 +35,7 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
             country: airport.country_name,
             style: iconStyle,
         });
+
 
         feature.setStyle(iconStyle);
 
@@ -154,9 +109,6 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
             <strong>Timezone:</strong> ${feature.get('timezone')}<br>
             <strong>GMT:</strong> ${feature.get('gmt')}<br>
     ` + "`" + `;
-
-      console.log('element', element)
-      console.log('content', contentDiv)
       tippyButton._tippy.setContent(contentDiv);
       tippyButton._tippy.show();
    });
@@ -185,8 +137,8 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
       view.setZoom(zoom + 1);
    };
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_e1e7`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_e1e7`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_811e`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_811e`, data),
 	}
 }
 
@@ -220,7 +172,7 @@ func AirportMap(data []models.Airport) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><a class=\"skiplink\" href=\"#map\">Go to map</a><div id=\"map\" class=\"w-full h-full map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"map\" class=\"w-full h-full map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

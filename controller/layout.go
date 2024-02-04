@@ -11,13 +11,12 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
 
-func (h *Handlers) CreateLayout(w http.ResponseWriter, r *http.Request, title string,
+func (h *Handlers) CreateLayout(_ http.ResponseWriter, r *http.Request, title string,
 	data templ.Component) templ.Component {
-
 	var user *account.User
 	userCtx := r.Context().Value(ctxKeyAuthUser)
 	if userCtx != nil {
-		user = userCtx.(*account.User)
+		user, _ = userCtx.(*account.User)
 	}
 
 	var nav []models.NavItem
@@ -34,7 +33,7 @@ func (h *Handlers) CreateLayout(w http.ResponseWriter, r *http.Request, title st
 			{Path: "/airlines", Label: "Airlines", Icon: "ion-paper-airplane"},
 			{Path: "/airports", Label: "Airports", Icon: "ion-paper-airplane"},
 			{Path: "/flights", Label: "Flights", Icon: "ion-paper-airplane"},
-			{Path: "/locations", Label: "Locations", Icon: "ion-flag"},
+			{Path: "/locations/city", Label: "Locations", Icon: "ion-flag"},
 			{Path: "/settings", Label: "Settings", Icon: "ion-gear-a"},
 		}
 	}

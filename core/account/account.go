@@ -19,7 +19,7 @@ const (
 
 type Token = string
 
-type Accounts struct {
+type RepositoyAccount struct {
 	pgpool      *pgxpool.Pool
 	redisClient *redis.Client
 	validator   *validator.Validate
@@ -30,8 +30,8 @@ func NewAccounts(
 	redisClient *redis.Client,
 	validator *validator.Validate,
 
-) *Accounts {
-	return &Accounts{
+) *RepositoyAccount {
+	return &RepositoyAccount{
 		pgpool:      pgpool,
 		redisClient: redisClient,
 		validator:   validator,
@@ -56,7 +56,7 @@ type UserToken struct {
 }
 
 // Logout deletes the user token from the Redis store.
-func (a *Accounts) Logout(ctx context.Context, token Token) error {
+func (a *RepositoyAccount) Logout(ctx context.Context, token Token) error {
 	// userKey := REDIS_PREFIX + string(token)
 
 	// Check if the token exists

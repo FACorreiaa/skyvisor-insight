@@ -1,0 +1,62 @@
+package locations
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"fmt"
+	"strconv"
+)
+
+templ CityTable(c models.CityTable) {
+	<div class="flex flex-col items-center">
+		<div class="overflow-x-auto">
+			<table class="table table-xs">
+				<!-- head -->
+				<thead>
+					<tr>
+						for _, col := range c.Column {
+							<th>{ col }</th>
+						}
+					</tr>
+				</thead>
+				<!-- rows -->
+				<tbody>
+					for _, city := range c.City {
+						<tr>
+							<td>{ city.CityName }</td>
+							<td>{ city.CountryName }</td>
+							<td>{ city.Continent }</td>
+							<td>{city.CurrencyName}></td>
+							<td>{ city.Timezone }</td>
+							<td>{ city.GMT }</td>
+							<td>{ city.PhonePrefix }</td>
+							<td>{ fmt.Sprintf("%f", city.Latitude) }</td>
+							<td>{ fmt.Sprintf("%f", city.Longitude) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<!-- paginator -->
+			<div class="flex justify-center mt-10">
+				<form class="join" hx-boost="true" method="get">
+					<a
+						class="join-item btn"
+						href={ templ.URL("/locations/city") }
+					>First Page</a>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/locations/city?page=%d", c.PrevPage)) }
+					>«</a>
+					<button class="join-item btn disabled">{ strconv.Itoa(c.Page) }</button>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/locations/city?page=%d", c.NextPage)) }
+					>»</a>
+					<a
+						class="join-item btn"
+						href={ templ.URL(fmt.Sprintf("/locations/city?page=%d", c.LastPage)) }
+					>Last Page</a>
+				</form>
+			</div>
+		</div>
+	</div>
+}

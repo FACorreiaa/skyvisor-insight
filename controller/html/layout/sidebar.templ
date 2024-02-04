@@ -11,7 +11,7 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 				for _, item := range sidebar {
 					<li
 						hx-boost="true"
-						class={ "focus:text-blue focus:text-gray-200", templ.KV(item.ActivePath, item.Path) }
+						class={ "focus:text-blue focus:text-gray-200 active", templ.KV(item.ActivePath, item.Path) }
 					>
 						<a
 							hx-trigger="load delay:1s"

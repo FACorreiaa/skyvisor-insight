@@ -7,20 +7,20 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type AirportRepository struct {
+type RepositoryAirport struct {
 	pgpool *pgxpool.Pool
 }
 
 func NewAirports(
 	pgpool *pgxpool.Pool,
 
-) *AirportRepository {
-	return &AirportRepository{
+) *RepositoryAirport {
+	return &RepositoryAirport{
 		pgpool: pgpool,
 	}
 }
 
-func (r *AirportRepository) GetAirports(ctx context.Context, page, pageSize int) ([]models.Airport, error) {
+func (r *RepositoryAirport) GetAirports(ctx context.Context, page, pageSize int) ([]models.Airport, error) {
 	var airport []models.Airport
 
 	offset := (page - 1) * pageSize
@@ -42,7 +42,7 @@ func (r *AirportRepository) GetAirports(ctx context.Context, page, pageSize int)
 	for rows.Next() {
 		var a models.Airport
 		err := rows.Scan(
-			&a.ID, &a.GMT, &a.AirportId, &a.IataCode,
+			&a.ID, &a.GMT, &a.AirportID, &a.IataCode,
 			&a.CityIataCode, &a.IcaoCode, &a.CountryISO2,
 			&a.GeonameID, &a.Latitude, &a.Longitude,
 			&a.AirportName, &a.CountryName, &a.PhoneNumber,
@@ -62,7 +62,7 @@ func (r *AirportRepository) GetAirports(ctx context.Context, page, pageSize int)
 	return airport, nil
 }
 
-func (r *AirportRepository) GetSum(ctx context.Context) (int, error) {
+func (r *RepositoryAirport) GetSum(ctx context.Context) (int, error) {
 	var count int
 	row := r.pgpool.QueryRow(ctx, `SELECT Count(id)
 										FROM airport
@@ -74,7 +74,7 @@ func (r *AirportRepository) GetSum(ctx context.Context) (int, error) {
 	return count, nil
 }
 
-func (r *AirportRepository) GetAirportsLocation(ctx context.Context) ([]models.Airport, error) {
+func (r *RepositoryAirport) GetAirportsLocation(ctx context.Context) ([]models.Airport, error) {
 	var airport []models.Airport
 
 	rows, err := r.pgpool.Query(ctx, `SELECT a.id, a.gmt, a.latitude, a.longitude,

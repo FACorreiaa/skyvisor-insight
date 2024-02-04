@@ -1,0 +1,28 @@
+package locations
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+)
+
+templ LocationsLayoutPage(title, description string, component templ.Component, sidebar []models.SidebarItem) {
+	<div>
+		@layout.BannerComponent(title, description)
+		<div role="tablist" class="tabs tabs-boxed">
+			<a role="tab" class="tab">Tab 1</a>
+			<a role="tab" class="tab tab-active">Tab 2</a>
+			<a role="tab" class="tab">Tab 3</a>
+			<a role="tab" class="tab">Tab 3</a>
+			<a role="tab" class="tab">Tab 3</a>
+			<a role="tab" class="tab">Tab 3</a>
+		</div>
+		<div class="container flex my-24 md:px-6">
+			<div class="w-1/12">
+				@layout.SidebarComponent(sidebar)
+			</div>
+			<div class="w-11/12">
+				@component
+			</div>
+		</div>
+	</div>
+}

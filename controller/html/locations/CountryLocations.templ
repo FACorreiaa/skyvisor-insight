@@ -8,11 +8,11 @@ import (
 templ CountryLocations(sidebar []models.SidebarItem, c []models.Country, title string, description string) {
 	<div>
 		@layout.BannerComponent(title, description)
-		<div class="container flex mx-auto my-24 md:px-6">
-			<div class="w-1/6">
+		<div class="container flex pt-10 mx-auto mb-24 mr:px-6">
+			<div class="w-1/12">
 				@layout.SidebarComponent(sidebar)
 			</div>
-			<div class="w-full">
+			<div class="w-11/12">
 				@CountryMap(c)
 			</div>
 		</div>

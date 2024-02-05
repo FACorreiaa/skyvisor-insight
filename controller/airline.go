@@ -115,6 +115,6 @@ func (h *Handlers) airlineLocationPage(w http.ResponseWriter, r *http.Request) e
 	if err != nil {
 		return err
 	}
-	a := airline.AirlineLocationsPage(sidebar, airlines)
+	a := airline.AirlineLocationsPage(sidebar, airlines, "Airline", "Check out airport locations")
 	return h.CreateLayout(w, r, "Airline Locations Page", a).Render(context.Background(), w)
 }

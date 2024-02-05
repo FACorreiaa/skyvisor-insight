@@ -96,7 +96,7 @@ func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	a := airport.AirportPage(airportTable, sidebar)
+	a := airport.AirportPage(airportTable, sidebar, "Airports", "Check out airport locations")
 	return h.CreateLayout(w, r, "Airport Page", a).Render(context.Background(), w)
 }
 
@@ -106,6 +106,6 @@ func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) e
 	if err != nil {
 		return err
 	}
-	a := airport.AirportLocationsPage(sidebar, airportsLocations)
+	a := airport.AirportLocationsPage(sidebar, airportsLocations, "Airports", "Check out airport locations")
 	return h.CreateLayout(w, r, "Airport Locations Page", a).Render(context.Background(), w)
 }

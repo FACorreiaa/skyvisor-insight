@@ -36,7 +36,7 @@ func LocationsLayoutPage(title, description string, component templ.Component, s
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container flex mx-auto mb-24 mr:px-6\"><div class=\"w-1/12\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container flex pt-10 mx-auto mb-24 mr:px-6\"><div class=\"w-1/12\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

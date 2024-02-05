@@ -15,7 +15,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
-func AirportLocationsPage(sidebar []models.SidebarItem, airports []models.Airport) templ.Component {
+func AirportLocationsPage(sidebar []models.SidebarItem, airports []models.Airport, title, description string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -32,11 +32,11 @@ func AirportLocationsPage(sidebar []models.SidebarItem, airports []models.Airpor
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.BannerComponent("Airports", "Check location of your favourite airports").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.BannerComponent(title, description).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container flex mx-auto my-24 md:px-6\"><div class=\"w-1/6\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container flex pt-10 mx-auto mb-24 mr:px-6\"><div class=\"w-1/12\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -44,7 +44,7 @@ func AirportLocationsPage(sidebar []models.SidebarItem, airports []models.Airpor
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-full\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-11/12\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

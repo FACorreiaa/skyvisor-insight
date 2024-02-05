@@ -19,15 +19,15 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
 		{
 			Label: "Airlines",
-			Icon:  svg2.SettingsIcon(),
+			Icon:  svg2.TicketIcon(),
 			SubItems: []models.SidebarItem{
-				{Path: "/airlines", Label: "Airline", Icon: svg2.MapIcon()},
+				{Path: "/airlines", Label: "Airline", Icon: svg2.TicketIcon()},
 				{Path: "/airlines/map", Label: "Airline location", Icon: svg2.MapIcon()},
 			},
 		},
-		{Path: "/airlines/tax", Label: "Airline Tax", Icon: svg2.MapIcon()},
-		{Path: "/airlines/aircraft", Label: "Aircraft", Icon: svg2.MapIcon()},
-		{Path: "/airlines/airplane", Label: "Airplane", Icon: svg2.MapIcon()},
+		{Path: "/airlines/tax", Label: "Airline Tax", Icon: svg2.CreditCardIcon()},
+		{Path: "/airlines/aircraft", Label: "Aircraft", Icon: svg2.PaperAirplaneIcon()},
+		{Path: "/airlines/airplane", Label: "Airplane", Icon: svg2.PaperAirplaneIcon()},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},

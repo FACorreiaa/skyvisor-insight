@@ -82,8 +82,14 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 func (h *Handlers) renderSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
-		{Path: "/airports", Label: "Airports", Icon: svg2.ArrowRightIcon()},
-		{Path: "/airports/locations", Label: "Show Airports", Icon: svg2.MapIcon()},
+		{
+			Label: "Airports",
+			Icon:  svg2.BuildingOfficeIcon(),
+			SubItems: []models.SidebarItem{
+				{Path: "/airports", Label: "Airport data", Icon: svg2.BuildingOfficeIcon()},
+				{Path: "/airports/locations", Label: "Airport locations", Icon: svg2.MapIcon()},
+			},
+		},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
 	}

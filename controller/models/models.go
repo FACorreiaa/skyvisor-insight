@@ -14,7 +14,7 @@ import (
 
 type NavItem struct {
 	Path  string
-	Icon  string
+	Icon  templ.Component
 	Label string
 }
 

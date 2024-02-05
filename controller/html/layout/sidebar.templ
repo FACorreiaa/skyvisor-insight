@@ -3,6 +3,7 @@ package layout
 import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"fmt"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 )
 
 script toggleDropdown(id string) {
@@ -32,15 +33,16 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 							</a>
 						}
 						if len(item.SubItems) > 0 {
-							<summary class="flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+							<summary class="flex items-center text-gray-900 rounded-lg space-between dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
 								@item.Icon
 								<button
 									onClick={ toggleDropdown(fmt.Sprintf("%d", index)) }
 									class="flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
 								>
-									<span class="ms-3">
+									<span class="mr-5 ms-3">
 										{ item.Label }
 									</span>
+									@svg2.ArrowDown()
 								</button>
 							</summary>
 							<ul class="hidden ml-4 space-y-2 focus:outline-none" id={ fmt.Sprintf("%d", index) }>

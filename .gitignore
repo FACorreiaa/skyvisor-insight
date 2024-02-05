@@ -40,3 +40,5 @@ air
 logfile
 post_cmd.txt
 main
+.main
+.tmp/main

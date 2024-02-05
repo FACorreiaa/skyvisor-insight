@@ -9,7 +9,7 @@ import (
 templ AirlineTaxTable(tax models.TaxTable) {
 	<div class="flex flex-col items-center">
 		<div class="overflow-x-auto">
-			<table class="table table-xs">
+			<table class="table table-zebra">
 				<!-- head -->
 				<thead>
 					<tr>
@@ -21,7 +21,7 @@ templ AirlineTaxTable(tax models.TaxTable) {
 				<!-- rows -->
 				<tbody>
 					for _, t := range tax.Tax {
-						<tr>
+						<tr class="hover">
 							<td>{ t.TaxName }</td>
 							<td>{ t.AirlineName }</td>
 							<td>{ t.CountryName }</td>

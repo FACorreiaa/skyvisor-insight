@@ -3,6 +3,8 @@ package controller
 import (
 	"net/http"
 
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
+
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
@@ -29,12 +31,12 @@ func (h *Handlers) CreateLayout(_ http.ResponseWriter, r *http.Request, title st
 		}
 	} else {
 		nav = []models.NavItem{
-			{Path: "/", Label: "Home"},
-			{Path: "/airlines", Label: "Airlines", Icon: "ion-paper-airplane"},
-			{Path: "/airports", Label: "Airports", Icon: "ion-paper-airplane"},
-			{Path: "/flights", Label: "Flights", Icon: "ion-paper-airplane"},
-			{Path: "/locations/city", Label: "Locations", Icon: "ion-flag"},
-			{Path: "/settings", Label: "Settings", Icon: "ion-gear-a"},
+			{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
+			{Path: "/airlines", Label: "Airlines", Icon: svg2.TicketIcon()},
+			{Path: "/airports", Label: "Airports", Icon: svg2.BuildingOfficeIcon()},
+			{Path: "/flights", Label: "Flights", Icon: svg2.PaperAirplaneIcon()},
+			{Path: "/locations/city", Label: "Locations", Icon: svg2.LocationsIcon()},
+			{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 		}
 	}
 

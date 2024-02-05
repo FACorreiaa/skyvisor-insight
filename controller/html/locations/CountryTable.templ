@@ -9,7 +9,7 @@ import (
 templ CountryTable(c models.CountryTable) {
 	<div class="flex flex-col items-center">
 		<div class="overflow-x-auto">
-			<table class="table table-xs">
+			<table class="table table-zebra">
 				<!-- head -->
 				<thead>
 					<tr>
@@ -21,7 +21,7 @@ templ CountryTable(c models.CountryTable) {
 				<!-- rows -->
 				<tbody>
 					for _, ct := range c.Country {
-						<tr>
+						<tr class="hover">
 							<td>{ ct.CountryName }</td>
 							<td>{ ct.Capital }</td>
 							<td>{ ct.Continent }</td>

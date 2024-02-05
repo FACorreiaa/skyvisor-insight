@@ -13,6 +13,7 @@ import "bytes"
 import (
 	"fmt"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 )
 
 func toggleDropdown(id string) templ.ComponentScript {
@@ -86,7 +87,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/layout/sidebar.templ`, Line: 29, Col: 21}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/layout/sidebar.templ`, Line: 30, Col: 21}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -98,7 +99,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 				}
 			}
 			if len(item.SubItems) > 0 {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<summary class=\"flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<summary class=\"flex items-center text-gray-900 rounded-lg space-between dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -119,20 +120,28 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group\"><span class=\"ms-3\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group\"><span class=\"mr-5 ms-3\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/layout/sidebar.templ`, Line: 41, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/layout/sidebar.templ`, Line: 42, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></button></summary><ul class=\"hidden ml-4 space-y-2 focus:outline-none\" id=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = svg2.ArrowDown().Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></summary><ul class=\"hidden ml-4 space-y-2 focus:outline-none\" id=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -182,7 +191,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(subItem.Label)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/layout/sidebar.templ`, Line: 58, Col: 27}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/layout/sidebar.templ`, Line: 60, Col: 27}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {

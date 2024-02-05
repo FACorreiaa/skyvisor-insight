@@ -15,11 +15,22 @@ import (
 func (h *Handlers) renderLocationsBar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
-		{Path: "/locations/city", Label: "City", Icon: svg2.HomeIcon()},
-		{Path: "/locations/city/map", Label: "City Map", Icon: svg2.HomeIcon()},
-		{Path: "/locations/country", Label: "Country", Icon: svg2.HomeIcon()},
-		{Path: "/locations/country/map", Label: "Country Map", Icon: svg2.HomeIcon()},
-
+		{
+			Label: "Cities",
+			Icon:  svg2.GlobeEuropeIcon(),
+			SubItems: []models.SidebarItem{
+				{Path: "/locations/city", Label: "City data", Icon: svg2.GlobeEuropeIcon()},
+				{Path: "/locations/city/map", Label: "City locations", Icon: svg2.MapIcon()},
+			},
+		},
+		{
+			Label: "Countries",
+			Icon:  svg2.GlobeIcon(),
+			SubItems: []models.SidebarItem{
+				{Path: "/locations/country", Label: "Country data", Icon: svg2.GlobeIcon()},
+				{Path: "/locations/country/map", Label: "Country locations", Icon: svg2.MapIcon()},
+			},
+		},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
 	}

@@ -9,7 +9,7 @@ import (
 templ CityTable(c models.CityTable) {
 	<div class="flex flex-col items-center">
 		<div class="overflow-x-auto">
-			<table class="table table-xs">
+			<table class="table table-zebra">
 				<!-- head -->
 				<thead>
 					<tr>
@@ -21,11 +21,11 @@ templ CityTable(c models.CityTable) {
 				<!-- rows -->
 				<tbody>
 					for _, city := range c.City {
-						<tr>
+						<tr class="hover">
 							<td>{ city.CityName }</td>
 							<td>{ city.CountryName }</td>
 							<td>{ city.Continent }</td>
-							<td>{city.CurrencyName}></td>
+							<td>{ city.CurrencyName }></td>
 							<td>{ city.Timezone }</td>
 							<td>{ city.GMT }</td>
 							<td>{ city.PhonePrefix }</td>

@@ -6,7 +6,7 @@ import (
 
 templ LayoutPage(l models.LayoutTempl) {
 	<!DOCTYPE html>
-	<html lang="en" data-theme="nord">
+	<html lang="en" data-theme="pastel">
 		<head>
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -25,7 +25,7 @@ templ LayoutPage(l models.LayoutTempl) {
 		<body hx-boost="true">
 			<div class="flex flex-col h-screen font-lato" id="contents">
 				@NavbarComponent(l.Nav, l.User, l.ActiveNav)
-				<div class="h-full">
+				<div class="h-full overflow-auto">
 					@l.Content
 				</div>
 				@FooterComponent()

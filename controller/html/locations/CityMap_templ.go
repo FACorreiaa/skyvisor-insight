@@ -14,9 +14,8 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 
 func cityMapContainer(data []models.City) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_cityMapContainer_ad67`,
-		Function: `function __templ_cityMapContainer_ad67(data){console.log('data', data)
-  function createFeatureFromCity(city) {
+		Name: `__templ_cityMapContainer_8a2c`,
+		Function: `function __templ_cityMapContainer_8a2c(data){function createFeatureFromCity(city) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -32,7 +31,7 @@ func cityMapContainer(data []models.City) templ.ComponentScript {
             geometry: new ol.geom.Point(ol.proj.fromLonLat([city.longitude, city.latitude])),
             city: city.city_name,
             country: city.country_name,
-            timezone: city.timezone
+            timezone: city.timezone,
             style: iconStyle,
         });
 
@@ -137,8 +136,8 @@ func cityMapContainer(data []models.City) templ.ComponentScript {
       view.setZoom(zoom + 1);
    };
 }`,
-		Call:       templ.SafeScript(`__templ_cityMapContainer_ad67`, data),
-		CallInline: templ.SafeScriptInline(`__templ_cityMapContainer_ad67`, data),
+		Call:       templ.SafeScript(`__templ_cityMapContainer_8a2c`, data),
+		CallInline: templ.SafeScriptInline(`__templ_cityMapContainer_8a2c`, data),
 	}
 }
 
@@ -155,7 +154,7 @@ func CityMap(data []models.City) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n\t\t\t\t.map {\n\t\t\t\t\twidth: 100%;\n\t\t\t\t\theight: 850px;\n\t\t\t\t}\n\t\t\t\ta.skiplink {\n\t\t\t\t\tposition: absolute;\n\t\t\t\t\tclip: rect(1px, 1px, 1px, 1px);\n\t\t\t\t\tpadding: 0;\n\t\t\t\t\tborder: 0;\n\t\t\t\t\theight: 1px;\n\t\t\t\t\twidth: 1px;\n\t\t\t\t\toverflow: hidden;\n\t\t\t\t}\n\t\t\t\ta.skiplink:focus {\n\t\t\t\t\tclip: auto;\n\t\t\t\t\theight: auto;\n\t\t\t\t\twidth: auto;\n\t\t\t\t\tbackground-color: #fff;\n\t\t\t\t\tpadding: 0.3em;\n\t\t\t\t}\n\t\t\t\t#map:focus {\n\t\t\t\t\toutline: #4A74A8 solid 0.15em;\n\t\t\t\t}\n\t\t\t</style></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n\t\t\t\t.map {\n\t\t\t\t\twidth: 100%;\n\t\t\t\t\theight: 850px;\n\t\t\t\t}\n        .map-container {\n\t\t\t\t\tposition: relative;\n\t\t\t\t\theight: 700px;\n          padding-top: 10px;\n\t\t\t\t}\n\t\t\t\ta.skiplink {\n\t\t\t\t\tposition: absolute;\n\t\t\t\t\tclip: rect(1px, 1px, 1px, 1px);\n\t\t\t\t\tpadding: 0;\n\t\t\t\t\tborder: 0;\n\t\t\t\t\theight: 1px;\n\t\t\t\t\twidth: 1px;\n\t\t\t\t\toverflow: hidden;\n\t\t\t\t}\n\t\t\t\ta.skiplink:focus {\n\t\t\t\t\tclip: auto;\n\t\t\t\t\theight: auto;\n\t\t\t\t\twidth: auto;\n\t\t\t\t\tbackground-color: #fff;\n\t\t\t\t\tpadding: 0.3em;\n\t\t\t\t}\n\t\t\t\t#map:focus {\n\t\t\t\t\toutline: #4A74A8 solid 0.15em;\n\t\t\t\t}\n\t\t\t</style></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -172,7 +171,7 @@ func CityMap(data []models.City) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"map\" class=\"w-full h-full map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div class=\"map-container\"><div id=\"map\" class=\"w-full h-full map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div></div><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

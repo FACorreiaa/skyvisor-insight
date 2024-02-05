@@ -136,6 +136,11 @@ templ CountryMap(data []models.Country) {
 					width: 100%;
 					height: 850px;
 				}
+        .map-container {
+					position: relative;
+					height: 700px;
+          padding-top: 10px;
+				}
 				a.skiplink {
 					position: absolute;
 					clip: rect(1px, 1px, 1px, 1px);
@@ -158,8 +163,9 @@ templ CountryMap(data []models.Country) {
 			</style>
 		</head>
 		<body onload={ countryMapContainer(data) }>
-			<div id="map" class="w-full h-full map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
-			<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
+			<div class="map-container">
+				<div id="map" class="w-full h-full map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
+			</div> <button id="zoom-out" class="btn btn-secondary">Zoom out</button>
 			<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
 		</body>
 	</html>

@@ -20,6 +20,49 @@ func NewAirlines(
 	}
 }
 
+func (r *RepositoryAirline) getAirlineData(ctx context.Context, query string,
+	args ...interface{}) ([]models.Airline, error) {
+	var al []models.Airline
+
+	rows, err := r.pgpool.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var a models.Airline
+		err := rows.Scan(
+			&a.ID, &a.AirlineName, &a.DateFounded, &a.FleetAverageAge,
+			&a.FleetSize, &a.Callsign, &a.HubCode, &a.Status,
+			&a.Type, &a.CountryName,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		al = append(al, a)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return al, nil
+}
+
+func (r *RepositoryAirline) GetAirlines(ctx context.Context, page, pageSize int) ([]models.Airline, error) {
+	offset := (page - 1) * pageSize
+	query := `select al.id, al.airline_name, al.date_founded, al.fleet_average_age, al.fleet_size,
+						al.callsign, al.hub_code, al.status, al.type, al.country_name
+						from  airline al
+						where al.airline_id != 0 AND TRIM(UPPER(al.airline_name)) != ''
+						order by al.airline_name
+						OFFSET $1 LIMIT $2`
+
+	return r.getAirlineData(ctx, query, offset, pageSize)
+}
+
 func (r *RepositoryAirline) GetAirlineSum(ctx context.Context) (int, error) {
 	var count int
 	row := r.pgpool.QueryRow(ctx, `SELECT Count(id)
@@ -71,4 +114,16 @@ func (r *RepositoryAirline) GetAirlinesLocations(ctx context.Context) ([]models.
 	}
 
 	return airline, nil
+}
+
+func (r *RepositoryAirline) GetAirlineByName(ctx context.Context, param string) ([]models.Airline, error) {
+	query := `select al.id, al.airline_name, al.date_founded, al.fleet_average_age, al.fleet_size,
+			       al.callsign, al.hub_code, al.status, al.type, al.country_name
+			from  airline al
+			where al.airline_id != 0
+			  AND TRIM(UPPER(al.airline_name)) != ''
+			  AND TRIM(UPPER(al.airline_name)) ILIKE TRIM(UPPER('%'+$1+'%'))
+			order by al.airline_name`
+
+	return r.getAirlineData(ctx, query, param)
 }

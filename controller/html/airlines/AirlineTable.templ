@@ -2,12 +2,14 @@ package airline
 
 import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
 	"fmt"
 	"strconv"
 )
 
 templ AirlineTable(a models.AirlineTable) {
-	<div class="flex flex-col items-center">
+	<div class="flex flex-col items-left">
+		@components.InputComponent()
 		<div class="overflow-x-auto">
 			<table class="table table-zebra">
 				<!-- head -->
@@ -19,7 +21,7 @@ templ AirlineTable(a models.AirlineTable) {
 					</tr>
 				</thead>
 				<!-- rows -->
-				<tbody>
+				<tbody id="search-results">
 					for _, airline := range a.Airline {
 						<tr class="hover">
 							<td>{ airline.AirlineName }</td>

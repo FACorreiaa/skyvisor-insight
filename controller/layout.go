@@ -5,7 +5,7 @@ import (
 
 	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/a-h/templ"
@@ -32,7 +32,7 @@ func (h *Handlers) CreateLayout(_ http.ResponseWriter, r *http.Request, title st
 	} else {
 		nav = []models.NavItem{
 			{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
-			{Path: "/airlines", Label: "Airlines", Icon: svg2.TicketIcon()},
+			{Path: "/airlines/airline", Label: "Airlines", Icon: svg2.TicketIcon()},
 			{Path: "/airports", Label: "Airports", Icon: svg2.BuildingOfficeIcon()},
 			{Path: "/flights", Label: "Flights", Icon: svg2.PaperAirplaneIcon()},
 			{Path: "/locations/city", Label: "Locations", Icon: svg2.LocationsIcon()},
@@ -48,5 +48,5 @@ func (h *Handlers) CreateLayout(_ http.ResponseWriter, r *http.Request, title st
 		Content:   data,
 	}
 
-	return layout.LayoutPage(l)
+	return components.LayoutPage(l)
 }

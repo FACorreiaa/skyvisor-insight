@@ -23,7 +23,7 @@ func (h *Handlers) logout(w http.ResponseWriter, r *http.Request) error {
 	token := session.Values["token"]
 
 	if token, ok := token.(string); ok {
-		h.core.accounts.Logout(r.Context(), account.Token(token))
+		_ = h.core.accounts.Logout(r.Context(), account.Token(token))
 	}
 
 	session.Values["token"] = ""

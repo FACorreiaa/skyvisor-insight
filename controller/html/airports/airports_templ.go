@@ -11,7 +11,7 @@ import "io"
 import "bytes"
 
 import (
-	"github.com/FACorreiaa/Aviation-tracker/controller/html/layout"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
@@ -32,7 +32,7 @@ func AirportPage(table templ.Component, sidebar []models.SidebarItem, title, des
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.BannerComponent(title, description).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.BannerComponent(title, description).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -40,7 +40,7 @@ func AirportPage(table templ.Component, sidebar []models.SidebarItem, title, des
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = layout.SidebarComponent(sidebar).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SidebarComponent(sidebar).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

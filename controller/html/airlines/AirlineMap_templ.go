@@ -60,14 +60,14 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 // iconFeature.setStyle(iconStyle);
 func mapContainer(data []models.Airline) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_b2a7`,
-		Function: `function __templ_mapContainer_b2a7(data){function createFeatureFromAirline(airline) {
+		Name: `__templ_mapContainer_1044`,
+		Function: `function __templ_mapContainer_1044(data){function createFeatureFromAirline(airline) {
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
                 anchor: [1, 46],
                 anchorXUnits: 'fraction',
                 anchorYUnits: 'pixels',
-                src: '../static/icons/marker.png',
+                src: '../../static/icons/marker.png',
                 scale: 0.5,
             }),
         });
@@ -197,8 +197,8 @@ func mapContainer(data []models.Airline) templ.ComponentScript {
       view.setZoom(zoom + 1);
    };
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_b2a7`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_b2a7`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_1044`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_1044`, data),
 	}
 }
 

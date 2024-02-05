@@ -21,8 +21,8 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 			Label: "Airlines",
 			Icon:  svg2.TicketIcon(),
 			SubItems: []models.SidebarItem{
-				{Path: "/airlines", Label: "Airline", Icon: svg2.TicketIcon()},
-				{Path: "/airlines/map", Label: "Airline location", Icon: svg2.MapIcon()},
+				{Path: "/airlines/airline", Label: "Airline", Icon: svg2.TicketIcon()},
+				{Path: "/airlines/airline/location", Label: "Airline location", Icon: svg2.MapIcon()},
 			},
 		},
 		{Path: "/airlines/tax", Label: "Airline Tax", Icon: svg2.CreditCardIcon()},
@@ -36,12 +36,22 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 }
 
 func (h *Handlers) getAirlinesLocations() ([]models.Airline, error) {
-	a, err := h.core.airlines.GetAirlinesLocations(context.Background())
+	al, err := h.core.airlines.GetAirlinesLocations(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	return a, nil
+	return al, nil
+}
+
+func (h *Handlers) getAirlineByName(_ http.ResponseWriter, r *http.Request) ([]models.Airline, error) {
+	param := r.FormValue("search")
+	al, err := h.core.airlines.GetAirlineByName(context.Background(), param)
+	if err != nil {
+		return nil, err
+	}
+	return al, err
+
 }
 
 func (h *Handlers) getTotalAirline() (int, error) {
@@ -62,12 +72,12 @@ func (h *Handlers) getAirline(_ http.ResponseWriter, r *http.Request) (int, []mo
 		page = 1
 	}
 
-	a, err := h.core.airlines.GetAirlines(context.Background(), page, pageSize)
+	al, err := h.core.airlines.GetAirlines(context.Background(), page, pageSize)
 	if err != nil {
 		return 0, nil, err
 	}
 
-	return page, a, nil
+	return page, al, nil
 }
 
 func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
@@ -100,12 +110,12 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 }
 
 func (h *Handlers) airlineMainPage(w http.ResponseWriter, r *http.Request) error {
-	taxTable, err := h.renderAirlineTable(w, r)
+	table, err := h.renderAirlineTable(w, r)
 	sidebar := h.renderAirlineSidebar()
 	if err != nil {
 		return err
 	}
-	a := airline.AirlineLayoutPage("Airline", "Check out data about Airlines", taxTable, sidebar)
+	a := airline.AirlineLayoutPage("Airline", "Check out data about Airlines", table, sidebar)
 	return h.CreateLayout(w, r, "Airline Tax Page", a).Render(context.Background(), w)
 }
 

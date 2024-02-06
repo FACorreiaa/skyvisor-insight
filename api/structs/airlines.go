@@ -14,7 +14,7 @@ type Airline struct {
 	ID                   string     `json:"id"`
 	FleetAverageAge      float64    `json:"fleet_average_age,string"`
 	AirlineID            int        `json:"airline_id,string"`
-	Callsign             string     `json:"callsign"`
+	CallSign             string     `json:"callsign"`
 	HubCode              string     `json:"hub_code"`
 	IataCode             string     `json:"iata_code"`
 	IcaoCode             string     `json:"icao_code"`

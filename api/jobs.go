@@ -550,7 +550,7 @@ func (s *ServiceJob) insertNewAirline() error {
 				return []interface{}{
 					airline.FleetAverageAge,
 					airline.AirlineID,
-					airline.Callsign,
+					airline.CallSign,
 					airline.HubCode,
 					airline.IataCode,
 					airline.IcaoCode,
@@ -773,7 +773,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 		duration := time.Since(startTime)
 		valueFromDuration := slog.DurationValue(duration)
 		slog.Info("Live flights job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
-		handleError(err, "Error checking for new aircraft")
+		handleError(err, "Error checking live flighst")
 	})
 	handleError(err, "Error running cron job")
 

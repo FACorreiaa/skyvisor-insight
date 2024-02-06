@@ -6,10 +6,11 @@ import (
 	"net/http"
 	"strconv"
 
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
+
 	"github.com/a-h/templ"
 
 	airline "github.com/FACorreiaa/Aviation-tracker/controller/html/airlines"
-	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
@@ -86,9 +87,21 @@ func (h *Handlers) getAirline(_ http.ResponseWriter, r *http.Request) (int, []mo
 }
 
 func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	columnNames := []string{"Airline Name", "Date Founded", "Fleet Average Age", "Fleet Size",
-		"Call Sign", "Hub Code", "Status", "Type", "Country name",
+	columnNames := []models.ColumnItems{
+		{Title: "Airline Name", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
+		{Title: "Date Founder", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
+		{Title: "Fleet Average Size", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
+		{Title: "Fleet Size", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
+		{Title: "Call Sign", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
+		{Title: "Hub Code", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
+		{Title: "Status", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
+		{Title: "Type", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
+		{Title: "Country Name", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
 	}
+
+	// 	{"Airline Name", "Date Founded", "Fleet Average Age", "Fleet Size",
+	// 	"Call Sign", "Hub Code", "Status", "Type", "Country name",
+	// }
 	param := r.FormValue("search")
 	var page int
 

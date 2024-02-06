@@ -88,15 +88,15 @@ func (h *Handlers) getAirline(_ http.ResponseWriter, r *http.Request) (int, []mo
 
 func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
 	columnNames := []models.ColumnItems{
-		{Title: "Airline Name", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
-		{Title: "Date Founder", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
-		{Title: "Fleet Average Size", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
-		{Title: "Fleet Size", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
-		{Title: "Call Sign", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
-		{Title: "Hub Code", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
-		{Title: "Status", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
-		{Title: "Type", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
-		{Title: "Country Name", Icon: svg2.ArrowOrderIcon("w-3 h-3 stroke-2")},
+		{Title: "Airline Name", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Date Founder", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Fleet Average Size", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Fleet Size", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Call Sign", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Hub Code", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Status", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Type", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Country Name", Icon: svg2.ArrowOrderIcon()},
 	}
 
 	// 	{"Airline Name", "Date Founded", "Fleet Average Age", "Fleet Size",

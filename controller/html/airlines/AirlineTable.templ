@@ -17,8 +17,13 @@ templ AirlineTable(a models.AirlineTable) {
 				<thead>
 					<tr>
 						for _, col := range a.Column {
-							<th class="align-middle">
-								{ col.Title } @col.Icon
+							<th>
+								<div class="flex justify-start align-middle">
+									{ col.Title }
+									<button class="pl-4">
+										@col.Icon
+									</button>
+								</div>
 							</th>
 						}
 					</tr>

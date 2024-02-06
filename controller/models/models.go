@@ -252,12 +252,13 @@ type AircraftTable struct {
 }
 
 type AirlineTable struct {
-	Column   []string
-	Airline  []Airline
-	PrevPage int
-	NextPage int
-	Page     int
-	LastPage int
+	Column      []string
+	Airline     []Airline
+	PrevPage    int
+	NextPage    int
+	Page        int
+	LastPage    int
+	SearchParam string
 }
 
 type AirplaneTable struct {

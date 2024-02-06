@@ -47,26 +47,14 @@ templ AirlineTable(a models.AirlineTable) {
 			</table>
 			<!-- paginator -->
 			<div class="flex justify-center mt-10">
-				<form class="join" hx-boost="true" method="get">
-					<a
-						class="join-item btn"
-						href={ templ.URL("/airlines") }
-					>First Page</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airlines?page=%d", a.PrevPage)) }
-					>«</a>
-					<button class="join-item btn disabled">{ strconv.Itoa(a.Page) }</button>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airlines?page=%d", a.NextPage)) }
-					>»</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airlines?page=%d", a.LastPage)) }
-					>Last Page</a>
-				</form>
-			</div>
+                <form class="join" hx-boost="true" method="get">
+                    <a class="join-item btn" href={templ.SafeURL("/airlines/airline")}>First Page</a>
+                    <a class="join-item btn" href={templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.PrevPage, a.SearchParam))}>«</a>
+                    <button class="join-item btn disabled">{strconv.Itoa(a.Page)}</button>
+                    <a class="join-item btn" href={templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.NextPage, a.SearchParam))}>»</a>
+                    <a class="join-item btn" href={templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.SearchParam))}>Last Page</a>
+                </form>
+            </div>
 		</div>
 	</div>
 }

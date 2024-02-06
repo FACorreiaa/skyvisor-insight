@@ -116,14 +116,17 @@ func (r *RepositoryAirline) GetAirlinesLocations(ctx context.Context) ([]models.
 	return airline, nil
 }
 
-func (r *RepositoryAirline) GetAirlineByName(ctx context.Context, param string) ([]models.Airline, error) {
+func (r *RepositoryAirline) GetAirlineByName(ctx context.Context, param string, page,
+	pageSize int) ([]models.Airline, error) {
+	offset := (page - 1) * pageSize
 	query := `select al.id, al.airline_name, al.date_founded, al.fleet_average_age, al.fleet_size,
 			       al.callsign, al.hub_code, al.status, al.type, al.country_name
 			from  airline al
 			where al.airline_id != 0
 			  AND TRIM(UPPER(al.airline_name)) != ''
-			  AND TRIM(UPPER(al.airline_name)) ILIKE TRIM(UPPER('%'+$1+'%'))
-			order by al.airline_name`
+			  AND TRIM(UPPER(al.airline_name)) ILIKE TRIM(UPPER('%' || $1 || '%'))
+			order by al.airline_name
+			OFFSET $2 LIMIT $3`
 
-	return r.getAirlineData(ctx, query, param)
+	return r.getAirlineData(ctx, query, param, offset, pageSize)
 }

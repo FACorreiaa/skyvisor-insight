@@ -1,21 +1,23 @@
 package components
 
 templ InputComponent() {
-	<form method="post"  hx-post="/airlines/airline"
-                            			hx-trigger="input changed delay:500ms, search"
-                            			hx-target="#search-results">
-	<label class="w-full max-w-xs form-control">
-    		<div class="label">
-    			<span class="label-text">Search by Airline Name</span>
-    		</div>
-    		<input
-    			type="search"
-    			placeholder="Type here"
-    			class="w-full max-w-xs input input-bordered"
-    			name="search"
-
-    			hx-indicator=".htmx-indicator"
-    		/>
-    	</label>
-    	</form>
+	<form
+		method="get"
+		hx-get="/airlines/airline"
+		hx-trigger="input changed delay:500ms, search"
+		hx-target="#search-results, tbody"
+	>
+		<label class="w-full max-w-xs form-control">
+			<div class="label">
+				<span class="label-text">Search by Airline Name</span>
+			</div>
+			<input
+				type="search"
+				placeholder="Type here"
+				class="w-full max-w-xs input input-bordered input-sm"
+				name="search"
+				hx-indicator=".htmx-indicator"
+			/>
+		</label>
+	</form>
 }

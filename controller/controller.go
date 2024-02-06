@@ -106,11 +106,11 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	// Airlines Router
 	airlinesRouter := auth.PathPrefix("/airlines").Subrouter()
 	airlinesRouter.HandleFunc("/airline", handler(h.airlineMainPage)).Methods(http.MethodGet)
-	airlinesRouter.HandleFunc("/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
-	airlinesRouter.HandleFunc("/airline/{name}", handler(h.airlineMainPage)).Methods(http.MethodPost)
+	airlinesRouter.HandleFunc("/airline/location", handler(h.airlineLocationPage)).Methods(http.MethodGet)
+	airlinesRouter.HandleFunc("/airline/{name}", handler(h.airlineMainPage)).Methods(http.MethodGet)
 	airlinesRouter.HandleFunc("/aircraft", handler(h.airlineAircraftPage)).Methods(http.MethodGet)
 	airlinesRouter.HandleFunc("/airplane", handler(h.airlineAirplanePage)).Methods(http.MethodGet)
-	airlinesRouter.HandleFunc("/airline/location", handler(h.airlineLocationPage)).Methods(http.MethodGet)
+	airlinesRouter.HandleFunc("/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
 
 	// locations
 	locationsRouter := auth.PathPrefix("/locations").Subrouter()

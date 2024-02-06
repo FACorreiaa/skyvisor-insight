@@ -44,14 +44,19 @@ func (h *Handlers) getAirlinesLocations() ([]models.Airline, error) {
 	return al, nil
 }
 
-func (h *Handlers) getAirlineByName(_ http.ResponseWriter, r *http.Request) ([]models.Airline, error) {
+func (h *Handlers) getAirlineByName(_ http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
 	param := r.FormValue("search")
-	al, err := h.core.airlines.GetAirlineByName(context.Background(), param)
+	pageSize := 10
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
-		return nil, err
+		// Handle error or set a default page number
+		page = 1
 	}
-	return al, err
-
+	al, err := h.core.airlines.GetAirlineByName(context.Background(), param, page, pageSize)
+	if err != nil {
+		return 0, nil, err
+	}
+	return page, al, err
 }
 
 func (h *Handlers) getTotalAirline() (int, error) {
@@ -84,8 +89,21 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 	columnNames := []string{"Airline Name", "Date Founded", "Fleet Average Age", "Fleet Size",
 		"Call Sign", "Hub Code", "Status", "Type", "Country name",
 	}
+	param := r.FormValue("search")
+	var page int
 
-	page, al, _ := h.getAirline(w, r)
+	var al []models.Airline
+	fullPage, airlineList, _ := h.getAirline(w, r)
+	filteredPage, filteredAirline, _ := h.getAirlineByName(w, r)
+
+	if len(param) > 0 {
+		al = filteredAirline
+		page = filteredPage
+	} else {
+		al = airlineList
+		page = fullPage
+	}
+
 	nextPage := page + 1
 	prevPage := page - 1
 	if prevPage < 1 {
@@ -97,12 +115,13 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 		return nil, err
 	}
 	a := models.AirlineTable{
-		Column:   columnNames,
-		Airline:  al,
-		PrevPage: prevPage,
-		NextPage: nextPage,
-		Page:     page,
-		LastPage: lastPage,
+		Column:      columnNames,
+		Airline:     al,
+		PrevPage:    prevPage,
+		NextPage:    nextPage,
+		Page:        page,
+		LastPage:    lastPage,
+		SearchParam: param,
 	}
 	airlineTable := airline.AirlineTable(a)
 
@@ -111,6 +130,7 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 
 func (h *Handlers) airlineMainPage(w http.ResponseWriter, r *http.Request) error {
 	table, err := h.renderAirlineTable(w, r)
+
 	sidebar := h.renderAirlineSidebar()
 	if err != nil {
 		return err

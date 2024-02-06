@@ -99,9 +99,6 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 		{Title: "Country Name", Icon: svg2.ArrowOrderIcon()},
 	}
 
-	// 	{"Airline Name", "Date Founded", "Fleet Average Age", "Fleet Size",
-	// 	"Call Sign", "Hub Code", "Status", "Type", "Country name",
-	// }
 	param := r.FormValue("search")
 	var page int
 

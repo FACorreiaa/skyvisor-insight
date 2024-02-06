@@ -34,7 +34,7 @@ func (r *RepositoryAirline) getAirlineData(ctx context.Context, query string,
 		var a models.Airline
 		err := rows.Scan(
 			&a.ID, &a.AirlineName, &a.DateFounded, &a.FleetAverageAge,
-			&a.FleetSize, &a.Callsign, &a.HubCode, &a.Status,
+			&a.FleetSize, &a.CallSign, &a.HubCode, &a.Status,
 			&a.Type, &a.CountryName,
 		)
 
@@ -99,7 +99,7 @@ func (r *RepositoryAirline) GetAirlinesLocations(ctx context.Context) ([]models.
 		var a models.Airline
 		err := rows.Scan(
 			&a.AirlineID, &a.AirlineName, &a.DateFounded, &a.FleetAverageAge,
-			&a.FleetSize, &a.Callsign, &a.HubCode, &a.Status, &a.Type, &a.CountryName,
+			&a.FleetSize, &a.CallSign, &a.HubCode, &a.Status, &a.Type, &a.CountryName,
 			&a.CityName, &a.AirportName, &a.Timezone, &a.Latitude, &a.Longitude,
 		)
 

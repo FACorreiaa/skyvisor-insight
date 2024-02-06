@@ -137,7 +137,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = svg2.ArrowDown().Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = svg2.ArrowDownIcon().Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

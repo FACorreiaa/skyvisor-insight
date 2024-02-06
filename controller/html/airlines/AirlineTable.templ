@@ -11,12 +11,15 @@ templ AirlineTable(a models.AirlineTable) {
 	<div class="flex flex-col items-left">
 		@components.InputComponent()
 		<div class="overflow-x-auto">
+			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-zebra">
 				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range a.Column {
-							<th>{ col }</th>
+							<th class="align-middle">
+								{ col.Title } @col.Icon
+							</th>
 						}
 					</tr>
 				</thead>
@@ -36,7 +39,7 @@ templ AirlineTable(a models.AirlineTable) {
 								<td>{ fmt.Sprintf("%.1f",airline.FleetAverageAge) }</td>
 							}
 							<td>{ fmt.Sprintf("%d",airline.FleetSize) }</td>
-							<td>{ airline.Callsign }</td>
+							<td>{ airline.CallSign }</td>
 							<td>{ airline.HubCode }</td>
 							<td>{ airline.Status }</td>
 							<td>{ airline.Type }</td>
@@ -47,14 +50,14 @@ templ AirlineTable(a models.AirlineTable) {
 			</table>
 			<!-- paginator -->
 			<div class="flex justify-center mt-10">
-                <form class="join" hx-boost="true" method="get">
-                    <a class="join-item btn" href={templ.SafeURL("/airlines/airline")}>First Page</a>
-                    <a class="join-item btn" href={templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.PrevPage, a.SearchParam))}>«</a>
-                    <button class="join-item btn disabled">{strconv.Itoa(a.Page)}</button>
-                    <a class="join-item btn" href={templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.NextPage, a.SearchParam))}>»</a>
-                    <a class="join-item btn" href={templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.SearchParam))}>Last Page</a>
-                </form>
-            </div>
+				<form class="join" hx-boost="true" method="get">
+					<a class="join-item btn" href={ templ.SafeURL("/airlines/airline") }>First Page</a>
+					<a class="join-item btn" href={ templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.PrevPage, a.SearchParam)) }>«</a>
+					<button class="join-item btn disabled">{ strconv.Itoa(a.Page) }</button>
+					<a class="join-item btn" href={ templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.NextPage, a.SearchParam)) }>»</a>
+					<a class="join-item btn" href={ templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.SearchParam)) }>Last Page</a>
+				</form>
+			</div>
 		</div>
 	</div>
 }

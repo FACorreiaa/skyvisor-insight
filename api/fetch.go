@@ -367,7 +367,7 @@ func FetchAndInsertAirlineData(conn *pgxpool.Pool) error {
 			return []interface{}{
 				res.Data[i].FleetAverageAge,
 				res.Data[i].AirlineID,
-				res.Data[i].Callsign,
+				res.Data[i].CallSign,
 				res.Data[i].HubCode,
 				res.Data[i].IataCode,
 				res.Data[i].IcaoCode,

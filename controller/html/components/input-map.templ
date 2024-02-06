@@ -2,10 +2,11 @@ package components
 
 templ InputComponent() {
 	<form
+	    hx-boost="true"
 		method="get"
 		hx-get="/airlines/airline"
 		hx-trigger="input changed delay:500ms, search"
-		hx-target="#search-results, tbody"
+		hx-target="#search-results"
 	>
 		<label class="w-full max-w-xs form-control">
 			<div class="label">

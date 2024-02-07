@@ -180,6 +180,36 @@ type Airline struct {
 	CreatedAt            CustomTime `db:"created_at" json:"created_at"`
 }
 
+type AirlineDetails struct {
+	ID                   string      `json:"id"`
+	FleetAverageAge      float64     `json:"fleet_average_age,string"`
+	AirlineID            int         `json:"airline_id,string"`
+	CallSign             string      `json:"callsign"`
+	HubCode              string      `json:"hub_code"`
+	IataCode             string      `json:"iata_code"`
+	IcaoCode             string      `json:"icao_code"`
+	CountryISO2          string      `json:"country_iso2"`
+	DateFounded          int         `json:"date_founded,string"`
+	IataPrefixAccounting int         `json:"iata_prefix_accounting,string"`
+	AirlineName          string      `json:"airline_name"`
+	CountryName          string      `json:"country_name"`
+	FleetSize            int         `json:"fleet_size,string"`
+	Status               string      `json:"status"`
+	Type                 string      `json:"type"`
+	CityName             string      `json:"city_name"`
+	AirportName          string      `json:"airport_name"`
+	Timezone             string      `json:"timezone"`
+	Latitude             float64     `json:"latitude,string,omitempty"`
+	Longitude            float64     `json:"longitude,string,omitempty"`
+	PlaneAge             int         `json:"plane_age,string"`
+	PlaneClass           interface{} `json:"plane_class"`
+	ModelName            string      `json:"model_name"`
+	PlaneOwner           interface{} `json:"plane_owner"`
+	RegistrationDate     CustomTime  `json:"registration_date"`
+	Continent            string      `json:"continent"`
+	CreatedAt            CustomTime  `db:"created_at" json:"created_at"`
+}
+
 type Airplane struct {
 	ID                     string      `json:"id" `
 	AirlineName            string      `json:"airline_name"`

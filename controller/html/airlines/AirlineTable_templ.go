@@ -78,7 +78,7 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 templ.SafeURL = templ.URL(fmt.Sprintf("/airlines/airline/%s", airline.AirlineName))
+			var templ_7745c5c3_Var3 templ.SafeURL = templ.URL(fmt.Sprintf("/airlines/airline/%s", airline.ID))
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -90,7 +90,7 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(airline.AirlineName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirlineTable.templ`, Line: 35, Col: 109}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirlineTable.templ`, Line: 35, Col: 100}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

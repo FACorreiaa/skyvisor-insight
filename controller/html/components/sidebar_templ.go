@@ -40,7 +40,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"sidebar-multi-level-sidebar\" class=\"fixed left-0 z-40 transition-transform -translate-x-full w-58 sm:translate-x-0\" aria-label=\"Sidebar\"><div class=\"h-full pt-0 pr-3 bg-gray-50 dark:bg-gray-800\"><ul class=\"space-y-4 font-normal menu\" onclick=\"toggleDropdown(this)\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"sidebar-multi-level-sidebar\" class=\"fixed left-0 z-40 w-40 transition-transform -translate-x-full sm:translate-x-0\" aria-label=\"Sidebar\"><div class=\"h-full pt-0 pr-3 bg-gray-50 dark:bg-gray-800\"><ul class=\"space-y-4 font-normal menu\" onclick=\"toggleDropdown(this)\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

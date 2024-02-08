@@ -1,0 +1,74 @@
+package airport
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"fmt"
+)
+
+//refactor tomorrow
+templ CardAirportComponent(a models.Airport) {
+	<div class="shadow-xl card w-96 bg-base-100">
+		<div class="card-body">
+			<h2 class="card-title">Airport Name</h2>
+			<ul>
+				<li><strong>Airport: </strong>{ a.AirportName }</li>
+				<li><strong>Phone: </strong>{ a.PhoneNumber.String }</li>
+				<li><strong>Timezone: </strong>{ a.Timezone }</li>
+			</ul>
+		</div>
+	</div>
+}
+
+templ CardLocationComponent(a models.Airport) {
+	<div class="shadow-xl card w-96 bg-base-100">
+		<div class="card-body">
+			<h2 class="card-title">Locations</h2>
+			<ul>
+				<li><strong>Country: </strong>{ a.CountryName }</li>
+				<li><strong>City: </strong>{ a.CityName }</li>
+				<li><strong>GMT: </strong>{ a.GMT }</li>
+			</ul>
+		</div>
+	</div>
+}
+
+templ CardCoordinatesComponent(a models.Airport) {
+	<div class="shadow-xl card w-96 bg-base-100">
+		<div class="card-body">
+			<h2 class="card-title">Locations</h2>
+			<ul>
+				<li><strong>Latitude: </strong>{ fmt.Sprintf("%f", a.Latitude) }</li>
+				<li><strong>Longitude: </strong>{ fmt.Sprintf("%f", a.Longitude) }</li>
+				<li><strong>Geoname ID: </strong>{ a.GeonameID }</li>
+			</ul>
+		</div>
+	</div>
+}
+
+templ AirportDetailsPage(sidebar []models.SidebarItem, a models.Airport, title, description string) {
+	<div>
+		@components.BannerComponent(title, description)
+		<div class="container flex pt-10 mx-auto mb-24 mr:px-6">
+			<div class="w-1/12">
+				@components.SidebarComponent(sidebar)
+			</div>
+			<div class="w-11/12 ml-10">
+				<div class="flex mb-24 mr:px-6">
+					<div class="w-full md:w-1/3">
+						@CardAirportComponent(a)
+					</div>
+					<div class="w-full md:w-1/3">
+						@CardLocationComponent(a)
+					</div>
+					<div class="w-full md:w-1/3">
+						@CardCoordinatesComponent(a)
+					</div>
+				</div>
+				<div class="w-11/12 ">
+					@AirportDetailedMap(a)
+				</div>
+			</div>
+		</div>
+	</div>
+}

@@ -3,6 +3,7 @@ package controller
 import (
 	"embed"
 	"errors"
+	"log"
 	"log/slog"
 	"net/http"
 
@@ -42,6 +43,22 @@ type Handlers struct {
 	sessions    *sessions.CookieStore
 	core        *core
 	redisClient *redis.Client
+}
+
+func HandlerErrorExtended(message string, values ...interface{}) {
+	for _, v := range values {
+		if v == nil {
+			continue
+		}
+
+		log.Printf("%s: %v", message, v)
+	}
+}
+
+func HandleError(err error, message string) {
+	if err != nil {
+		log.Printf("%s: %v", message, err)
+	}
 }
 
 func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client) http.Handler {
@@ -123,7 +140,9 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	airportsRouter := auth.PathPrefix("/airports").Subrouter()
 	airportsRouter.HandleFunc("", handler(h.airportPage)).Methods(http.MethodGet)
 	airportsRouter.HandleFunc("/locations", handler(h.airportLocationPage)).Methods(http.MethodGet)
+	airlinesRouter.HandleFunc("/airport/{airport_name}", handler(h.airportPage)).Methods(http.MethodGet)
 
+	airportsRouter.HandleFunc("/details/{airport_id}", handler(h.airportDetailsPage)).Methods(http.MethodGet)
 	auth.HandleFunc("/flights", handler(h.liveFlightsPage)).Methods(http.MethodGet)
 
 	return r

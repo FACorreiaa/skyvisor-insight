@@ -114,10 +114,8 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 		page = fullPage
 	}
 
-	nextPage := page + 1
-	prevPage := page - 1
-	if prevPage < 1 {
-		prevPage = 1
+	if page-1 < 0 {
+		return nil, nil
 	}
 
 	lastPage, err := h.getTotalAirline()
@@ -127,8 +125,8 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 	a := models.AirlineTable{
 		Column:      columnNames,
 		Airline:     al,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
+		PrevPage:    page - 1,
+		NextPage:    page + 1,
 		Page:        page,
 		LastPage:    lastPage,
 		SearchParam: param,

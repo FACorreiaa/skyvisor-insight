@@ -21,6 +21,7 @@ func (h *Handlers) getAirlineAircraft(_ http.ResponseWriter, r *http.Request) (i
 
 	a, err := h.core.airlines.GetAircraft(context.Background(), page, pageSize)
 	if err != nil {
+		HandleError(err, "Error getting aircrafts")
 		return 0, nil, err
 	}
 

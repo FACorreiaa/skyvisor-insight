@@ -130,3 +130,49 @@ func (r *RepositoryAirline) GetAirlineByName(ctx context.Context, param string, 
 
 	return r.getAirlineData(ctx, query, param, offset, pageSize)
 }
+
+func (r *RepositoryAirline) GetAirlineByID(ctx context.Context, id int) (models.AirlineDetails, error) {
+	var al models.AirlineDetails
+	query := `
+		select DISTINCT ON (al.airline_name) al.fleet_average_age, al.airline_id, al.callsign, al.hub_code,
+                                     al.iata_code, al.icao_code, al.country_iso2, al.date_founded,
+                                     al.iata_prefix_accounting, al.airline_name, al.country_name,
+                                     al.fleet_size, al.status, al.type, al.created_at,
+                                     ap.model_name, ap.plane_owner, ap.plane_age, ap.registration_date,
+                                     c.continent
+		from airline al
+		         right join airplane ap on al.iata_code = ap.airline_iata_code
+		         JOIN country c ON al.country_iso2 = c.country_iso2
+		WHERE al.airline_name IS NOT NULL
+		AND al.airline_name != ''
+		AND al.airline_id = $1
+;`
+	err := r.pgpool.QueryRow(ctx, query, id).Scan(
+		&al.FleetAverageAge,
+		&al.AirlineID,
+		&al.CallSign,
+		&al.HubCode,
+		&al.IataCode,
+		&al.IcaoCode,
+		&al.CountryISO2,
+		&al.DateFounded,
+		&al.IataPrefixAccounting,
+		&al.AirlineName,
+		&al.CountryName,
+		&al.FleetSize,
+		&al.Status,
+		&al.Type,
+		&al.CreatedAt,
+		&al.ModelName,
+		&al.PlaneOwner,
+		&al.PlaneAge,
+		&al.RegistrationDate,
+		&al.Continent,
+	)
+
+	if err != nil {
+		return models.AirlineDetails{}, err
+	}
+
+	return al, nil
+}

@@ -1,16 +1,16 @@
 package components
 
-templ InputComponent() {
+templ InputComponent(label string, route string, target string) {
 	<form
 	    hx-boost="true"
 		method="get"
-		hx-get="/airlines/airline"
+		hx-get={route}
 		hx-trigger="input changed delay:500ms, search"
-		hx-target="#search-results"
+		hx-target={target}
 	>
 		<label class="w-full max-w-xs form-control">
 			<div class="label">
-				<span class="label-text">Search by Airline Name</span>
+				<span class="label-text">{label}</span>
 			</div>
 			<input
 				type="search"

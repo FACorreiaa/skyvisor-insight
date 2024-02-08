@@ -20,12 +20,13 @@ import (
 func (h *Handlers) getAirports(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
 	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	orderBy := r.URL.Query().Get("orderBy")
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	a, err := h.core.airports.GetAirports(context.Background(), page, pageSize)
+	a, err := h.core.airports.GetAirports(context.Background(), page, pageSize, orderBy)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -76,6 +77,23 @@ func (h *Handlers) getAirportDetails(_ http.ResponseWriter, r *http.Request) (mo
 	return ap, nil
 }
 
+func (h *Handlers) getAirportByName(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
+	param := r.FormValue("search")
+	pageSize := 10
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	orderBy := r.URL.Query().Get("orderBy")
+
+	if err != nil {
+		// Handle error or set a default page number
+		page = 1
+	}
+	ap, err := h.core.airports.GetAirportByName(context.Background(), param, page, pageSize, orderBy)
+	if err != nil {
+		return 0, nil, err
+	}
+	return page, ap, err
+}
+
 func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
 	columnNames := []models.ColumnItems{
 		{Title: "Airport Name", Icon: svg2.ArrowOrderIcon()},
@@ -91,7 +109,7 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 	var page int
 
 	param := r.FormValue("search")
-
+	orderBy := r.FormValue("orderBy")
 	fullPage, airportList, _ := h.getAirports(w, r)
 	filteredPage, filteredAirport, _ := h.getAirportByName(w, r)
 
@@ -119,6 +137,7 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 		Page:        page,
 		LastPage:    lastPage,
 		SearchParam: param,
+		OrderParam:  orderBy,
 	}
 	airportTable := airport.AirportTableComponent(a)
 
@@ -151,21 +170,6 @@ func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
 	}
 	a := airport.AirportPage(at, sidebar, "Airports", "Check out airport locations")
 	return h.CreateLayout(w, r, "Airport Page", a).Render(context.Background(), w)
-}
-
-func (h *Handlers) getAirportByName(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
-	param := r.FormValue("search")
-	pageSize := 10
-	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-	if err != nil {
-		// Handle error or set a default page number
-		page = 1
-	}
-	ap, err := h.core.airports.GetAirportByName(context.Background(), param, page, pageSize)
-	if err != nil {
-		return 0, nil, err
-	}
-	return page, ap, err
 }
 
 func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) error {

@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -17,11 +17,11 @@ import (
 )
 
 func main() {
-	//go:generate npx tailwindcss build -c tailwind.config.js -o ./controller/static/css/style.css --
+	//go:generate npx tailwindcss build -c tailwind.config.js -o ./controller/static/css/style.css -
 
 	cfg, err := config.NewConfig()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
@@ -39,7 +39,7 @@ func main() {
 
 	pool, err := db.Init(cfg.Database.ConnectionURL)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 	defer pool.Close()
@@ -48,20 +48,20 @@ func main() {
 
 	redisClient, err := db.InitRedis(cfg.Redis.Host, cfg.Redis.Password, cfg.Redis.DB)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 	defer func(redisClient *redis.Client) {
 		err = redisClient.Close()
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			os.Exit(1)
 		}
 	}(redisClient)
 	// db.WaitForRedis(redisClient)
 
 	if err = db.Migrate(pool); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
@@ -69,48 +69,48 @@ func main() {
 
 	tableDataMigration := api.NewRepository(pool)
 	if err = tableDataMigration.MigrateAirlineAPIData(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	if err = tableDataMigration.MigrateAircraftAPIData(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	if err = tableDataMigration.MigrateTaxAPIData(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	if err = tableDataMigration.MigrateAirplaneAPIData(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	if err = tableDataMigration.MigrateAirportAPIData(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	if err = tableDataMigration.MigrateCountryAPIData(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	if err = tableDataMigration.MigrateCityAPIData(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 	if err = tableDataMigration.MigrateFlightAPIData(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
-	fmt.Println("This operation took: ", time.Since(startTime))
+	log.Println("This operation took: ", time.Since(startTime))
 
 	// if err = db.MigrateRedis(redisClient); err != nil {
-	//	fmt.Println(err)
+	//	log.Println(err)
 	//	os.Exit(1)
 	//}
 

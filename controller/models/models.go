@@ -262,6 +262,7 @@ type Table[T any, V any] struct {
 	Page        int
 	LastPage    int
 	SearchParam string
+	QueryParam  string
 }
 
 type AirportTable struct {
@@ -272,6 +273,7 @@ type AirportTable struct {
 	Page        int
 	LastPage    int
 	SearchParam string
+	OrderParam  string
 }
 
 type TaxTable struct {

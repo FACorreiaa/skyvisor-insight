@@ -92,9 +92,9 @@ func (a *RepositoyAccount) Login(ctx context.Context, form LoginForm) (*Token, e
 func (a *RepositoyAccount) UserFromSessionToken(ctx context.Context, token Token) (*User, error) {
 	// key := REDIS_PREFIX + string(token)
 	// Retrieve user ID from Redis
-	fmt.Println("Retrieving user ID from Redis for token:", token)
+	log.Println("Retrieving user ID from Redis for token:", token)
 	userID, err := a.redisClient.Get(ctx, token).Result()
-	fmt.Println("Retrieved user ID from Redis:", userID)
+	log.Println("Retrieved user ID from Redis:", userID)
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			return nil, errors.New("auth session expired")

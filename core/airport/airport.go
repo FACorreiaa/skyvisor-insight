@@ -2,7 +2,6 @@ package airport
 
 import (
 	"context"
-
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -52,19 +51,28 @@ func (r *RepositoryAirport) getAirportData(ctx context.Context, query string,
 	return al, nil
 }
 
-func (r *RepositoryAirport) GetAirports(ctx context.Context, page, pageSize int) ([]models.Airport, error) {
+func (r *RepositoryAirport) GetAirports(ctx context.Context,
+	page, pageSize int, orderBy string) ([]models.Airport, error) {
 	query := `SELECT id, gmt, airport_id, iata_code,
        										city_iata_code, icao_code, country_iso2,
-       										geoname_id, latitude, longitude, airport_name,
+       										geoname_id, latitude, longitude, airport_name as "Airport Name",
        										country_name, phone_number, timezone,
        										created_at
        								FROM airport
        								WHERE  airport_name IS NOT NULL AND TRIM(UPPER(airport_name)) != ''
-       								ORDER BY id
-       								OFFSET $1 LIMIT $2`
+       								ORDER BY CASE
+							         WHEN $1 = 'Airport Name' then airport_name::text
+							         WHEN $1 = 'Country Name' then country_name::text
+       								 WHEN $1 = 'Phone Number' then phone_number::text
+       								 WHEN $1 = 'Timezone' then timezone::text   
+       								 WHEN $1 = 'GMT' then gmt::text
+       								 WHEN $1 = 'Latitude' then latitude::text
+       								 WHEN $1 = 'Longitude' then longitude::text
+							         END DESC 
+       								OFFSET $2 LIMIT $3`
 	offset := (page - 1) * pageSize
 
-	return r.getAirportData(ctx, query, offset, pageSize)
+	return r.getAirportData(ctx, query, orderBy, offset, pageSize)
 }
 
 func (r *RepositoryAirport) GetSum(ctx context.Context) (int, error) {
@@ -119,19 +127,19 @@ func (r *RepositoryAirport) GetAirportsLocation(ctx context.Context) ([]models.A
 }
 
 func (r *RepositoryAirport) GetAirportByName(ctx context.Context, name string,
-	page, pageSize int) ([]models.Airport, error) {
+	page, pageSize int, orderBy string) ([]models.Airport, error) {
 	query := `SELECT id, gmt, airport_id, iata_code,
        										city_iata_code, icao_code, country_iso2,
-       										geoname_id, latitude, longitude, airport_name,
+       										geoname_id, latitude, longitude, airport_name as "Airport Name",
        										country_name, phone_number, timezone,
        										created_at
        								FROM airport
        								WHERE  TRIM(UPPER(airport_name)) ILIKE TRIM(UPPER('%' || $1 || '%'))
-       								ORDER BY id
-       								OFFSET $2 LIMIT $3`
+       								ORDER BY $2 DESC
+       								OFFSET $3 LIMIT $4`
 	offset := (page - 1) * pageSize
 
-	return r.getAirportData(ctx, query, name, offset, pageSize)
+	return r.getAirportData(ctx, query, name, orderBy, offset, pageSize)
 }
 
 func (r *RepositoryAirport) GetAirportByID(ctx context.Context, id int) (models.Airport, error) {

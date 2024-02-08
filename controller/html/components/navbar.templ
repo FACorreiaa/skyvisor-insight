@@ -7,13 +7,15 @@ import (
 
 templ NavbarComponent(nav []models.NavItem, user *account.User, activeNav string) {
 	<nav class="bg-gray-600 border-gray-200 dark:bg-gray-900">
-		<div class="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto">
+		<div class="flex items-center justify-between px-6 py-2">
+			<!-- Logo at the left -->
 			<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-				<img src="../static/icons/ticket.png" class="h-8" alt="Flowbite Logo"/>
+				<img src={ "/static/icons/ticket.png" } class="h-8" alt="SkyVisor Insight"/>
 				<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">SkyVisor Insight</span>
 			</a>
-			<div class="hidden w-full md:block md:w-auto" id="navbar-default">
-				<ul class="px-1 menu menu-horizontal">
+			<!-- Items aligned to the right -->
+			<div class="flex items-center space-x-2">
+				<ul class="menu menu-horizontal">
 					for _, item := range nav {
 						<li hx-boost="true">
 							<a

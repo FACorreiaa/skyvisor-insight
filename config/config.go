@@ -106,13 +106,13 @@ func NewLogConfig() *LogConfig {
 func NewDatabaseConfig() (*DatabaseConfig, error) {
 	err := godotenv.Load(".env")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		log.Fatal("Error loading .env file")
 	}
 
 	if os.Getenv("APP_ENV") == "dev" {
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			log.Fatal("Error loading .env file")
 		}
 	}

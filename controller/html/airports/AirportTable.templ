@@ -16,8 +16,8 @@ script returnToPreviousPage(page int) {
 }
 
 templ AirportTableComponent(airport models.AirportTable) {
-	<div class="flex flex-col items-left">
-		@components.InputComponent("Search by Airport Name", "/airlines/airline", "#search-results")
+	<div class="flex flex-col items-left" id="table-container">
+		@components.InputComponent("Search by Airport Name", "/airports")
 		<div class="overflow-x-auto">
 			<table class="table table-zebra">
 				<!-- head -->
@@ -25,11 +25,16 @@ templ AirportTableComponent(airport models.AirportTable) {
 					<tr>
 						for _, col := range airport.Column {
 							<th>
-								<div class="flex justify-start align-middle">
+								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
-									<button class="pl-4">
-										@col.Icon
-									</button>
+									<form class="join" hx-boost="true" method="get">
+										<a
+											class="pl-4"
+											href={ templ.URL(fmt.Sprintf("/airports?orderBy=%s", col.Title)) }
+										>
+											@col.Icon
+										</a>
+									</form>
 								</div>
 							</th>
 						}

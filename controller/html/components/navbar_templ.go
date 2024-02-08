@@ -28,7 +28,15 @@ func NavbarComponent(nav []models.NavItem, user *account.User, activeNav string)
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"bg-gray-600 border-gray-200 dark:bg-gray-900\"><div class=\"flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto\"><a href=\"/\" class=\"flex items-center space-x-3 rtl:space-x-reverse\"><img src=\"../static/icons/ticket.png\" class=\"h-8\" alt=\"Flowbite Logo\"> <span class=\"self-center text-2xl font-semibold whitespace-nowrap dark:text-white\">SkyVisor Insight</span></a><div class=\"hidden w-full md:block md:w-auto\" id=\"navbar-default\"><ul class=\"px-1 menu menu-horizontal\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"bg-gray-600 border-gray-200 dark:bg-gray-900\"><div class=\"flex items-center justify-between px-6 py-2\"><!-- Logo at the left --><a href=\"/\" class=\"flex items-center space-x-3 rtl:space-x-reverse\"><img src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/static/icons/ticket.png"))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"h-8\" alt=\"SkyVisor Insight\"> <span class=\"self-center text-2xl font-semibold whitespace-nowrap dark:text-white\">SkyVisor Insight</span></a><!-- Items aligned to the right --><div class=\"flex items-center space-x-2\"><ul class=\"menu menu-horizontal\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,7 +79,7 @@ func NavbarComponent(nav []models.NavItem, user *account.User, activeNav string)
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(item.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/components/navbar.templ`, Line: 24, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/components/navbar.templ`, Line: 26, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -113,7 +121,7 @@ func NavbarComponent(nav []models.NavItem, user *account.User, activeNav string)
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(user.Username)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/components/navbar.templ`, Line: 34, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/components/navbar.templ`, Line: 36, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {

@@ -2,6 +2,7 @@ package airport
 
 import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
 	"fmt"
 	"strconv"
 )
@@ -15,14 +16,22 @@ script returnToPreviousPage(page int) {
 }
 
 templ AirportTableComponent(airport models.AirportTable) {
-	<div class="flex flex-col items-center">
+	<div class="flex flex-col items-left">
+		@components.InputComponent("Search by Airport Name", "/airlines/airline", "#search-results")
 		<div class="overflow-x-auto">
 			<table class="table table-zebra">
 				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range airport.Column {
-							<th>{ col }</th>
+							<th>
+								<div class="flex justify-start align-middle">
+									{ col.Title }
+									<button class="pl-4">
+										@col.Icon
+									</button>
+								</div>
+							</th>
 						}
 					</tr>
 				</thead>
@@ -30,7 +39,12 @@ templ AirportTableComponent(airport models.AirportTable) {
 				<tbody>
 					for _, airport := range airport.Airports {
 						<tr class="hover">
-							<td>{ airport.AirportName }</td>
+							<td hx-boost="true">
+								<a
+									hx-trigger="load delay:1s"
+									href={ templ.SafeURL(fmt.Sprintf("/airports/details/%d", airport.AirportID)) }
+								>{ airport.AirportName }</a>
+							</td>
 							<td>{ airport.CountryName }</td>
 							if airport.PhoneNumber.Valid {
 								<td>{ fmt.Sprintf("%s", airport.PhoneNumber.String) }</td>
@@ -56,16 +70,16 @@ templ AirportTableComponent(airport models.AirportTable) {
 					>First Page</a>
 					<a
 						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airports?page=%d", airport.PrevPage)) }
+						href={ templ.URL(fmt.Sprintf("/airports?page=%d&search=%s", airport.PrevPage, airport.SearchParam)) }
 					>«</a>
 					<button class="join-item btn disabled">{ strconv.Itoa(airport.Page) }</button>
 					<a
 						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airports?page=%d", airport.NextPage)) }
+						href={ templ.URL(fmt.Sprintf("/airports?page=%d&search=%s", airport.NextPage, airport.SearchParam)) }
 					>»</a>
 					<a
 						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airports?page=%d", airport.LastPage)) }
+						href={ templ.URL(fmt.Sprintf("/airports?page=%d&search=%s", airport.LastPage, airport.SearchParam)) }
 					>Last Page</a>
 				</form>
 			</div>

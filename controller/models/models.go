@@ -254,13 +254,24 @@ type PageLayout struct {
 	ActiveNav string
 }
 
+type Table[T any, V any] struct {
+	Column      []T
+	Data        []V
+	PrevPage    int
+	NextPage    int
+	Page        int
+	LastPage    int
+	SearchParam string
+}
+
 type AirportTable struct {
-	Column   []string
-	Airports []Airport
-	PrevPage int
-	NextPage int
-	Page     int
-	LastPage int
+	Column      []ColumnItems
+	Airports    []Airport
+	PrevPage    int
+	NextPage    int
+	Page        int
+	LastPage    int
+	SearchParam string
 }
 
 type TaxTable struct {

@@ -20,20 +20,11 @@ func NewAirports(
 	}
 }
 
-func (r *RepositoryAirport) GetAirports(ctx context.Context, page, pageSize int) ([]models.Airport, error) {
-	var airport []models.Airport
+func (r *RepositoryAirport) getAirportData(ctx context.Context, query string,
+	args ...interface{}) ([]models.Airport, error) {
+	var al []models.Airport
 
-	offset := (page - 1) * pageSize
-	rows, err := r.pgpool.Query(ctx, `SELECT id, gmt, airport_id, iata_code,
-       										city_iata_code, icao_code, country_iso2,
-       										geoname_id, latitude, longitude, airport_name,
-       										country_name, phone_number, timezone,
-       										created_at
-       								FROM airport
-       								WHERE  airport_name IS NOT NULL AND TRIM(UPPER(airport_name)) != ''
-       								ORDER BY id
-       								OFFSET $1 LIMIT $2`,
-		offset, pageSize)
+	rows, err := r.pgpool.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,18 +39,32 @@ func (r *RepositoryAirport) GetAirports(ctx context.Context, page, pageSize int)
 			&a.AirportName, &a.CountryName, &a.PhoneNumber,
 			&a.Timezone, &a.CreatedAt,
 		)
-
 		if err != nil {
 			return nil, err
 		}
-		airport = append(airport, a)
+		al = append(al, a)
 	}
 
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return airport, nil
+	return al, nil
+}
+
+func (r *RepositoryAirport) GetAirports(ctx context.Context, page, pageSize int) ([]models.Airport, error) {
+	query := `SELECT id, gmt, airport_id, iata_code,
+       										city_iata_code, icao_code, country_iso2,
+       										geoname_id, latitude, longitude, airport_name,
+       										country_name, phone_number, timezone,
+       										created_at
+       								FROM airport
+       								WHERE  airport_name IS NOT NULL AND TRIM(UPPER(airport_name)) != ''
+       								ORDER BY id
+       								OFFSET $1 LIMIT $2`
+	offset := (page - 1) * pageSize
+
+	return r.getAirportData(ctx, query, offset, pageSize)
 }
 
 func (r *RepositoryAirport) GetSum(ctx context.Context) (int, error) {
@@ -94,10 +99,9 @@ func (r *RepositoryAirport) GetAirportsLocation(ctx context.Context) ([]models.A
 
 	for rows.Next() {
 		var a models.Airport
-		var c models.City
 		err := rows.Scan(
 			&a.ID, &a.GMT, &a.Latitude, &a.Longitude,
-			&a.AirportName, &c.CityName, &a.CountryName, &a.PhoneNumber,
+			&a.AirportName, &a.CityName, &a.CountryName, &a.PhoneNumber,
 			&a.Timezone,
 		)
 
@@ -112,4 +116,62 @@ func (r *RepositoryAirport) GetAirportsLocation(ctx context.Context) ([]models.A
 	}
 
 	return airport, nil
+}
+
+func (r *RepositoryAirport) GetAirportByName(ctx context.Context, name string,
+	page, pageSize int) ([]models.Airport, error) {
+	query := `SELECT id, gmt, airport_id, iata_code,
+       										city_iata_code, icao_code, country_iso2,
+       										geoname_id, latitude, longitude, airport_name,
+       										country_name, phone_number, timezone,
+       										created_at
+       								FROM airport
+       								WHERE  TRIM(UPPER(airport_name)) ILIKE TRIM(UPPER('%' || $1 || '%'))
+       								ORDER BY id
+       								OFFSET $2 LIMIT $3`
+	offset := (page - 1) * pageSize
+
+	return r.getAirportData(ctx, query, name, offset, pageSize)
+}
+
+func (r *RepositoryAirport) GetAirportByID(ctx context.Context, id int) (models.Airport, error) {
+	var ap models.Airport
+	query := `
+		select distinct on(airport_id)
+		    ap.airport_id,
+		    ap.airport_name,
+		    ap.phone_number,
+		    ap.country_name,
+		    ap.timezone,
+		    ap.gmt,
+		    ap.geoname_id,
+		    ap.created_at,
+		    ap.latitude,
+		    ap.longitude,
+		    ct.city_name,
+		    ct.timezone
+		from airport ap
+		join city ct on ct.iata_code = ap.iata_code
+		where ap.airport_id = $1;
+	`
+	err := r.pgpool.QueryRow(ctx, query, id).Scan(
+		&ap.ID,
+		&ap.AirportName,
+		&ap.PhoneNumber,
+		&ap.CountryName,
+		&ap.Timezone,
+		&ap.GMT,
+		&ap.GeonameID,
+		&ap.CreatedAt,
+		&ap.Latitude,
+		&ap.Longitude,
+		&ap.CityName,
+		&ap.Timezone,
+	)
+
+	if err != nil {
+		return models.Airport{}, err
+	}
+
+	return ap, nil
 }

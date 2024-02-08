@@ -2,9 +2,12 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"math"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 
 	airport "github.com/FACorreiaa/Aviation-tracker/controller/html/airports"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
@@ -49,17 +52,59 @@ func (h *Handlers) getTotalAirports() (int, error) {
 	return lastPage, nil
 }
 
-func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	columnNames := []string{"Airport Name", "Country Name", "Phone Number",
-		"Timezone", "GMT", "Latitude", "Longitude",
+func (h *Handlers) getAirportDetails(_ http.ResponseWriter, r *http.Request) (models.Airport, error) {
+	vars := mux.Vars(r)
+	idStr, ok := vars["airport_id"]
+	if !ok {
+		err := errors.New("airport_id not found in path")
+		HandleError(err, "Error getting airport_id")
+		return models.Airport{}, err
 	}
 
-	page, airports, _ := h.getAirports(w, r)
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		HandleError(err, "Error converting airport_id to integer")
+		return models.Airport{}, err
+	}
 
-	nextPage := page + 1
-	prevPage := page - 1
-	if prevPage < 1 {
-		prevPage = 1
+	ap, err := h.core.airports.GetAirportByID(context.Background(), id)
+	if err != nil {
+		HandleError(err, "Error fetching airport details")
+		return models.Airport{}, err
+	}
+
+	return ap, nil
+}
+
+func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
+	columnNames := []models.ColumnItems{
+		{Title: "Airport Name", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Country Name", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Phone Number", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Timezone", Icon: svg2.ArrowOrderIcon()},
+		{Title: "GMT", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Latitude", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Longitude", Icon: svg2.ArrowOrderIcon()},
+	}
+
+	var ap []models.Airport
+	var page int
+
+	param := r.FormValue("search")
+
+	fullPage, airportList, _ := h.getAirports(w, r)
+	filteredPage, filteredAirport, _ := h.getAirportByName(w, r)
+
+	if len(param) > 0 {
+		ap = filteredAirport
+		page = filteredPage
+	} else {
+		ap = airportList
+		page = fullPage
+	}
+
+	if page-1 < 0 {
+		return nil, nil
 	}
 
 	lastPage, err := h.getTotalAirports()
@@ -67,12 +112,13 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 		return nil, err
 	}
 	a := models.AirportTable{
-		Column:   columnNames,
-		Airports: airports,
-		PrevPage: prevPage,
-		NextPage: nextPage,
-		Page:     page,
-		LastPage: lastPage,
+		Column:      columnNames,
+		Airports:    ap,
+		PrevPage:    page - 1,
+		NextPage:    page + 1,
+		Page:        page,
+		LastPage:    lastPage,
+		SearchParam: param,
 	}
 	airportTable := airport.AirportTableComponent(a)
 
@@ -97,21 +143,49 @@ func (h *Handlers) renderSidebar() []models.SidebarItem {
 }
 
 func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
-	airportTable, err := h.renderAirportTable(w, r)
+	at, err := h.renderAirportTable(w, r)
 	sidebar := h.renderSidebar()
 	if err != nil {
+		HandleError(err, "Error fetching airport data table")
 		return err
 	}
-	a := airport.AirportPage(airportTable, sidebar, "Airports", "Check out airport locations")
+	a := airport.AirportPage(at, sidebar, "Airports", "Check out airport locations")
 	return h.CreateLayout(w, r, "Airport Page", a).Render(context.Background(), w)
 }
 
-func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) error {
-	sidebar := h.renderSidebar()
-	airportsLocations, err := h.getAirportsLocation()
+func (h *Handlers) getAirportByName(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
+	param := r.FormValue("search")
+	pageSize := 10
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
+		// Handle error or set a default page number
+		page = 1
+	}
+	ap, err := h.core.airports.GetAirportByName(context.Background(), param, page, pageSize)
+	if err != nil {
+		return 0, nil, err
+	}
+	return page, ap, err
+}
+
+func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) error {
+	al, err := h.getAirportsLocation()
+	sidebar := h.renderSidebar()
+	if err != nil {
+		HandleError(err, "Error fetching airport location table")
 		return err
 	}
-	a := airport.AirportLocationsPage(sidebar, airportsLocations, "Airports", "Check out airport locations")
+	a := airport.AirportLocationsPage(sidebar, al, "Airports", "Check out airport locations")
 	return h.CreateLayout(w, r, "Airport Locations Page", a).Render(context.Background(), w)
+}
+
+func (h *Handlers) airportDetailsPage(w http.ResponseWriter, r *http.Request) error {
+	ad, err := h.getAirportDetails(w, r)
+	sidebar := h.renderSidebar()
+	if err != nil {
+		HandleError(err, "Error fetching airport details page")
+		return err
+	}
+	a := airport.AirportDetailsPage(sidebar, ad, "Airports", "Check out airport information")
+	return h.CreateLayout(w, r, "Airport Details Page", a).Render(context.Background(), w)
 }

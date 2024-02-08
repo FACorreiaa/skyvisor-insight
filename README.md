@@ -9,7 +9,7 @@ The main stack of this project contains:
 - [TailwindCSS](https://tailwindui.com/)
 - [Templ](https://github.com/a-h/templ)
 
-[pgx](https://github.com/jackc/pgx) is the PostgreSQL Driver used to handler queries to the data base.
+[pgx](https://github.com/jackc/pgx) is the PostgresSQL Driver used to handler queries to the database.
 
 This project uses [Docker](https://www.docker.com/) to deploy and test the website
 
@@ -20,6 +20,17 @@ This project uses [Docker](https://www.docker.com/) to deploy and test the websi
 ## Prerequisites
 - [Air](https://github.com/cosmtrek/air)
 - [Docker](https://docs.docker.com/get-started/)
+
+### Todo list
+
+- [x] Map components
+- [x] Table components
+- [ ] Navigation on tables
+- [ ] Order By on tables
+- [ ] Live flights endpoint
+- [ ] Restructure code to use generics and clean functions
+- [ ] Optimise Docker container
+- [ ] Deployment
 
 ## Getting Started
 Create `.env` file (see `env.sample`), then run `make local-setup` and `make run`. That's it :)

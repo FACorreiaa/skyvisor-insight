@@ -51,7 +51,7 @@ func (r *RepositoryLocation) getCityData(ctx context.Context, query string,
 }
 
 func (r *RepositoryLocation) GetCity(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string) ([]models.City, error) {
+	orderBy string, sortBy string, name string) ([]models.City, error) {
 	offset := (page - 1) * pageSize
 	query := `SELECT
 			    ct.id,
@@ -67,6 +67,9 @@ func (r *RepositoryLocation) GetCity(ctx context.Context, page, pageSize int,
 			FROM city ct
 			LEFT JOIN country cou ON cou.country_iso2 = ct.country_iso2
 			WHERE ct.city_name IS NOT NULL AND TRIM(UPPER(ct.city_name)) != ''
+			AND    Trim(Upper(city_name)) ILIKE trim(upper('%'
+				                  || $1
+				                  || '%'))
 			ORDER BY
 		    CASE WHEN $2 = 'City Name' AND $3 = 'ASC' THEN ct.city_name::text END ASC,
 		    CASE WHEN $2 = 'City Name' AND $3 = 'DESC' THEN ct.city_name::text END DESC,
@@ -86,9 +89,9 @@ func (r *RepositoryLocation) GetCity(ctx context.Context, page, pageSize int,
 		    CASE WHEN $2 = 'Latitude' and $3 = 'DESC' THEN ct.latitude::text END DESC,
 		    CASE WHEN $2 = 'Longitude' and $3 = 'ASC' THEN ct.longitude::text END ASC,
 		    CASE WHEN $2 = 'Longitude' and $3 = 'DESC' THEN ct.longitude::text END DESC
-			OFFSET $1 LIMIT $4;`
+			OFFSET $4 LIMIT $5;`
 
-	return r.getCityData(ctx, query, offset, orderBy, sortBy, pageSize)
+	return r.getCityData(ctx, query, name, orderBy, sortBy, offset, pageSize)
 }
 
 func (r *RepositoryLocation) GetCityLocation(ctx context.Context) ([]models.City, error) {

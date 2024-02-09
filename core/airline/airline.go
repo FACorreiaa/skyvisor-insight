@@ -51,16 +51,36 @@ func (r *RepositoryAirline) getAirlineData(ctx context.Context, query string,
 	return al, nil
 }
 
-func (r *RepositoryAirline) GetAirlines(ctx context.Context, page, pageSize int) ([]models.Airline, error) {
+func (r *RepositoryAirline) GetAirlines(ctx context.Context, page,
+	pageSize int, orderBy, sortBy, name string) ([]models.Airline, error) {
 	offset := (page - 1) * pageSize
 	query := `select al.id, al.airline_name, al.date_founded, al.fleet_average_age, al.fleet_size,
 						al.callsign, al.hub_code, al.status, al.type, al.country_name
 						from  airline al
 						where al.airline_id != 0 AND TRIM(UPPER(al.airline_name)) != ''
-						order by al.airline_name
-						OFFSET $1 LIMIT $2`
+						AND TRIM(UPPER(al.airline_name)) ILIKE TRIM(UPPER('%' || $1 || '%'))
+						order by
+						    CASE WHEN $2 = 'Airline Name' AND $3 = 'ASC' THEN al.airline_name::text END ASC,
+						    CASE WHEN $2 = 'Airline Name' AND $3 = 'DESC' THEN al.airline_name::text END DESC,
+						    CASE WHEN $2 = 'Date Founded' AND $3 = 'ASC' THEN al.date_founded::text END ASC,
+						    CASE WHEN $2 = 'Date Founded' AND $3 = 'DESC' THEN al.date_founded::text END DESC,
+						    CASE WHEN $2 = 'Fleet Average Size' AND $3 = 'ASC' THEN al.fleet_average_age::text END ASC,
+						    CASE WHEN $2 = 'Fleet Average Size' AND $3 = 'DESC' THEN al.fleet_average_age::text END DESC,
+						    CASE WHEN $2 = 'Fleet Size' AND $3 = 'ASC' THEN al.fleet_size::text END ASC,
+						    CASE WHEN $2 = 'Fleet Size' AND $3 = 'DESC' THEN al.fleet_size::text END DESC,
+						    CASE WHEN $2 = 'Call Sign' AND $3 = 'ASC' THEN al.callsign::text END ASC,
+						    CASE WHEN $2 = 'Call Sign' AND $3 = 'DESC' THEN al.callsign::text END DESC,
+						    CASE WHEN $2 = 'Hub Code' AND $3 = 'ASC' THEN al.hub_code::text END ASC,
+						    CASE WHEN $2 = 'Hub Code' AND $3 = 'DESC' THEN al.hub_code::text END DESC,
+						    CASE WHEN $2 = 'Status' AND $3 = 'ASC' THEN al.status::text END ASC,
+						    CASE WHEN $2 = 'Status' AND $3 = 'DESC' THEN al.status::text END DESC,
+						    CASE WHEN $2 = 'Type' AND $3 = 'ASC' THEN al.type::text END ASC,
+						    CASE WHEN $2 = 'Type' AND $3 = 'DESC' THEN al.type::text END DESC,
+							CASE WHEN $2 = 'Country Name' AND $3 = 'ASC' THEN al.country_name::text END ASC,
+						    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN al.country_name::text END DESC
+						OFFSET $4 LIMIT $5`
 
-	return r.getAirlineData(ctx, query, offset, pageSize)
+	return r.getAirlineData(ctx, query, name, orderBy, sortBy, offset, pageSize)
 }
 
 func (r *RepositoryAirline) GetAirlineSum(ctx context.Context) (int, error) {
@@ -114,21 +134,6 @@ func (r *RepositoryAirline) GetAirlinesLocations(ctx context.Context) ([]models.
 	}
 
 	return airline, nil
-}
-
-func (r *RepositoryAirline) GetAirlineByName(ctx context.Context, param string, page,
-	pageSize int) ([]models.Airline, error) {
-	offset := (page - 1) * pageSize
-	query := `select al.id, al.airline_name, al.date_founded, al.fleet_average_age, al.fleet_size,
-			       al.callsign, al.hub_code, al.status, al.type, al.country_name
-			from  airline al
-			where al.airline_id != 0
-			  AND TRIM(UPPER(al.airline_name)) != ''
-			  AND TRIM(UPPER(al.airline_name)) ILIKE TRIM(UPPER('%' || $1 || '%'))
-			order by al.airline_name
-			OFFSET $2 LIMIT $3`
-
-	return r.getAirlineData(ctx, query, param, offset, pageSize)
 }
 
 func (r *RepositoryAirline) GetAirlineByID(ctx context.Context, id int) (models.AirlineDetails, error) {

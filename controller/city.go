@@ -60,13 +60,15 @@ func (h *Handlers) getCities(_ http.ResponseWriter, r *http.Request) (int, []mod
 	pageSize := 10
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
+	param := r.FormValue("search")
+
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	c, err := h.core.locations.GetCity(context.Background(), page, pageSize, orderBy, sortBy)
+	c, err := h.core.locations.GetCity(context.Background(), page, pageSize, orderBy, sortBy, param)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -74,27 +76,7 @@ func (h *Handlers) getCities(_ http.ResponseWriter, r *http.Request) (int, []mod
 	return page, c, nil
 }
 
-func (h *Handlers) getCityByName(_ http.ResponseWriter, r *http.Request) (int, []models.City, error) {
-	param := r.FormValue("search")
-	pageSize := 10
-	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-	orderBy := r.FormValue("orderBy")
-	sortBy := r.FormValue("sortBy")
-
-	if err != nil {
-		// Handle error or set a default page number
-		page = 1
-	}
-	c, err := h.core.locations.GetCityByName(context.Background(), page, pageSize, param, orderBy, sortBy)
-	if err != nil {
-		return 0, nil, err
-	}
-	return page, c, err
-}
-
 func (h *Handlers) renderCityTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	c := make([]models.City, 0)
-	var page int
 	var sortAux string
 
 	param := r.FormValue("search")
@@ -119,16 +101,7 @@ func (h *Handlers) renderCityTable(w http.ResponseWriter, r *http.Request) (temp
 		{Title: "Longitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 	}
 
-	fullPage, cityList, _ := h.getCities(w, r)
-	filteredPage, filteredCity, _ := h.getCityByName(w, r)
-
-	if len(param) > 0 {
-		c = filteredCity
-		page = filteredPage
-	} else {
-		c = cityList
-		page = fullPage
-	}
+	page, c, _ := h.getCities(w, r)
 
 	nextPage := page + 1
 	prevPage := page - 1

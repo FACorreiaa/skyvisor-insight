@@ -278,12 +278,15 @@ type AirportTable struct {
 }
 
 type TaxTable struct {
-	Column   []string
-	Tax      []Tax
-	PrevPage int
-	NextPage int
-	Page     int
-	LastPage int
+	Column      []ColumnItems
+	Tax         []Tax
+	PrevPage    int
+	NextPage    int
+	Page        int
+	LastPage    int
+	SearchParam string
+	OrderParam  string
+	SortParam   string
 }
 
 type AircraftTable struct {
@@ -309,6 +312,8 @@ type AirlineTable struct {
 	Page        int
 	LastPage    int
 	SearchParam string
+	OrderParam  string
+	SortParam   string
 }
 
 type AirplaneTable struct {

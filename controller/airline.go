@@ -45,21 +45,6 @@ func (h *Handlers) getAirlinesLocations() ([]models.Airline, error) {
 	return al, nil
 }
 
-func (h *Handlers) getAirlineByName(_ http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
-	param := r.FormValue("search")
-	pageSize := 10
-	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-	if err != nil {
-		// Handle error or set a default page number
-		page = 1
-	}
-	al, err := h.core.airlines.GetAirlineByName(context.Background(), param, page, pageSize)
-	if err != nil {
-		return 0, nil, err
-	}
-	return page, al, err
-}
-
 func (h *Handlers) getTotalAirline() (int, error) {
 	total, err := h.core.airlines.GetAirlineSum(context.Background())
 	pageSize := 10
@@ -72,13 +57,17 @@ func (h *Handlers) getTotalAirline() (int, error) {
 
 func (h *Handlers) getAirline(_ http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
 	pageSize := 10
+	param := r.FormValue("search")
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	al, err := h.core.airlines.GetAirlines(context.Background(), page, pageSize)
+	al, err := h.core.airlines.GetAirlines(context.Background(), page, pageSize, orderBy, sortBy, param)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -87,32 +76,31 @@ func (h *Handlers) getAirline(_ http.ResponseWriter, r *http.Request) (int, []mo
 }
 
 func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
+	param := r.FormValue("search")
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+	var sortAux string
+
+	if sortBy == ASC {
+		sortAux = DESC
+	} else {
+		sortAux = ASC
+	}
 	columnNames := []models.ColumnItems{
-		{Title: "Airline Name", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Date Founder", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Fleet Average Size", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Fleet Size", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Call Sign", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Hub Code", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Status", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Type", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Country Name", Icon: svg2.ArrowOrderIcon()},
+		{Title: "Airline Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Date Founded", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Fleet Average Size", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Fleet Size", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Call Sign", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Hub Code", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Status", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Type", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 	}
 
-	param := r.FormValue("search")
 	var page int
 
-	var al []models.Airline
-	fullPage, airlineList, _ := h.getAirline(w, r)
-	filteredPage, filteredAirline, _ := h.getAirlineByName(w, r)
-
-	if len(param) > 0 {
-		al = filteredAirline
-		page = filteredPage
-	} else {
-		al = airlineList
-		page = fullPage
-	}
+	page, al, _ := h.getAirline(w, r)
 
 	if page-1 < 0 {
 		return nil, nil
@@ -130,6 +118,8 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 		Page:        page,
 		LastPage:    lastPage,
 		SearchParam: param,
+		OrderParam:  orderBy,
+		SortParam:   sortAux,
 	}
 	airlineTable := airline.AirlineTable(a)
 

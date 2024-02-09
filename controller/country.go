@@ -35,13 +35,14 @@ func (h *Handlers) getCountries(_ http.ResponseWriter, r *http.Request) (int, []
 	pageSize := 10
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
+	param := r.FormValue("search")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	c, err := h.core.locations.GetCountry(context.Background(), page, pageSize, orderBy, sortBy)
+	c, err := h.core.locations.GetCountry(context.Background(), page, pageSize, orderBy, sortBy, param)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -49,26 +50,7 @@ func (h *Handlers) getCountries(_ http.ResponseWriter, r *http.Request) (int, []
 	return page, c, nil
 }
 
-func (h *Handlers) getCountryByName(_ http.ResponseWriter, r *http.Request) (int, []models.Country, error) {
-	param := r.FormValue("search")
-	pageSize := 10
-	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-	orderBy := r.FormValue("orderBy")
-	sortBy := r.FormValue("sortBy")
-
-	if err != nil {
-		// Handle error or set a default page number
-		page = 1
-	}
-	c, err := h.core.locations.GetCountryByName(context.Background(), page, pageSize, param, orderBy, sortBy)
-	if err != nil {
-		return 0, nil, err
-	}
-	return page, c, err
-}
-
 func (h *Handlers) renderCountryTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	c := make([]models.Country, 0)
 	var page int
 	var sortAux string
 
@@ -95,16 +77,7 @@ func (h *Handlers) renderCountryTable(w http.ResponseWriter, r *http.Request) (t
 		{Title: "Longitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 	}
 
-	fullPage, countryList, _ := h.getCountries(w, r)
-	filteredPage, filteredCountry, _ := h.getCountryByName(w, r)
-
-	if len(param) > 0 {
-		c = filteredCountry
-		page = filteredPage
-	} else {
-		c = countryList
-		page = fullPage
-	}
+	page, c, _ := h.getCountries(w, r)
 
 	nextPage := page + 1
 	prevPage := page - 1

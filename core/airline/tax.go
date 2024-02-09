@@ -7,19 +7,11 @@ import (
 
 // tax
 
-func (r *RepositoryAirline) GetTax(ctx context.Context, page, pageSize int) ([]models.Tax, error) {
+func (r *RepositoryAirline) getTaxData(ctx context.Context, query string,
+	args ...interface{}) ([]models.Tax, error) {
 	var tax []models.Tax
 
-	offset := (page - 1) * pageSize
-	rows, err := r.pgpool.Query(ctx, `SELECT DISTINCT ON(t.id)
-    										t.id, t.tax_name, a.airline_name, a.country_name
-											FROM tax t
-											         INNER JOIN airline a ON t.iata_code = a.iata_code
-											         INNER JOIN country c ON a.country_name = c.country_name
-											WHERE t.tax_name IS NOT NULL AND t.tax_name != ''
-											ORDER BY t.id
-       										OFFSET $1 LIMIT $2`,
-		offset, pageSize)
+	rows, err := r.pgpool.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +35,30 @@ func (r *RepositoryAirline) GetTax(ctx context.Context, page, pageSize int) ([]m
 	}
 
 	return tax, nil
+}
+
+func (r *RepositoryAirline) GetTax(ctx context.Context, page, pageSize int,
+	orderBy string, sortBy string, name string) ([]models.Tax, error) {
+	query := `SELECT 
+    										t.id, t.tax_name, a.airline_name, a.country_name
+											FROM tax t
+											         INNER JOIN airline a ON t.iata_code = a.iata_code
+											         INNER JOIN country c ON a.country_name = c.country_name
+											WHERE t.tax_name IS NOT NULL
+											AND t.tax_name != ''
+											AND    Trim(Upper(tax_name))
+											           ILIKE trim(upper('%' || $1 || '%'))
+											ORDER BY
+			    CASE WHEN $2 = 'Tax Name' AND $3 = 'ASC' THEN t.tax_name::text END ASC,
+			    CASE WHEN $2 = 'Tax Name' AND $3 = 'DESC' THEN t.tax_name::text END DESC,
+			    CASE WHEN $2 = 'Airline Name' AND $3 = 'ASC' THEN a.airline_name::text END ASC,
+			    CASE WHEN $2 = 'Airline Name' AND $3 = 'DESC' THEN a.airline_name::text END DESC,
+			    CASE WHEN $2 = 'Country Name' AND $3 = 'ASC' THEN a.country_name::text END ASC,
+			    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN a.country_name::text END DESC
+       										OFFSET $4 LIMIT $5`
+
+	offset := (page - 1) * pageSize
+	return r.getTaxData(ctx, query, name, orderBy, sortBy, offset, pageSize)
 }
 
 func (r *RepositoryAirline) GetSum(ctx context.Context) (int, error) {

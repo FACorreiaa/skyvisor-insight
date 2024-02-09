@@ -30,7 +30,7 @@ templ AirportTableComponent(airport models.AirportTable) {
 									<form class="join" hx-boost="true" method="get">
 										<a
 											class="pl-4"
-											href={ templ.URL(fmt.Sprintf("/airports?orderBy=%s", col.Title)) }
+											href={ templ.URL(fmt.Sprintf("/airports?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
 										>
 											@col.Icon
 										</a>

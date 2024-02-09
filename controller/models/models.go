@@ -274,6 +274,7 @@ type AirportTable struct {
 	LastPage    int
 	SearchParam string
 	OrderParam  string
+	SortParam   string
 }
 
 type TaxTable struct {
@@ -295,8 +296,9 @@ type AircraftTable struct {
 }
 
 type ColumnItems struct {
-	Title string
-	Icon  templ.Component
+	Title     string
+	Icon      templ.Component
+	SortParam string
 }
 type AirlineTable struct {
 	Column      []ColumnItems

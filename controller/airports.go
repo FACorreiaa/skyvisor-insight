@@ -21,12 +21,14 @@ func (h *Handlers) getAirports(_ http.ResponseWriter, r *http.Request) (int, []m
 	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
+	sortBy := r.URL.Query().Get("sortBy")
+
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	a, err := h.core.airports.GetAirports(context.Background(), page, pageSize, orderBy)
+	a, err := h.core.airports.GetAirports(context.Background(), page, pageSize, orderBy, sortBy)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -95,21 +97,30 @@ func (h *Handlers) getAirportByName(_ http.ResponseWriter, r *http.Request) (int
 }
 
 func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	columnNames := []models.ColumnItems{
-		{Title: "Airport Name", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Country Name", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Phone Number", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Timezone", Icon: svg2.ArrowOrderIcon()},
-		{Title: "GMT", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Latitude", Icon: svg2.ArrowOrderIcon()},
-		{Title: "Longitude", Icon: svg2.ArrowOrderIcon()},
-	}
-
 	var ap []models.Airport
 	var page int
+	var sortAux string
 
 	param := r.FormValue("search")
 	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+
+	if sortBy == "ASC" {
+		sortAux = "DESC"
+	} else {
+		sortAux = "ASC"
+	}
+
+	columnNames := []models.ColumnItems{
+		{Title: "Airport Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Phone Number", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Timezone", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "GMT", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Latitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Longitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+	}
+
 	fullPage, airportList, _ := h.getAirports(w, r)
 	filteredPage, filteredAirport, _ := h.getAirportByName(w, r)
 
@@ -138,6 +149,7 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 		LastPage:    lastPage,
 		SearchParam: param,
 		OrderParam:  orderBy,
+		SortParam:   sortAux,
 	}
 	airportTable := airport.AirportTableComponent(a)
 

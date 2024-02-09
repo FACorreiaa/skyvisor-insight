@@ -52,35 +52,94 @@ func (r *RepositoryAirport) getAirportData(ctx context.Context, query string,
 }
 
 func (r *RepositoryAirport) GetAirports(ctx context.Context,
-	page, pageSize int, orderBy string) ([]models.Airport, error) {
-	query := `SELECT id, gmt, airport_id, iata_code,
-       										city_iata_code, icao_code, country_iso2,
-       										geoname_id, latitude, longitude, airport_name as "Airport Name",
-       										country_name, phone_number, timezone,
-       										created_at
-       								FROM airport
-       								WHERE  airport_name IS NOT NULL AND TRIM(UPPER(airport_name)) != ''
-       								ORDER BY CASE
-							         WHEN $1 = 'Airport Name' then airport_name::text
-							         WHEN $1 = 'Country Name' then country_name::text
-       								 WHEN $1 = 'Phone Number' then phone_number::text
-       								 WHEN $1 = 'Timezone' then timezone::text   
-       								 WHEN $1 = 'GMT' then gmt::text
-       								 WHEN $1 = 'Latitude' then latitude::text
-       								 WHEN $1 = 'Longitude' then longitude::text
-							         END DESC 
-       								OFFSET $2 LIMIT $3`
+	page, pageSize int, orderBy string, sortBy string) ([]models.Airport, error) {
+	query := `SELECT   id,
+			         gmt,
+			         airport_id,
+			         iata_code,
+			         city_iata_code,
+			         icao_code,
+			         country_iso2,
+			         geoname_id,
+			         latitude,
+			         longitude,
+			         airport_name AS "Airport Name",
+			         country_name,
+			         phone_number,
+			         timezone,
+			         created_at
+			FROM     airport
+			WHERE    airport_name IS NOT NULL
+			AND      Trim(Upper(airport_name)) != ''
+			ORDER BY
+			         CASE
+			                  WHEN $1 = 'Airport Name'
+			                  AND      $2 = 'ASC' THEN airport_name::text
+			         END ASC,
+			         CASE
+			                  WHEN $1 = 'Airport Name'
+			                  AND      $2 = 'DESC' THEN airport_name::text
+			         END DESC,
+			         CASE
+			                  WHEN $1 = 'Country Name'
+			                  AND      $2 = 'ASC' THEN country_name::text
+			         END ASC,
+			         CASE
+			                  WHEN $1 = 'Country Name'
+			                  AND      $2 = 'DESC' THEN country_name::text
+			         END DESC,
+			         CASE
+			                  WHEN $1 = 'Phone Number'
+			                  AND      $2 = 'ASC' THEN phone_number::text
+			         END ASC,
+			         CASE
+			                  WHEN $1 = 'Phone Number'
+			                  AND      $2 = 'DESC' THEN phone_number::text
+			         END DESC,
+			         CASE
+			                  WHEN $1 = 'Timezone'
+			                  AND      $2 = 'ASC' THEN timezone::text
+			         END ASC,
+			         CASE
+			                  WHEN $1 = 'Timezone'
+			                  AND      $2 = 'DESC' THEN timezone::text
+			         END DESC,
+			         CASE
+			                  WHEN $1 = 'GMT'
+			                  AND      $2 = 'ASC' THEN timezone::text
+			         END ASC,
+			         CASE
+			                  WHEN $1 = 'GMT'
+			                  AND      $2 = 'DESC' THEN timezone::text
+			         END DESC,
+			         CASE
+			                  WHEN $1 = 'Latitude'
+			                  AND      $2 = 'ASC' THEN timezone::text
+			         END ASC,
+			         CASE
+			                  WHEN $1 = 'Latitude'
+			                  AND      $2 = 'DESC' THEN timezone::text
+			         END DESC,
+			         CASE
+			                  WHEN $1 = 'Longitude'
+			                  AND      $2 = 'ASC' THEN timezone::text
+			         END ASC,
+			         CASE
+			                  WHEN $1 = 'Longitude'
+			                  AND      $2 = 'DESC' THEN timezone::text
+			         END DESC
+			         offset $3 limit $4`
 	offset := (page - 1) * pageSize
 
-	return r.getAirportData(ctx, query, orderBy, offset, pageSize)
+	return r.getAirportData(ctx, query, orderBy, sortBy, offset, pageSize)
 }
 
 func (r *RepositoryAirport) GetSum(ctx context.Context) (int, error) {
 	var count int
 	row := r.pgpool.QueryRow(ctx, `SELECT Count(id)
-										FROM airport
-										WHERE  airport_name IS NOT NULL AND TRIM(UPPER(airport_name)) != ''
-`)
+										FROM   airport
+										WHERE  airport_name IS NOT NULL
+										       AND Trim(Upper(airport_name)) != ''`)
 	if err := row.Scan(&count); err != nil {
 		return 0, err
 	}
@@ -90,15 +149,21 @@ func (r *RepositoryAirport) GetSum(ctx context.Context) (int, error) {
 func (r *RepositoryAirport) GetAirportsLocation(ctx context.Context) ([]models.Airport, error) {
 	var airport []models.Airport
 
-	rows, err := r.pgpool.Query(ctx, `SELECT a.id, a.gmt, a.latitude, a.longitude,
-       											 a.airport_name, c.city_name,
-												 a.country_name, a.phone_number, a.timezone
-												 FROM airport a
-												 INNER JOIN
-    											 	City c ON a.city_iata_code = c.iata_code
-												 WHERE
-    												a.airport_name IS NOT NULL AND TRIM(UPPER(a.airport_name)) != ''
-												 ORDER BY id`)
+	rows, err := r.pgpool.Query(ctx, `SELECT a.id,
+											       a.gmt,
+											       a.latitude,
+											       a.longitude,
+											       a.airport_name,
+											       c.city_name,
+											       a.country_name,
+											       a.phone_number,
+											       a.timezone
+											FROM   airport a
+											       INNER JOIN city c
+											               ON a.city_iata_code = c.iata_code
+											WHERE  a.airport_name IS NOT NULL
+											       AND Trim(Upper(a.airport_name)) != ''
+											ORDER  BY id `)
 	if err != nil {
 		return nil, err
 	}
@@ -128,15 +193,26 @@ func (r *RepositoryAirport) GetAirportsLocation(ctx context.Context) ([]models.A
 
 func (r *RepositoryAirport) GetAirportByName(ctx context.Context, name string,
 	page, pageSize int, orderBy string) ([]models.Airport, error) {
-	query := `SELECT id, gmt, airport_id, iata_code,
-       										city_iata_code, icao_code, country_iso2,
-       										geoname_id, latitude, longitude, airport_name as "Airport Name",
-       										country_name, phone_number, timezone,
-       										created_at
-       								FROM airport
-       								WHERE  TRIM(UPPER(airport_name)) ILIKE TRIM(UPPER('%' || $1 || '%'))
-       								ORDER BY $2 DESC
-       								OFFSET $3 LIMIT $4`
+	query := `SELECT   id,
+				         gmt,
+				         airport_id,
+				         iata_code,
+				         city_iata_code,
+				         icao_code,
+				         country_iso2,
+				         geoname_id,
+				         latitude,
+				         longitude,
+				         airport_name AS "Airport Name",
+				         country_name,
+				         phone_number,
+				         timezone,
+				         created_at
+				FROM     airport
+				WHERE    Trim(Upper(airport_name)) ilike trim(upper('%'
+				                  || $1
+				                  || '%'))
+				ORDER BY $2 DESC offset $3 limit $4`
 	offset := (page - 1) * pageSize
 
 	return r.getAirportData(ctx, query, name, orderBy, offset, pageSize)

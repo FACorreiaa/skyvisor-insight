@@ -58,13 +58,15 @@ func (h *Handlers) getTotalCities() (int, error) {
 
 func (h *Handlers) getCities(_ http.ResponseWriter, r *http.Request) (int, []models.City, error) {
 	pageSize := 10
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	c, err := h.core.locations.GetCity(context.Background(), page, pageSize)
+	c, err := h.core.locations.GetCity(context.Background(), page, pageSize, orderBy, sortBy)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -72,12 +74,62 @@ func (h *Handlers) getCities(_ http.ResponseWriter, r *http.Request) (int, []mod
 	return page, c, nil
 }
 
+func (h *Handlers) getCityByName(_ http.ResponseWriter, r *http.Request) (int, []models.City, error) {
+	param := r.FormValue("search")
+	pageSize := 10
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+
+	if err != nil {
+		// Handle error or set a default page number
+		page = 1
+	}
+	c, err := h.core.locations.GetCityByName(context.Background(), page, pageSize, param, orderBy, sortBy)
+	if err != nil {
+		return 0, nil, err
+	}
+	return page, c, err
+}
+
 func (h *Handlers) renderCityTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	columnNames := []string{"City Name", "Timezone", "GMT", "Continent",
-		"Country Name", "Currency Name", "Phone Prefix", "Latitude", "Longitude",
+	c := make([]models.City, 0)
+	var page int
+	var sortAux string
+
+	param := r.FormValue("search")
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+
+	if sortBy == ASC {
+		sortAux = DESC
+	} else {
+		sortAux = ASC
 	}
 
-	page, c, _ := h.getCities(w, r)
+	columnNames := []models.ColumnItems{
+		{Title: "City Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Timezone", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "GMT", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Continent", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Currency Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Phone Prefix", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Latitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Longitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+	}
+
+	fullPage, cityList, _ := h.getCities(w, r)
+	filteredPage, filteredCity, _ := h.getCityByName(w, r)
+
+	if len(param) > 0 {
+		c = filteredCity
+		page = filteredPage
+	} else {
+		c = cityList
+		page = fullPage
+	}
+
 	nextPage := page + 1
 	prevPage := page - 1
 	if prevPage < 1 {
@@ -89,12 +141,15 @@ func (h *Handlers) renderCityTable(w http.ResponseWriter, r *http.Request) (temp
 		return nil, err
 	}
 	ct := models.CityTable{
-		Column:   columnNames,
-		City:     c,
-		PrevPage: prevPage,
-		NextPage: nextPage,
-		Page:     page,
-		LastPage: lastPage,
+		Column:      columnNames,
+		City:        c,
+		PrevPage:    prevPage,
+		NextPage:    nextPage,
+		Page:        page,
+		LastPage:    lastPage,
+		SearchParam: param,
+		OrderParam:  orderBy,
+		SortParam:   sortAux,
 	}
 	cityTable := locations.CityTable(ct)
 

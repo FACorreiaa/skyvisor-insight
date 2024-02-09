@@ -45,6 +45,9 @@ type Handlers struct {
 	redisClient *redis.Client
 }
 
+const ASC = "ASC"
+const DESC = "DESC"
+
 func HandlerErrorExtended(message string, values ...interface{}) {
 	for _, v := range values {
 		if v == nil {

@@ -295,6 +295,7 @@ type AircraftTable struct {
 	LastPage int
 }
 
+// Need to change this to improve all the sorting on the tables
 type ColumnItems struct {
 	Title     string
 	Icon      templ.Component
@@ -320,21 +321,27 @@ type AirplaneTable struct {
 }
 
 type CityTable struct {
-	Column   []string
-	City     []City
-	PrevPage int
-	NextPage int
-	Page     int
-	LastPage int
+	Column      []ColumnItems
+	City        []City
+	PrevPage    int
+	NextPage    int
+	Page        int
+	LastPage    int
+	SearchParam string
+	OrderParam  string
+	SortParam   string
 }
 
 type CountryTable struct {
-	Column   []string
-	Country  []Country
-	PrevPage int
-	NextPage int
-	Page     int
-	LastPage int
+	Column      []ColumnItems
+	Country     []Country
+	PrevPage    int
+	NextPage    int
+	Page        int
+	LastPage    int
+	SearchParam string
+	OrderParam  string
+	SortParam   string
 }
 
 type CustomTime struct {

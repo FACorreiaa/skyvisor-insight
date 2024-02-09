@@ -84,12 +84,12 @@ func (h *Handlers) getAirportByName(_ http.ResponseWriter, r *http.Request) (int
 	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
-
+	sortBy := r.URL.Query().Get("sortBy")
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
-	ap, err := h.core.airports.GetAirportByName(context.Background(), param, page, pageSize, orderBy)
+	ap, err := h.core.airports.GetAirportByName(context.Background(), param, page, pageSize, orderBy, sortBy)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -97,7 +97,7 @@ func (h *Handlers) getAirportByName(_ http.ResponseWriter, r *http.Request) (int
 }
 
 func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	var ap []models.Airport
+	ap := make([]models.Airport, 0)
 	var page int
 	var sortAux string
 
@@ -105,10 +105,10 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
-	if sortBy == "ASC" {
-		sortAux = "DESC"
+	if sortBy == ASC {
+		sortAux = DESC
 	} else {
-		sortAux = "ASC"
+		sortAux = ASC
 	}
 
 	columnNames := []models.ColumnItems{

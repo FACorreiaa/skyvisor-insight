@@ -48,8 +48,6 @@ func (s *ServiceJob) getExistingID(query string, id int, tableData []int) ([]int
 	}
 	defer rows.Close()
 
-	// var existingIDs []int
-
 	for rows.Next() {
 		if err = rows.Scan(&id); err != nil {
 			handleError(err, "Error scanning IDs")
@@ -700,7 +698,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 		cron.Recover(cron.DefaultLogger), // or use cron.DefaultLogger
 	))
 	slog.Info("Insert api check job")
-	_, err := c.AddFunc("@every 6h", func() {
+	_, err := c.AddFunc("@weekly", func() {
 		startTime := time.Now()
 		err := s.insertNewCities()
 		duration := time.Since(startTime)
@@ -710,7 +708,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@every 6h", func() {
+	_, err = c.AddFunc("@weekly", func() {
 		startTime := time.Now()
 		err := s.insertNewCountries()
 		duration := time.Since(startTime)
@@ -720,7 +718,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@every 6h", func() {
+	_, err = c.AddFunc("@weekly", func() {
 		startTime := time.Now()
 		err := s.insertNewAirports()
 		duration := time.Since(startTime)
@@ -730,7 +728,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@every 6h", func() {
+	_, err = c.AddFunc("@weekly", func() {
 		startTime := time.Now()
 		err := s.insertNewAirplanes()
 		duration := time.Since(startTime)
@@ -740,7 +738,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, err = c.AddFunc("@every 6h", func() {
+	_, err = c.AddFunc("@weekly", func() {
 		startTime := time.Now()
 		err := s.insertNewTax()
 		duration := time.Since(startTime)
@@ -750,7 +748,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 	})
 	handleError(err, "Error running cron job")
 
-	_, _ = c.AddFunc("@every 6h", func() {
+	_, _ = c.AddFunc("@weekly", func() {
 		startTime := time.Now()
 		err := s.insertNewAirline()
 		duration := time.Since(startTime)
@@ -758,7 +756,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 		slog.Info("Airline job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
 		handleError(err, "Error checking for new airline")
 	})
-	_, _ = c.AddFunc("@every 6h", func() {
+	_, _ = c.AddFunc("@weekly", func() {
 		startTime := time.Now()
 		err := s.insertNewAircraft()
 		duration := time.Since(startTime)

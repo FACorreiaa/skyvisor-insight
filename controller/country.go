@@ -8,6 +8,7 @@ import (
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/locations"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 	"github.com/a-h/templ"
 )
 
@@ -32,13 +33,16 @@ func (h *Handlers) getTotalCountries() (int, error) {
 
 func (h *Handlers) getCountries(_ http.ResponseWriter, r *http.Request) (int, []models.Country, error) {
 	pageSize := 10
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+	param := r.FormValue("search")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	c, err := h.core.locations.GetCountry(context.Background(), page, pageSize)
+	c, err := h.core.locations.GetCountry(context.Background(), page, pageSize, orderBy, sortBy, param)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -47,11 +51,34 @@ func (h *Handlers) getCountries(_ http.ResponseWriter, r *http.Request) (int, []
 }
 
 func (h *Handlers) renderCountryTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	columnNames := []string{"Country Name", "Capital", "Continent", "Currency Name",
-		"Population", "Currency Code", "Currency Name", "Latitude", "Longitude",
+	var page int
+	var sortAux string
+
+	param := r.FormValue("search")
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+
+	if sortBy == ASC {
+		sortAux = DESC
+	} else {
+		sortAux = ASC
+	}
+
+	columnNames := []models.ColumnItems{
+		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Capital", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Continent", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Currency Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Population", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Currency Code", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Currency Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Phone Prefix", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Latitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Longitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 	}
 
 	page, c, _ := h.getCountries(w, r)
+
 	nextPage := page + 1
 	prevPage := page - 1
 	if prevPage < 1 {
@@ -64,12 +91,15 @@ func (h *Handlers) renderCountryTable(w http.ResponseWriter, r *http.Request) (t
 	}
 
 	ct := models.CountryTable{
-		Column:   columnNames,
-		Country:  c,
-		PrevPage: prevPage,
-		NextPage: nextPage,
-		Page:     page,
-		LastPage: lastPage,
+		Column:      columnNames,
+		Country:     c,
+		PrevPage:    prevPage,
+		NextPage:    nextPage,
+		Page:        page,
+		LastPage:    lastPage,
+		SearchParam: param,
+		OrderParam:  orderBy,
+		SortParam:   sortAux,
 	}
 	cityTable := locations.CountryTable(ct)
 

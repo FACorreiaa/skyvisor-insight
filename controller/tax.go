@@ -8,18 +8,23 @@ import (
 
 	airline "github.com/FACorreiaa/Aviation-tracker/controller/html/airlines"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 	"github.com/a-h/templ"
 )
 
 func (h *Handlers) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, []models.Tax, error) {
 	pageSize := 10
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	param := r.FormValue("search")
+
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	t, err := h.core.airlines.GetTax(context.Background(), page, pageSize)
+	t, err := h.core.airlines.GetTax(context.Background(), page, pageSize, orderBy, sortBy, param)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -38,13 +43,29 @@ func (h *Handlers) getTotalTax() (int, error) {
 }
 
 func (h *Handlers) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	columnNames := []string{"Tax Name", "Airline Name", "Country Name"}
+	var page int
+	var sortAux string
 
-	page, t, _ := h.getAirlineTax(w, r)
-	nextPage := page + 1
-	prevPage := page - 1
-	if prevPage < 1 {
-		prevPage = 1
+	param := r.FormValue("search")
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+
+	if sortBy == ASC {
+		sortAux = DESC
+	} else {
+		sortAux = ASC
+	}
+
+	columnNames := []models.ColumnItems{
+		{Title: "Tax Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Airline Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+	}
+
+	page, tax, _ := h.getAirlineTax(w, r)
+
+	if page-1 < 1 {
+		page = 1
 	}
 
 	lastPage, err := h.getTotalTax()
@@ -52,12 +73,15 @@ func (h *Handlers) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request)
 		return nil, err
 	}
 	taxData := models.TaxTable{
-		Column:   columnNames,
-		Tax:      t,
-		PrevPage: prevPage,
-		NextPage: nextPage,
-		Page:     page,
-		LastPage: lastPage,
+		Column:      columnNames,
+		Tax:         tax,
+		PrevPage:    page - 1,
+		NextPage:    page + 1,
+		Page:        page,
+		LastPage:    lastPage,
+		SearchParam: param,
+		OrderParam:  orderBy,
+		SortParam:   sortAux,
 	}
 	taxTable := airline.AirlineTaxTable(taxData)
 

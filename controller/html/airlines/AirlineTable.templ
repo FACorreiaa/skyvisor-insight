@@ -18,11 +18,16 @@ templ AirlineTable(a models.AirlineTable) {
 					<tr>
 						for _, col := range a.Column {
 							<th>
-								<div class="flex justify-start align-middle">
+								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
-									<button class="pl-4">
-										@col.Icon
-									</button>
+									<form class="join" hx-boost="true" method="get">
+										<a
+											class="pl-4"
+											href={ templ.URL(fmt.Sprintf("/airlines/airline?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
+										>
+											@col.Icon
+										</a>
+									</form>
 								</div>
 							</th>
 						}

@@ -2,6 +2,7 @@ package location
 
 import (
 	"context"
+
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
@@ -37,10 +38,10 @@ func (r *RepositoryLocation) getCountryData(ctx context.Context, query string,
 	return country, nil
 }
 
-func (r *RepositoryLocation) GetCountry(ctx context.Context, page, pageSize int) ([]models.Country, error) {
+func (r *RepositoryLocation) GetCountry(ctx context.Context, page, pageSize int,
+	orderBy, sortBy, name string) ([]models.Country, error) {
 	offset := (page - 1) * pageSize
 	query := `SELECT
-			    DISTINCT ON (cou.country_name)
 			    cou.country_name,
 			    cou.id, cou.capital,
 			    cou.currency_name,
@@ -59,11 +60,31 @@ func (r *RepositoryLocation) GetCountry(ctx context.Context, page, pageSize int)
 			  AND TRIM(UPPER(cou.country_name)) != ''
 			  AND ct.latitude IS NOT NULL
   			  AND ct.longitude IS NOT NULL
+			  AND    Trim(Upper(country_name)) ILIKE trim(upper('%'
+				                  || $1
+				                  || '%'))
 			ORDER BY
-			    cou.country_name
-            OFFSET $1 LIMIT $2`
+			    CASE WHEN $2 = 'Country Name' AND $3 = 'ASC' THEN cou.country_name::text END ASC,
+			    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN cou.country_name::text END DESC,
+			    CASE WHEN $2 = 'Capital' AND $3 = 'ASC' THEN cou.capital::text END ASC,
+			    CASE WHEN $2 = 'Capital' AND $3 = 'DESC' THEN cou.capital::text END DESC,
+				CASE WHEN $2 = 'Continent' AND $3 = 'ASC' THEN cou.continent::text END ASC,
+			    CASE WHEN $2 = 'Continent' AND $3 = 'DESC' THEN cou.continent::text END DESC,
+			    CASE WHEN $2 = 'Currency Name' AND $3 = 'ASC' THEN cou.currency_name::text END ASC,
+			    CASE WHEN $2 = 'Currency Name' AND $3 = 'DESC' THEN cou.currency_name::text END DESC,
+			    CASE WHEN $2 = 'Currency Code' and $3 = 'ASC' THEN cou.currency_code::text END ASC,
+			    CASE WHEN $2 = 'Currency Code' and $3 = 'DESC' THEN cou.currency_code::text END DESC,
+			    CASE WHEN $2 = 'Population' and $3 = 'ASC' THEN cou.population::text END ASC,
+			    CASE WHEN $2 = 'Population' and $3 = 'DESC' THEN cou.population::text END DESC,
+	            CASE WHEN $2 = 'Phone Prefix' and $3 = 'ASC' THEN cou.phone_prefix::text END ASC,
+			    CASE WHEN $2 = 'Phone Prefix' and $3 = 'DESC' THEN cou.phone_prefix::text END DESC,
+			    CASE WHEN $2 = 'Latitude' and $3 = 'ASC' THEN ct.latitude::text END ASC,
+			    CASE WHEN $2 = 'Latitude' and $3 = 'DESC' THEN ct.latitude::text END DESC,
+			    CASE WHEN $2 = 'Longitude' and $3 = 'ASC' THEN ct.longitude::text END ASC,
+			    CASE WHEN $2 = 'Longitude' and $3 = 'DESC' THEN ct.longitude::text END DESC
+            OFFSET $4 LIMIT $5`
 
-	return r.getCountryData(ctx, query, offset, pageSize)
+	return r.getCountryData(ctx, query, name, orderBy, sortBy, offset, pageSize)
 }
 
 func (r *RepositoryLocation) GetCountryLocation(ctx context.Context) ([]models.Country, error) {

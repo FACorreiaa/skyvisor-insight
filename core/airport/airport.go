@@ -192,7 +192,7 @@ func (r *RepositoryAirport) GetAirportsLocation(ctx context.Context) ([]models.A
 }
 
 func (r *RepositoryAirport) GetAirportByName(ctx context.Context, name string,
-	page, pageSize int, orderBy string) ([]models.Airport, error) {
+	page, pageSize int, orderBy string, sortBy string) ([]models.Airport, error) {
 	query := `SELECT   id,
 				         gmt,
 				         airport_id,
@@ -212,10 +212,67 @@ func (r *RepositoryAirport) GetAirportByName(ctx context.Context, name string,
 				WHERE    Trim(Upper(airport_name)) ilike trim(upper('%'
 				                  || $1
 				                  || '%'))
-				ORDER BY $2 DESC offset $3 limit $4`
+				ORDER BY
+			         CASE
+			                  WHEN $2 = 'Airport Name'
+			                  AND      $3 = 'ASC' THEN airport_name::text
+			         END ASC,
+			         CASE
+			                  WHEN $2 = 'Airport Name'
+			                  AND      $3 = 'DESC' THEN airport_name::text
+			         END DESC,
+			         CASE
+			                  WHEN $2 = 'Country Name'
+			                  AND      $3 = 'ASC' THEN country_name::text
+			         END ASC,
+			         CASE
+			                  WHEN $2 = 'Country Name'
+			                  AND      $3 = 'DESC' THEN country_name::text
+			         END DESC,
+			         CASE
+			                  WHEN $2 = 'Phone Number'
+			                  AND      $3 = 'ASC' THEN phone_number::text
+			         END ASC,
+			         CASE
+			                  WHEN $2 = 'Phone Number'
+			                  AND      $3 = 'DESC' THEN phone_number::text
+			         END DESC,
+			         CASE
+			                  WHEN $2 = 'Timezone'
+			                  AND      $3 = 'ASC' THEN timezone::text
+			         END ASC,
+			         CASE
+			                  WHEN $2 = 'Timezone'
+			                  AND      $3 = 'DESC' THEN timezone::text
+			         END DESC,
+			         CASE
+			                  WHEN $2 = 'GMT'
+			                  AND      $3 = 'ASC' THEN timezone::text
+			         END ASC,
+			         CASE
+			                  WHEN $2 = 'GMT'
+			                  AND      $3 = 'DESC' THEN timezone::text
+			         END DESC,
+			         CASE
+			                  WHEN $2 = 'Latitude'
+			                  AND      $3 = 'ASC' THEN timezone::text
+			         END ASC,
+			         CASE
+			                  WHEN $2 = 'Latitude'
+			                  AND      $3 = 'DESC' THEN timezone::text
+			         END DESC,
+			         CASE
+			                  WHEN $2 = 'Longitude'
+			                  AND      $3 = 'ASC' THEN timezone::text
+			         END ASC,
+			         CASE
+			                  WHEN $2 = 'Longitude'
+			                  AND      $3 = 'DESC' THEN timezone::text
+			         END DESC
+				offset $4 limit $5`
 	offset := (page - 1) * pageSize
 
-	return r.getAirportData(ctx, query, name, orderBy, offset, pageSize)
+	return r.getAirportData(ctx, query, name, orderBy, sortBy, offset, pageSize)
 }
 
 func (r *RepositoryAirport) GetAirportByID(ctx context.Context, id int) (models.Airport, error) {

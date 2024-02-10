@@ -26,7 +26,8 @@ This project uses [Docker](https://www.docker.com/) to deploy and test the websi
 - [x] Map components
 - [x] Table components
 - [ ] Navigation on tables
-- [ ] Order By on tables
+- [x] Order By on tables
+- [ ] Fix order on search params
 - [ ] Live flights endpoint
 - [ ] Restructure code to use generics and clean functions
 - [ ] Optimise Docker container

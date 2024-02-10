@@ -320,12 +320,15 @@ type AirlineTable struct {
 }
 
 type AirplaneTable struct {
-	Column   []string
-	Airplane []Airplane
-	PrevPage int
-	NextPage int
-	Page     int
-	LastPage int
+	Column      []ColumnItems
+	Airplane    []Airplane
+	PrevPage    int
+	NextPage    int
+	Page        int
+	LastPage    int
+	SearchParam string
+	OrderParam  string
+	SortParam   string
 }
 
 type CityTable struct {

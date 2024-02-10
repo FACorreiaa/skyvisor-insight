@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 	"math"
 	"net/http"
 	"strconv"
@@ -14,12 +15,15 @@ import (
 func (h *Handlers) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []models.Airplane, error) {
 	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+	param := r.FormValue("search")
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	a, err := h.core.airlines.GetAirplanes(context.Background(), page, pageSize)
+	a, err := h.core.airlines.GetAirplanes(context.Background(), page, pageSize, orderBy, sortBy, param)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -38,10 +42,34 @@ func (h *Handlers) getTotalAirplanes() (int, error) {
 }
 
 func (h *Handlers) renderAirlineAirplaneTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	columnNames := []string{"Model Name", "Airline Name", "Plane Series", "Plane owner", "Plane class",
-		"Plane age", "Plane status", "Line number", "First Flight Date", "Engine type",
-		"Engine count", "Construction number", "Production line", "Test registration date",
-		"Registration date", "Registration number",
+	var sortAux string
+
+	param := r.FormValue("search")
+	orderBy := r.FormValue("orderBy")
+	sortBy := r.FormValue("sortBy")
+
+	if sortBy == ASC {
+		sortAux = DESC
+	} else {
+		sortAux = ASC
+	}
+	columnNames := []models.ColumnItems{
+		{Title: "Model Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Airline Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Plane Series", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Plane Owner", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Plane Class", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Plane Age", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Plane Status", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Line Number", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "First Flight Date", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Engine Type", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Engine Count", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Construction Number", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Production Line", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Test Registration Date", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Registration Date", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Registration Number", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 	}
 
 	page, ap, _ := h.getAirplane(w, r)
@@ -56,12 +84,15 @@ func (h *Handlers) renderAirlineAirplaneTable(w http.ResponseWriter, r *http.Req
 		return nil, err
 	}
 	a := models.AirplaneTable{
-		Column:   columnNames,
-		Airplane: ap,
-		PrevPage: prevPage,
-		NextPage: nextPage,
-		Page:     page,
-		LastPage: lastPage,
+		Column:      columnNames,
+		Airplane:    ap,
+		PrevPage:    prevPage,
+		NextPage:    nextPage,
+		Page:        page,
+		LastPage:    lastPage,
+		SearchParam: param,
+		OrderParam:  orderBy,
+		SortParam:   sortAux,
 	}
 	airlineTable := airline.AirplaneTable(a)
 

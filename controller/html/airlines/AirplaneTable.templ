@@ -2,19 +2,33 @@ package airline
 
 import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+		"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
 	"fmt"
 	"strconv"
 )
 
 templ AirplaneTable(a models.AirplaneTable) {
-	<div class="flex flex-col items-center">
+	<div class="flex flex-col items-left">
+		@components.InputComponent("Search by Airplane Name", "/airlines/airplane")
 		<div class="overflow-x-auto">
 			<table class="table table-zebra">
 				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range a.Column {
-							<th>{ col }</th>
+							<th>
+								<div class="flex justify-start align-middle" hx-boost>
+									{ col.Title }
+									<form class="join" hx-boost="true" method="get">
+										<a
+											class="pl-4"
+											href={ templ.URL(fmt.Sprintf("/airlines/airplane?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
+										>
+											@col.Icon
+										</a>
+									</form>
+								</div>
+							</th>
 						}
 					</tr>
 				</thead>

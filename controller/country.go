@@ -2,6 +2,8 @@ package controller
 
 import (
 	"context"
+	"errors"
+	"github.com/gorilla/mux"
 	"math"
 	"net/http"
 	"strconv"
@@ -48,6 +50,24 @@ func (h *Handlers) getCountries(_ http.ResponseWriter, r *http.Request) (int, []
 	}
 
 	return page, c, nil
+}
+
+func (h *Handlers) getCountryDetails(_ http.ResponseWriter, r *http.Request) (models.Country, error) {
+	vars := mux.Vars(r)
+	country, ok := vars["country_name"]
+	if !ok {
+		err := errors.New("country_name not found in path")
+		HandleError(err, "Error getting country_name")
+		return models.Country{}, err
+	}
+
+	c, err := h.core.locations.GetCountryByName(context.Background(), country)
+	if err != nil {
+		HandleError(err, "Error fetching country details")
+		return models.Country{}, err
+	}
+
+	return c, nil
 }
 
 func (h *Handlers) renderCountryTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
@@ -126,4 +146,15 @@ func (h *Handlers) countryLocationPage(w http.ResponseWriter, r *http.Request) e
 	cl := locations.CountryLocations(sidebar, c, "Country capital Locations",
 		"Check data of country capitals around the world")
 	return h.CreateLayout(w, r, "Country locations page", cl).Render(context.Background(), w)
+}
+
+func (h *Handlers) countryDetailsPage(w http.ResponseWriter, r *http.Request) error {
+	c, err := h.getCountryDetails(w, r)
+	sidebar := h.renderLocationsBar()
+	if err != nil {
+		HandleError(err, "Error fetching country details page")
+		return err
+	}
+	a := locations.CountryDetailsPage(sidebar, c, "Country", "Check information about countries")
+	return h.CreateLayout(w, r, "Country Details Page", a).Render(context.Background(), w)
 }

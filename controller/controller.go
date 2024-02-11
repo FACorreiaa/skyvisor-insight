@@ -137,9 +137,9 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	locationsRouter.HandleFunc("/city", handler(h.cityMainPage)).Methods(http.MethodGet)
 	locationsRouter.HandleFunc("/city/map", handler(h.cityLocationsPage)).Methods(http.MethodGet)
 	locationsRouter.HandleFunc("/city/details/{city_id}", handler(h.cityDetailsPage)).Methods(http.MethodGet)
-
 	locationsRouter.HandleFunc("/country", handler(h.countryMainPage)).Methods(http.MethodGet)
 	locationsRouter.HandleFunc("/country/map", handler(h.countryLocationPage)).Methods(http.MethodGet)
+	locationsRouter.HandleFunc("/country/details/{country_name}", handler(h.countryDetailsPage)).Methods(http.MethodGet)
 
 	// Airports router
 	airportsRouter := auth.PathPrefix("/airports").Subrouter()

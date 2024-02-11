@@ -164,7 +164,7 @@ func (r *RepositoryLocation) GetCityByName(ctx context.Context, page, pageSize i
 	return r.getCityData(ctx, query, name, orderBy, sortBy, offset, pageSize)
 }
 
-func (r *RepositoryLocation) GetCityByID(ctx context.Context, id int) (models.City, error) {
+func (r *RepositoryLocation) GetCityByID(ctx context.Context, cityID int) (models.City, error) {
 	var c models.City
 	query := `
 			SELECT
@@ -185,8 +185,8 @@ func (r *RepositoryLocation) GetCityByID(ctx context.Context, id int) (models.Ci
 			  AND ct.city_id = $1;
 	`
 
-	err := r.pgpool.QueryRow(ctx, query, id).Scan(
-		&c.ID, &c.CityName, &c.Timezone, &c.GMT,
+	err := r.pgpool.QueryRow(ctx, query, cityID).Scan(
+		&c.CityID, &c.CityName, &c.Timezone, &c.GMT,
 		&c.Continent, &c.CountryName, &c.CurrencyName,
 		&c.PhonePrefix, &c.Latitude, &c.Longitude,
 	)

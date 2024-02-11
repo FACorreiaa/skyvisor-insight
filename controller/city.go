@@ -178,9 +178,9 @@ func (h *Handlers) cityLocationsPage(w http.ResponseWriter, r *http.Request) err
 
 func (h *Handlers) cityDetailsPage(w http.ResponseWriter, r *http.Request) error {
 	c, err := h.getCityDetails(w, r)
-	sidebar := h.renderSidebar()
+	sidebar := h.renderLocationsBar()
 	if err != nil {
-		HandleError(err, "Error fetching airport details page")
+		HandleError(err, "Error fetching city details page")
 		return err
 	}
 	a := locations.CityDetailsPage(sidebar, c, "City", "Check information about cities")

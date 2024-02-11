@@ -296,7 +296,7 @@ func (r *RepositoryAirport) GetAirportByID(ctx context.Context, id int) (models.
 		where ap.airport_id = $1;
 	`
 	err := r.pgpool.QueryRow(ctx, query, id).Scan(
-		&ap.ID,
+		&ap.AirportID,
 		&ap.AirportName,
 		&ap.PhoneNumber,
 		&ap.CountryName,

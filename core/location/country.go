@@ -130,3 +130,41 @@ func (r *RepositoryLocation) GetCountrySum(ctx context.Context) (int, error) {
 	}
 	return count, nil
 }
+
+func (r *RepositoryLocation) GetCountryByName(ctx context.Context, name string) (models.Country, error) {
+	var c models.Country
+	query := `SELECT
+			    cou.country_name,
+			    cou.id, cou.capital,
+			    cou.continent,
+			    cou.currency_name,
+			    cou.population,
+			    cou.currency_code,
+			    cou.currency_name,
+			    ct.latitude,
+			    ct.longitude
+			FROM
+			    country cou
+			JOIN
+			    city ct ON ct.city_name = cou.capital
+			WHERE
+			    cou.country_name IS NOT NULL
+			  AND TRIM(UPPER(cou.country_name)) != ''
+			  AND ct.latitude IS NOT NULL
+  			  AND ct.longitude IS NOT NULL
+			  AND country_name = $1
+			`
+	err := r.pgpool.QueryRow(ctx, query, name).Scan(
+		&c.CountryName,
+		&c.ID, &c.Capital, &c.CurrencyName,
+		&c.Continent,
+		&c.Population, &c.CurrencyCode,
+		&c.CurrencyName, &c.Latitude, &c.Longitude,
+	)
+
+	if err != nil {
+		return models.Country{}, err
+	}
+
+	return c, nil
+}

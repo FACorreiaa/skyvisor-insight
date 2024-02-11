@@ -136,6 +136,8 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	locationsRouter := auth.PathPrefix("/locations").Subrouter()
 	locationsRouter.HandleFunc("/city", handler(h.cityMainPage)).Methods(http.MethodGet)
 	locationsRouter.HandleFunc("/city/map", handler(h.cityLocationsPage)).Methods(http.MethodGet)
+	locationsRouter.HandleFunc("/city/details/{city_id}", handler(h.cityDetailsPage)).Methods(http.MethodGet)
+
 	locationsRouter.HandleFunc("/country", handler(h.countryMainPage)).Methods(http.MethodGet)
 	locationsRouter.HandleFunc("/country/map", handler(h.countryLocationPage)).Methods(http.MethodGet)
 
@@ -143,12 +145,8 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	airportsRouter := auth.PathPrefix("/airports").Subrouter()
 	airportsRouter.HandleFunc("", handler(h.airportPage)).Methods(http.MethodGet)
 	airportsRouter.HandleFunc("/locations", handler(h.airportLocationPage)).Methods(http.MethodGet)
-
-	// airlinesRouter.HandleFunc("/airport/{airport_name}", handler(h.airportPage)).Methods(http.MethodGet)
-
-	// airportsRouter.HandleFunc("/airport", handler(h.airportPage)).Methods(http.MethodGet)
-
 	airportsRouter.HandleFunc("/details/{airport_id}", handler(h.airportDetailsPage)).Methods(http.MethodGet)
+
 	auth.HandleFunc("/flights", handler(h.liveFlightsPage)).Methods(http.MethodGet)
 
 	return r

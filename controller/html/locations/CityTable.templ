@@ -36,7 +36,12 @@ templ CityTable(c models.CityTable) {
 				<tbody>
 					for _, city := range c.City {
 						<tr class="hover">
-							<td>{ city.CityName }</td>
+							<td hx-boost="true">
+								<a
+									hx-trigger="load delay:1s"
+									href={ templ.SafeURL(fmt.Sprintf("/locations/city/details/%d", city.CityID)) }
+								>{ city.CityName }</a>
+							</td>
 							<td>{ city.CountryName }</td>
 							<td>{ city.Continent }</td>
 							<td>{ city.CurrencyName }></td>

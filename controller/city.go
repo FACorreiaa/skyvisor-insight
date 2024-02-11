@@ -2,9 +2,12 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"math"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/locations"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
@@ -74,6 +77,30 @@ func (h *Handlers) getCities(_ http.ResponseWriter, r *http.Request) (int, []mod
 	}
 
 	return page, c, nil
+}
+
+func (h *Handlers) getCityDetails(_ http.ResponseWriter, r *http.Request) (models.City, error) {
+	vars := mux.Vars(r)
+	idStr, ok := vars["city_id"]
+	if !ok {
+		err := errors.New("city_id not found in path")
+		HandleError(err, "Error getting city_id")
+		return models.City{}, err
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		HandleError(err, "Error converting city_id to integer")
+		return models.City{}, err
+	}
+
+	c, err := h.core.locations.GetCityByID(context.Background(), id)
+	if err != nil {
+		HandleError(err, "Error fetching city details")
+		return models.City{}, err
+	}
+
+	return c, nil
 }
 
 func (h *Handlers) renderCityTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
@@ -147,4 +174,15 @@ func (h *Handlers) cityLocationsPage(w http.ResponseWriter, r *http.Request) err
 	}
 	cl := locations.CityLocations(sidebar, c, "City Locations", "Check location of cities around the world")
 	return h.CreateLayout(w, r, "City locations page", cl).Render(context.Background(), w)
+}
+
+func (h *Handlers) cityDetailsPage(w http.ResponseWriter, r *http.Request) error {
+	c, err := h.getCityDetails(w, r)
+	sidebar := h.renderSidebar()
+	if err != nil {
+		HandleError(err, "Error fetching airport details page")
+		return err
+	}
+	a := locations.CityDetailsPage(sidebar, c, "City", "Check information about cities")
+	return h.CreateLayout(w, r, "City Details Page", a).Render(context.Background(), w)
 }

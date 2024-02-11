@@ -14,9 +14,8 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 
 func detailedMapContainer(data models.Airport) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_3ba3`,
-		Function: `function __templ_detailedMapContainer_3ba3(data){console.log('data', data)
-  function createFeatureFromAirport(airport) {
+		Name: `__templ_detailedMapContainer_0e85`,
+		Function: `function __templ_detailedMapContainer_0e85(data){function createFeatureFromAirport(airport) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -46,7 +45,7 @@ func detailedMapContainer(data models.Airport) templ.ComponentScript {
 
 
    const vectorSource = new ol.source.Vector({
-    features: [createFeatureFromAirport(data)], // Pass the single object to createFeatureFromAirport
+    features: [createFeatureFromAirport(data)],
   });
 
    const vectorLayer = new ol.layer.Vector({
@@ -140,8 +139,8 @@ func detailedMapContainer(data models.Airport) templ.ComponentScript {
       view.setZoom(zoom + 1);
    };
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_3ba3`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_3ba3`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_0e85`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_0e85`, data),
 	}
 }
 

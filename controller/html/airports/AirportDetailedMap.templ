@@ -3,7 +3,6 @@ package airport
 import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 
 script detailedMapContainer(data models.Airport) {
-  console.log('data', data)
   function createFeatureFromAirport(airport) {
 
         const iconStyle = new ol.style.Style({
@@ -34,7 +33,7 @@ script detailedMapContainer(data models.Airport) {
 
 
    const vectorSource = new ol.source.Vector({
-    features: [createFeatureFromAirport(data)], // Pass the single object to createFeatureFromAirport
+    features: [createFeatureFromAirport(data)],
   });
 
    const vectorLayer = new ol.layer.Vector({

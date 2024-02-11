@@ -103,8 +103,8 @@ func (r *RepositoryAirline) GetAirlinesLocations(ctx context.Context) ([]models.
        										ct.city_name, ap.airport_name, ap.timezone,
        										ct.latitude, ct.longitude
 											from  airline al
-											left join airport ap on ap.airport_id = airline_id
-											left join city ct on ap.city_iata_code = ct.iata_code
+											join airport ap on ap.airport_id = airline_id
+											join city ct on ap.city_iata_code = ct.iata_code
 											where al.airline_id != 0
 											  and TRIM(UPPER(al.airline_name)) != ''
 											  and ct.longitude IS NOT NULL

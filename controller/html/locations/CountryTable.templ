@@ -50,28 +50,12 @@ templ CountryTable(c models.CountryTable) {
 					}
 				</tbody>
 			</table>
-			<!-- paginator -->
-			<div class="flex justify-center mt-10">
-				<form class="join" hx-boost="true" method="get">
-					<a
-						class="join-item btn"
-						href={ templ.URL("/locations/country") }
-					>First Page</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/locations/country?page=%d", c.PrevPage)) }
-					>«</a>
-					<button class="join-item btn disabled">{ strconv.Itoa(c.Page) }</button>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/locations/country?page=%d", c.NextPage)) }
-					>»</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/locations/country?page=%d", c.LastPage)) }
-					>Last Page</a>
-				</form>
-			</div>
 		</div>
+		<!-- paginator -->
+		@components.PaginatorComponent("/locations/country",
+			fmt.Sprintf("/locations/country?page=%d&search=%s", c.PrevPage, c.SearchParam),
+			strconv.Itoa(c.Page),
+			fmt.Sprintf("/locations/country?page=%d&search=%s", c.NextPage, c.SearchParam),
+			fmt.Sprintf("/locations/country?page=%d&search=%s", c.LastPage, c.SearchParam))
 	</div>
 }

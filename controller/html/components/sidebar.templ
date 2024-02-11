@@ -14,7 +14,7 @@ script toggleDropdown(id string) {
 templ SidebarComponent(sidebar []models.SidebarItem) {
 	<aside id="sidebar-multi-level-sidebar" class="fixed left-0 z-40 w-40 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
 		<div class="h-full pt-0 pr-3 bg-gray-50 dark:bg-gray-800">
-			<ul class="space-y-4 font-normal menu" onclick="toggleDropdown(this)">
+			<ul class="py-2 font-normal menu" onclick="toggleDropdown(this)">
 				for index, item := range sidebar {
 					<li
 						hx-boost="true"

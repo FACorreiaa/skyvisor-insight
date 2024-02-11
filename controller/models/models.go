@@ -301,7 +301,7 @@ type AircraftTable struct {
 	SortParam   string
 }
 
-// Need to change this to improve all the sorting on the tables
+// Need to change this to improve all the sorting on the tables.
 type ColumnItems struct {
 	Title     string
 	Icon      templ.Component

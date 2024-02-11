@@ -64,8 +64,10 @@ func (h *Handlers) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request)
 
 	page, tax, _ := h.getAirlineTax(w, r)
 
-	if page-1 < 1 {
-		page = 1
+	nextPage := page + 1
+	prevPage := page - 1
+	if prevPage < 1 {
+		prevPage = 1
 	}
 
 	lastPage, err := h.getTotalTax()
@@ -75,8 +77,8 @@ func (h *Handlers) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request)
 	taxData := models.TaxTable{
 		Column:      columnNames,
 		Tax:         tax,
-		PrevPage:    page - 1,
-		NextPage:    page + 1,
+		PrevPage:    prevPage,
+		NextPage:    nextPage,
 		Page:        page,
 		LastPage:    lastPage,
 		SearchParam: param,

@@ -159,8 +159,8 @@ func (r *RepositoryAirport) GetAirportsLocation(ctx context.Context) ([]models.A
 											       a.phone_number,
 											       a.timezone
 											FROM   airport a
-											       INNER JOIN city c
-											               ON a.city_iata_code = c.iata_code
+											JOIN city c
+											ON a.city_iata_code = c.iata_code
 											WHERE  a.airport_name IS NOT NULL
 											       AND Trim(Upper(a.airport_name)) != ''
 											ORDER  BY id `)

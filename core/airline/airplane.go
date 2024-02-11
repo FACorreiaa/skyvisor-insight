@@ -129,7 +129,7 @@ func (r *RepositoryAirline) GetAirplaneSum(ctx context.Context) (int, error) {
 	var count int
 	row := r.pgpool.QueryRow(ctx, `SELECT Count(ap.id)
 	FROM airplane ap
-	left join airline al on al.airline_id = ap.airplane_id
+	JOIN airline al on al.airline_id = ap.airplane_id
 										where ap.model_name IS NOT NULL AND TRIM(UPPER(ap.model_name)) != ''
 `)
 	if err := row.Scan(&count); err != nil {

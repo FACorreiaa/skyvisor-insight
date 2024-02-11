@@ -65,7 +65,7 @@ func (r *RepositoryLocation) GetCity(ctx context.Context, page, pageSize int,
 			    ct.latitude,
 			    ct.longitude
 			FROM city ct
-			LEFT JOIN country cou ON cou.country_iso2 = ct.country_iso2
+			JOIN country cou ON cou.country_iso2 = ct.country_iso2
 			WHERE ct.city_name IS NOT NULL AND TRIM(UPPER(ct.city_name)) != ''
 			AND    Trim(Upper(city_name)) ILIKE trim(upper('%'
 				                  || $1
@@ -102,7 +102,7 @@ func (r *RepositoryLocation) GetCityLocation(ctx context.Context) ([]models.City
               cou.currency_name, cou.phone_prefix,
               ct.latitude, ct.longitude
             from city ct
-            left join
+            join
               country cou on cou.country_iso2 = ct.country_iso2
             where
               ct.city_name IS NOT NULL AND TRIM(UPPER(ct.city_name)) != ''
@@ -116,7 +116,7 @@ func (r *RepositoryLocation) GetCitySum(ctx context.Context) (int, error) {
 	var count int
 	row := r.pgpool.QueryRow(ctx, `SELECT COUNT(DISTINCT ct.city_name)
 										FROM city ct
-										LEFT JOIN country cou ON cou.country_iso2 = ct.country_iso2
+										JOIN country cou ON cou.country_iso2 = ct.country_iso2
 										WHERE ct.city_name IS NOT NULL AND TRIM(UPPER(ct.city_name)) != '';`)
 	if err := row.Scan(&count); err != nil {
 		return 0, err
@@ -133,7 +133,7 @@ func (r *RepositoryLocation) GetCityByName(ctx context.Context, page, pageSize i
               cou.currency_name, cou.phone_prefix,
               ct.latitude, ct.longitude
               FROM city ct
-              LEFT JOIN
+              JOIN
               	country cou on cou.country_iso2 = ct.country_iso2
               WHERE
               	ct.city_name IS NOT NULL AND TRIM(UPPER(ct.city_name)) != ''
@@ -162,4 +162,38 @@ func (r *RepositoryLocation) GetCityByName(ctx context.Context, page, pageSize i
 	            OFFSET $4 LIMIT $5`
 
 	return r.getCityData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+}
+
+func (r *RepositoryLocation) GetCityByID(ctx context.Context, id int) (models.City, error) {
+	var c models.City
+	query := `
+			SELECT
+				ct.city_id,
+			    ct.city_name,
+			    ct.timezone,
+			    ct.gmt,
+			    cou.continent,
+			    cou.country_name,
+			    cou.currency_name,
+			    cou.phone_prefix,
+			    ct.latitude,
+			    ct.longitude
+			FROM city ct
+			JOIN country cou ON cou.country_iso2 = ct.country_iso2
+			WHERE ct.city_name IS NOT NULL
+			  AND TRIM(UPPER(ct.city_name)) != ''
+			  AND ct.city_id = $1;
+	`
+
+	err := r.pgpool.QueryRow(ctx, query, id).Scan(
+		&c.ID, &c.CityName, &c.Timezone, &c.GMT,
+		&c.Continent, &c.CountryName, &c.CurrencyName,
+		&c.PhonePrefix, &c.Latitude, &c.Longitude,
+	)
+
+	if err != nil {
+		return models.City{}, err
+	}
+
+	return c, nil
 }

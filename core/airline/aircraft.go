@@ -48,7 +48,7 @@ func (r *RepositoryAirline) GetAircraft(ctx context.Context, page, pageSize int,
 											ap.model_code, ap.plane_age, ap.plane_class, ap.plane_owner, ap.plane_series, ap.plane_status
 											FROM
 																		aircraft ac
-											LEFT JOIN airplane ap ON ac.plane_type_id = ap.airplane_id
+											JOIN airplane ap ON ac.plane_type_id = ap.airplane_id
 											WHERE ac.plane_type_id != 0 AND TRIM(UPPER(ac.aircraft_name)) != ''
        										AND    Trim(Upper(aircraft_name))
 											           ILIKE trim(upper('%' || $1 || '%'))
@@ -87,7 +87,7 @@ func (r *RepositoryAirline) GetAircraftSum(ctx context.Context) (int, error) {
 	var count int
 	row := r.pgpool.QueryRow(ctx, `SELECT Count(ac.id)
 										FROM aircraft ac
-										LEFT JOIN airplane ap ON ac.plane_type_id = ap.airplane_id
+										JOIN airplane ap ON ac.plane_type_id = ap.airplane_id
 										WHERE ac.plane_type_id != 0 AND TRIM(UPPER(ac.aircraft_name)) != ''
 `)
 	if err := row.Scan(&count); err != nil {

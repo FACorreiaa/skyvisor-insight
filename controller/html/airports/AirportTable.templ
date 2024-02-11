@@ -66,28 +66,12 @@ templ AirportTableComponent(airport models.AirportTable) {
 					}
 				</tbody>
 			</table>
-			<!-- paginator -->
-			<div class="flex justify-center mt-10">
-				<form class="join" hx-boost="true" method="get">
-					<a
-						class="join-item btn"
-						href={ templ.URL("/airports") }
-					>First Page</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airports?page=%d&search=%s", airport.PrevPage, airport.SearchParam)) }
-					>«</a>
-					<button class="join-item btn disabled">{ strconv.Itoa(airport.Page) }</button>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airports?page=%d&search=%s", airport.NextPage, airport.SearchParam)) }
-					>»</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airports?page=%d&search=%s", airport.LastPage, airport.SearchParam)) }
-					>Last Page</a>
-				</form>
-			</div>
 		</div>
+		<!-- paginator -->
+		@components.PaginatorComponent("/airports",
+			fmt.Sprintf("/airports?page=%d&search=%s", airport.PrevPage, airport.SearchParam),
+			strconv.Itoa(airport.Page),
+			fmt.Sprintf("/airports?page=%d&search=%s", airport.NextPage, airport.SearchParam),
+			fmt.Sprintf("/airports?page=%d&search=%s", airport.LastPage, airport.SearchParam))
 	</div>
 }

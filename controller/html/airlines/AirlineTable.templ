@@ -60,16 +60,12 @@ templ AirlineTable(a models.AirlineTable) {
 					}
 				</tbody>
 			</table>
-			<!-- paginator -->
-			<div class="flex justify-center mt-10">
-				<form class="join" hx-boost="true" method="get">
-					<a class="join-item btn" href={ templ.SafeURL("/airlines/airline") }>First Page</a>
-					<a class="join-item btn" href={ templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.PrevPage, a.SearchParam)) }>«</a>
-					<button class="join-item btn disabled">{ strconv.Itoa(a.Page) }</button>
-					<a class="join-item btn" href={ templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.NextPage, a.SearchParam)) }>»</a>
-					<a class="join-item btn" href={ templ.URL(fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.SearchParam)) }>Last Page</a>
-				</form>
-			</div>
 		</div>
+		<!-- paginator -->
+		@components.PaginatorComponent("/airlines/airline",
+			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.PrevPage, a.SearchParam),
+			strconv.Itoa(a.Page),
+			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.NextPage, a.SearchParam),
+			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.SearchParam))
 	</div>
 }

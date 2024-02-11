@@ -37,7 +37,11 @@ templ AirplaneTable(a models.AirplaneTable) {
 					for _, ap := range a.Airplane {
 						<tr class="hover">
 							<td>{ ap.ModelName }</td>
-							<td>{ ap.AirlineName }</td>
+							if ap.AirlineName == "" {
+							    <td>Not available</td>
+							} else {
+							    <td>{ ap.AirlineName }</td>
+							}
 							<td>{ ap.PlaneSeries }</td>
 							if ap.PlaneOwner != nil {
 								<td>{ fmt.Sprintf("%v", ap.PlaneOwner) }</td>

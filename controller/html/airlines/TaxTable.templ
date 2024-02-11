@@ -45,27 +45,11 @@ templ AirlineTaxTable(tax models.TaxTable) {
 				</tbody>
 			</table>
 			<!-- paginator -->
-			<div class="flex justify-center mt-10">
-				<form class="join" hx-boost="true" method="get">
-					<a
-						class="join-item btn"
-						href={ templ.URL("/airlines/tax") }
-					>First Page</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airlines/tax?page=%d", tax.PrevPage)) }
-					>«</a>
-					<button class="join-item btn disabled">{ strconv.Itoa(tax.Page) }</button>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airlines/tax?page=%d", tax.NextPage)) }
-					>»</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airlines/tax?page=%d", tax.LastPage)) }
-					>Last Page</a>
-				</form>
-			</div>
+			@components.PaginatorComponent("/airlines/tax",
+				fmt.Sprintf("/airlines/tax?page=%d", tax.PrevPage),
+				strconv.Itoa(tax.Page),
+				fmt.Sprintf("/airlines/tax?page=%d", tax.NextPage),
+				fmt.Sprintf("/airlines/tax?page=%d", tax.LastPage))
 		</div>
 	</div>
 }

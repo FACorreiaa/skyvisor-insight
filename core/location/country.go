@@ -53,7 +53,7 @@ func (r *RepositoryLocation) GetCountry(ctx context.Context, page, pageSize int,
 			    ct.longitude
 			FROM
 			    country cou
-			        LEFT JOIN
+			JOIN
 			    city ct ON ct.city_name = cou.capital
 			WHERE
 			    cou.country_name IS NOT NULL
@@ -101,7 +101,7 @@ func (r *RepositoryLocation) GetCountryLocation(ctx context.Context) ([]models.C
 			    ct.longitude
 			FROM
 			    country cou
-			        LEFT JOIN
+			JOIN
 			    city ct ON ct.city_name = cou.capital
 			WHERE
 			    cou.country_name IS NOT NULL
@@ -119,7 +119,7 @@ func (r *RepositoryLocation) GetCountrySum(ctx context.Context) (int, error) {
 	row := r.pgpool.QueryRow(ctx, `
 				SELECT COUNT(DISTINCT cou.country_name)
 				FROM country cou
-				LEFT JOIN
+				JOIN
 			    	city ct ON ct.city_name = cou.capital
 				WHERE cou.country_name IS NOT NULL
 				AND ct.latitude IS NOT NULL

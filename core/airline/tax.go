@@ -42,8 +42,8 @@ func (r *RepositoryAirline) GetTax(ctx context.Context, page, pageSize int,
 	query := `SELECT 
     										t.id, t.tax_name, a.airline_name, a.country_name
 											FROM tax t
-											         INNER JOIN airline a ON t.iata_code = a.iata_code
-											         INNER JOIN country c ON a.country_name = c.country_name
+											         JOIN airline a ON t.iata_code = a.iata_code
+											         JOIN country c ON a.country_name = c.country_name
 											WHERE t.tax_name IS NOT NULL
 											AND t.tax_name != ''
 											AND    Trim(Upper(tax_name))
@@ -65,8 +65,8 @@ func (r *RepositoryAirline) GetSum(ctx context.Context) (int, error) {
 	var count int
 	row := r.pgpool.QueryRow(ctx, `SELECT Count(DISTINCT t.id)
 										FROM tax t
-										INNER JOIN airline a ON t.iata_code = a.iata_code
-										INNER JOIN country c ON a.country_name = c.country_name
+										JOIN airline a ON t.iata_code = a.iata_code
+										JOIN country c ON a.country_name = c.country_name
 										WHERE t.tax_name IS NOT NULL AND t.tax_name != ''
 `)
 	if err := row.Scan(&count); err != nil {

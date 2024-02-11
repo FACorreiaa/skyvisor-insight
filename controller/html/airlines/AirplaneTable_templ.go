@@ -96,27 +96,42 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(ap.AirlineName)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 39, Col: 27}
+			if ap.AirlineName == "" {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td>Not available</td>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(ap.AirlineName)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 42, Col: 31}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(ap.PlaneSeries)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 40, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 44, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -134,7 +149,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%v", ap.PlaneOwner))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 42, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 46, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -158,7 +173,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%v", ap.PlaneClass))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 47, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 51, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -181,7 +196,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", ap.PlaneAge))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 51, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 55, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -194,7 +209,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(ap.PlaneStatus)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 52, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 56, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -207,7 +222,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%v", ap.LineNumber))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 53, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 57, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -220,7 +235,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(ap.FirstFlightDate.GetTime().Format("2006-01-01"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 54, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 58, Col: 62}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -233,7 +248,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(ap.EnginesType)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 55, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 59, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -246,7 +261,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", ap.EnginesCount))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 56, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 60, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -259,7 +274,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(ap.ConstructionNumber)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 57, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 61, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -272,7 +287,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(ap.ProductionLine)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 58, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 62, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -290,7 +305,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%v", ap.TestRegistrationNumber))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 60, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 64, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -313,7 +328,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(ap.RegistrationDate.GetTime().Format("2006-01-01"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 64, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 68, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -326,7 +341,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(ap.RegistrationNumber)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 65, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 69, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -362,7 +377,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(a.Page))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 81, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/AirplaneTable.templ`, Line: 85, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {

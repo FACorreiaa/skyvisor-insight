@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"errors"
+	"log"
 	"math"
 	"net/http"
 	"strconv"
@@ -82,6 +83,8 @@ func (h *Handlers) getCities(_ http.ResponseWriter, r *http.Request) (int, []mod
 func (h *Handlers) getCityDetails(_ http.ResponseWriter, r *http.Request) (models.City, error) {
 	vars := mux.Vars(r)
 	idStr, ok := vars["city_id"]
+	log.Printf("Vars: %+v", vars)
+
 	if !ok {
 		err := errors.New("city_id not found in path")
 		HandleError(err, "Error getting city_id")

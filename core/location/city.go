@@ -32,7 +32,7 @@ func (r *RepositoryLocation) getCityData(ctx context.Context, query string,
 
 	for rows.Next() {
 		var c models.City
-		err := rows.Scan(&c.ID, &c.CityName, &c.Timezone, &c.GMT,
+		err := rows.Scan(&c.ID, &c.CityID, &c.CityName, &c.Timezone, &c.GMT,
 			&c.Continent, &c.CountryName, &c.CurrencyName,
 			&c.PhonePrefix, &c.Latitude, &c.Longitude,
 		)
@@ -55,6 +55,7 @@ func (r *RepositoryLocation) GetCity(ctx context.Context, page, pageSize int,
 	offset := (page - 1) * pageSize
 	query := `SELECT
 			    ct.id,
+			    ct.city_id,
 			    ct.city_name,
 			    ct.timezone,
 			    ct.gmt,

@@ -16,15 +16,15 @@ import (
 
 func detailedMapContainer(data models.City) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_1b13`,
-		Function: `function __templ_detailedMapContainer_1b13(data){function createFeatureFromCity(city) {
+		Name: `__templ_detailedMapContainer_01ac`,
+		Function: `function __templ_detailedMapContainer_01ac(data){function createFeatureFromCity(city) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
                 anchor: [1, 46],
                 anchorXUnits: 'fraction',
                 anchorYUnits: 'pixels',
-                src: '../../static/icons/marker.png',
+                src: '../../../static/icons/marker.png',
                 scale: 0.5,
             }),
         });
@@ -134,8 +134,8 @@ func detailedMapContainer(data models.City) templ.ComponentScript {
 	view.setZoom(zoom + 1)
    };
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_1b13`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_1b13`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_01ac`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_01ac`, data),
 	}
 }
 

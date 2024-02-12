@@ -2,7 +2,7 @@ package account
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -62,7 +62,7 @@ func (a *RepositoyAccount) Logout(ctx context.Context, token Token) error {
 	// Check if the token exists
 	exists, err := a.redisClient.Exists(ctx, token).Result()
 	if err != nil {
-		return fmt.Errorf("error checking token existence: %w", err)
+		return errors.New("error checking token existence")
 	}
 
 	if exists == 0 {
@@ -72,7 +72,7 @@ func (a *RepositoyAccount) Logout(ctx context.Context, token Token) error {
 
 	// Delete the token
 	if err = a.redisClient.Del(ctx, token).Err(); err != nil {
-		return fmt.Errorf("error deleting token: %w", err)
+		return errors.New("error deleting token")
 	}
 
 	return nil

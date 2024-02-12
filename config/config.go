@@ -1,7 +1,7 @@
 package config
 
 import (
-	"fmt"
+	"errors"
 	"log"
 	"log/slog"
 	"net/url"
@@ -120,7 +120,7 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 	host := GetEnv("DB_HOST", "localhost")
 	port, err := strconv.Atoi(GetEnv("DB_PORT", "5435"))
 	if err != nil {
-		return nil, fmt.Errorf("invalid DB_PORT: %w", err)
+		return nil, errors.New("invalid DB_PORT")
 	}
 	user := GetEnv("DB_USER", "postgres")
 	pass := GetEnv("DB_PASS", "postgres")
@@ -166,19 +166,19 @@ func NewServerConfig() (*ServerConfig, error) {
 	addr := GetEnv("ADDR", "127.0.0.1:6969")
 	writeTimeout, err := time.ParseDuration(GetEnv("write_timeout", "15s"))
 	if err != nil {
-		return nil, fmt.Errorf("invalid WRITE_TIMEOUT: %w", err)
+		return nil, errors.New("invalid WRITE_TIMEOUT")
 	}
 	readTimeout, err := time.ParseDuration(GetEnv("read_timeout", "15s"))
 	if err != nil {
-		return nil, fmt.Errorf("invalid READ_TIMEOUT: %w", err)
+		return nil, errors.New("invalid READ_TIMEOUT")
 	}
 	idleTimeout, err := time.ParseDuration(GetEnv("idle_timeout", "60s"))
 	if err != nil {
-		return nil, fmt.Errorf("invalid IDLE_TIMEOUT: %w", err)
+		return nil, errors.New("invalid IDLE_TIMEOUT")
 	}
 	gracefulTimeout, err := time.ParseDuration(GetEnv("graceful_timeout", "5s"))
 	if err != nil {
-		return nil, fmt.Errorf("invalid GRACEFUL_TIMEOUT: %w", err)
+		return nil, errors.New("invalid GRACEFUL_TIMEOUT")
 	}
 	sessionKey := GetEnv("session_key", "super-secret")
 

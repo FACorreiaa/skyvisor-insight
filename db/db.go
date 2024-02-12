@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/md5"
 	"embed"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -86,7 +87,7 @@ func Migrate(conn *pgxpool.Pool) error {
 
 		if prevHash, ok := appliedMigrations[file.Name()]; ok {
 			if prevHash != contentHash {
-				return fmt.Errorf("hash mismatch for %s", file.Name())
+				return errors.New("hash mismatch for")
 			}
 
 			slog.Info(file.Name() + " already applied")
@@ -98,7 +99,8 @@ func Migrate(conn *pgxpool.Pool) error {
 				return err
 			}
 
-			if _, err := tx.Exec(ctx, `insert into _migrations (name, hash) values ($1, $2)`, file.Name(), contentHash); err != nil {
+			if _, err := tx.Exec(ctx, `insert into _migrations (name, hash) values ($1, $2)`,
+				file.Name(), contentHash); err != nil {
 				return err
 			}
 

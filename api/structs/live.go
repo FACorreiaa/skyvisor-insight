@@ -1,7 +1,10 @@
 package structs
 
 import (
+	"encoding/json"
 	"github.com/google/uuid"
+	"github.com/valyala/fastjson"
+	"log"
 )
 
 type FlightStatus string
@@ -88,4 +91,35 @@ type LiveFlights struct {
 type FlightAPIData struct {
 	Pagination Pagination    `json:"pagination"`
 	Data       []LiveFlights `json:"data"`
+}
+
+func ValidateLiveFlights(flights *FlightAPIData) error {
+	for i := range flights.Data {
+		// Convert Aircraft struct to JSON string
+		aircraftJSON, err := json.Marshal(flights.Data[i].Aircraft)
+		if err != nil {
+			log.Println("Error marshaling Aircraft to JSON:", err)
+			return err
+		}
+
+		// Parse the JSON string with fastjson
+		v, err := fastjson.Parse(string(aircraftJSON))
+		if err != nil {
+			log.Println("Error parsing JSON:", err)
+			return err
+		}
+
+		// Use fastjson to modify the JSON object
+		v.Get("aircraft").Set("null",
+			fastjson.MustParse(`{"aircraft_registration":"N/A",
+				"aircraft_iata": "N/A", "aircraft_icao": "N/A", "aircraft_icao24":"N/A"
+			}`))
+
+		// Optional: Print the modified JSON
+		modifiedJSON := v.MarshalTo(nil)
+
+		log.Printf("Modified JSON: %s\n", modifiedJSON)
+	}
+
+	return nil
 }

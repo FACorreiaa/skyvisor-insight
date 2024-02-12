@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "missing_access_key",
+    "message": "You have not supplied an API Access Key. [Required format: access_key=YOUR_ACCESS_KEY]"
+  }
+}

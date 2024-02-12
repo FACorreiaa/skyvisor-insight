@@ -2,7 +2,7 @@ package controller
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"net/http"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/user"
@@ -38,7 +38,7 @@ func (h *Handlers) registerPost(w http.ResponseWriter, r *http.Request) error {
 	session, _ := h.sessions.Get(r, "auth")
 	session.Values["token"] = token
 	if err := session.Save(r, w); err != nil {
-		return fmt.Errorf("failed to save session: %w", err)
+		return errors.New("failed to save session")
 	}
 
 	http.Redirect(w, r, "/settings", http.StatusSeeOther)

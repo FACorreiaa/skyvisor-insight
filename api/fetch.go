@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"log/slog"
 	"net/http"
@@ -24,7 +24,7 @@ const value = 2
 func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, error) {
 	accessKey := os.Getenv("AVIATION_STACK_API_KEY")
 	if accessKey == "" {
-		return nil, fmt.Errorf("missing API access key")
+		return nil, errors.New("missing API access key")
 	}
 
 	baseURL := "http://api.aviationstack.com/v1/"
@@ -32,7 +32,7 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 	// Parse the base URL
 	parsedURL, err := url.Parse(baseURL)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse URL: %w", err)
+		return nil, errors.New("failed to parse URL")
 	}
 
 	// Set the endpoint path
@@ -60,17 +60,17 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 
 	response, err := http.Get(finalURL)
 	if err != nil {
-		return nil, fmt.Errorf("failed to make GET request: %w", err)
+		return nil, errors.New("failed to make GET request")
 	}
 
 	if response.StatusCode >= http.StatusBadRequest {
-		return nil, fmt.Errorf("something is not ok")
+		return nil, errors.New("something is not ok")
 	}
 
 	body, err := io.ReadAll(response.Body)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %w", err)
+		return nil, errors.New("failed to read response body")
 	}
 
 	defer response.Body.Close()

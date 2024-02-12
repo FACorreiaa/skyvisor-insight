@@ -3,7 +3,7 @@ package structs
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"log"
 	"time"
 )
@@ -167,6 +167,6 @@ func (ct *CustomTime) Scan(value interface{}) error {
 		ct.Time = parsedTime
 		return nil
 	default:
-		return fmt.Errorf("unsupported Scan value for CustomTime: %T", value)
+		return errors.New("unsupported Scan value for CustomTime")
 	}
 }

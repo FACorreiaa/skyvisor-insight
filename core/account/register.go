@@ -56,12 +56,12 @@
 //		)
 //		user, err = pgx.CollectOneRow(row, pgx.RowToStructByPos[User])
 //		if err != nil {
-//			return fmt.Errorf("error inserting user: %w", err)
+//			return errors.New("error inserting user: %w", err)
 //		}
 //
 //		tokenBytes := make([]byte, RAND_SIZE)
 //		if _, err := rand.Read(tokenBytes); err != nil {
-//			return fmt.Errorf("error generating token: %w", err)
+//			return errors.New("error generating token: %w", err)
 //		}
 //		token = Token(fmt.Sprintf("%x", tokenBytes))
 //
@@ -72,7 +72,7 @@
 //			token,
 //			"auth",
 //		); err != nil {
-//			return fmt.Errorf("error inserting token: %w", err)
+//			return errors.New("error inserting token: %w", err)
 //		}
 //
 //		return nil
@@ -152,19 +152,19 @@ func (a *RepositoyAccount) RegisterNewAccount(ctx context.Context, form Register
 		)
 		user, err = pgx.CollectOneRow(row, pgx.RowToStructByPos[User])
 		if err != nil {
-			return fmt.Errorf("error inserting user: %w", err)
+			return errors.New("error inserting user")
 		}
 
 		tokenBytes := make([]byte, RAND_SIZE)
 		if _, err = rand.Read(tokenBytes); err != nil {
-			return fmt.Errorf("error generating token: %w", err)
+			return errors.New("error generating token")
 		}
 		token = Token(fmt.Sprintf("%x", tokenBytes))
 
 		// Store the session token in Redis
 		// redisKey := fmt.Sprintf("user_session:%s", token)
 		if err := a.redisClient.Set(ctx, token, user.ID, time.Hour*24*7).Err(); err != nil {
-			return fmt.Errorf("error inserting token into Redis: %w", err)
+			return errors.New("error inserting token into Redis")
 		}
 
 		return nil

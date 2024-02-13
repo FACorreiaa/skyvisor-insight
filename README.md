@@ -29,7 +29,8 @@ This project uses [Docker](https://www.docker.com/) to deploy and test the websi
 - [x] Order By on tables
 - [ ] Fix order on search params
 - [ ] Live flights endpoint
-- [ ] Restructure code to use generics and clean functions
+- [ ] Restructure code to use generics and delete repeated functions
+- [ ] Review the methods to bulk import with [Postgres](https://www.postgresql.org/docs/current/sql-copy.html)
 - [ ] Optimise Docker container
 - [ ] Deployment
 

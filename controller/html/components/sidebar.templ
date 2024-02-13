@@ -14,7 +14,7 @@ script toggleDropdown(id string) {
 templ SidebarComponent(sidebar []models.SidebarItem) {
 	<aside id="sidebar-multi-level-sidebar" class="fixed left-0 z-40 w-40 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
 		<div class="h-full pt-0 pr-3 bg-gray-50 dark:bg-gray-800">
-			<ul class="py-2 font-normal menu" onclick="toggleDropdown(this)">
+			<ul class="font-normal menu" onclick="toggleDropdown(this)">
 				for index, item := range sidebar {
 					<li
 						hx-boost="true"
@@ -39,13 +39,13 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 									onClick={ toggleDropdown(fmt.Sprintf("%d", index)) }
 									class="flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
 								>
-									<span class="mr-5 ms-3">
+									<span class="m-2">
 										{ item.Label }
 									</span>
 									@svg2.ArrowDownIcon()
 								</button>
 							</summary>
-							<ul class="hidden ml-4 space-y-2 focus:outline-none" id={ fmt.Sprintf("%d", index) }>
+							<ul class="hidden ml-2 space-y-2 focus:outline-none" id={ fmt.Sprintf("%d", index) }>
 								for _, subItem := range item.SubItems {
 									<li
 										hx-boost="true"
@@ -57,7 +57,7 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 											class="flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
 										>
 											@subItem.Icon
-											<span class="ms-3">
+											<span class="m-2">
 												{ subItem.Label }
 											</span>
 										</a>

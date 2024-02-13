@@ -5,11 +5,23 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"github.com/FACorreiaa/Aviation-tracker/core/account"
+	"github.com/google/uuid"
 	"log"
 	"time"
 
-	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"github.com/a-h/templ"
+)
+
+type FlightStatus string
+
+const (
+	Scheduled FlightStatus = "scheduled"
+	Active    FlightStatus = "active"
+	Landed    FlightStatus = "landed"
+	Cancelled FlightStatus = "cancelled"
+	Incident  FlightStatus = "incident"
+	Diverted  FlightStatus = "diverted"
 )
 
 type NavItem struct {
@@ -241,6 +253,76 @@ type Airplane struct {
 	CreatedAt              CustomTime  `db:"created_at" json:"created_at"`
 }
 
+type LiveFlights struct {
+	ID           uuid.UUID    `db:"id"`
+	FlightDate   string       `json:"flight_date,omitempty"`
+	FlightStatus FlightStatus `json:"flight_status,omitempty"`
+	Departure    struct {
+		Airport         string      `json:"airport"`
+		Timezone        string      `json:"timezone"`
+		Iata            string      `json:"iata"`
+		Icao            string      `json:"icao"`
+		Terminal        string      `json:"terminal"`
+		Gate            interface{} `json:"gate"`
+		Delay           *int        `json:"delay"`
+		Scheduled       string      `json:"scheduled"`
+		Estimated       string      `json:"estimated"`
+		Actual          interface{} `json:"actual"`
+		EstimatedRunway interface{} `json:"estimated_runway"`
+		ActualRunway    interface{} `json:"actual_runway"`
+	} `json:"departure,omitempty"`
+	Arrival struct {
+		Airport         string      `json:"airport"`
+		Timezone        string      `json:"timezone"`
+		Iata            string      `json:"iata"`
+		Icao            string      `json:"icao"`
+		Terminal        interface{} `json:"terminal"`
+		Gate            interface{} `json:"gate"`
+		Baggage         interface{} `json:"baggage"`
+		Delay           *int        `json:"delay"`
+		Scheduled       string      `json:"scheduled"`
+		Estimated       string      `json:"estimated"`
+		Actual          interface{} `json:"actual"`
+		EstimatedRunway interface{} `json:"estimated_runway"`
+		ActualRunway    interface{} `json:"actual_runway"`
+	} `json:"arrival,omitempty"`
+	Airline struct {
+		Name string `json:"name"`
+		Iata string `json:"iata"`
+		Icao string `json:"icao"`
+	} `json:"airline,omitempty"`
+	Flight struct {
+		Number     string `json:"number"`
+		Iata       string `json:"iata"`
+		Icao       string `json:"icao"`
+		Codeshared struct {
+			AirlineName  string `json:"airline_name"`
+			AirlineIata  string `json:"airline_iata"`
+			AirlineIcao  string `json:"airline_icao"`
+			FlightNumber string `json:"flight_number"`
+			FlightIata   string `json:"flight_iata"`
+			FlightIcao   string `json:"flight_icao"`
+		} `json:"codeshared,omitempty"`
+	} `json:"flight"`
+	Aircraft struct {
+		AircraftRegistration string `json:"registration"`
+		AircraftIata         string `json:"iata"`
+		AircraftIcao         string `json:"icao"`
+		AircraftIcao24       string `json:"icao24"`
+	} `json:"aircraft,omitempty"`
+	Live struct {
+		LiveUpdated         string  `json:"updated"`
+		LiveLatitude        float32 `json:"latitude,omitempty"`
+		LiveLongitude       float32 `json:"longitude,omitempty"`
+		LiveAltitude        float32 `json:"altitude"`
+		LiveDirection       float32 `json:"direction"`
+		LiveSpeedHorizontal float32 `json:"speed_horizontal"`
+		LiveSpeedVertical   float32 `json:"speed_vertical"`
+		LiveIsGround        bool    `json:"is_ground"`
+	} `json:"live,omitempty"`
+	CreatedAt CustomTime `json:"created_at"`
+}
+
 func (a *Airport) GetPhoneNumber() string {
 	if !a.PhoneNumber.Valid {
 		return "Phone not available"
@@ -301,7 +383,7 @@ type AircraftTable struct {
 	SortParam   string
 }
 
-// Need to change this to improve all the sorting on the tables.
+// ColumnItems Need to change this to improve all the sorting on the tables.
 type ColumnItems struct {
 	Title     string
 	Icon      templ.Component

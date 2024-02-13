@@ -16,22 +16,27 @@ import (
 func (h *Handlers) renderLiveLocationsSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
+		{Path: "/flights/live", Label: "All Flights", Icon: svg2.HomeIcon()},
 		{
-			Label: "Cities",
+			Label: "Live Flights",
 			Icon:  svg2.GlobeEuropeIcon(),
 			SubItems: []models.SidebarItem{
-				{Path: "/locations/city", Label: "City data", Icon: svg2.GlobeEuropeIcon()},
-				{Path: "/locations/city/map", Label: "City locations", Icon: svg2.MapIcon()},
+				{Path: "/flights/active/data", Label: "Live Flights", Icon: svg2.GlobeEuropeIcon()},
+				{Path: "/flights/active/map", Label: "Live Flights Locations", Icon: svg2.MapIcon()},
 			},
 		},
 		{
-			Label: "Countries",
-			Icon:  svg2.GlobeIcon(),
+			Label: "Landed Flights",
+			Icon:  svg2.GlobeEuropeIcon(),
 			SubItems: []models.SidebarItem{
-				{Path: "/locations/country", Label: "Country data", Icon: svg2.GlobeIcon()},
-				{Path: "/locations/country/map", Label: "Country locations", Icon: svg2.MapIcon()},
+				{Path: "/flights/landed/data", Label: "Landed Flights", Icon: svg2.GlobeEuropeIcon()},
+				{Path: "/flights/landed/map", Label: "Landed Flights Location", Icon: svg2.MapIcon()},
 			},
 		},
+		{Path: "/flights/scheduled", Label: "Scheduled Flights", Icon: svg2.HomeIcon()},
+		{Path: "/flights/cancelled", Label: "Cancelled Flights", Icon: svg2.HomeIcon()},
+		{Path: "/flights/incident", Label: "Incident Flights", Icon: svg2.HomeIcon()},
+		{Path: "/flights/diverted", Label: "Diverted Flights", Icon: svg2.HomeIcon()},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
 	}

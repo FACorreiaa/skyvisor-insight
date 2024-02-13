@@ -66,7 +66,7 @@ func SettingsPage(settings models.SettingsPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form method=\"post\" enctype=\"multipart/form-data\"><fieldset><fieldset class=\"max-w-lg mx-auto mt-2\"><label for=\"username\" class=\"block text-sm font-medium text-gray-900 dark:text-white\">Username</label> <input class=\"bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500\" type=\"text\" placeholder=\"Username\" name=\"username\" id=\"username\" required value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form method=\"post\" enctype=\"multipart/form-data\"><fieldset><fieldset class=\"max-w-lg mx-auto mt-2\"><label for=\"username\" class=\"block text-sm font-medium text-gray-900 dark:text-white\">Email</label> <input class=\"bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500\" type=\"text\" placeholder=\"Username\" name=\"username\" id=\"username\" required value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

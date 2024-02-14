@@ -437,6 +437,18 @@ type CountryTable struct {
 	SortParam   string
 }
 
+type FlightsTable struct {
+	Column      []ColumnItems
+	Flights     []LiveFlights
+	PrevPage    int
+	NextPage    int
+	Page        int
+	LastPage    int
+	SearchParam string
+	OrderParam  string
+	SortParam   string
+}
+
 type CustomTime struct {
 	time.Time
 }

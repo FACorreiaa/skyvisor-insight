@@ -5,7 +5,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
-templ LiveFlightsPage(sidebar []models.SidebarItem, title, description string) {
+templ LiveFlightsPage(table templ.Component, sidebar []models.SidebarItem, title, description string) {
 	<div>
 		@components.BannerComponent(title, description)
 		<div class="container flex pt-10 mx-auto mb-24 mr:px-6">
@@ -13,7 +13,7 @@ templ LiveFlightsPage(sidebar []models.SidebarItem, title, description string) {
 				@components.SidebarComponent(sidebar)
 			</div>
 			<div class="w-11/12">
-            				lol
+            				@table
             </div>
 		</div>
 	</div>

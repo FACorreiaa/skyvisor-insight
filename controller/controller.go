@@ -7,6 +7,8 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/FACorreiaa/Aviation-tracker/core/flights"
+
 	"github.com/FACorreiaa/Aviation-tracker/core/location"
 
 	"github.com/FACorreiaa/Aviation-tracker/core/airline"
@@ -33,6 +35,7 @@ type core struct {
 	airports  *airport.RepositoryAirport
 	airlines  *airline.RepositoryAirline
 	locations *location.RepositoryLocation
+	flights   *flights.RepositoryFlights
 }
 
 type Handlers struct {
@@ -86,6 +89,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 			airports:  airport.NewAirports(pool),
 			airlines:  airline.NewAirlines(pool),
 			locations: location.NewLocations(pool),
+			flights:   flights.NewFlights(pool),
 		},
 	}
 
@@ -147,7 +151,8 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	airportsRouter.HandleFunc("/locations", handler(h.airportLocationPage)).Methods(http.MethodGet)
 	airportsRouter.HandleFunc("/details/{airport_id}", handler(h.airportDetailsPage)).Methods(http.MethodGet)
 
-	auth.HandleFunc("/flights", handler(h.liveFlightsPage)).Methods(http.MethodGet)
+	flightsRouter := auth.PathPrefix("/flights").Subrouter()
+	flightsRouter.HandleFunc("", handler(h.liveFlightsPage)).Methods(http.MethodGet)
 
 	return r
 }

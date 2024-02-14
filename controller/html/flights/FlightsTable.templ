@@ -1,0 +1,65 @@
+package flights
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
+	"fmt"
+	"strconv"
+)
+
+script goToNextPage(page int) {
+  return page + 1
+}
+
+script returnToPreviousPage(page int) {
+  return page - 1
+}
+
+templ FlightsTableComponent(live models.FlightsTable) {
+	<div class="flex flex-col items-left" id="table-container">
+		@components.InputComponent("Search by Flights Name", "/flights")
+		<div class="overflow-x-auto">
+			<table class="table table-zebra">
+				<!-- head -->
+				<thead>
+					<tr>
+						for _, col := range live.Column {
+							<th>
+								<div class="flex justify-start align-middle" hx-boost>
+									{ col.Title }
+									<form class="join" hx-boost="true" method="get">
+										<a
+											class="pl-4"
+											href={ templ.URL(fmt.Sprintf("/flights?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
+										>
+											@col.Icon
+										</a>
+									</form>
+								</div>
+							</th>
+						}
+					</tr>
+				</thead>
+				<!-- rows -->
+				<tbody>
+					for _, lf := range live.Flights {
+						<tr class="hover">
+							<td hx-boost="true">
+								<a
+									hx-trigger="load delay:1s"
+									href={ templ.SafeURL(fmt.Sprintf("/airports/details/%s", lf.Flight.Number)) }
+								>{ lf.Flight.Number }</a>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		<!-- paginator -->
+		@components.PaginatorComponent("/flights",
+			fmt.Sprintf("/flights?page=%d&search=%s", live.PrevPage, live.SearchParam),
+			strconv.Itoa(live.Page),
+			fmt.Sprintf("/flights?page=%d&search=%s", live.NextPage, live.SearchParam),
+			fmt.Sprintf("/flights?page=%d&search=%s", live.LastPage, live.SearchParam))
+	</div>
+}

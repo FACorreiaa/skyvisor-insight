@@ -2,7 +2,9 @@ package controller
 
 import (
 	"context"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
@@ -47,9 +49,39 @@ func (h *Handlers) renderLiveLocationsSidebar() []models.SidebarItem {
 	return sidebar
 }
 
-func (h *Handlers) renderFlightsTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	lf := make([]models.LiveFlights, 0)
-	var page int
+func (h *Handlers) getFlights(w http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
+	pageSize := 10
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	//orderBy := r.URL.Query().Get("orderBy")
+	//sortBy := r.URL.Query().Get("sortBy")
+
+	if err != nil {
+		// Handle error or set a default page number
+		page = 1
+	}
+
+	lf, err := h.core.flights.GetAllFlights(context.Background(), page, pageSize)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return page, lf, nil
+}
+
+func (h *Handlers) getTotalFlights() (int, error) {
+	total, err := h.core.flights.GetAllFlightsSum(context.Background())
+	pageSize := 10
+	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
+	if err != nil {
+		return 0, err
+	}
+	return lastPage, nil
+}
+
+func (h *Handlers) renderFlightsTable(w http.ResponseWriter,
+	r *http.Request) (templ.Component, error) {
+	//lf := make([]models.LiveFlights, 0)
+	//var page int
 	var sortAux string
 
 	param := r.FormValue("search")
@@ -65,6 +97,8 @@ func (h *Handlers) renderFlightsTable(w http.ResponseWriter, r *http.Request) (t
 	columnNames := []models.ColumnItems{
 		{Title: "Flight Number", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 	}
+
+	page, lf, err := h.getFlights(w, r)
 
 	//fullPage, airportList, _ := h.getAirports(w, r)
 	//filteredPage, filteredAirport, _ := h.getAirportByName(w, r)
@@ -83,8 +117,9 @@ func (h *Handlers) renderFlightsTable(w http.ResponseWriter, r *http.Request) (t
 		prevPage = 1
 	}
 
-	lastPage, err := h.getTotalAirports()
+	lastPage, err := h.getTotalFlights()
 	if err != nil {
+		HandleError(err, "Error fetching total flights")
 		return nil, err
 	}
 	f := models.FlightsTable{

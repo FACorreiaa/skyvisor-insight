@@ -141,7 +141,7 @@ func (h *Handlers) renderFlightsTable(w http.ResponseWriter,
 	return flightsTable, nil
 }
 
-func (h *Handlers) liveFlightsPage(w http.ResponseWriter, r *http.Request) error {
+func (h *Handlers) allFlightsPage(w http.ResponseWriter, r *http.Request) error {
 	table, err := h.renderFlightsTable(w, r)
 	if err != nil {
 		HandleError(err, "Error fetching flights table")
@@ -149,6 +149,13 @@ func (h *Handlers) liveFlightsPage(w http.ResponseWriter, r *http.Request) error
 	}
 	s := h.renderLiveLocationsSidebar()
 
-	f := flights.LiveFlightsPage(table, s, "Live Flights", "check live flights data")
+	f := flights.AllFlightsPage(table, s, "Live Flights", "Check all flights going on")
+	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
+}
+
+func (h *Handlers) detailedFlightsPage(w http.ResponseWriter, r *http.Request) error {
+	s := h.renderLiveLocationsSidebar()
+
+	f := flights.DetailedFlightsPage(s, "Live Flights", "Detailed flight data")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }

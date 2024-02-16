@@ -18,6 +18,7 @@ script returnToPreviousPage(page int) {
 templ FlightsTableComponent(live models.FlightsTable) {
 	<div class="flex flex-col items-left" id="table-container">
 		@components.InputComponent("Search by Flights Number", "/flights")
+		<h1>Change this page query to include airline name</h1>
 		<div class="overflow-x-auto">
 			<table class="table table-zebra">
 				<!-- head -->
@@ -50,6 +51,16 @@ templ FlightsTableComponent(live models.FlightsTable) {
 									href={ templ.SafeURL(fmt.Sprintf("/airports/details/%s", lf.Flight.Number)) }
 								>{ lf.Flight.Number }</a>
 							</td>
+							<td>{ fmt.Sprintf("%s", lf.FlightStatus) }</td>
+							<td>{ lf.FlightDate }</td>
+							<td>{ lf.Departure.Airport }</td>
+							<td>{ lf.Departure.Estimated }</td>
+							<td>{ lf.Arrival.Airport }</td>
+							<td>{ lf.Arrival.Estimated }</td>
+							<td>{ fmt.Sprintf("%d", lf.Arrival.Delay) }</td>
+							<td>{ fmt.Sprintf("%d", lf.Departure.Delay) }</td>
+							<td>{ lf.Departure.Terminal }</td>
+							<td>{ lf.Departure.Gate.(string) }</td>
 						</tr>
 					}
 				</tbody>

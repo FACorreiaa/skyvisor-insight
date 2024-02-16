@@ -52,15 +52,15 @@ func (h *Handlers) renderLiveLocationsSidebar() []models.SidebarItem {
 func (h *Handlers) getFlights(w http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
 	pageSize := 10
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-	//orderBy := r.URL.Query().Get("orderBy")
-	//sortBy := r.URL.Query().Get("sortBy")
+	orderBy := r.URL.Query().Get("orderBy")
+	sortBy := r.URL.Query().Get("sortBy")
 
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	lf, err := h.core.flights.GetAllFlights(context.Background(), page, pageSize)
+	lf, err := h.core.flights.GetAllFlights(context.Background(), page, pageSize, orderBy, sortBy)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -80,8 +80,7 @@ func (h *Handlers) getTotalFlights() (int, error) {
 
 func (h *Handlers) renderFlightsTable(w http.ResponseWriter,
 	r *http.Request) (templ.Component, error) {
-	//lf := make([]models.LiveFlights, 0)
-	//var page int
+
 	var sortAux string
 
 	param := r.FormValue("search")
@@ -96,12 +95,26 @@ func (h *Handlers) renderFlightsTable(w http.ResponseWriter,
 
 	columnNames := []models.ColumnItems{
 		{Title: "Flight Number", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Flight Status", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Flight Date", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Airport Departure", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Estimated Departure", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Airport Arrival", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Estimated Arrival", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Arrival Delay", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Departure Delay", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Departure Terminal", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Departure Gate", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 	}
 
 	page, lf, err := h.getFlights(w, r)
+	if err != nil {
+		HandleError(err, "Error fetching total flights")
+		return nil, err
+	}
 
-	//fullPage, airportList, _ := h.getAirports(w, r)
-	//filteredPage, filteredAirport, _ := h.getAirportByName(w, r)
+	// fullPage, airportList, _ := h.getAirports(w, r)
+	// filteredPage, filteredAirport, _ := h.getAirportByName(w, r)
 
 	//if len(param) > 0 {
 	//	lf = filteredAirport

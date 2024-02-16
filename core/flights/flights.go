@@ -2,6 +2,7 @@ package flights
 
 import (
 	"context"
+
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -150,8 +151,8 @@ func (r *RepositoryFlights) getFlightsData(ctx context.Context, query string,
 }
 
 func (r *RepositoryFlights) GetAllFlights(ctx context.Context,
-	page, pageSize int) ([]models.LiveFlights, error) {
-	query := `select DISTINCT ON (f.flight_number)
+	page, pageSize int, orderBy, sortBy string) ([]models.LiveFlights, error) {
+	query := `select
 							       f.flight_number,
 							       f.flight_date,
 							       f.flight_status,
@@ -177,17 +178,41 @@ func (r *RepositoryFlights) GetAllFlights(ctx context.Context,
 							       f.departure_estimated,
 							       COALESCE(f.departure_delay, 0)
 							from flights f
-							order by flight_number, flight_date asc
+							ORDER BY
+							CASE
+									WHEN $3 = 'Flight Number'
+									AND      $4 = 'ASC' THEN flight_number::text
+							END ASC,
+							CASE
+									WHEN $3 = 'Flight Number'
+									AND      $4 = 'DESC' THEN flight_number::text
+							END DESC,
+							CASE
+									WHEN $3 = 'Flight Status'
+									AND      $4 = 'ASC' THEN flight_status::text
+							END ASC,
+							CASE
+									WHEN $3 = 'Flight Status'
+									AND      $4 = 'DESC' THEN flight_status::text
+							END DESC,
+							CASE
+									WHEN $3 = 'Flight Date'
+									AND      $4 = 'ASC' THEN flight_date::text
+							END ASC,
+							CASE
+									WHEN $3 = 'Flight Date'
+									AND      $4 = 'DESC' THEN flight_date::text
+							END DESC
 							offset $1 limit $2`
 
 	offset := (page - 1) * pageSize
 
-	return r.getFlightsData(ctx, query, offset, pageSize)
+	return r.getFlightsData(ctx, query, offset, pageSize, orderBy, sortBy)
 }
 
 func (r *RepositoryFlights) GetAllFlightsSum(ctx context.Context) (int, error) {
 	var count int
-	row := r.pgpool.QueryRow(ctx, `SELECT DISTINCT ON(flight_number) Count(id)
+	row := r.pgpool.QueryRow(ctx, `SELECT DISTINCT ON(flight_number) Count(flight_number)
 										FROM   flights
 										GROUP BY flight_number`)
 

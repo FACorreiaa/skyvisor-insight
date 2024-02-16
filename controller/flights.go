@@ -51,6 +51,7 @@ func (h *Handlers) renderLiveLocationsSidebar() []models.SidebarItem {
 
 func (h *Handlers) getFlights(w http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
 	pageSize := 10
+	param := r.FormValue("search")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")
@@ -60,7 +61,7 @@ func (h *Handlers) getFlights(w http.ResponseWriter, r *http.Request) (int, []mo
 		page = 1
 	}
 
-	lf, err := h.core.flights.GetAllFlights(context.Background(), page, pageSize, orderBy, sortBy)
+	lf, err := h.core.flights.GetAllFlights(context.Background(), page, pageSize, orderBy, sortBy, param)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -112,17 +113,6 @@ func (h *Handlers) renderFlightsTable(w http.ResponseWriter,
 		HandleError(err, "Error fetching total flights")
 		return nil, err
 	}
-
-	// fullPage, airportList, _ := h.getAirports(w, r)
-	// filteredPage, filteredAirport, _ := h.getAirportByName(w, r)
-
-	//if len(param) > 0 {
-	//	lf = filteredAirport
-	//	page = filteredPage
-	//} else {
-	//	lf = airportList
-	//	page = fullPage
-	//}
 
 	nextPage := page + 1
 	prevPage := page - 1

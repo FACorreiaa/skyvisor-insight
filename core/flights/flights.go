@@ -1,7 +1,7 @@
 package flights
 
 import (
-	"context"
+	"context" //nolint:goimports
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -20,7 +20,10 @@ func NewFlights(
 	}
 }
 
-//func (r *RepositoryFlights) getFlightsData(ctx context.Context, query string,
+const ms = 1000
+const min = 60
+
+// func (r *RepositoryFlights) getFlightsData(ctx context.Context, query string,
 //	args ...interface{}) ([]models.LiveFlights, error) {
 //	var lf []models.LiveFlights
 //
@@ -111,7 +114,8 @@ func (r *RepositoryFlights) getFlightsData(ctx context.Context, query string,
 
 	for rows.Next() {
 		var f models.LiveFlights
-		err := rows.Scan(
+
+		err = rows.Scan(
 			&f.Flight.Number,
 			&f.FlightDate,
 			&f.FlightStatus,
@@ -140,6 +144,12 @@ func (r *RepositoryFlights) getFlightsData(ctx context.Context, query string,
 		if err != nil {
 			return nil, err
 		}
+
+		if f.Arrival.Delay != nil {
+			minutes := *f.Arrival.Delay / (ms * min)
+			f.Arrival.Delay = &minutes
+		}
+
 		lf = append(lf, f)
 	}
 
@@ -151,7 +161,7 @@ func (r *RepositoryFlights) getFlightsData(ctx context.Context, query string,
 }
 
 func (r *RepositoryFlights) GetAllFlights(ctx context.Context,
-	page, pageSize int, orderBy, sortBy string) ([]models.LiveFlights, error) {
+	page, pageSize int, orderBy, sortBy, flightNumber string) ([]models.LiveFlights, error) {
 	query := `select
 							       f.flight_number,
 							       f.flight_date,
@@ -162,7 +172,7 @@ func (r *RepositoryFlights) GetAllFlights(ctx context.Context,
 							       COALESCE(f.arrival_actual_runway, 'Not defined') as arrival_actual,
 							       f.arrival_airport,
 							        COALESCE(f.arrival_baggage, 'Not defined'),
-							        COALESCE(f.arrival_delay, 0),
+							       COALESCE(FLOOR(f.arrival_delay / (1000 * 60)), 0),
 							        f.arrival_estimated,
 							        COALESCE(f.arrival_terminal, 'Not defined'),
 							        COALESCE(f.arrival_gate, 'Not defined'),
@@ -175,9 +185,11 @@ func (r *RepositoryFlights) GetAllFlights(ctx context.Context,
 							       COALESCE(f.departure_actual, 'Not defined'),
 							       COALESCE(f.departure_actual_runway, 'Not defined'),
 							       f.departure_airport,
-							       f.departure_estimated,
-							       COALESCE(f.departure_delay, 0)
+							    	f.departure_estimated,
+							       COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0)
 							from flights f
+							WHERE	Trim(Upper(f.flight_number))
+							          ILIKE trim(upper('%' || $5 || '%'))
 							ORDER BY
 							CASE
 									WHEN $3 = 'Flight Number'
@@ -207,7 +219,7 @@ func (r *RepositoryFlights) GetAllFlights(ctx context.Context,
 
 	offset := (page - 1) * pageSize
 
-	return r.getFlightsData(ctx, query, offset, pageSize, orderBy, sortBy)
+	return r.getFlightsData(ctx, query, offset, pageSize, orderBy, sortBy, flightNumber)
 }
 
 func (r *RepositoryFlights) GetAllFlightsSum(ctx context.Context) (int, error) {

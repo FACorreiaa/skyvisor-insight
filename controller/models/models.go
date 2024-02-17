@@ -5,10 +5,11 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
-	"github.com/FACorreiaa/Aviation-tracker/core/account"
-	"github.com/google/uuid"
 	"log"
 	"time"
+
+	"github.com/FACorreiaa/Aviation-tracker/core/account"
+	"github.com/google/uuid"
 
 	"github.com/a-h/templ"
 )
@@ -320,7 +321,13 @@ type LiveFlights struct {
 		LiveSpeedVertical   float32 `json:"speed_vertical"`
 		LiveIsGround        bool    `json:"is_ground"`
 	} `json:"live,omitempty"`
-	CreatedAt CustomTime `json:"created_at"`
+	CreatedAt            CustomTime `json:"created_at"`
+	DepartureAirportName string     `json:"departure_airport"`
+	DepartureLatitude    string     `json:"departure_latitude"`
+	DepartureLongitude   string     `json:"departure_longitude"`
+	ArrivalAirportName   string     `json:"arrival_airport"`
+	ArrivalLatitude      string     `json:"arrival_latitude"`
+	ArrivalLongitude     string     `json:"arrival_longitude"`
 }
 
 func (a *Airport) GetPhoneNumber() string {

@@ -153,7 +153,7 @@ func NewRedisConfig() (*RedisConfig, error) {
 	//	Addr:     host,
 	//	Password: pass, // no password set
 	//	DB:       0,    // use default DB
-	//})
+	// })
 
 	return &RedisConfig{
 		Host:     host,

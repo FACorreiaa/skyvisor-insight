@@ -2,6 +2,7 @@ package airline
 
 import (
 	"context"
+
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 

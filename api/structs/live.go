@@ -2,9 +2,10 @@ package structs
 
 import (
 	"encoding/json"
+	"log"
+
 	"github.com/google/uuid"
 	"github.com/valyala/fastjson"
-	"log"
 )
 
 type FlightStatus string

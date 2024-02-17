@@ -72,7 +72,7 @@ func (a *RepositoyAccount) Login(ctx context.Context, form LoginForm) (*Token, e
 	//	user.ID,
 	//	token,
 	//	"auth",
-	//); err != nil {
+	// ); err != nil {
 	//	slog.Error("Error inserting token", "err", err)
 	//	return nil, errors.New("internal server error")
 	//}

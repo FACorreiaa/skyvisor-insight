@@ -2,10 +2,11 @@ package controller
 
 import (
 	"context"
-	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 	"math"
 	"net/http"
 	"strconv"
+
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 
 	airline "github.com/FACorreiaa/Aviation-tracker/controller/html/airlines"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"

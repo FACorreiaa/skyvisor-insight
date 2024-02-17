@@ -16,6 +16,7 @@ script detailedMapContainer(data models.City) {
                 scale: 0.5,
             }),
         });
+        //
 
         const feature = new ol.Feature({
             geometry: new ol.geom.Point(ol.proj.fromLonLat([city.longitude, city.latitude])),

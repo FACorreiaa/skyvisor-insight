@@ -3,10 +3,11 @@ package controller
 import (
 	"context"
 	"errors"
-	"github.com/gorilla/mux"
 	"math"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/locations"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"

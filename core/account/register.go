@@ -1,6 +1,6 @@
 // package account
 //
-//import (
+// import (
 //	"context"
 //	"crypto/rand"
 //	"errors"
@@ -12,14 +12,14 @@
 //	"log/slog"
 //)
 //
-//type RegisterForm struct {
+// type RegisterForm struct {
 //	Username        string `form:"username" validate:"required"`
 //	Email           string `form:"email" validate:"required,email"`
 //	Password        string `form:"password" validate:"required,min=8,max=72"`
 //	PasswordConfirm string `form:"password_confirm" validate:"required,eqfield=Password"`
 //}
 //
-//func (a *Accounts) RegisterNewAccount(ctx context.Context, form RegisterForm) (*Token, error) {
+// func (a *Accounts) RegisterNewAccount(ctx context.Context, form RegisterForm) (*Token, error) {
 //	if err := a.validator.Struct(form); err != nil {
 //		slog.Warn("Validation error")
 //		return nil, err

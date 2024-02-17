@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"math"
 	"net/http"
 	"strconv"
@@ -9,6 +10,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 	"github.com/a-h/templ"
+	"github.com/gorilla/mux"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/flights"
 )
@@ -22,7 +24,14 @@ import (
 func (h *Handlers) renderLiveLocationsSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
-		{Path: "/flights/live", Label: "All Flights", Icon: svg2.HomeIcon()},
+		{
+			Label: "Flights",
+			Icon:  svg2.AcademicCapIcon(),
+			SubItems: []models.SidebarItem{
+				{Path: "/flights", Label: "All Flights", Icon: svg2.HomeIcon()},
+				{Path: "/flights/preview", Label: "All Flights", Icon: svg2.HomeIcon()},
+			},
+		},
 		{
 			Label: "Live Flights",
 			Icon:  svg2.GlobeEuropeIcon(),
@@ -141,6 +150,34 @@ func (h *Handlers) renderFlightsTable(w http.ResponseWriter,
 	return flightsTable, nil
 }
 
+func (h *Handlers) getFlightsDetails(_ http.ResponseWriter, r *http.Request) (models.LiveFlights, error) {
+	vars := mux.Vars(r)
+	flightNumber, ok := vars["flight_number"]
+	if !ok {
+		err := errors.New("flight_number not found in path")
+		HandleError(err, "Error getting flight_number")
+		return models.LiveFlights{}, err
+	}
+
+	lf, err := h.core.flights.GetFlightByID(context.Background(), flightNumber)
+	if err != nil {
+		HandleError(err, "Error flights details")
+		return models.LiveFlights{}, err
+	}
+
+	return lf, nil
+}
+
+func (h *Handlers) getAllFlights(_ http.ResponseWriter, r *http.Request) ([]models.LiveFlights, error) {
+	lf, err := h.core.flights.GetAllFlightsPreview(context.Background())
+	if err != nil {
+		HandleError(err, "Error flights details")
+		return nil, err
+	}
+
+	return lf, nil
+}
+
 func (h *Handlers) allFlightsPage(w http.ResponseWriter, r *http.Request) error {
 	table, err := h.renderFlightsTable(w, r)
 	if err != nil {
@@ -155,7 +192,26 @@ func (h *Handlers) allFlightsPage(w http.ResponseWriter, r *http.Request) error 
 
 func (h *Handlers) detailedFlightsPage(w http.ResponseWriter, r *http.Request) error {
 	s := h.renderLiveLocationsSidebar()
+	fd, err := h.getFlightsDetails(w, r)
 
-	f := flights.DetailedFlightsPage(s, "Live Flights", "Detailed flight data")
+	if err != nil {
+		HandleError(err, "Error fetching flights details page")
+		return err
+	}
+
+	f := flights.DetailedFlightsPage(s, fd, "Live Flights", "Detailed flight data")
+	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
+}
+
+func (h *Handlers) flightsPreview(w http.ResponseWriter, r *http.Request) error {
+	s := h.renderLiveLocationsSidebar()
+	fd, err := h.getAllFlights(w, r)
+
+	if err != nil {
+		HandleError(err, "Error fetching flights details page")
+		return err
+	}
+
+	f := flights.FLightsPreviewPage(s, fd, "Live Flights", "Detailed flight data")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }

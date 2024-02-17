@@ -35,6 +35,7 @@ module.exports = {
 			'nord',
 			'cyberpunk',
 			'pastel',
+			'cupcake',
 			{
 				'catppuccin-latte': {
 					primary: '#1e66f5', // blue

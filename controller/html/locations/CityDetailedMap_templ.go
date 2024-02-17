@@ -16,8 +16,8 @@ import (
 
 func detailedMapContainer(data models.City) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_01ac`,
-		Function: `function __templ_detailedMapContainer_01ac(data){function createFeatureFromCity(city) {
+		Name: `__templ_detailedMapContainer_47db`,
+		Function: `function __templ_detailedMapContainer_47db(data){function createFeatureFromCity(city) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -28,6 +28,7 @@ func detailedMapContainer(data models.City) templ.ComponentScript {
                 scale: 0.5,
             }),
         });
+        //
 
         const feature = new ol.Feature({
             geometry: new ol.geom.Point(ol.proj.fromLonLat([city.longitude, city.latitude])),
@@ -134,8 +135,8 @@ func detailedMapContainer(data models.City) templ.ComponentScript {
 	view.setZoom(zoom + 1)
    };
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_01ac`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_01ac`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_47db`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_47db`, data),
 	}
 }
 

@@ -16,8 +16,9 @@ import (
 
 func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_6c6f`,
-		Function: `function __templ_detailedMapContainer_6c6f(data){const tileLayer = new  ol.layer.Tile({
+		Name: `__templ_detailedMapContainer_7a0b`,
+		Function: `function __templ_detailedMapContainer_7a0b(data){console.log('data', data)
+    const tileLayer = new  ol.layer.Tile({
   source: new ol.source.StadiaMaps({
     layer: 'stamen_toner',
   }),
@@ -41,6 +42,59 @@ const style = new ol.style.Style({
     width: 2,
   }),
 });
+
+  const departureMarker = new ol.Feature({
+    geometry: new ol.geom.Point(ol.proj.fromLonLat([
+      parseFloat(data.departure_longitude),
+      parseFloat(data.departure_latitude),
+    ])),
+    departure: data.departure_airport,
+    timezone: data.departure.timezone
+  });
+  const departureMarkerStyle = new ol.style.Style({
+    image: new ol.style.Icon({
+      anchor: [0.5, 46],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'pixels',
+      src: '../../../static/icons/marker.png',
+      scale: 0.5,
+    }),
+  });
+  departureMarker.setStyle(departureMarkerStyle);
+
+  const arrivalMarker = new ol.Feature({
+    geometry: new ol.geom.Point(ol.proj.fromLonLat([
+      parseFloat(data.arrival_longitude),
+      parseFloat(data.arrival_latitude),
+    ])),
+    arrival: data.arrival_airport,
+    timezone: data.arrival.timezone
+  });
+  const arrivalMarkerStyle = new ol.style.Style({
+    image: new ol.style.Icon({
+      anchor: [0.5, 46],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'pixels',
+      src: '../../../static/icons/marker.png',
+      scale: 0.5,
+    }),
+  });
+  arrivalMarker.setStyle(arrivalMarkerStyle);
+
+
+    const markersSource = new ol.source.Vector({
+        features: [departureMarker, arrivalMarker],
+    });
+
+    const markersLayer = new ol.layer.Vector({
+        source: markersSource,
+    });
+
+    map.addLayer(markersLayer);
+    map.addLayer(new ol.layer.Vector({
+        source: new ol.source.Vector(),
+        style: style,
+    }));
 
 const flightsSource = new ol.source.Vector({
   attributions: 'Flight data by ' + '<a href="https://openflights.org/data.html">OpenFlights</a>,',
@@ -66,6 +120,8 @@ const flightsSource = new ol.source.Vector({
       features.push(
         new ol.Feature({
           geometry: line,
+          departure: data.departure_airport,
+          arrival: data.arrival_airport,
           finished: false,
         })
       );
@@ -87,6 +143,58 @@ const flightsLayer = new ol.layer.Vector({
 });
 
 map.addLayer(flightsLayer);
+
+//popup code
+const element = document.getElementById('popup');
+   const popup = new ol.Overlay({
+      element: element,
+      positioning: 'bottom-center',
+      stopEvent: false,
+   });
+   map.addOverlay(popup);
+
+   let popover;
+
+   function disposePopover() {
+      if (popover) {
+	popover.dispose()
+	popover = undefined
+      }
+   }
+
+   const tippyButton = document.getElementById('popup');
+    tippy(tippyButton, {
+      content: document.createElement('div'),
+      interactive: true,
+      trigger: 'click',
+      placement: 'top',
+      animation: 'scale'  ,
+      theme: 'translucent'
+    });
+
+map.on('click', function (evt) {
+    const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+        return feature;
+    });
+    disposePopover();
+    if (!feature) {
+        return;
+    }
+    popup.setPosition(evt.coordinate);
+
+    // Show tooltip with departure or arrival information
+    const contentDiv = document.createElement('div');
+    if (feature.get('departure')) {
+        contentDiv.innerHTML = ` + "`" + `<strong>Departure:</strong> ${feature.get('departure')}<br>
+                                <p><strong>Timezone:</strong> ${feature.get('timezone')}<br></p>` + "`" + `;
+    } else if (feature.get('arrival')) {
+        contentDiv.innerHTML = ` + "`" + `<strong>Arrival:</strong> ${feature.get('arrival')}<br>
+                                <p><strong>Timezone:</strong> ${feature.get('timezone')}<br></p>` + "`" + `;
+    }
+    tippyButton._tippy.setContent(contentDiv);
+    tippyButton._tippy.show();
+});
+
 
 const pointsPerMs = 0.02;
 function animateFlights(event) {
@@ -135,8 +243,8 @@ function addLater(features, timeout) {
   }, timeout);
 }
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_6c6f`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_6c6f`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_7a0b`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_7a0b`, data),
 	}
 }
 

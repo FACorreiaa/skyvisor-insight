@@ -16,133 +16,238 @@ import (
 
 func previewMapContainer(data []models.LiveFlights) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_previewMapContainer_305e`,
-		Function: `function __templ_previewMapContainer_305e(data){const tileLayer = new  ol.layer.Tile({
-  source: new ol.source.StadiaMaps({
-    layer: 'stamen_toner',
-  }),
+		Name: `__templ_previewMapContainer_4a40`,
+		Function: `function __templ_previewMapContainer_4a40(data){const tileLayer = new ol.layer.Tile({
+    source: new ol.source.StadiaMaps({
+        layer: 'stamen_toner',
+    }),
 });
 
 console.log('data', data)
 
 const map = new ol.Map({
-  layers: [tileLayer],
-  target: 'map',
-  view: new ol.View({
-    center: [-11000000, 4600000],
-    zoom: 1,
-  }),
+    layers: [tileLayer],
+    target: 'map',
+    view: new ol.View({
+        center: [-11000000, 4600000],
+        zoom: 1,
+    }),
 });
 
 const style = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: '#EAE911',
-    width: 3,
-  }),
+    stroke: new ol.style.Stroke({
+        color: '#EAE911',
+        width: 3,
+    }),
 });
 
-const flightsSource = new ol.source.Vector({
-        attributions: 'Flight data by ' + '<a href="https://openflights.org/data.html">OpenFlights</a>,',
-        loader: function () {
-            const features = [];
+const markersSource = new ol.source.Vector();
+const markersLayer = new ol.layer.Vector({
+    source: markersSource,
+});
 
-            for (let i = 0; i < data.length - 1; i++) {
-                const from = data[i];
-                const to = data[i + 1];
+map.addLayer(markersLayer);
 
-                const arcGenerator = new arc.GreatCircle(
-                    {
-                        x: parseFloat(from.departure_longitude),
-                        y: parseFloat(from.departure_latitude),
-                    },
-                    {
-                        x: parseFloat(to.departure_longitude),
-                        y: parseFloat(to.departure_latitude),
-                    }
-                );
+for (let i = 0; i < data.length; i++) {
+    const flight = data[i];
 
-                const arcLine = arcGenerator.Arc(100, { offset: 10 });
-
-                arcLine.geometries.forEach(function (geometry) {
-                    const line = new ol.geom.LineString(geometry.coords);
-                    line.transform('EPSG:4326', 'EPSG:3857');
-
-                    features.push(
-                        new ol.Feature({
-                            geometry: line,
-                            finished: false,
-                        })
-                    );
-                });
-            }
-
-            addLater(features, 0);
-            tileLayer.on('postrender', animateFlights);
-        },
+    const departureMarker = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat([
+            parseFloat(flight.departure_longitude),
+            parseFloat(flight.departure_latitude),
+        ])),
+        departure: flight.departure_airport,
+        timezone: flight.departure.timezone
     });
+    const departureMarkerStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: [0.5, 46],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            src: '../../../static/icons/airplane-take-off.svg',
+            scale: 0.5,
+        }),
+    });
+    departureMarker.setStyle(departureMarkerStyle);
+    markersSource.addFeature(departureMarker);
+
+    const arrivalMarker = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat([
+            parseFloat(flight.arrival_longitude),
+            parseFloat(flight.arrival_latitude),
+        ])),
+        arrival: flight.arrival_airport,
+        timezone: flight.arrival.timezone
+    });
+    const arrivalMarkerStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: [0.5, 46],
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'pixels',
+            src: '../../../static/icons/airplane-landing.svg',
+            scale: 0.5,
+        }),
+    });
+    arrivalMarker.setStyle(arrivalMarkerStyle);
+    markersSource.addFeature(arrivalMarker);
+}
+
+const flightsSource = new ol.source.Vector({
+    attributions: 'Flight data by ' + '<a href="https://openflights.org/data.html">OpenFlights</a>,',
+    loader: function() {
+        const features = [];
+
+        for (let i = 0; i < data.length - 1; i++) {
+            const from = data[i];
+            const to = data[i + 1];
+
+
+            const arcGenerator = new arc.GreatCircle({
+                x: parseFloat(from.departure_longitude),
+                y: parseFloat(from.departure_latitude),
+            }, {
+                x: parseFloat(to.departure_longitude),
+                y: parseFloat(to.departure_latitude),
+            });
+
+            const arcLine = arcGenerator.Arc(100, {
+                offset: 10
+            });
+
+            arcLine.geometries.forEach(function(geometry) {
+                const line = new ol.geom.LineString(geometry.coords);
+                line.transform('EPSG:4326', 'EPSG:3857');
+
+                features.push(
+                    new ol.Feature({
+                        geometry: line,
+                        departure: from.departure_airport,
+                        arrival: to.arrival_airport,
+                        finished: false,
+                    })
+                );
+            });
+        }
+
+        addLater(features, 0);
+        tileLayer.on('postrender', animateFlights);
+    },
+});
 
 
 const flightsLayer = new ol.layer.Vector({
-  source: flightsSource,
-  style: function (feature) {
-    if (feature.get('finished')) {
-      return style;
-    }
-    return null;
-  },
+    source: flightsSource,
+    style: function(feature) {
+        if (feature.get('finished')) {
+            return style;
+        }
+        return null;
+    },
 });
 
 map.addLayer(flightsLayer);
+const element = document.getElementById('popup');
+const popup = new ol.Overlay({
+    element: element,
+    positioning: 'bottom-center',
+    stopEvent: false
+})
 
-const pointsPerMs = 0.02;
-function animateFlights(event) {
-  const vectorContext = ol.render.getVectorContext(event);
-  const frameState = event.frameState;
-  vectorContext.setStyle(style);
+let popover;
 
-  const features = flightsSource.getFeatures();
-  for (let i = 0; i < features.length; i++) {
-    const feature = features[i];
-    if (!feature.get('finished')) {
-      const coords = feature.getGeometry().getCoordinates();
-      const elapsedTime = frameState.time - feature.get('start');
-      if (elapsedTime >= 0) {
-        const elapsedPoints = elapsedTime * pointsPerMs;
-
-        if (elapsedPoints >= coords.length) {
-          feature.set('finished', true);
-        }
-
-        const maxIndex = Math.min(elapsedPoints, coords.length);
-        const currentLine = new ol.geom.LineString(coords.slice(0, maxIndex));
-
-        const worldWidth = ol.extent.getWidth(map.getView().getProjection().getExtent());
-        const offset = Math.floor(map.getView().getCenter()[0] / worldWidth);
-
-        currentLine.translate(offset * worldWidth, 0);
-        vectorContext.drawGeometry(currentLine);
-        currentLine.translate(worldWidth, 0);
-        vectorContext.drawGeometry(currentLine);
-      }
+function disposePopover() {
+    if (popover) {
+        popover.dispose();
+        popover = undefined;
+    } else {
+        return
     }
-  }
-  map.render();
+}
+
+
+const tippyButton = document.getElementById('popup');
+tippy(tippyButton, {
+    content: document.createElement('div'),
+    interactive: true,
+    trigger: 'click',
+    placement: 'top',
+    animation: 'scale',
+    theme: 'translucent'
+});
+
+map.on('click', function(evt) {
+    const feature = map.forEachFeatureAtPixel(evt.pixel, function(feature) {
+        return feature;
+    });
+    disposePopover();
+    if (!feature) {
+        return;
+    }
+    popup.setPosition(evt.coordinate);
+
+    // Show tooltip with departure or arrival information
+    const contentDiv = document.createElement('div');
+    if (feature.get('departure')) {
+        contentDiv.innerHTML = ` + "`" + `<strong>Departure:</strong> ${feature.get('departure')}<br>
+                                <p><strong>Timezone:</strong> ${feature.get('timezone')}<br></p>` + "`" + `;
+    } else if (feature.get('arrival')) {
+        contentDiv.innerHTML = ` + "`" + `<strong>Arrival:</strong> ${feature.get('arrival')}<br>
+                                <p><strong>Timezone:</strong> ${feature.get('timezone')}<br></p>` + "`" + `;
+    }
+    tippyButton._tippy.setContent(contentDiv);
+    tippyButton._tippy.show();
+});
+
+const pointsPerMs = 0.08;
+
+function animateFlights(event) {
+    const vectorContext = ol.render.getVectorContext(event);
+    const frameState = event.frameState;
+    vectorContext.setStyle(style);
+
+    const features = flightsSource.getFeatures();
+    for (let i = 0; i < features.length; i++) {
+        const feature = features[i];
+        if (!feature.get('finished')) {
+            const coords = feature.getGeometry().getCoordinates();
+            const elapsedTime = frameState.time - feature.get('start');
+            if (elapsedTime >= 0) {
+                const elapsedPoints = elapsedTime * pointsPerMs;
+
+                if (elapsedPoints >= coords.length) {
+                    feature.set('finished', true);
+                }
+
+                const maxIndex = Math.min(elapsedPoints, coords.length);
+                const currentLine = new ol.geom.LineString(coords.slice(0, maxIndex));
+
+                const worldWidth = ol.extent.getWidth(map.getView().getProjection().getExtent());
+                const offset = Math.floor(map.getView().getCenter()[0] / worldWidth);
+
+                currentLine.translate(offset * worldWidth, 0);
+                vectorContext.drawGeometry(currentLine);
+                currentLine.translate(worldWidth, 0);
+                vectorContext.drawGeometry(currentLine);
+            }
+        }
+    }
+    map.render();
 }
 
 function addLater(features, timeout) {
-  window.setTimeout(function () {
-    let start = Date.now();
-    features.forEach(function (feature) {
-      feature.set('start', start);
-      flightsSource.addFeature(feature);
-      const duration = (feature.getGeometry().getCoordinates().length - 1) / pointsPerMs;
-      start += duration;
-    });
-  }, timeout);
+    window.setTimeout(function() {
+        let start = Date.now();
+        features.forEach(function(feature) {
+            feature.set('start', start);
+            flightsSource.addFeature(feature);
+            const duration = (feature.getGeometry().getCoordinates().length - 1) / pointsPerMs;
+            start += duration;
+        });
+    }, timeout);
 }
 }`,
-		Call:       templ.SafeScript(`__templ_previewMapContainer_305e`, data),
-		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_305e`, data),
+		Call:       templ.SafeScript(`__templ_previewMapContainer_4a40`, data),
+		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_4a40`, data),
 	}
 }
 
@@ -159,7 +264,7 @@ func FlightsPreviewMap(data []models.LiveFlights) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n\t\t\t\t.map {\n\t\t\t\t\twidth: 100%;\n\t\t\t\t\theight: 500px;\n\t\t\t\t}\n        .map-container {\n\t\t\t\t\tposition:\n\t\t\t\t\trelative\n\t\t\t\t\theight: 600px;\n          padding-top: 10px;\n\t\t\t\t}\n\t\t\t\ta.skiplink {\n\t\t\t\t\tposition:\n\t\t\t\t\tabsolute\n\t\t\t\t\tclip: rect(1px, 1px, 1px, 1px);\n\t\t\t\t\tpadding:\n\t\t\t\t\t0\n\t\t\t\t\tborder:\n\t\t\t\t\t0\n\t\t\t\t\theight: 1px;\n\t\t\t\t\twidth: 1px;\n\t\t\t\t\toverflow:\n\t\t\t\t\thidden\n\t\t\t\t}\n\t\t\t\ta.skiplink:focus {\n\t\t\t\t\tclip:\n\t\t\t\t\tauto\n\t\t\t\t\theight:\n\t\t\t\t\tauto\n\t\t\t\t\twidth:\n\t\t\t\t\tauto\n\t\t\t\t\tbackground-color: #fff;\n\t\t\t\t\tpadding: 0.3em;\n\t\t\t\t}\n\t\t\t\t#map:focus {\n\t\t\t\t\toutline: #4A74A8 solid 0.15em;\n\t\t\t\t}\n\t\t\t</style></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n                .map {\n                    width: 100%;\n                    height: 600px;\n                }\n\n                .map-container {\n                    position:\n                        relative height: 600px;\n                    padding-top: 10px;\n                }\n\n                a.skiplink {\n                    position:\n                        absolute clip: rect(1px, 1px, 1px, 1px);\n                    padding:\n                        0 border: 0 height: 1px;\n                    width: 1px;\n                    overflow:\n                        hidden\n                }\n\n                a.skiplink:focus {\n                    clip:\n                        auto height: auto width: auto background-color: #fff;\n                    padding: 0.3em;\n                }\n\n                #map:focus {\n                    outline: #4A74A8 solid 0.15em;\n                }\n\t\t\t</style></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

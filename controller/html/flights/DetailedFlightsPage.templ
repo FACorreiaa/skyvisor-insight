@@ -3,76 +3,185 @@ package flights
 import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
-	"strconv"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
+	"fmt"
 )
 
-templ FlightDetailsCardLayoutComponent(title string) {
-	<div class="shadow-xl card w-69 bg-base-100">
-		<div class="card-body">
-			<h2 class="card-title">{ title }</h2>
-			{ children... }
+templ BannerLayout() {
+	<div class="relative text-center isolate  items-center  gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1 rounded-box">
+		<div class="absolute left-[max(-7rem,calc(50%-52rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+			<div class="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30" style="clip-path: polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)"></div>
+		</div>
+		<div class="absolute left-[max(45rem,calc(50%+8rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+			<div class="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30" style="clip-path: polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)"></div>
+		</div>
+		{ children... }
+	</div>
+}
+
+templ FlightHeader(lf models.LiveFlights) {
+	@BannerLayout() {
+		<div class="mx-auto">
+			<div class="flex flex-wrap items-center justify-center text-center gap-x-4 gap-y-2">
+				<div class="items-start ">
+					<div class="justify-center w-full text-center">
+						<h1><strong>{ lf.Flight.Number }</strong></h1>
+						<span>AIRLINE</span>
+					</div>
+				</div>
+				<div class="mx-auto mr:px-6">
+					<span>Here will be the city names instead. add fields to query query later</span>
+					<div class="relative flex flex-col flex-wrap justify-center w-full text-center gap-x-4 gap-y-2 lg:flex-row">
+						<strong class="font-semibold">{ lf.Departure.Airport }</strong>
+						@svg2.AirplaneIcon()
+						<strong>{ lf.Arrival.Airport }</strong>
+					</div>
+				</div>
+				<div>
+					<span class="items-end ">
+						<div>
+							<h1><strong>LOCATION</strong></h1>
+							if lf.FlightStatus == "" {
+								<span>Status not available</span>
+							} else {
+								<span>{ fmt.Sprintf("%s", lf.FlightStatus) }</span>
+							}
+						</div>
+					</span>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ FlightFooter(lf models.LiveFlights) {
+	@BannerLayout() {
+		<div class="mx-auto">
+			<div class="flex flex-wrap items-center justify-center text-center gap-x-4 gap-y-2">
+				<div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+					<p class="mx-auto text-sm leading-6 text-gray-900">
+						<strong class="font-semibold">Departure timezone: </strong>
+						<label>{ lf.Departure.Timezone }</label>
+						<svg viewBox="0 0 2 2" class="mx-2 inline h-0.5 w-0.5 fill-current" aria-hidden="true"><circle cx="1" cy="1" r="1"></circle></svg>
+						<strong class="font-semibold">Arrival timezone: </strong>
+						<label>{ lf.Arrival.Timezone }</label>
+					</p>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ FlightDetailedDeparture(title string, lf models.LiveFlights) {
+	<div class="relative flex flex-grow h-20 pt-2 text-center card rounded-box place-items-center">
+		<h1 class="p-2 rounded bg-gray-light rounded-box">{ title }</h1>
+		<div class="flex-col">
+			<h2><strong>{ lf.Departure.Airport }</strong></h2>
+			<div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+				<p class="mx-auto text-sm leading-6 text-gray-900">
+					<label class="text-xs font-semibold text-slate-100 ">IATA: </label><strong class="font-semibold">{ lf.Departure.Iata }</strong><svg viewBox="0 0 2 2" class="mx-2 inline h-0.5 w-0.5 fill-current" aria-hidden="true"><circle cx="1" cy="1" r="1"></circle></svg><label class="text-xs font-semibold text-slate-200 ">ICAO: </label><strong class="font-semibold">{ lf.Departure.Icao }</strong>
+				</p>
+			</div>
+			<div class="grid grid-cols-2 grid-rows-2 gap-4 pt-2 text-center bg-gray-light">
+				<div class="flex items-center justify-end p-2 bg-gray-200 ">
+					<div class="flex-col">
+						<p class="text-xs font-semibold text-slate-400">Scheduled: </p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.Scheduled }</p>
+					</div>
+				</div>
+				<div class="flex items-center justify-start p-2 bg-gray-200 ">
+					<div class="flex-col">
+						<p class="text-xs font-semibold text-slate-400">Estimated: </p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.Estimated }</p>
+					</div>
+				</div>
+				<div class="flex items-center justify-end p-2 bg-gray-200 ">
+					<div class="flex-col">
+						<p class="text-xs font-semibold text-slate-400">Actual: </p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.Actual.(string) }</p>
+					</div>
+				</div>
+				<div class="flex items-center justify-start p-2 bg-gray-200 ">
+					<div class="flex-col">
+						<p class="text-xs font-semibold text-slate-400">Runaway: </p>
+						<p>Query RunAway</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.ActualRunway.(string) }</p>
+					</div>
+				</div>
+			</div>
+			<div class="flex-row mt-4">
+				<span class="w-2/3 p-2 text-xs font-bold bg-gray-light">Terminal</span><span class="w-2/3 p-2 text-xs">{ lf.Departure.Terminal }</span>
+				<span class="w-2/3 p-2 text-xs font-bold bg-gray-light">Gate</span><span class="w-2/3 p-2 text-xs">{ lf.Departure.Gate.(string) }</span>
+			</div>
 		</div>
 	</div>
 }
 
-templ DepartureDetailsComponent(lf models.LiveFlights) {
-	@FlightDetailsCardLayoutComponent("Departure") {
-		<ul>
-			<li><strong>Aiport: </strong>{ lf.Departure.Airport }</li>
-			<li><strong>Estimated: </strong>{ lf.Departure.Estimated }</li>
-			<li><strong>Scheduled: </strong>{ lf.Departure.Scheduled }</li>
-			<li><strong>Terminal: </strong>{ lf.Departure.Terminal }</li>
-			<li><strong>Gate: </strong>{ lf.Departure.Gate.(string) }</li>
-			<li><strong>Timezone: </strong>{ lf.Departure.Timezone }</li>
-			<li><strong>Actual: </strong>{ lf.Departure.Actual.(string) }</li>
-			if lf.Departure.Delay != nil {
-				<li><strong>Delay: </strong>No Delay Info</li>
-			} else {
-				<li><strong>Delay: </strong>{ strconv.Itoa(*lf.Departure.Delay) }</li>
-			}
-		</ul>
-	}
-}
-
-templ ArrivalDetailsComponent(lf models.LiveFlights) {
-	@FlightDetailsCardLayoutComponent("Arrival") {
-		<ul>
-			<li><strong>Aiport: </strong>{ lf.Arrival.Airport }</li>
-			<li><strong>Estimated: </strong>{ lf.Arrival.Estimated }</li>
-			<li><strong>Scheduled: </strong>{ lf.Arrival.Scheduled }</li>
-			<li><strong>Terminal: </strong>{ lf.Arrival.Terminal.(string) }</li>
-			<li><strong>Gate: </strong>{ lf.Arrival.Gate.(string) }</li>
-			<li><strong>Timezone: </strong>{ lf.Arrival.Timezone }</li>
-			<li><strong>Actual: </strong>{ lf.Arrival.Actual.(string) }</li>
-			if lf.Arrival.Delay != nil {
-				<li><strong>Delay: </strong>No Delay Info</li>
-			} else {
-				<li><strong>Delay: </strong>{ strconv.Itoa(*lf.Arrival.Delay) }</li>
-			}
-		</ul>
-	}
+templ FlightDetailedArrival(title string, lf models.LiveFlights) {
+	<div class="relative flex flex-grow h-20 pt-2 text-center card rounded-box place-items-center">
+		<h1 class="p-2 rounded bg-gray-light rounded-box">{ title }</h1>
+		<div class="flex-col">
+			<h2><strong>{ lf.Arrival.Airport }</strong></h2>
+			<div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+				<p class="mx-auto text-sm leading-6 text-gray-900">
+					<label class="text-xs font-semibold text-slate-100 ">IATA: </label><strong class="font-semibold">{ lf.Arrival.Iata }</strong><svg viewBox="0 0 2 2" class="mx-2 inline h-0.5 w-0.5 fill-current" aria-hidden="true"><circle cx="1" cy="1" r="1"></circle></svg><label class="text-xs font-semibold text-slate-200 ">ICAO: </label><strong class="font-semibold">{ lf.Arrival.Icao }</strong>
+				</p>
+			</div>
+			<div class="grid grid-cols-2 grid-rows-2 gap-4 pt-2 bg-gray-light">
+				<div class="flex items-center justify-end p-2 bg-gray-200 ">
+					<div class="flex-col">
+						<p class="text-xs font-semibold text-slate-400">Scheduled: </p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.Scheduled }</p>
+					</div>
+				</div>
+				<div class="flex items-center justify-start p-2 bg-gray-200 ">
+					<div class="flex-col">
+						<p class="text-xs font-semibold text-slate-400">Estimated: </p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.Estimated }</p>
+					</div>
+				</div>
+				<div class="flex items-center justify-end p-2 bg-gray-200 ">
+					<div class="flex-col">
+						<p class="text-xs font-semibold text-slate-400">Actual: </p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.Actual.(string) }</p>
+					</div>
+				</div>
+				<div class="flex items-center justify-start p-2 bg-gray-200 ">
+					<div class="flex-col">
+						<p class="text-xs font-semibold text-slate-400">Runaway: </p>
+						<p>Query RunAway</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.ActualRunway.(string) }</p>
+					</div>
+				</div>
+			</div>
+			<div class="flex-row mt-4">
+				<span class="w-2/3 p-2 text-xs font-bold bg-gray-light">Terminal</span><span class="w-2/3 p-2 text-xs">{ lf.Arrival.Terminal.(string) }</span>
+				<span class="w-2/3 p-2 text-xs font-bold bg-gray-light">Gate</span><span class="w-2/3 p-2 text-xs">{ lf.Arrival.Gate.(string) }</span>
+			</div>
+		</div>
+	</div>
 }
 
 templ DetailedFlightsPage(sidebar []models.SidebarItem, lf models.LiveFlights, title, description string) {
 	<div>
 		@components.BannerComponent(title, description)
-		<div class="container flex pt-10 mx-auto mb-24 mr:px-6">
+		<div class="container flex flex-col min-h-screen pt-10 mx-auto mb-24 mr:px-6">
 			<div class="w-2/12">
 				@components.SidebarComponent(sidebar)
 			</div>
-			<div class="w-11/12 ml-10">
+			<div class="flex-grow w-11/12 ml-10">
+				@FlightHeader(lf)
+				<div class="flex flex-grow mx-auto mr:px-6">
+					<div class="relative flex flex-col flex-wrap justify-center w-full text-center h-96 gap-x-4 gap-y-2 lg:flex-row">
+						@FlightDetailedDeparture("Departure", lf)
+						<div class="flex-grow divider lg:divider-horizontal"></div>
+						@FlightDetailedArrival("Arrival", lf)
+					</div>
+				</div>
 				<div>
-					<h1>Flight number: <strong>{ lf.Flight.Number }</strong></h1>
+					@FlightFooter(lf)
 				</div>
-				<div class="flex mb-24 mr:px-6">
-					<div class="p-2 md:w-1/3">
-						@DepartureDetailsComponent(lf)
-					</div>
-					<div class="p-2 md:w-1/3">
-						@ArrivalDetailsComponent(lf)
-					</div>
-				</div>
-				<div class="w-11/12 mr:px-6">
+				<div class="absolute z-20 w-11/12 pt-2 mr:px-6">
 					@FlightsDetailMap(lf)
 				</div>
 			</div>

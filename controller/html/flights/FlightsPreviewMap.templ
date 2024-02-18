@@ -6,12 +6,12 @@ import (
 
 script previewMapContainer(data []models.LiveFlights) {
     const tileLayer = new ol.layer.Tile({
-    source: new ol.source.StadiaMaps({
-        layer: 'stamen_toner',
-    }),
+    // source: new ol.source.StadiaMaps({
+    //     layer: 'stamen_watercolor',
+    // }),
+    source: new ol.source.OSM(),
 });
 
-console.log('data', data)
 
 const map = new ol.Map({
     layers: [tileLayer],

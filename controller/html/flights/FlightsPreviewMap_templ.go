@@ -16,14 +16,14 @@ import (
 
 func previewMapContainer(data []models.LiveFlights) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_previewMapContainer_4a40`,
-		Function: `function __templ_previewMapContainer_4a40(data){const tileLayer = new ol.layer.Tile({
-    source: new ol.source.StadiaMaps({
-        layer: 'stamen_toner',
-    }),
+		Name: `__templ_previewMapContainer_577c`,
+		Function: `function __templ_previewMapContainer_577c(data){const tileLayer = new ol.layer.Tile({
+    // source: new ol.source.StadiaMaps({
+    //     layer: 'stamen_watercolor',
+    // }),
+    source: new ol.source.OSM(),
 });
 
-console.log('data', data)
 
 const map = new ol.Map({
     layers: [tileLayer],
@@ -246,8 +246,8 @@ function addLater(features, timeout) {
     }, timeout);
 }
 }`,
-		Call:       templ.SafeScript(`__templ_previewMapContainer_4a40`, data),
-		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_4a40`, data),
+		Call:       templ.SafeScript(`__templ_previewMapContainer_577c`, data),
+		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_577c`, data),
 	}
 }
 

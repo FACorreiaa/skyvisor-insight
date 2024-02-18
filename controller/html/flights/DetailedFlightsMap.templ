@@ -7,9 +7,11 @@ import (
 script detailedMapContainer(data models.LiveFlights) {
         console.log('data', data)
     const tileLayer = new ol.layer.Tile({
-        source: new ol.source.StadiaMaps({
-            layer: 'stamen_toner',
-        }),
+        // source: new ol.source.StadiaMaps({
+        //     layer: 'stamen_toner',
+        // }),
+        source: new ol.source.OSM(),
+
     });
 
     const map = new ol.Map({
@@ -239,14 +241,15 @@ templ FlightsDetailMap(data models.LiveFlights) {
 		<head>
 			<style scoped>
                 .map {
-                    width: 100%;
-                    height: 600px;
+                    height: 200px;
+                    z-index:1;
                 }
 
                 .map-container {
-                    position:
-                        relative height: 600px;
+                    position: relative;
+                    min-height: 400px;
                     padding-top: 10px;
+                    z-index: 0;
                 }
 
                 a.skiplink {
@@ -271,8 +274,8 @@ templ FlightsDetailMap(data models.LiveFlights) {
 			</style>
 		</head>
 		<body onload={ detailedMapContainer(data) }>
-			<div class="map-container">
-				<div id="map" class="w-full h-full map" tabindex="0">
+			<div class="container map-container">
+				<div id="map" class="mx-auto map" tabindex="0">
 					<button aria-describedby="popup" data-tippy-content="popup" id="popup"></button>
 				</div>
 			</div>

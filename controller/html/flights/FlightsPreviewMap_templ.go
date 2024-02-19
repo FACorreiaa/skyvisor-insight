@@ -16,8 +16,9 @@ import (
 
 func previewMapContainer(data []models.LiveFlights) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_previewMapContainer_577c`,
-		Function: `function __templ_previewMapContainer_577c(data){const tileLayer = new ol.layer.Tile({
+		Name: `__templ_previewMapContainer_ba35`,
+		Function: `function __templ_previewMapContainer_ba35(data){console.log('data', data)
+    const tileLayer = new ol.layer.Tile({
     // source: new ol.source.StadiaMaps({
     //     layer: 'stamen_watercolor',
     // }),
@@ -246,8 +247,8 @@ function addLater(features, timeout) {
     }, timeout);
 }
 }`,
-		Call:       templ.SafeScript(`__templ_previewMapContainer_577c`, data),
-		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_577c`, data),
+		Call:       templ.SafeScript(`__templ_previewMapContainer_ba35`, data),
+		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_ba35`, data),
 	}
 }
 

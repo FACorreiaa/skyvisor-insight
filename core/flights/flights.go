@@ -334,7 +334,9 @@ func (r *RepositoryFlights) GetFlightByID(ctx context.Context, flightNumber stri
 			    COALESCE(f.departure_actual_runway, 'Not defined') as departure_actual_runway,
 			    f.departure_airport,
 			    f.departure_estimated,
-			    COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay
+			    COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay,
+				f.departure_icao,
+				f.arrival_icao
 			FROM
 			    flights f
 			        LEFT JOIN
@@ -380,6 +382,8 @@ func (r *RepositoryFlights) GetFlightByID(ctx context.Context, flightNumber stri
 		&f.Departure.Airport,
 		&f.Departure.Estimated,
 		&f.Departure.Delay,
+		&f.Departure.Icao,
+		&f.Arrival.Icao,
 	)
 	if err != nil {
 		return models.LiveFlights{}, err
@@ -397,6 +401,8 @@ func (r *RepositoryFlights) GetAllFlightsPreview(ctx context.Context) ([]models.
 			    COALESCE(ad.airport_name, 'Not available') AS departure_airport,
 			    COALESCE(ad.latitude, 0.0) AS departure_latitude,
 			    COALESCE(ad.longitude, 0.0) AS departure_longitude,
+			    ad.city_iata_code AS departure_city,
+    			ad.country_iso2 AS departure_country,
 			    COALESCE(aa.airport_name, 'Not available') AS arrival_airport,
 			    COALESCE(aa.latitude, 0.0) AS arrival_latitude,
 			    COALESCE(aa.longitude, 0.0) AS arrival_longitude,

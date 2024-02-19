@@ -9,7 +9,7 @@ import (
 templ AirportCardLayoutComponent(title string) {
 	<div class="shadow-xl card w-69 bg-base-100">
 		<div class="card-body">
-		<h2 class="card-title">{ title }</h2>
+			<h2 class="card-title">{ title }</h2>
 			{ children... }
 		</div>
 	</div>
@@ -19,9 +19,9 @@ templ AirportCardLayoutComponent(title string) {
 templ CardAirportComponent(a models.Airport) {
 	@AirportCardLayoutComponent("Airport") {
 		<ul>
-			<li><strong>Airport: </strong>{ a.AirportName }</li>
-			<li><strong>Phone: </strong>{ a.PhoneNumber.String }</li>
-			<li><strong>Timezone: </strong>{ a.Timezone }</li>
+			<li><label class="font-bold">Airport: </label> { a.AirportName }</li>
+			<li><label class="font-bold">Phone: </label> { a.PhoneNumber.String }</li>
+			<li><label class="font-bold">Timeozne: </label> { a.Timezone }</li>
 		</ul>
 	}
 }
@@ -29,9 +29,9 @@ templ CardAirportComponent(a models.Airport) {
 templ CardLocationComponent(a models.Airport) {
 	@AirportCardLayoutComponent("Location") {
 		<ul>
-			<li><strong>Country: </strong>{ a.CountryName }</li>
-			<li><strong>City: </strong>{ a.CityName }</li>
-			<li><strong>GMT: </strong>{ a.GMT }</li>
+			<li><label class="font-bold">Country: </label>{ a.CountryName }</li>
+			<li><label class="font-bold">City: </label>{ a.CityName }</li>
+			<li><label class="font-bold">GMT: </label>{ a.GMT }</li>
 		</ul>
 	}
 }
@@ -39,9 +39,9 @@ templ CardLocationComponent(a models.Airport) {
 templ CardCoordinatesComponent(a models.Airport) {
 	@AirportCardLayoutComponent("Coordinates") {
 		<ul>
-			<li><strong>Latitude: </strong>{ fmt.Sprintf("%f", a.Latitude) }</li>
-			<li><strong>Longitude: </strong>{ fmt.Sprintf("%f", a.Longitude) }</li>
-			<li><strong>Geoname ID: </strong>{ a.GeonameID }</li>
+			<li><label class="font-bold">Latitude: </label>{ fmt.Sprintf("%f", a.Latitude) }</li>
+			<li><label class="font-bold">Longitude: </label>{ fmt.Sprintf("%f", a.Longitude) }</li>
+			<li><label class="font-bold">Geoname id: </label>{ a.GeonameID }</li>
 		</ul>
 	}
 }

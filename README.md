@@ -14,10 +14,12 @@ The main stack of this project contains:
 This project uses [Docker](https://www.docker.com/) to deploy and test the website
 
 ## What this repo will never handle
+
 - Deployment beyond simple Dockerfile
 - Testing
 
 ## Prerequisites
+
 - [Air](https://github.com/cosmtrek/air)
 - [Docker](https://docs.docker.com/get-started/)
 
@@ -28,11 +30,13 @@ This project uses [Docker](https://www.docker.com/) to deploy and test the websi
 - [ ] Navigation on tables
 - [x] Order By on tables
 - [ ] Fix order on search params
-- [ ] Live flights endpoint
+- [x] Live flights endpoint
+- [x] Fix all flighst status css pages
 - [ ] Restructure code to use generics and delete repeated functions
 - [ ] Review the methods to bulk import with [Postgres](https://www.postgresql.org/docs/current/sql-copy.html)
 - [ ] Optimise Docker container
 - [ ] Deployment
 
 ## Getting Started
+
 Create `.env` file (see `env.sample`), then run `make local-setup` and `make run`. That's it :)

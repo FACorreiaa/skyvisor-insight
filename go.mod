@@ -14,7 +14,7 @@ require (
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v5 v5.5.3
 	github.com/joho/godotenv v1.5.1
-	github.com/redis/go-redis/v9 v9.4.0
+	github.com/redis/go-redis/v9 v9.5.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/vgarvardt/pgx-google-uuid/v5 v5.0.0
 	golang.org/x/crypto v0.19.0

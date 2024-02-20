@@ -44,7 +44,7 @@ func CityDetailsPage(sidebar []models.SidebarItem, c models.City, title, descrip
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-11/12 ml-10\"><div class=\"flex mb-24 mr:px-6\"><div class=\"p-2 md:w-1/3\">hello</div><div class=\"p-2 md:w-1/3\">there</div><div class=\"p-2 md:w-1/3\">duck</div></div><div class=\"w-11/12 mr:px-6\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-11/12 ml-10\"><div class=\"flex mb-8 mr:px-6\"><div class=\"p-2 md:w-1/3\">hello</div><div class=\"p-2 md:w-1/3\">there</div><div class=\"p-2 md:w-1/3\">duck</div></div><div class=\"w-11/12 mb-8 mr:px-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

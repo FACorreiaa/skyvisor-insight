@@ -8,24 +8,26 @@ import (
 templ CountryDetailsPage(sidebar []models.SidebarItem, c models.Country, title, description string) {
 	<div>
 		@components.BannerComponent(title, description)
-		<div class="container flex pt-10 mx-auto mb-24 mr:px-6">
-			<div class="w-1/12">
-				@components.SidebarComponent(sidebar)
-			</div>
-			<div class="w-11/12 ml-10">
-				<div class="flex mb-24 mr:px-6">
-					<div class="p-2 md:w-1/3">
-						hello
-					</div>
-					<div class="p-2 md:w-1/3">
-						there
-					</div>
-					<div class="p-2 md:w-1/3">
-						duck
-					</div>
+		<div class="flex items-center justify-center flex-grow">
+			<div class="container flex flex-col pt-10 mx-auto mb-24 mr:px-6 lg:flex-row">
+				<div class="w-2/12">
+					@components.SidebarComponent(sidebar)
 				</div>
-				<div class="w-11/12 mr:px-6">
-					@CountryDetailedMap(c)
+				<div class="w-11/12 ml-10">
+					<div class="flex mb-24 mr:px-6">
+						<div class="p-2 md:w-1/3">
+							hello
+						</div>
+						<div class="p-2 md:w-1/3">
+							there
+						</div>
+						<div class="p-2 md:w-1/3">
+							duck
+						</div>
+					</div>
+					<div class="pt-2">
+						@CountryDetailedMap(c)
+					</div>
 				</div>
 			</div>
 		</div>

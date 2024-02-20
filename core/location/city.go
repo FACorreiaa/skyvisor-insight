@@ -97,11 +97,17 @@ func (r *RepositoryLocation) GetCity(ctx context.Context, page, pageSize int,
 
 func (r *RepositoryLocation) GetCityLocation(ctx context.Context) ([]models.City, error) {
 	query := `select DISTINCT ON(ct.city_name)
-              ct.id,
-              ct.city_name, ct.timezone, ct.gmt,
-              cou.continent, cou.country_name,
-              cou.currency_name, cou.phone_prefix,
-              ct.latitude, ct.longitude
+								ct.id,
+								ct.city_id,
+								ct.city_name,
+								ct.timezone,
+								ct.gmt,
+								cou.continent,
+								cou.country_name,
+								cou.currency_name,
+								cou.phone_prefix,
+								ct.latitude,
+								ct.longitude
             from city ct
             join
               country cou on cou.country_iso2 = ct.country_iso2

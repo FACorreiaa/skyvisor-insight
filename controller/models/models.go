@@ -271,6 +271,8 @@ type LiveFlights struct {
 		Actual          interface{} `json:"actual"`
 		EstimatedRunway interface{} `json:"estimated_runway"`
 		ActualRunway    interface{} `json:"actual_runway"`
+		CityCode        string      `json:"departure_city_code"`
+		CountryCode     string      `json:"departure_country_code"`
 	} `json:"departure,omitempty"`
 	Arrival struct {
 		Airport         string      `json:"airport"`
@@ -286,6 +288,8 @@ type LiveFlights struct {
 		Actual          interface{} `json:"actual"`
 		EstimatedRunway interface{} `json:"estimated_runway"`
 		ActualRunway    interface{} `json:"actual_runway"`
+		CityCode        string      `json:"arrival_city_code"`
+		CountryCode     string      `json:"arrival_country_code"`
 	} `json:"arrival,omitempty"`
 	Airline struct {
 		Name string `json:"name"`

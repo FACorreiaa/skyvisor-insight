@@ -33,9 +33,9 @@ templ FlightHeader(lf models.LiveFlights) {
 			<div class="flex flex-wrap items-center justify-center text-center gap-x-4 gap-y-2">
 				<div class="items-start ">
 					<div class="justify-center w-full text-center">
-						<h1 class="font-bold"><strong>{ lf.Flight.Number }</strong></h1>
+						<h1 class="font-bold">Flight { lf.Flight.Number }</h1>
 						if (lf.Airline.Name == "") {
-							<span>Not available</span>
+							<span>Airline not available</span>
 						} else {
 							{ lf.Airline.Name }
 						}
@@ -43,9 +43,15 @@ templ FlightHeader(lf models.LiveFlights) {
 				</div>
 				<div class="mx-auto mr:px-6">
 					<div class="relative flex flex-col flex-wrap justify-center w-full text-center gap-x-4 gap-y-2 lg:flex-row">
-						<span class="font-semibold">{ lf.Departure.Timezone }</span>
+						<div class="flex flex-col flex-wrap">
+							<span class="font-semibold">{ lf.Departure.CountryCode }</span>
+							<span class="text-xs font-medium">{ lf.Departure.CityCode }</span>
+						</div>
 						@svg2.AirplaneIcon()
-						<span class="font-bold">{ lf.Arrival.Timezone }</span>
+						<div class="flex flex-col flex-wrap">
+							<span class="font-semibold">{ lf.Arrival.CountryCode }</span>
+							<span class="text-xs font-medium ">{ lf.Arrival.CityCode }</span>
+						</div>
 					</div>
 				</div>
 				<div>
@@ -214,36 +220,40 @@ templ FlightDetailedArrival(title string, lf models.LiveFlights) {
 }
 
 templ DetailedFlightsPage(sidebar []models.SidebarItem, lf models.LiveFlights, title, description string) {
-	<div>
+	<div class="flex flex-col pl-2">
 		@components.BannerComponent(title, description)
-		<div class="container flex flex-col min-h-screen pt-10 mx-auto mb-24 mr:px-6">
-			<div class="w-2/12">
-				@components.SidebarComponent(sidebar)
-			</div>
-			<div class="justify-center flex-grow w-11/12 ml-10">
-				@FlightHeader(lf)
-				<div class="flex flex-grow mx-auto mr:px-6">
-					<div class="relative flex flex-col flex-wrap justify-center w-full text-center h-96 gap-x-4 gap-y-2 lg:flex-row">
-						@FlightDetailedDeparture("Departure", lf)
-						<div class="flex-grow text-center divider lg:divider-horizontal"></div>
-						@FlightDetailedArrival("Arrival", lf)
+		<div class="flex items-center justify-center flex-grow">
+			<div class="container flex flex-col pt-10 mx-auto mb-24 mr:px-6 lg:flex-row">
+				<div class="w-2/12">
+					@components.SidebarComponent(sidebar)
+				</div>
+				<div class="flex-grow w-10/12 ml-10">
+					@FlightHeader(lf)
+					<div class="flex mx-auto mr:px-6">
+						<div class="relative flex flex-col flex-wrap justify-center w-full text-center h-96 gap-x-4 gap-y-2 lg:flex-row">
+							@FlightDetailedDeparture("Departure", lf)
+							<div class="flex-grow text-center divider lg:divider-horizontal"></div>
+							@FlightDetailedArrival("Arrival", lf)
+						</div>
 					</div>
-				</div>
-				<div class="pb-2 text-center">
-					<label
-						id="dropdown-label"
-						onClick={ toggleDropdown(fmt.Sprintf("%s", "show-more")) }
-						class="block p-4 text-xs font-bold bg-white rounded-box"
-					>Show more </label>
-				</div>
-				<div>
-					@FlightFooter(lf)
-				</div>
-				<div id="show-more" class="hidden p-2">
-					@FlightDetails(lf)
-				</div>
-				<div class="absolute z-20 w-11/12 pt-2 mr:px-6">
-					@FlightsDetailMap(lf)
+					if lf.FlightStatus == "active" {
+						<div class="pb-2 text-center">
+							<label
+								id="dropdown-label"
+								onClick={ toggleDropdown(fmt.Sprintf("%s", "show-more")) }
+								class="block p-4 text-xs font-bold bg-white rounded-box"
+							>Show more </label>
+						</div>
+					}
+					<div>
+						@FlightFooter(lf)
+					</div>
+					<div id="show-more" class="hidden p-2">
+						@FlightDetails(lf)
+					</div>
+					<div class="z-20 justify-center pt-2">
+						@FlightsDetailMap(lf)
+					</div>
 				</div>
 			</div>
 		</div>

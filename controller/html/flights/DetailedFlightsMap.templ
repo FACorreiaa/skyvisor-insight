@@ -234,6 +234,19 @@ script detailedMapContainer(data models.LiveFlights) {
             });
         }, timeout);
     }
+
+
+   document.getElementById('zoom-out').onclick = function () {
+      const view = map.getView();
+      const zoom = view.getZoom();
+      view.setZoom(zoom - 1);
+   };
+
+   document.getElementById('zoom-in').onclick = function () {
+      const view = map.getView();
+      const zoom = view.getZoom();
+      view.setZoom(zoom + 1);
+   };
 }
 
 templ FlightsDetailMap(data models.LiveFlights) {
@@ -241,17 +254,9 @@ templ FlightsDetailMap(data models.LiveFlights) {
 		<head>
 			<style scoped>
                 .map {
-                    height: 200px;
+                    height: 400px;
                     z-index:1;
                 }
-
-                .map-container {
-                    position: relative;
-                    min-height: 400px;
-                    padding-top: 10px;
-                    z-index: 0;
-                }
-
                 a.skiplink {
                     position:
                         absolute clip: rect(1px, 1px, 1px, 1px);
@@ -274,13 +279,15 @@ templ FlightsDetailMap(data models.LiveFlights) {
 			</style>
 		</head>
 		<body onload={ detailedMapContainer(data) }>
-			<div class="container map-container">
-				<div id="map" class="mx-auto map" tabindex="0">
+			<div class="container w-full rounded-box">
+				<div id="map" class="map" tabindex="0">
 					<button aria-describedby="popup" data-tippy-content="popup" id="popup"></button>
 				</div>
+				<div class="pt-4">
+					<button id="zoom-out" class="btn btn-secondary ">Zoom out</button>
+					<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
+				</div>
 			</div>
-			<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
-			<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
 			<script src="https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js"></script>
 		</body>
 	</html>

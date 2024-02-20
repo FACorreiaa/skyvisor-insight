@@ -16,8 +16,8 @@ import (
 
 func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_a5a3`,
-		Function: `function __templ_detailedMapContainer_a5a3(data){console.log('data', data)
+		Name: `__templ_detailedMapContainer_b2c9`,
+		Function: `function __templ_detailedMapContainer_b2c9(data){console.log('data', data)
     const tileLayer = new ol.layer.Tile({
         // source: new ol.source.StadiaMaps({
         //     layer: 'stamen_toner',
@@ -246,9 +246,22 @@ func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
             });
         }, timeout);
     }
+
+
+   document.getElementById('zoom-out').onclick = function () {
+      const view = map.getView();
+      const zoom = view.getZoom();
+      view.setZoom(zoom - 1);
+   };
+
+   document.getElementById('zoom-in').onclick = function () {
+      const view = map.getView();
+      const zoom = view.getZoom();
+      view.setZoom(zoom + 1);
+   };
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_a5a3`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_a5a3`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_b2c9`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_b2c9`, data),
 	}
 }
 
@@ -265,7 +278,7 @@ func FlightsDetailMap(data models.LiveFlights) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n                .map {\n                    height: 200px;\n                    z-index:1;\n                }\n\n                .map-container {\n                    position: relative;\n                    min-height: 400px;\n                    padding-top: 10px;\n                    z-index: 0;\n                }\n\n                a.skiplink {\n                    position:\n                        absolute clip: rect(1px, 1px, 1px, 1px);\n                    padding:\n                        0 border: 0 height: 1px;\n                    width: 1px;\n                    overflow:\n                        hidden\n                }\n\n                a.skiplink:focus {\n                    clip:\n                        auto height: auto width: auto background-color: #fff;\n                    padding: 0.3em;\n                }\n\n                #map:focus {\n                    outline: #4A74A8 solid 0.15em;\n                }\n\t\t\t</style></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n                .map {\n                    height: 400px;\n                    z-index:1;\n                }\n                a.skiplink {\n                    position:\n                        absolute clip: rect(1px, 1px, 1px, 1px);\n                    padding:\n                        0 border: 0 height: 1px;\n                    width: 1px;\n                    overflow:\n                        hidden\n                }\n\n                a.skiplink:focus {\n                    clip:\n                        auto height: auto width: auto background-color: #fff;\n                    padding: 0.3em;\n                }\n\n                #map:focus {\n                    outline: #4A74A8 solid 0.15em;\n                }\n\t\t\t</style></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -282,7 +295,7 @@ func FlightsDetailMap(data models.LiveFlights) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div class=\"container map-container\"><div id=\"map\" class=\"mx-auto map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div></div><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button><script src=\"https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js\"></script></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div class=\"container w-full rounded-box\"><div id=\"map\" class=\"map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div class=\"pt-4\"><button id=\"zoom-out\" class=\"btn btn-secondary \">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></div></div><script src=\"https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

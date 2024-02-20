@@ -205,7 +205,10 @@ func (r *RepositoryFlights) getFlightsLocationsData(ctx context.Context, query s
 			&f.Departure.Airport,
 			&f.Departure.Estimated,
 			&f.Departure.Delay,
-		)
+			&f.Departure.CityCode,
+			&f.Departure.CountryCode,
+			&f.Arrival.CityCode,
+			&f.Arrival.CityCode)
 		if err != nil {
 			return nil, err
 		}
@@ -336,7 +339,11 @@ func (r *RepositoryFlights) GetFlightByID(ctx context.Context, flightNumber stri
 			    f.departure_estimated,
 			    COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay,
 				f.departure_icao,
-				f.arrival_icao
+				f.arrival_icao,
+				ad.city_iata_code AS departure_city_code,
+			    ad.country_iso2 AS departure_country_code,
+			    aa.city_iata_code AS arrival_city_code,
+			    aa.country_iso2 AS arrival_country_code
 			FROM
 			    flights f
 			        LEFT JOIN
@@ -384,6 +391,10 @@ func (r *RepositoryFlights) GetFlightByID(ctx context.Context, flightNumber stri
 		&f.Departure.Delay,
 		&f.Departure.Icao,
 		&f.Arrival.Icao,
+		&f.Departure.CityCode,
+		&f.Departure.CountryCode,
+		&f.Arrival.CityCode,
+		&f.Arrival.CountryCode,
 	)
 	if err != nil {
 		return models.LiveFlights{}, err
@@ -401,8 +412,6 @@ func (r *RepositoryFlights) GetAllFlightsPreview(ctx context.Context) ([]models.
 			    COALESCE(ad.airport_name, 'Not available') AS departure_airport,
 			    COALESCE(ad.latitude, 0.0) AS departure_latitude,
 			    COALESCE(ad.longitude, 0.0) AS departure_longitude,
-			    ad.city_iata_code AS departure_city,
-    			ad.country_iso2 AS departure_country,
 			    COALESCE(aa.airport_name, 'Not available') AS arrival_airport,
 			    COALESCE(aa.latitude, 0.0) AS arrival_latitude,
 			    COALESCE(aa.longitude, 0.0) AS arrival_longitude,
@@ -428,7 +437,11 @@ func (r *RepositoryFlights) GetAllFlightsPreview(ctx context.Context) ([]models.
 			    COALESCE(f.departure_actual_runway, 'Not defined') as departure_actual_runway,
 			    f.departure_airport,
 			    f.departure_estimated,
-			    COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay
+			    COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay,
+				ad.city_iata_code AS departure_city_code,
+			    ad.country_iso2 AS departure_country_code,
+			    aa.city_iata_code AS arrival_city_code,
+			    aa.country_iso2 AS arrival_country_code
 			FROM
 			    flights f
 			        LEFT JOIN

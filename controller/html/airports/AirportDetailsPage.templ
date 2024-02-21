@@ -15,34 +15,31 @@ templ AirportCardLayoutComponent(title string) {
 	</div>
 }
 
-//refactor tomorrow
-templ CardAirportComponent(a models.Airport) {
-	@AirportCardLayoutComponent("Airport") {
-		<ul>
-			<li><label class="font-bold">Airport: </label> { a.AirportName }</li>
-			<li><label class="font-bold">Phone: </label> { a.PhoneNumber.String }</li>
-			<li><label class="font-bold">Timeozne: </label> { a.Timezone }</li>
-		</ul>
-	}
-}
-
-templ CardLocationComponent(a models.Airport) {
-	@AirportCardLayoutComponent("Location") {
-		<ul>
-			<li><label class="font-bold">Country: </label>{ a.CountryName }</li>
-			<li><label class="font-bold">City: </label>{ a.CityName }</li>
-			<li><label class="font-bold">GMT: </label>{ a.GMT }</li>
-		</ul>
-	}
-}
-
-templ CardCoordinatesComponent(a models.Airport) {
-	@AirportCardLayoutComponent("Coordinates") {
-		<ul>
-			<li><label class="font-bold">Latitude: </label>{ fmt.Sprintf("%f", a.Latitude) }</li>
-			<li><label class="font-bold">Longitude: </label>{ fmt.Sprintf("%f", a.Longitude) }</li>
-			<li><label class="font-bold">Geoname id: </label>{ a.GeonameID }</li>
-		</ul>
+templ AirportDetailsCard(a models.Airport) {
+	@components.ExtendedCardLayout() {
+		<div class="flex flex-wrap justify-between gap-4">
+			<div class="flex flex-col">
+				<div class="grid grid-cols-subgrid">
+					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Airport: </label>{ a.AirportName }</span>
+					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Phone: </label>{ a.PhoneNumber.String }</span>
+					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Timezone: </label>{ a.Timezone }</span>
+				</div>
+			</div>
+			<div class="flex flex-col">
+				<div class="grid grid-cols-subgrid">
+					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Country: </label>{ a.CountryName }</span>
+					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">City: </label>{ a.CityName }</span>
+					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">GMT: </label>{ a.GMT }</span>
+				</div>
+			</div>
+			<div class="flex flex-col">
+				<div class="grid grid-cols-subgrid">
+					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Latitude: </label>{ fmt.Sprintf("%f", a.Latitude) }</span>
+					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Longitude: </label>{ fmt.Sprintf("%f", a.Latitude) }</span>
+					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Geoname ID: </label>{ a.GeonameID }</span>
+				</div>
+			</div>
+		</div>
 	}
 }
 
@@ -55,18 +52,8 @@ templ AirportDetailsPage(sidebar []models.SidebarItem, a models.Airport, title, 
 					@components.SidebarComponent(sidebar)
 				</div>
 				<div class="w-11/12 ml-10">
-					<div class="flex mb-24 mr:px-6">
-						<div class="p-2 md:w-1/3">
-							@CardAirportComponent(a)
-						</div>
-						<div class="p-2 md:w-1/3">
-							@CardLocationComponent(a)
-						</div>
-						<div class="p-2 md:w-1/3">
-							@CardCoordinatesComponent(a)
-						</div>
-					</div>
-					<div class="z-20 pt-2">
+					@AirportDetailsCard(a)
+					<div class="z-20 pt-2 ml-2">
 						@AirportDetailedMap(a)
 					</div>
 				</div>

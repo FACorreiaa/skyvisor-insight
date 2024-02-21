@@ -340,10 +340,10 @@ func (r *RepositoryFlights) GetFlightByID(ctx context.Context, flightNumber stri
 			    COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay,
 				f.departure_icao,
 				f.arrival_icao,
-				ad.city_iata_code AS departure_city_code,
-			    ad.country_iso2 AS departure_country_code,
-			    aa.city_iata_code AS arrival_city_code,
-			    aa.country_iso2 AS arrival_country_code
+				COALESCE(ad.city_iata_code, 'Not available') AS departure_city_code,
+			    COALESCE(ad.country_iso2 , 'Not available') AS departure_country_code,
+			    COALESCE(aa.city_iata_code, 'Not available') AS arrival_city_code,
+			    COALESCE(aa.country_iso2, 'Not available') AS arrival_country_code
 			FROM
 			    flights f
 			        LEFT JOIN
@@ -438,10 +438,10 @@ func (r *RepositoryFlights) GetAllFlightsPreview(ctx context.Context) ([]models.
 			    f.departure_airport,
 			    f.departure_estimated,
 			    COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay,
-				ad.city_iata_code AS departure_city_code,
-			    ad.country_iso2 AS departure_country_code,
-			    aa.city_iata_code AS arrival_city_code,
-			    aa.country_iso2 AS arrival_country_code
+				COALESCE(ad.city_iata_code, 'Not available') AS departure_city_code,
+			    COALESCE(ad.country_iso2 , 'Not available') AS departure_country_code,
+			    COALESCE(aa.city_iata_code, 'Not available') AS arrival_city_code,
+			    COALESCE(aa.country_iso2, 'Not available') AS arrival_country_code
 			FROM
 			    flights f
 			        LEFT JOIN

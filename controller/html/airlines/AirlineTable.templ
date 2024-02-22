@@ -37,9 +37,12 @@ templ AirlineTable(a models.AirlineTable) {
 				<tbody>
 					for _, airline := range a.Airline {
 						<tr class="hover">
-							<td hx-boost="true">
-								<a href={ templ.URL(fmt.Sprintf("/airlines/airline/%s", airline.ID)) }>{ airline.AirlineName }</a>
-							</td>
+							<td>{ fmt.Sprintf("%d",airline.AirlineID) }</td>
+							<td hx-boost="true" >
+								<a
+                                    hx-trigger="load delay:1s"
+                                    href={ templ.URL(fmt.Sprintf("/airlines/airline/%s", airline.AirlineName)) }>{ airline.AirlineName }</a>
+                                </td>
 							if airline.DateFounded == 0 {
 								<td class="italic">Not available</td>
 							} else {

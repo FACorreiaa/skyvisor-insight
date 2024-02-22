@@ -2,11 +2,13 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"math"
 	"net/http"
 	"strconv"
 
 	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
+	"github.com/gorilla/mux"
 
 	"github.com/a-h/templ"
 
@@ -39,6 +41,7 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 func (h *Handlers) getAirlinesLocations() ([]models.Airline, error) {
 	al, err := h.core.airlines.GetAirlinesLocations(context.Background())
 	if err != nil {
+		HandleError(err, "Error fetching locations")
 		return nil, err
 	}
 
@@ -69,10 +72,29 @@ func (h *Handlers) getAirline(_ http.ResponseWriter, r *http.Request) (int, []mo
 
 	al, err := h.core.airlines.GetAirlines(context.Background(), page, pageSize, orderBy, sortBy, param)
 	if err != nil {
+		HandleError(err, "Error fetching airlines")
 		return 0, nil, err
 	}
 
 	return page, al, nil
+}
+
+func (h *Handlers) getAirlineDetails(_ http.ResponseWriter, r *http.Request) (models.Airline, error) {
+	vars := mux.Vars(r)
+	airlineName, ok := vars["airline_name"]
+	if !ok {
+		err := errors.New("airline_name not found in path")
+		HandleError(err, "Error getting airline_name")
+		return models.Airline{}, err
+	}
+
+	c, err := h.core.airlines.GetAirlineByID(context.Background(), airlineName)
+	if err != nil {
+		HandleError(err, "Error fetching airline_name details")
+		return models.Airline{}, err
+	}
+
+	return c, nil
 }
 
 func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
@@ -87,6 +109,7 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 		sortAux = ASC
 	}
 	columnNames := []models.ColumnItems{
+		{Title: "Airline ID", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Airline Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Date Founded", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Fleet Average Size", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
@@ -110,6 +133,7 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 
 	lastPage, err := h.getTotalAirline()
 	if err != nil {
+		HandleError(err, "error getting total airline")
 		return nil, err
 	}
 	a := models.AirlineTable{
@@ -133,18 +157,31 @@ func (h *Handlers) airlineMainPage(w http.ResponseWriter, r *http.Request) error
 
 	sidebar := h.renderAirlineSidebar()
 	if err != nil {
+		HandleError(err, "Error rendering airline table")
 		return err
 	}
-	a := airline.AirlineLayoutPage("Airline", "Check out data about Airlines", table, sidebar)
+	a := airline.AirlineLayoutPage("Airline", "Check data about Airlines", table, sidebar)
 	return h.CreateLayout(w, r, "Airline Tax Page", a).Render(context.Background(), w)
 }
 
 func (h *Handlers) airlineLocationPage(w http.ResponseWriter, r *http.Request) error {
 	sidebar := h.renderAirlineSidebar()
-	airlines, err := h.getAirlinesLocations()
+	al, err := h.getAirlinesLocations()
 	if err != nil {
+		HandleError(err, "Error rendering locations")
 		return err
 	}
-	a := airline.AirlineLocationsPage(sidebar, airlines, "Airline", "Check out airport locations")
+	a := airline.AirlineLocationsPage(sidebar, al, "Airline", "Check airline details")
+	return h.CreateLayout(w, r, "Airline Details Page", a).Render(context.Background(), w)
+}
+
+func (h *Handlers) airlineDetailsPage(w http.ResponseWriter, r *http.Request) error {
+	sidebar := h.renderAirlineSidebar()
+	al, err := h.getAirlineDetails(w, r)
+	if err != nil {
+		HandleError(err, "Error rendering details")
+		return err
+	}
+	a := airline.AirlineDetailsPage(sidebar, al, "Airline", "Check airport locations")
 	return h.CreateLayout(w, r, "Airline Locations Page", a).Render(context.Background(), w)
 }

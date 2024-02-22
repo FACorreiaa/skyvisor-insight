@@ -180,7 +180,7 @@ func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
 		HandleError(err, "Error fetching airport data table")
 		return err
 	}
-	a := airport.AirportPage(at, sidebar, "Airports", "Check out airport locations")
+	a := airport.AirportPage(at, sidebar, "Airports", "Check airport locations")
 	return h.CreateLayout(w, r, "Airport Page", a).Render(context.Background(), w)
 }
 
@@ -191,7 +191,7 @@ func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) e
 		HandleError(err, "Error fetching airport location table")
 		return err
 	}
-	a := airport.AirportLocationsPage(sidebar, al, "Airports", "Check out airport locations")
+	a := airport.AirportLocationsPage(sidebar, al, "Airports", "Check airport locations")
 	return h.CreateLayout(w, r, "Airport Locations Page", a).Render(context.Background(), w)
 }
 
@@ -202,6 +202,6 @@ func (h *Handlers) airportDetailsPage(w http.ResponseWriter, r *http.Request) er
 		HandleError(err, "Error fetching airport details page")
 		return err
 	}
-	a := airport.AirportDetailsPage(sidebar, ad, "Airports", "Check out airport information")
+	a := airport.AirportDetailsPage(sidebar, ad, "Airports", "Check airport information")
 	return h.CreateLayout(w, r, "Airport Details Page", a).Render(context.Background(), w)
 }

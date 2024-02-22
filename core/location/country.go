@@ -18,11 +18,17 @@ func (r *RepositoryLocation) getCountryData(ctx context.Context, query string,
 
 	for rows.Next() {
 		var c models.Country
-		err := rows.Scan(&c.CountryName,
-			&c.ID, &c.Capital, &c.CurrencyName,
+		err := rows.Scan(
+			&c.CountryName,
+			&c.ID,
+			&c.Capital,
+			&c.CurrencyName,
 			&c.Continent,
-			&c.Population, &c.CurrencyCode,
-			&c.CurrencyName, &c.Latitude, &c.Longitude,
+			&c.Population,
+			&c.CurrencyCode,
+			&c.CurrencyName,
+			&c.Latitude,
+			&c.Longitude,
 		)
 
 		if err != nil {

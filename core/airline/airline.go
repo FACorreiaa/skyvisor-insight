@@ -2,6 +2,7 @@ package airline
 
 import (
 	"context"
+	"log"
 
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,6 +18,12 @@ func NewAirlines(
 ) *RepositoryAirline {
 	return &RepositoryAirline{
 		pgpool: pgpool,
+	}
+}
+
+func handleError(err error, message string) {
+	if err != nil {
+		log.Printf("%s: %v", message, err)
 	}
 }
 
@@ -136,8 +143,8 @@ func (r *RepositoryAirline) GetAirlinesLocations(ctx context.Context) ([]models.
 	return airline, nil
 }
 
-func (r *RepositoryAirline) GetAirlineByID(ctx context.Context, id int) (models.AirlineDetails, error) {
-	var al models.AirlineDetails
+func (r *RepositoryAirline) GetAirlineByID(ctx context.Context, airlineName string) (models.Airline, error) {
+	var al models.Airline
 	query := `
 		select DISTINCT ON (al.airline_name) al.fleet_average_age, al.airline_id, al.callsign, al.hub_code,
                                      al.iata_code, al.icao_code, al.country_iso2, al.date_founded,
@@ -145,14 +152,20 @@ func (r *RepositoryAirline) GetAirlineByID(ctx context.Context, id int) (models.
                                      al.fleet_size, al.status, al.type, al.created_at,
                                      ap.model_name, ap.plane_owner, ap.plane_age, ap.registration_date,
                                      c.continent
-		from airline al
-		         right join airplane ap on al.iata_code = ap.airline_iata_code
-		         JOIN country c ON al.country_iso2 = c.country_iso2
-		WHERE al.airline_name IS NOT NULL
-		AND al.airline_name != ''
-		AND al.airline_id = $1
-;`
-	err := r.pgpool.QueryRow(ctx, query, id).Scan(
+		FROM airline al
+		RIGHT JOIN airplane
+		    ap ON al.iata_code = ap.airline_iata_code
+		JOIN country
+		    c ON al.country_iso2 = c.country_iso2
+		WHERE
+		    al.airline_name IS NOT NULL
+		AND
+		    al.airline_name != ''
+		AND
+		    Trim(Upper(airline_name)) ilike trim(upper('%'
+				                  || $1
+				                  || '%'))`
+	err := r.pgpool.QueryRow(ctx, query, airlineName).Scan(
 		&al.FleetAverageAge,
 		&al.AirlineID,
 		&al.CallSign,
@@ -176,8 +189,8 @@ func (r *RepositoryAirline) GetAirlineByID(ctx context.Context, id int) (models.
 	)
 
 	if err != nil {
-		return models.AirlineDetails{}, err
+		handleError(err, "Error scanning airlines")
+		return models.Airline{}, err
 	}
-
 	return al, nil
 }

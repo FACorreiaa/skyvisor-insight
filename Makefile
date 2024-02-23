@@ -70,3 +70,10 @@ stop:
 lint:
 	@golangci-lint run -c .golangci.yml
 
+list-deps:
+	go list -u -m all
+
+upgrade-deps:
+	go get -u ./...
+
+

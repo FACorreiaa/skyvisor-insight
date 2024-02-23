@@ -58,7 +58,7 @@ func (h *Handlers) renderLiveLocationsSidebar() []models.SidebarItem {
 	return sidebar
 }
 
-func (h *Handlers) getFlights(w http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
+func (h *Handlers) getFlights(_ http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
 	pageSize := 10
 	param := r.FormValue("search")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
@@ -78,7 +78,7 @@ func (h *Handlers) getFlights(w http.ResponseWriter, r *http.Request) (int, []mo
 	return page, lf, nil
 }
 
-func (h *Handlers) getTotalFlights() (int, error) {
+func (h *Handlers) getAllFlightsServiceService() (int, error) {
 	total, err := h.core.flights.GetAllFlightsSum(context.Background())
 	pageSize := 10
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
@@ -129,7 +129,7 @@ func (h *Handlers) renderFlightsTable(w http.ResponseWriter,
 		prevPage = 1
 	}
 
-	lastPage, err := h.getTotalFlights()
+	lastPage, err := h.getAllFlightsServiceService()
 	if err != nil {
 		HandleError(err, "Error fetching total flights")
 		return nil, err
@@ -168,7 +168,7 @@ func (h *Handlers) getFlightsDetails(_ http.ResponseWriter, r *http.Request) (mo
 	return lf, nil
 }
 
-func (h *Handlers) getAllFlights(_ http.ResponseWriter, r *http.Request) ([]models.LiveFlights, error) {
+func (h *Handlers) getAllFlightsService() ([]models.LiveFlights, error) {
 	lf, err := h.core.flights.GetAllFlightsPreview(context.Background())
 	if err != nil {
 		HandleError(err, "Error flights details")
@@ -205,7 +205,7 @@ func (h *Handlers) detailedFlightsPage(w http.ResponseWriter, r *http.Request) e
 
 func (h *Handlers) flightsPreview(w http.ResponseWriter, r *http.Request) error {
 	s := h.renderLiveLocationsSidebar()
-	fd, err := h.getAllFlights(w, r)
+	fd, err := h.getAllFlightsService()
 
 	if err != nil {
 		HandleError(err, "Error fetching flights details page")

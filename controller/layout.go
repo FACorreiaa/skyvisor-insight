@@ -10,6 +10,8 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	"github.com/a-h/templ"
 
+	"context"
+
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
 
@@ -49,4 +51,9 @@ func (h *Handlers) CreateLayout(_ http.ResponseWriter, r *http.Request, title st
 	}
 
 	return components.LayoutPage(l)
+}
+
+func (h *Handlers) homePage(w http.ResponseWriter, r *http.Request) error {
+	home := components.HomePage()
+	return h.CreateLayout(w, r, "Home Page", home).Render(context.Background(), w)
 }

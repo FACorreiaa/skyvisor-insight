@@ -32,7 +32,7 @@ func (h *Handlers) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, [
 	return page, t, nil
 }
 
-func (h *Handlers) getTotalTax() (int, error) {
+func (h *Handlers) getAllTax() (int, error) {
 	total, err := h.core.airlines.GetSum(context.Background())
 	pageSize := 10
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
@@ -70,7 +70,7 @@ func (h *Handlers) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request)
 		prevPage = 1
 	}
 
-	lastPage, err := h.getTotalTax()
+	lastPage, err := h.getAllTax()
 	if err != nil {
 		return nil, err
 	}

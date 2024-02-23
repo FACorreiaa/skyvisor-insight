@@ -41,7 +41,7 @@ func (h *Handlers) renderLocationsBar() []models.SidebarItem {
 	return sidebar
 }
 
-func (h *Handlers) getCityLocations() ([]models.City, error) {
+func (h *Handlers) getCityLocationsService() ([]models.City, error) {
 	c, err := h.core.locations.GetCityLocation(context.Background())
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (h *Handlers) getCityLocations() ([]models.City, error) {
 	return c, nil
 }
 
-func (h *Handlers) getTotalCities() (int, error) {
+func (h *Handlers) getAllCitiesService() (int, error) {
 	total, err := h.core.locations.GetCitySum(context.Background())
 	pageSize := 10
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
@@ -119,13 +119,14 @@ func (h *Handlers) renderCityTable(w http.ResponseWriter, r *http.Request) (temp
 		sortAux = ASC
 	}
 
+	//
 	columnNames := []models.ColumnItems{
 		{Title: "City Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Continent", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Currency Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Timezone", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "GMT", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
-		{Title: "Continent", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
-		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
-		{Title: "Currency Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Phone Prefix", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Latitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Longitude", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
@@ -139,7 +140,7 @@ func (h *Handlers) renderCityTable(w http.ResponseWriter, r *http.Request) (temp
 		prevPage = 1
 	}
 
-	lastPage, err := h.getTotalCities()
+	lastPage, err := h.getAllCitiesService()
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +172,7 @@ func (h *Handlers) cityMainPage(w http.ResponseWriter, r *http.Request) error {
 
 func (h *Handlers) cityLocationsPage(w http.ResponseWriter, r *http.Request) error {
 	sidebar := h.renderLocationsBar()
-	c, err := h.getCityLocations()
+	c, err := h.getCityLocationsService()
 	if err != nil {
 		return err
 	}

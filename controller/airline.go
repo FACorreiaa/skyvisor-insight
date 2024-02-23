@@ -38,7 +38,7 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 	return sidebar
 }
 
-func (h *Handlers) getAirlinesLocations() ([]models.Airline, error) {
+func (h *Handlers) getAirlinesLocationService() ([]models.Airline, error) {
 	al, err := h.core.airlines.GetAirlinesLocations(context.Background())
 	if err != nil {
 		HandleError(err, "Error fetching locations")
@@ -48,7 +48,7 @@ func (h *Handlers) getAirlinesLocations() ([]models.Airline, error) {
 	return al, nil
 }
 
-func (h *Handlers) getTotalAirline() (int, error) {
+func (h *Handlers) getAllAirlineService() (int, error) {
 	total, err := h.core.airlines.GetAirlineSum(context.Background())
 	pageSize := 10
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
@@ -88,7 +88,7 @@ func (h *Handlers) getAirlineDetails(_ http.ResponseWriter, r *http.Request) (mo
 		return models.Airline{}, err
 	}
 
-	c, err := h.core.airlines.GetAirlineByID(context.Background(), airlineName)
+	c, err := h.core.airlines.GetAirlineByName(context.Background(), airlineName)
 	if err != nil {
 		HandleError(err, "Error fetching airline_name details")
 		return models.Airline{}, err
@@ -130,7 +130,7 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 		prevPage = 1
 	}
 
-	lastPage, err := h.getTotalAirline()
+	lastPage, err := h.getAllAirlineService()
 	if err != nil {
 		HandleError(err, "error getting total airline")
 		return nil, err
@@ -165,7 +165,7 @@ func (h *Handlers) airlineMainPage(w http.ResponseWriter, r *http.Request) error
 
 func (h *Handlers) airlineLocationPage(w http.ResponseWriter, r *http.Request) error {
 	sidebar := h.renderAirlineSidebar()
-	al, err := h.getAirlinesLocations()
+	al, err := h.getAirlinesLocationService()
 	if err != nil {
 		HandleError(err, "Error rendering locations")
 		return err

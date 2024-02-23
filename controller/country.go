@@ -15,7 +15,7 @@ import (
 	"github.com/a-h/templ"
 )
 
-func (h *Handlers) getCountryLocations() ([]models.Country, error) {
+func (h *Handlers) getCountryLocationsService() ([]models.Country, error) {
 	c, err := h.core.locations.GetCountryLocation(context.Background())
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (h *Handlers) getCountryLocations() ([]models.Country, error) {
 	return c, nil
 }
 
-func (h *Handlers) getTotalCountries() (int, error) {
+func (h *Handlers) getAllCountriesService() (int, error) {
 	total, err := h.core.locations.GetCountrySum(context.Background())
 	pageSize := 10
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
@@ -106,7 +106,7 @@ func (h *Handlers) renderCountryTable(w http.ResponseWriter, r *http.Request) (t
 		prevPage = 1
 	}
 
-	lastPage, err := h.getTotalCountries()
+	lastPage, err := h.getAllCountriesService()
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func (h *Handlers) countryMainPage(w http.ResponseWriter, r *http.Request) error
 
 func (h *Handlers) countryLocationPage(w http.ResponseWriter, r *http.Request) error {
 	sidebar := h.renderLocationsBar()
-	c, err := h.getCountryLocations()
+	c, err := h.getCountryLocationsService()
 	if err != nil {
 		return err
 	}

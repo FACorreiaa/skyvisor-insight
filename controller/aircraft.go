@@ -33,7 +33,7 @@ func (h *Handlers) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []m
 	return page, a, nil
 }
 
-func (h *Handlers) getTotalAircraft() (int, error) {
+func (h *Handlers) getAllAircraftService() (int, error) {
 	total, err := h.core.airlines.GetAircraftSum(context.Background())
 	pageSize := 10
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
@@ -78,7 +78,7 @@ func (h *Handlers) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Req
 		prevPage = 1
 	}
 
-	lastPage, err := h.getTotalAircraft()
+	lastPage, err := h.getAllAircraftService()
 	if err != nil {
 		return nil, err
 	}

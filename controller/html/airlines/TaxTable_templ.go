@@ -35,7 +35,7 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.InputComponent("Search by Airline Name", "/airlines/tax").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.InputComponent("Search Tax Name", "/airlines/tax").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

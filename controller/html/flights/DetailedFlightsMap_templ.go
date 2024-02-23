@@ -16,8 +16,8 @@ import (
 
 func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_b2c9`,
-		Function: `function __templ_detailedMapContainer_b2c9(data){console.log('data', data)
+		Name: `__templ_detailedMapContainer_c9a5`,
+		Function: `function __templ_detailedMapContainer_c9a5(data){console.log('data', data)
     const tileLayer = new ol.layer.Tile({
         // source: new ol.source.StadiaMaps({
         //     layer: 'stamen_toner',
@@ -40,7 +40,7 @@ func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
 
     const style = new ol.style.Style({
         stroke: new ol.style.Stroke({
-            color: '#EAE911',
+            color: '#8b0000',
             width: 2,
         }),
     });
@@ -59,7 +59,7 @@ func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
             src: '../../../static/icons/airplane-take-off.svg',
-            scale: 0.5,
+            scale: 0.8,
         }),
     });
     departureMarker.setStyle(departureMarkerStyle);
@@ -78,7 +78,7 @@ func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
             src: '../../../static/icons/airplane-landing.svg',
-            scale: 0.5,
+            scale: 0.8,
         }),
     });
     arrivalMarker.setStyle(arrivalMarkerStyle);
@@ -260,8 +260,8 @@ func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
       view.setZoom(zoom + 1);
    };
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_b2c9`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_b2c9`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_c9a5`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_c9a5`, data),
 	}
 }
 

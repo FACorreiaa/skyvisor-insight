@@ -34,7 +34,7 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.InputComponent("Search by Airline Name", "/airlines/airline").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.InputComponent("Search Airline Name", "/airlines/airline").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

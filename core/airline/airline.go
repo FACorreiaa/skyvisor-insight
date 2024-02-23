@@ -143,7 +143,7 @@ func (r *RepositoryAirline) GetAirlinesLocations(ctx context.Context) ([]models.
 	return airline, nil
 }
 
-func (r *RepositoryAirline) GetAirlineByID(ctx context.Context, airlineName string) (models.Airline, error) {
+func (r *RepositoryAirline) GetAirlineByName(ctx context.Context, airlineName string) (models.Airline, error) {
 	var al models.Airline
 	query := `
 		select DISTINCT ON (al.airline_name) al.fleet_average_age, al.airline_id, al.callsign, al.hub_code,

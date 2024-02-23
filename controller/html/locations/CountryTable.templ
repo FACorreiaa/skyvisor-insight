@@ -9,7 +9,7 @@ import (
 
 templ CountryTable(c models.CountryTable) {
 	<div class="flex flex-col items-left" id="table-container">
-		@components.InputComponent("Search by Country name", "/locations/country")
+		@components.InputComponent("Search Country name", "/locations/country")
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">

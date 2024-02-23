@@ -28,7 +28,7 @@ script detailedMapContainer(data models.LiveFlights) {
 
     const style = new ol.style.Style({
         stroke: new ol.style.Stroke({
-            color: '#EAE911',
+            color: '#8b0000',
             width: 2,
         }),
     });
@@ -47,7 +47,7 @@ script detailedMapContainer(data models.LiveFlights) {
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
             src: '../../../static/icons/airplane-take-off.svg',
-            scale: 0.5,
+            scale: 0.8,
         }),
     });
     departureMarker.setStyle(departureMarkerStyle);
@@ -66,7 +66,7 @@ script detailedMapContainer(data models.LiveFlights) {
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
             src: '../../../static/icons/airplane-landing.svg',
-            scale: 0.5,
+            scale: 0.8,
         }),
     });
     arrivalMarker.setStyle(arrivalMarkerStyle);

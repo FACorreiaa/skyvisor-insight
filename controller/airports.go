@@ -36,7 +36,7 @@ func (h *Handlers) getAirports(_ http.ResponseWriter, r *http.Request) (int, []m
 	return page, a, nil
 }
 
-func (h *Handlers) getAirportsLocation() ([]models.Airport, error) {
+func (h *Handlers) getAirportsLocationService() ([]models.Airport, error) {
 	a, err := h.core.airports.GetAirportsLocation(context.Background())
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (h *Handlers) getAirportsLocation() ([]models.Airport, error) {
 	return a, nil
 }
 
-func (h *Handlers) getTotalAirports() (int, error) {
+func (h *Handlers) getAllAirportsService() (int, error) {
 	total, err := h.core.airports.GetSum(context.Background())
 	pageSize := 10
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
@@ -97,7 +97,7 @@ func (h *Handlers) getAirportByName(_ http.ResponseWriter, r *http.Request) (int
 }
 
 func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	ap := make([]models.Airport, 0)
+	var ap = make([]models.Airport, 0)
 	var page int
 	var sortAux string
 
@@ -136,7 +136,7 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 		return nil, nil
 	}
 
-	lastPage, err := h.getTotalAirports()
+	lastPage, err := h.getAllAirportsService()
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +185,7 @@ func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (h *Handlers) airportLocationPage(w http.ResponseWriter, r *http.Request) error {
-	al, err := h.getAirportsLocation()
+	al, err := h.getAirportsLocationService()
 	sidebar := h.renderSidebar()
 	if err != nil {
 		HandleError(err, "Error fetching airport location table")

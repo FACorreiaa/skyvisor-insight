@@ -39,19 +39,19 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"overflow-x-auto\"><table class=\"table table-zebra\"><!-- head --><thead><tr>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"overflow-x-auto\"><span class=\"loading loading-ring loading-lg htmx-indicator\"></span><table class=\"table table-xs\"><!-- head --><thead><tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, col := range tax.Column {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<th><div class=\"flex justify-start align-middle\" hx-boost>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<th class=\"font-extrabold text-base\"><div class=\"flex justify-start align-middle\" hx-boost>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(col.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/TaxTable.templ`, Line: 21, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/TaxTable.templ`, Line: 22, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -91,7 +91,7 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(t.TaxName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/TaxTable.templ`, Line: 39, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/TaxTable.templ`, Line: 40, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -104,7 +104,7 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(t.AirlineName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/TaxTable.templ`, Line: 40, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/TaxTable.templ`, Line: 41, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +117,7 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(t.CountryName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/TaxTable.templ`, Line: 41, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airlines/TaxTable.templ`, Line: 42, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {

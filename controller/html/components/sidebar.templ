@@ -22,7 +22,7 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 					>
 						if len(item.SubItems) < 1 {
 							<a
-								hx-trigger="load delay:1s"
+								hx-trigger="load delay:300ms"
 								href={ templ.SafeURL(item.Path) }
 								class="flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
 							>
@@ -52,7 +52,7 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 										class={ "focus:text-purple" }
 									>
 										<a
-											hx-trigger="load delay:1s"
+											hx-trigger="load delay:300ms"
 											href={ templ.SafeURL(subItem.Path) }
 											class="flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
 										>

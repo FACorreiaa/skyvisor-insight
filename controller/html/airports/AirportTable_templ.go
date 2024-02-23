@@ -58,19 +58,19 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"overflow-x-auto\"><table class=\"table table-zebra\"><!-- head --><thead><tr>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"overflow-x-auto\"><span class=\"loading loading-ring loading-lg htmx-indicator\"></span><table class=\"table table-xs\"><!-- head --><thead><tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, col := range airport.Column {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<th><div class=\"flex justify-start align-middle\" hx-boost>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<th class=\"font-extrabold text-base\"><div class=\"flex justify-start align-middle\" hx-boost>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(col.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 28, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 29, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -103,7 +103,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, airport := range airport.Airports {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<tr class=\"hover\"><td hx-boost=\"true\"><a hx-trigger=\"load delay:1s\" href=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<tr class=\"hover\"><td hx-boost=\"true\"><a hx-trigger=\"load delay:300ms\" href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -119,7 +119,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(airport.AirportName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 50, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 51, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -132,7 +132,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(airport.CountryName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 52, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 53, Col: 32}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -150,7 +150,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", airport.PhoneNumber.String))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 54, Col: 59}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 55, Col: 59}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -173,7 +173,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(airport.Timezone)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 60, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 61, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -186,7 +186,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(airport.GMT)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 61, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 62, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -199,7 +199,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%f", airport.Latitude))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 62, Col: 48}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 63, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -212,7 +212,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%f", airport.Longitude))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 63, Col: 49}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/airports/AirportTable.templ`, Line: 64, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {

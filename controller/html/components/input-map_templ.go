@@ -31,14 +31,14 @@ func InputComponent(label string, route string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"input changed delay:500ms, search\"><label class=\"w-full max-w-xs form-control\"><div class=\"label\"><span class=\"label-text\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"input changed delay:200ms, search\"><label class=\"w-full max-w-xs form-control\"><div class=\"label\"><span class=\"label-text font-semi-bold text-xs pb-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/components/input-map.templ`, Line: 11, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/components/input-map.templ`, Line: 11, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {

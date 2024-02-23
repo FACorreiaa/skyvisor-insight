@@ -58,19 +58,19 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1>Change this page query to include airline name</h1><h1>Change the job to not import repeated items</h1><div class=\"overflow-x-auto\"><table class=\"table table-zebra\"><!-- head --><thead><tr>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1>Change this page query to include airline name</h1><h1>Change the job to not import repeated items</h1><div class=\"overflow-x-auto\"><span class=\"loading loading-ring loading-lg htmx-indicator\"></span><table class=\"table table-xs\"><!-- head --><thead><tr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, col := range live.Column {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<th><div class=\"flex justify-start align-middle\" hx-boost>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<th class=\"font-extrabold text-base\"><div class=\"flex justify-start align-middle\" hx-boost>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(col.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 30, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 31, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -103,7 +103,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, lf := range live.Flights {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<tr class=\"hover\"><td hx-boost=\"true\"><a hx-trigger=\"load delay:1s\" href=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<tr class=\"hover\"><td hx-boost=\"true\"><a hx-trigger=\"load delay:300ms\" href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -119,7 +119,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(lf.Flight.Number)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 52, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 53, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -132,7 +132,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", lf.FlightStatus))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 54, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 55, Col: 47}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -145,7 +145,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(lf.FlightDate)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 55, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 56, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -158,7 +158,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(lf.Departure.Airport)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 56, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 57, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -171,7 +171,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(lf.Departure.Estimated)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 57, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 58, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -184,7 +184,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(lf.Arrival.Airport)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 58, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 59, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -197,7 +197,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(lf.Arrival.Estimated)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 59, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 60, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -210,7 +210,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", lf.Arrival.Delay))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 60, Col: 48}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 61, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -223,7 +223,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", lf.Departure.Delay))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 61, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 62, Col: 50}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -236,7 +236,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(lf.Departure.Terminal)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 62, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 63, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -249,7 +249,7 @@ func FlightsTableComponent(live models.FlightsTable) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(lf.Departure.Gate.(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 63, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/FlightsTable.templ`, Line: 64, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {

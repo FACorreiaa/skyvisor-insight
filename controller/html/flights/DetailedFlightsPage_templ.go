@@ -67,16 +67,16 @@ func FlightHeader(lf models.LiveFlights) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if lf.Airline.Name == "" {
+			if lf.Flight.Codeshared.AirlineName == "" {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span>Airline not available</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
 				var templ_7745c5c3_Var4 string
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(lf.Airline.Name)
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(lf.Flight.Codeshared.AirlineName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/DetailedFlightsPage.templ`, Line: 27, Col: 24}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `controller/html/flights/DetailedFlightsPage.templ`, Line: 27, Col: 41}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {

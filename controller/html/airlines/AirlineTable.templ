@@ -12,12 +12,11 @@ templ AirlineTable(a models.AirlineTable) {
 		@components.InputComponent("Search by Airline Name", "/airlines/airline")
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
-			<table class="table table-zebra">
+			<table class="table table-xs">
 				<!-- head -->
 				<thead>
-					<tr>
 						for _, col := range a.Column {
-							<th>
+							<th class="font-extrabold text-base">
 								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
@@ -31,16 +30,14 @@ templ AirlineTable(a models.AirlineTable) {
 								</div>
 							</th>
 						}
-					</tr>
 				</thead>
 				<!-- rows -->
 				<tbody>
 					for _, airline := range a.Airline {
 						<tr class="hover">
-							<td>{ fmt.Sprintf("%d",airline.AirlineID) }</td>
 							<td hx-boost="true" >
 								<a
-                                    hx-trigger="load delay:1s"
+                                    hx-trigger="load delay:300ms"
                                     href={ templ.URL(fmt.Sprintf("/airlines/airline/%s", airline.AirlineName)) }>{ airline.AirlineName }</a>
                                 </td>
 							if airline.DateFounded == 0 {

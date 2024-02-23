@@ -5,11 +5,11 @@ templ InputComponent(label string, route string) {
 		hx-boost="true"
 		method="get"
 		hx-get={ route }
-		hx-trigger="input changed delay:500ms, search"
+		hx-trigger="input changed delay:200ms, search"
 	>
 		<label class="w-full max-w-xs form-control">
 			<div class="label">
-				<span class="label-text">{ label }</span>
+				<span class="label-text font-semi-bold text-xs pb-0">{ label }</span>
 			</div>
 			<input
 				type="search"

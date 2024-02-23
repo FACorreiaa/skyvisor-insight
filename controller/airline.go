@@ -109,7 +109,6 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 		sortAux = ASC
 	}
 	columnNames := []models.ColumnItems{
-		{Title: "Airline ID", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Airline Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Date Founded", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Fleet Average Size", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},

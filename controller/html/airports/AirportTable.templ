@@ -19,12 +19,13 @@ templ AirportTableComponent(airport models.AirportTable) {
 	<div class="flex flex-col items-left" id="table-container">
 		@components.InputComponent("Search by Airport Name", "/airports")
 		<div class="overflow-x-auto">
-			<table class="table table-zebra">
+			<span class="loading loading-ring loading-lg htmx-indicator"></span>
+			<table class="table table-xs">
 				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range airport.Column {
-							<th>
+							<th class="font-extrabold text-base">
 								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
@@ -46,7 +47,7 @@ templ AirportTableComponent(airport models.AirportTable) {
 						<tr class="hover">
 							<td hx-boost="true">
 								<a
-									hx-trigger="load delay:1s"
+									hx-trigger="load delay:300ms"
 									href={ templ.SafeURL(fmt.Sprintf("/airports/details/%d", airport.AirportID)) }
 								>{ airport.AirportName }</a>
 							</td>

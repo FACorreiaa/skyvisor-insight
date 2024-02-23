@@ -12,12 +12,13 @@ templ AirlineTaxTable(tax models.TaxTable) {
 	<div class="flex flex-col items-left">
 		@components.InputComponent("Search by Airline Name", "/airlines/tax")
 		<div class="overflow-x-auto">
-			<table class="table table-zebra">
+			<span class="loading loading-ring loading-lg htmx-indicator"></span>
+			<table class="table table-xs">
 				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range tax.Column {
-							<th>
+							<th class="font-extrabold text-base">
 								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">

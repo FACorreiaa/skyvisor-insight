@@ -17,8 +17,7 @@ templ CountryTable(c models.CountryTable) {
 				<thead>
 					<tr>
 						for _, col := range c.Column {
-							<th class="font-extrabold text-base">
-								<div class="flex justify-start align-middle" hx-boost>
+							<th class="font-extrabold text-sm">								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
 										<a

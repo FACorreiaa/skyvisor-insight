@@ -202,7 +202,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></div><script>\n            function toggleDropdown(id) {\n                const details = document.getElementById(id);\n                details.open = !details.open; // Toggle the 'open' attribute\n            }\n        </script></aside>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></div><script>\n            function toggleDropdown(id) {\n                const details = document.getElementById(id);\n                details.open = !details.open;\n            }\n        </script></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -16,7 +16,7 @@ templ AirlineTable(a models.AirlineTable) {
 				<!-- head -->
 				<thead>
 						for _, col := range a.Column {
-							<th class="font-extrabold text-base">
+							<th class="font-extrabold text-sm">
 								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">

@@ -97,6 +97,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	r.PathPrefix("/static/").Handler(http.FileServer(http.FS(staticFS)))
 	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, _ *http.Request) {
 		file, _ := staticFS.ReadFile("static/favicon.ico")
+
 		w.Header().Set("Content-Type", "image/x-icon")
 		_, err := w.Write(file)
 		if err != nil {

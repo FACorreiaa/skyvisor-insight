@@ -63,7 +63,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if len(item.SubItems) < 1 {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a hx-trigger=\"load delay:300ms\" href=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a hx-trigger=\"load delay:50ms\" href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -167,7 +167,7 @@ func SidebarComponent(sidebar []models.SidebarItem) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><a hx-trigger=\"load delay:300ms\" href=\"")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><a hx-trigger=\"load delay:50ms\" href=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

@@ -14,7 +14,7 @@ import (
 )
 
 func (h *Handlers) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []models.Aircraft, error) {
-	pageSize := 10
+	pageSize := 15
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	param := r.FormValue("search")
@@ -26,7 +26,7 @@ func (h *Handlers) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []m
 
 	a, err := h.core.airlines.GetAircraft(context.Background(), page, pageSize, param, orderBy, sortBy)
 	if err != nil {
-		HandleError(err, "Error getting aircrafts")
+		HandleError(err, "Error fetching aircrafts")
 		return 0, nil, err
 	}
 
@@ -35,7 +35,7 @@ func (h *Handlers) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []m
 
 func (h *Handlers) getAllAircraftService() (int, error) {
 	total, err := h.core.airlines.GetAircraftSum(context.Background())
-	pageSize := 10
+	pageSize := 15
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -80,6 +80,7 @@ func (h *Handlers) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Req
 
 	lastPage, err := h.getAllAircraftService()
 	if err != nil {
+		HandleError(err, "Error fetching last page")
 		return nil, err
 	}
 	data := models.AircraftTable{

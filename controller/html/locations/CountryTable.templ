@@ -39,7 +39,7 @@ templ CountryTable(c models.CountryTable) {
 						<tr class="hover">
 							<td hx-boost="true">
 								<a
-									hx-trigger="load delay:300ms"
+									hx-trigger="load delay:50ms"
 									href={ templ.SafeURL(fmt.Sprintf("/locations/country/details/%s", ct.CountryName)) }
 								>{ ct.CountryName }</a>
 							</td>

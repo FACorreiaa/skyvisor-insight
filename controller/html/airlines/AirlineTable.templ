@@ -37,7 +37,7 @@ templ AirlineTable(a models.AirlineTable) {
 						<tr class="hover">
 							<td hx-boost="true" >
 								<a
-                                    hx-trigger="load delay:300ms"
+                                    hx-trigger="load delay:50ms"
                                     href={ templ.URL(fmt.Sprintf("/airlines/airline/%s", airline.AirlineName)) }>{ airline.AirlineName }</a>
                                 </td>
 							if airline.DateFounded == 0 {

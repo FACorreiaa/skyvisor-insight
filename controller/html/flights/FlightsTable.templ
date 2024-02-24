@@ -49,7 +49,7 @@ templ FlightsTableComponent(live models.FlightsTable) {
 						<tr class="hover">
 							<td hx-boost="true">
 								<a
-									hx-trigger="load delay:300ms"
+									hx-trigger="load delay:50ms"
 									href={ templ.SafeURL(fmt.Sprintf("/flights/details/%s", lf.Flight.Number)) }
 								>{ lf.Flight.Number }</a>
 							</td>

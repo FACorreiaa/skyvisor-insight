@@ -78,7 +78,7 @@ func (h *Handlers) getAirlineDetails(_ http.ResponseWriter, r *http.Request) (mo
 	airlineName, ok := vars["airline_name"]
 	if !ok {
 		err := errors.New("airline_name not found in path")
-		HandleError(err, "Error getting airline_name")
+		HandleError(err, "Error fetching airline_name")
 		return models.Airline{}, err
 	}
 
@@ -126,7 +126,7 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 
 	lastPage, err := h.getAllAirlineService()
 	if err != nil {
-		HandleError(err, "error getting total airline")
+		HandleError(err, "error fetching total airline")
 		return nil, err
 	}
 	a := models.AirlineTable{

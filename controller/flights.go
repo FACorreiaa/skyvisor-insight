@@ -59,7 +59,7 @@ func (h *Handlers) renderLiveLocationsSidebar() []models.SidebarItem {
 }
 
 func (h *Handlers) getFlights(_ http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
-	pageSize := 10
+	pageSize := 15
 	param := r.FormValue("search")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
@@ -80,7 +80,7 @@ func (h *Handlers) getFlights(_ http.ResponseWriter, r *http.Request) (int, []mo
 
 func (h *Handlers) getAllFlightsServiceService() (int, error) {
 	total, err := h.core.flights.GetAllFlightsSum(context.Background())
-	pageSize := 10
+	pageSize := 15
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -155,7 +155,7 @@ func (h *Handlers) getFlightsDetails(_ http.ResponseWriter, r *http.Request) (mo
 	flightNumber, ok := vars["flight_number"]
 	if !ok {
 		err := errors.New("flight_number not found in path")
-		HandleError(err, "Error getting flight_number")
+		HandleError(err, "Error fetching flight_number")
 		return models.LiveFlights{}, err
 	}
 

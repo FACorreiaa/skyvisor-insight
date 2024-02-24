@@ -13,7 +13,7 @@ import (
 )
 
 func (h *Handlers) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, []models.Tax, error) {
-	pageSize := 10
+	pageSize := 15
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
@@ -34,7 +34,7 @@ func (h *Handlers) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, [
 
 func (h *Handlers) getAllTax() (int, error) {
 	total, err := h.core.airlines.GetSum(context.Background())
-	pageSize := 10
+	pageSize := 15
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -72,6 +72,7 @@ func (h *Handlers) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request)
 
 	lastPage, err := h.getAllTax()
 	if err != nil {
+		HandleError(err, "Error fetching tax")
 		return nil, err
 	}
 	taxData := models.TaxTable{
@@ -94,6 +95,7 @@ func (h *Handlers) airlineTaxPage(w http.ResponseWriter, r *http.Request) error 
 	taxTable, err := h.renderAirlineTaxTable(w, r)
 	sidebar := h.renderAirlineSidebar()
 	if err != nil {
+		HandleError(err, "Error rendering table")
 		return err
 	}
 	t := airline.AirlineLayoutPage("Airline Tax", "Check data about tax", taxTable, sidebar)

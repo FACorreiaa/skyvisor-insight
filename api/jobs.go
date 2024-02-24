@@ -187,7 +187,7 @@ func (s *ServiceJob) insertNewCities() error {
 	existingData, err := s.getExistingID(query, cityID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -253,7 +253,7 @@ func (s *ServiceJob) insertNewCountries() error {
 	existingData, err := s.getExistingID(query, countryIsoNumeric, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -323,7 +323,7 @@ func (s *ServiceJob) insertNewAirports() error {
 	existingData, err := s.getExistingID(query, airportID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -394,7 +394,7 @@ func (s *ServiceJob) insertNewAirplanes() error {
 	existingData, err := s.getExistingID(query, airplaneID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -479,7 +479,7 @@ func (s *ServiceJob) insertNewTax() error {
 	existingData, err := s.getExistingID(query, tax_id, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -536,7 +536,7 @@ func (s *ServiceJob) insertNewAirline() error {
 	existingData, err := s.getExistingID(query, airlineID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -608,7 +608,7 @@ func (s *ServiceJob) insertNewAircraft() error {
 	existingData, err := s.getExistingID(query, planeTypeID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 

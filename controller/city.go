@@ -44,6 +44,7 @@ func (h *Handlers) renderLocationsBar() []models.SidebarItem {
 func (h *Handlers) getCityLocationsService() ([]models.City, error) {
 	c, err := h.core.locations.GetCityLocation(context.Background())
 	if err != nil {
+		HandleError(err, "Error fetching cities")
 		return nil, err
 	}
 
@@ -52,23 +53,24 @@ func (h *Handlers) getCityLocationsService() ([]models.City, error) {
 
 func (h *Handlers) getAllCitiesService() (int, error) {
 	total, err := h.core.locations.GetCitySum(context.Background())
-	pageSize := 10
+	pageSize := 15
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
+		HandleError(err, "Error fetching sum of cities")
 		return 0, err
 	}
 	return lastPage, nil
 }
 
 func (h *Handlers) getCities(_ http.ResponseWriter, r *http.Request) (int, []models.City, error) {
-	pageSize := 10
+	pageSize := 15
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	param := r.FormValue("search")
 
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
-		// Handle error or set a default page number
+		HandleError(err, "page can't go lower than 1")
 		page = 1
 	}
 
@@ -87,7 +89,7 @@ func (h *Handlers) getCityDetails(_ http.ResponseWriter, r *http.Request) (model
 
 	if !ok {
 		err := errors.New("city_id not found in path")
-		HandleError(err, "Error getting city_id")
+		HandleError(err, "Error fetching city_id")
 		return models.City{}, err
 	}
 
@@ -142,6 +144,7 @@ func (h *Handlers) renderCityTable(w http.ResponseWriter, r *http.Request) (temp
 
 	lastPage, err := h.getAllCitiesService()
 	if err != nil {
+		HandleError(err, "Error fetching cities")
 		return nil, err
 	}
 	ct := models.CityTable{
@@ -164,9 +167,15 @@ func (h *Handlers) cityMainPage(w http.ResponseWriter, r *http.Request) error {
 	taxTable, err := h.renderCityTable(w, r)
 	sidebar := h.renderLocationsBar()
 	if err != nil {
+		HandleError(err, "Error rendering table")
 		return err
 	}
-	c := locations.LocationsLayoutPage("Cities", "Check cities data around the world", taxTable, sidebar)
+	cities, err := h.getCityLocationsService()
+	if err != nil {
+		HandleError(err, "Error fetching locations")
+		return err
+	}
+	c := locations.CityLayoutPage("Cities", "Check cities data around the world", taxTable, sidebar, cities)
 	return h.CreateLayout(w, r, "City Page", c).Render(context.Background(), w)
 }
 
@@ -174,6 +183,7 @@ func (h *Handlers) cityLocationsPage(w http.ResponseWriter, r *http.Request) err
 	sidebar := h.renderLocationsBar()
 	c, err := h.getCityLocationsService()
 	if err != nil {
+		HandleError(err, "Error fetching locations")
 		return err
 	}
 	cl := locations.CityLocations(sidebar, c, "City Locations", "Check location of cities around the world")

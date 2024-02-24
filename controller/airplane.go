@@ -14,7 +14,7 @@ import (
 )
 
 func (h *Handlers) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []models.Airplane, error) {
-	pageSize := 10
+	pageSize := 15
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
@@ -34,7 +34,7 @@ func (h *Handlers) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []m
 
 func (h *Handlers) getAllAirplanesService() (int, error) {
 	total, err := h.core.airlines.GetAirplaneSum(context.Background())
-	pageSize := 10
+	pageSize := 15
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -82,6 +82,7 @@ func (h *Handlers) renderAirlineAirplaneTable(w http.ResponseWriter, r *http.Req
 
 	lastPage, err := h.getAllAirplanesService()
 	if err != nil {
+		HandleError(err, "Error fetching last page")
 		return nil, err
 	}
 	a := models.AirplaneTable{

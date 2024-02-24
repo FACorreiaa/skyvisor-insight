@@ -18,6 +18,7 @@ import (
 func (h *Handlers) getCountryLocationsService() ([]models.Country, error) {
 	c, err := h.core.locations.GetCountryLocation(context.Background())
 	if err != nil {
+		HandleError(err, "Error fetching locations")
 		return nil, err
 	}
 
@@ -26,7 +27,7 @@ func (h *Handlers) getCountryLocationsService() ([]models.Country, error) {
 
 func (h *Handlers) getAllCountriesService() (int, error) {
 	total, err := h.core.locations.GetCountrySum(context.Background())
-	pageSize := 10
+	pageSize := 15
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -35,7 +36,7 @@ func (h *Handlers) getAllCountriesService() (int, error) {
 }
 
 func (h *Handlers) getCountries(_ http.ResponseWriter, r *http.Request) (int, []models.Country, error) {
-	pageSize := 10
+	pageSize := 15
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	param := r.FormValue("search")
@@ -58,7 +59,7 @@ func (h *Handlers) getCountryDetails(_ http.ResponseWriter, r *http.Request) (mo
 	country, ok := vars["country_name"]
 	if !ok {
 		err := errors.New("country_name not found in path")
-		HandleError(err, "Error getting country_name")
+		HandleError(err, "Error fetching country_name")
 		return models.Country{}, err
 	}
 
@@ -129,11 +130,14 @@ func (h *Handlers) renderCountryTable(w http.ResponseWriter, r *http.Request) (t
 
 func (h *Handlers) countryMainPage(w http.ResponseWriter, r *http.Request) error {
 	taxTable, err := h.renderCountryTable(w, r)
+	country, err := h.getCountryLocationsService()
+
 	sidebar := h.renderLocationsBar()
 	if err != nil {
+		HandleError(err, "Error rendering table")
 		return err
 	}
-	c := locations.LocationsLayoutPage("Countries", "Check countries of the world", taxTable, sidebar)
+	c := locations.CountryLayoutPage("Countries", "Check countries of the world", taxTable, sidebar, country)
 	return h.CreateLayout(w, r, "Country Page", c).Render(context.Background(), w)
 }
 
@@ -141,6 +145,7 @@ func (h *Handlers) countryLocationPage(w http.ResponseWriter, r *http.Request) e
 	sidebar := h.renderLocationsBar()
 	c, err := h.getCountryLocationsService()
 	if err != nil {
+		HandleError(err, "Error fetching countries")
 		return err
 	}
 

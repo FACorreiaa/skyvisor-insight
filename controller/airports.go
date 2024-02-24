@@ -39,6 +39,7 @@ func (h *Handlers) getAirports(_ http.ResponseWriter, r *http.Request) (int, []m
 func (h *Handlers) getAirportsLocationService() ([]models.Airport, error) {
 	a, err := h.core.airports.GetAirportsLocation(context.Background())
 	if err != nil {
+		HandleError(err, "Error fetching airports locations")
 		return nil, err
 	}
 
@@ -60,7 +61,7 @@ func (h *Handlers) getAirportDetails(_ http.ResponseWriter, r *http.Request) (mo
 	idStr, ok := vars["airport_id"]
 	if !ok {
 		err := errors.New("airport_id not found in path")
-		HandleError(err, "Error getting airport_id")
+		HandleError(err, "Error fetching airport_id")
 		return models.Airport{}, err
 	}
 
@@ -138,6 +139,7 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 
 	lastPage, err := h.getAllAirportsService()
 	if err != nil {
+		HandleError(err, "Error fetching airports")
 		return nil, err
 	}
 	a := models.AirportTable{

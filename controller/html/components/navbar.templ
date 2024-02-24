@@ -22,6 +22,8 @@ templ NavbarComponent(nav []models.NavItem, user *account.User, activeNav string
 								href={ templ.SafeURL(item.Path) }
 								class={ "focus:text-purple block px-3 py-2 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500",
 			    templ.KV("text-blue", item.Path == activeNav) }
+			    				hx-trigger="load delay:50ms"
+
 							>
 								@item.Icon
 								{ item.Label }

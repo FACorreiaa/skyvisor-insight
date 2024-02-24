@@ -39,7 +39,7 @@ templ CityTable(c models.CityTable) {
 						<tr class="hover">
 							<td hx-boost="true">
 								<a
-									hx-trigger="load delay:300ms"
+									hx-trigger="load delay:50ms"
 									href={ templ.SafeURL(fmt.Sprintf("/locations/city/details/%d", city.CityID)) }
 								>{ city.CityName }</a>
 							</td>

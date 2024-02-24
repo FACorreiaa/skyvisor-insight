@@ -155,7 +155,7 @@ func AirportMap(data []models.Airport) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n\t\t\t\t.map {\n\t\t\t\t\twidth: 100%;\n\t\t\t\t\theight: 850px;\n\t\t\t\t}\n\t\t\t\ta.skiplink {\n\t\t\t\t\tposition: absolute;\n\t\t\t\t\tclip: rect(1px, 1px, 1px, 1px);\n\t\t\t\t\tpadding: 0;\n\t\t\t\t\tborder: 0;\n\t\t\t\t\theight: 1px;\n\t\t\t\t\twidth: 1px;\n\t\t\t\t\toverflow: hidden;\n\t\t\t\t}\n\t\t\t\ta.skiplink:focus {\n\t\t\t\t\tclip: auto;\n\t\t\t\t\theight: auto;\n\t\t\t\t\twidth: auto;\n\t\t\t\t\tbackground-color: #fff;\n\t\t\t\t\tpadding: 0.3em;\n\t\t\t\t}\n\t\t\t\t#map:focus {\n\t\t\t\t\toutline: #4A74A8 solid 0.15em;\n\t\t\t\t}\n\t\t\t</style></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n\t\t\t\t.map {\n\t\t\t\t\twidth: 100%;\n\t\t\t\t\theight: 700px;\n\t\t\t\t}\n\t\t\t\t#map:focus {\n\t\t\t\t\toutline: #4A74A8 solid 0.15em;\n\t\t\t\t}\n\t\t\t</style></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

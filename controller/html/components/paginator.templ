@@ -2,7 +2,7 @@ package components
 
 templ PaginatorComponent(firstPage, prevPage, currentPage, nextPage, lastPage string) {
 	<div class="flex justify-center mt-10">
-		<form class="join" hx-boost="true" method="get">
+		<form class="join " hx-boost="true" method="get">
 			<a
 				class="join-item btn"
 				href={ templ.URL(firstPage) }

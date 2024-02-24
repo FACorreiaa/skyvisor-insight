@@ -20,14 +20,8 @@ import (
 func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
-		{
-			Label: "Airlines",
-			Icon:  svg2.TicketIcon(),
-			SubItems: []models.SidebarItem{
-				{Path: "/airlines/airline", Label: "Airline", Icon: svg2.TicketIcon()},
-				{Path: "/airlines/airline/location", Label: "Airline location", Icon: svg2.MapIcon()},
-			},
-		},
+		{Path: "/airlines/airline", Label: "Airlines", Icon: svg2.CreditCardIcon()},
+		{Path: "/airlines/airline/location", Label: "Airline location", Icon: svg2.MapIcon()},
 		{Path: "/airlines/tax", Label: "Airline Tax", Icon: svg2.CreditCardIcon()},
 		{Path: "/airlines/aircraft", Label: "Aircraft", Icon: svg2.PaperAirplaneIcon()},
 		{Path: "/airlines/airplane", Label: "Airplane", Icon: svg2.PaperAirplaneIcon()},
@@ -50,7 +44,7 @@ func (h *Handlers) getAirlinesLocationService() ([]models.Airline, error) {
 
 func (h *Handlers) getAllAirlineService() (int, error) {
 	total, err := h.core.airlines.GetAirlineSum(context.Background())
-	pageSize := 10
+	pageSize := 15
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -59,7 +53,7 @@ func (h *Handlers) getAllAirlineService() (int, error) {
 }
 
 func (h *Handlers) getAirline(_ http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
-	pageSize := 10
+	pageSize := 15
 	param := r.FormValue("search")
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
@@ -152,14 +146,15 @@ func (h *Handlers) renderAirlineTable(w http.ResponseWriter, r *http.Request) (t
 }
 
 func (h *Handlers) airlineMainPage(w http.ResponseWriter, r *http.Request) error {
-	table, err := h.renderAirlineTable(w, r)
+	var table, err = h.renderAirlineTable(w, r)
+	al, err := h.getAirlinesLocationService()
 
 	sidebar := h.renderAirlineSidebar()
 	if err != nil {
 		HandleError(err, "Error rendering airline table")
 		return err
 	}
-	a := airline.AirlineLayoutPage("Airline", "Check data about Airlines", table, sidebar)
+	a := airline.AirlineMainPageLayout("Airline", "Check data about Airlines", table, sidebar, al)
 	return h.CreateLayout(w, r, "Airline Tax Page", a).Render(context.Background(), w)
 }
 
@@ -170,7 +165,7 @@ func (h *Handlers) airlineLocationPage(w http.ResponseWriter, r *http.Request) e
 		HandleError(err, "Error rendering locations")
 		return err
 	}
-	a := airline.AirlineLocationsPage(sidebar, al, "Airline", "Check airline details")
+	a := airline.AirlineLocationsPage(sidebar, al, "Airline", "Check airline expanded locations")
 	return h.CreateLayout(w, r, "Airline Details Page", a).Render(context.Background(), w)
 }
 

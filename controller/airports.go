@@ -18,7 +18,7 @@ import (
 )
 
 func (h *Handlers) getAirports(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
-	pageSize := 10
+	pageSize := 15
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")
@@ -47,7 +47,7 @@ func (h *Handlers) getAirportsLocationService() ([]models.Airport, error) {
 
 func (h *Handlers) getAllAirportsService() (int, error) {
 	total, err := h.core.airports.GetSum(context.Background())
-	pageSize := 10
+	pageSize := 15
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -81,7 +81,7 @@ func (h *Handlers) getAirportDetails(_ http.ResponseWriter, r *http.Request) (mo
 
 func (h *Handlers) getAirportByName(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
 	param := r.FormValue("search")
-	pageSize := 10
+	pageSize := 15
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")
@@ -159,14 +159,8 @@ func (h *Handlers) renderAirportTable(w http.ResponseWriter, r *http.Request) (t
 func (h *Handlers) renderSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
-		{
-			Label: "Airports",
-			Icon:  svg2.BuildingOfficeIcon(),
-			SubItems: []models.SidebarItem{
-				{Path: "/airports", Label: "Airport data", Icon: svg2.BuildingOfficeIcon()},
-				{Path: "/airports/locations", Label: "Airport locations", Icon: svg2.MapIcon()},
-			},
-		},
+		{Path: "/airports", Label: "Airports", Icon: svg2.BuildingOfficeIcon()},
+		{Path: "/airports/locations", Label: "Airport locations", Icon: svg2.MapIcon()},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
 	}
@@ -175,12 +169,14 @@ func (h *Handlers) renderSidebar() []models.SidebarItem {
 
 func (h *Handlers) airportPage(w http.ResponseWriter, r *http.Request) error {
 	at, err := h.renderAirportTable(w, r)
+	al, err := h.getAirportsLocationService()
+
 	sidebar := h.renderSidebar()
 	if err != nil {
 		HandleError(err, "Error fetching airport data table")
 		return err
 	}
-	a := airport.AirportPage(at, sidebar, "Airports", "Check airport locations")
+	a := airport.AirportPage(at, sidebar, "Airports", "Check airport locations", al)
 	return h.CreateLayout(w, r, "Airport Page", a).Render(context.Background(), w)
 }
 

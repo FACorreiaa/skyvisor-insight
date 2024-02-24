@@ -277,7 +277,7 @@ func FlightsPreviewMap(data []models.LiveFlights) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n                .map {\n                    width: 100%;\n                    height: 600px;\n                }\n\n                a.skiplink {\n                    position:\n                        absolute clip: rect(1px, 1px, 1px, 1px);\n                    padding:\n                        0 border: 0 height: 1px;\n                    width: 1px;\n                    overflow:\n                        hidden\n                }\n\n                a.skiplink:focus {\n                    clip:\n                        auto height: auto width: auto background-color: #fff;\n                    padding: 0.3em;\n                }\n\n                #map:focus {\n                    outline: #4A74A8 solid 0.15em;\n                }\n\t\t\t</style></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><style scoped>\n                .map {\n                    width: 100%;\n                    height: 600px;\n                }\n                #map:focus {\n                    outline: #4A74A8 solid 0.15em;\n                }\n\t\t\t</style></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

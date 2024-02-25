@@ -86,5 +86,9 @@ templ-local:
 	templ generate -watch -proxy=http://localhost:6969
 
 build:
-	docker buildx build -t aviation-tracker --annotation "index,manifest=skyvisor-beta" --push .
+	docker buildx build -t a11199/skyvisor-insight --annotation "index,manifest,tagname=a11199/skyvisor-insight" --push .
+
+push:
+	docker push a11199/skyvisor-insight
+
 

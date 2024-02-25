@@ -163,7 +163,7 @@ func NewRedisConfig() (*RedisConfig, error) {
 }
 
 func NewServerConfig() (*ServerConfig, error) {
-	addr := GetEnv("ADDR", "127.0.0.1:6969")
+	addr := GetEnv("ADDR", "0.0.0.0:6969")
 	writeTimeout, err := time.ParseDuration(GetEnv("write_timeout", "15s"))
 	if err != nil {
 		return nil, errors.New("invalid WRITE_TIMEOUT")

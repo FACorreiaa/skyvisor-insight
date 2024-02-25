@@ -32,7 +32,22 @@ services:
     #      REDIS_DB: ${REDIS_DB}
     volumes:
       - ./.data/docker-redis:/var/lib/redis/data
+    networks:
+      - aviation-client
 
+  app-dev:
+    platform: linux/amd64
+    build:
+      dockerfile: Dockerfile
+      target: app-dev
+      context: ./
+    ports:
+      - "6969:8080"
+    volumes:
+      - ./:/app
+#    environment:
+#      APP_ENV: development
+    command: [ "air", "-c", ".air.toml" ]
     networks:
       - aviation-client
 

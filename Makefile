@@ -91,4 +91,8 @@ build:
 push:
 	docker push a11199/skyvisor-insight
 
+up:
+	docker compose up -d
 
+down:
+	docker compose down

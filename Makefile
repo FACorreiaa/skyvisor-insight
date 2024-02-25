@@ -1,6 +1,6 @@
 #.PHONY: build clean
-#project_name = skyvisor-container
-#image_name = skyvisor-container
+project_name = skyvisor-container
+image_name = skyvisor-container
 #
 #compose-up:
 #	make delete-container-if-exist
@@ -85,4 +85,6 @@ build-tailwind:
 templ-local:
 	templ generate -watch -proxy=http://localhost:6969
 
+build:
+	docker buildx build -t aviation-tracker --annotation "index,manifest=skyvisor-beta" --push .
 

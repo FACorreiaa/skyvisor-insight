@@ -51,16 +51,6 @@ type Handlers struct {
 const ASC = "ASC"
 const DESC = "DESC"
 
-func HandlerErrorExtended(message string, values ...interface{}) {
-	for _, v := range values {
-		if v == nil {
-			continue
-		}
-
-		log.Printf("%s: %v", message, v)
-	}
-}
-
 func HandleError(err error, message string) {
 	if err != nil {
 		log.Printf("%s: %v", message, err)
@@ -73,6 +63,10 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	if err := enTranslations.RegisterDefaultTranslations(validate, translator); err != nil {
 		slog.Error("Error registering translations", "error", err)
 	}
+	// var dir string
+	//
+	// flag.StringVar(&dir, "dir", ".", "the directory to serve files from. Defaults to the current dir")
+	// flag.Parse()
 
 	formDecoder := form.NewDecoder()
 
@@ -104,6 +98,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 			return
 		}
 	})
+	// r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()

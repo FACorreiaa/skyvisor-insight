@@ -196,7 +196,7 @@ templ AirlineMap(data []models.Airline) {
 		<head>
 			<style scoped>
 				.map {
-					height: 650px;
+					height: 600px;
                     z-index:1;
                 }
 				#map:focus {
@@ -205,11 +205,11 @@ templ AirlineMap(data []models.Airline) {
 			</style>
 		</head>
 		<body onload={ mapContainer(data) }>
-			<div class="container w-full rounded-box">
+			<div>
 				<div id="map" class=" map" tabindex="0">
 					<button aria-describedby="popup" data-tippy-content="popup" id="popup"></button>
 				</div>
-				<div class="mt-2">
+				<div class="mt-2 text-center">
 					<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
 					<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
 				</div>

@@ -1,6 +1,8 @@
 #.PHONY: build clean
 project_name = skyvisor-container
 image_name = a11199/skyvisor-insight
+image_name_dev = skyvisor-insight-dev:latest
+image_name_debug = skyvisor-insight-debug:latest
 
 compose-up:
 	make delete-container-if-exist
@@ -89,6 +91,9 @@ push:
 
 up:
 	docker compose up -d
+
+delete-container-if-exist:
+	docker stop $(project_name) || true && docker rm $(project_name) || true
 
 down:
 	docker compose down

@@ -37,6 +37,8 @@ services:
 
   app-dev:
     platform: linux/amd64
+    container_name: "skyvisor-insight-dev"
+    image: "skyvisor-insight-dev"
     build:
       dockerfile: Dockerfile
       target: app-dev
@@ -50,8 +52,23 @@ services:
     command: [ "air", "-c", ".air.toml" ]
     networks:
       - aviation-client
+#  release-stage:
+#    platform: linux/amd64
+#    container_name: "a11199/skyvisor-insight:latest"
+#    build:
+#      dockerfile: Dockerfile
+#      target: release-stage
+#      context: ./
+#    ports:
+#      - "6969:6969"
+#    volumes:
+#      - ./:/app
+#    networks:
+#      - aviation-client
   debug:
     platform: linux/amd64
+    container_name: "skyvisor-insight-debug"
+    image: "skyvisor-insight-debug"
     build:
       dockerfile: Dockerfile
       context: ./

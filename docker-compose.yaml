@@ -42,7 +42,7 @@ services:
       target: app-dev
       context: ./
     ports:
-      - "6969:8080"
+      - "6969:6969"
     volumes:
       - ./:/app
 #    environment:

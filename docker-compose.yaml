@@ -50,28 +50,24 @@ services:
     command: [ "air", "-c", ".air.toml" ]
     networks:
       - aviation-client
+  debug:
+    platform: linux/amd64
+    build:
+      dockerfile: Dockerfile
+      context: ./
+      target: app-debug
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
+    ports:
+      - "2345:2345"
+    volumes:
+      - ./:/app
+    command: "dlv --listen=:2345 --headless=true --log=true --log-output=debugger,debuglineerr,gdbwire,lldbout,rpc --accept-multiclient --api-version=2 exec ./entrypoint"
+    networks:
+      - aviation-client
 
-#  app-dev:
-#    build:
-#      target: dev
-#    ports:
-#      - "4001:4001"
-#    volumes:
-#      - ${PWD}/app:/app  # Adjust the path as needed
-#    environment:
-#      - APP_ENV=development
-#    command: [ "air", "-c", ".air.toml" ]
-#    networks:
-#      - aviation-client
-#  app-release:
-#      build:
-#        target: release-stage
-#      ports:
-#        - "8080:8080"
-#      environment:
-#        - APP_ENV=production
-#      networks:
-#        - aviation-client
 
 #  redis-commander:
 #    container_name: redis-commander

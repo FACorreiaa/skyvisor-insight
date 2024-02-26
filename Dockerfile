@@ -24,6 +24,15 @@ RUN GOOS=linux go install github.com/a-h/templ/cmd/templ@latest
 WORKDIR /app
 CMD ["air"]
 
+#FROM build-stage AS app-debug
+#RUN CGO_ENABLED=0 go get -ldflags "-s -w -extldflags '-static'" github.com/go-delve/delve/cmd/dlv
+#WORKDIR /app
+# Debug Stage
+FROM build-stage AS app-debug
+RUN CGO_ENABLED=0 go install github.com/go-delve/delve/cmd/dlv@latest
+WORKDIR /app
+#COPY --from=build-stage /entrypoint /entrypoint
+
 # Deploy.
 FROM gcr.io/distroless/static-debian11 AS release-stage
 WORKDIR /

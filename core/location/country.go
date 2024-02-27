@@ -141,12 +141,16 @@ func (r *RepositoryLocation) GetCountryByName(ctx context.Context, name string) 
 	var c models.Country
 	query := `SELECT
 			    cou.country_name,
-			    cou.id, cou.capital,
-			    cou.continent,
+			    cou.id,
+			    cou.capital,
 			    cou.currency_name,
+			    cou.continent,
 			    cou.population,
 			    cou.currency_code,
 			    cou.currency_name,
+			    cou.country_iso2,
+			    cou.country_iso3,
+			    cou.country_iso_numeric,
 			    ct.latitude,
 			    ct.longitude
 			FROM
@@ -162,10 +166,18 @@ func (r *RepositoryLocation) GetCountryByName(ctx context.Context, name string) 
 			`
 	err := r.pgpool.QueryRow(ctx, query, name).Scan(
 		&c.CountryName,
-		&c.ID, &c.Capital, &c.CurrencyName,
+		&c.ID,
+		&c.Capital,
+		&c.CurrencyName,
 		&c.Continent,
-		&c.Population, &c.CurrencyCode,
-		&c.CurrencyName, &c.Latitude, &c.Longitude,
+		&c.Population,
+		&c.CurrencyCode,
+		&c.CurrencyName,
+		&c.CountryISO2,
+		&c.CountryIso3,
+		&c.CountryIsoNumeric,
+		&c.Latitude,
+		&c.Longitude,
 	)
 
 	if err != nil {

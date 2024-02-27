@@ -256,8 +256,8 @@ func (r *RepositoryFlights) GetAllFlights(ctx context.Context,
 							    	f.departure_estimated,
 							       COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay
 							from flights f
-							WHERE	Trim(Upper(f.flight_number))
-							          ILIKE trim(upper('%' || $5 || '%'))
+							WHERE	Trim(Upper(f.flight_number)) ILIKE trim(upper('%' || $5 || '%'))
+							
 							ORDER BY
 							CASE
 									WHEN $3 = 'Flight Number'
@@ -456,4 +456,73 @@ func (r *RepositoryFlights) GetAllFlightsPreview(ctx context.Context) ([]models.
 			  ORDER BY f.flight_number;`
 
 	return r.getFlightsLocationsData(ctx, query)
+}
+
+func (r *RepositoryFlights) GetAllFlightsByStatus(ctx context.Context,
+	page, pageSize int, orderBy, sortBy, flightNumber, flightStatus string) ([]models.LiveFlights, error) {
+	query := `select
+							       f.flight_number,
+							       f.flight_date,
+							       f.flight_status,
+							       f.live_updated,
+							       f.id,
+							       COALESCE(f.arrival_actual, 'Not defined') as arrival_actual,
+							       COALESCE(f.arrival_actual_runway, 'Not defined') as arrival_actual,
+							       f.arrival_airport,
+							    	COALESCE(f.arrival_baggage, 'Not defined') as arrival_baggage,
+							       COALESCE(FLOOR(f.arrival_delay / (1000 * 60)), 0) as arrival_delay,
+							        f.arrival_estimated,
+							        COALESCE(f.arrival_terminal, 'Not defined') as arrival_terminal,
+							        COALESCE(f.arrival_gate, 'Not defined') as arrival_gate,
+							        f.arrival_timezone,
+							        f.departure_scheduled,
+							        COALESCE(f.departure_estimated_runway, 'Not defined') as departure_estimated_runway,
+							       f.departure_timezone,
+							       f.departure_terminal,
+							       COALESCE(f.departure_gate, 'Not defined') as departure_gate,
+							       COALESCE(f.departure_actual, 'Not defined') as departure_actual,
+							       COALESCE(f.departure_actual_runway, 'Not defined') as departure_actual_runway,
+							       f.departure_airport,
+							    	f.departure_estimated,
+							       COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay
+							from flights f
+							WHERE	Trim(Upper(f.flight_number))
+							          ILIKE trim(upper('%' || $5 || '%'))
+							          AND flight_status = $6
+-- 							AND (
+-- 						        $6 = '' -- No status provided, include all flights
+-- 						        OR ($6 = 'active' AND f.flight_status = 'active')
+-- 						        OR ($6 = 'cancelled' AND f.flight_status = 'cancelled')
+-- 						        -- Add more conditions for other statuses as needed
+--     						)
+							ORDER BY
+							CASE
+									WHEN $3 = 'Flight Number'
+									AND      $4 = 'ASC' THEN flight_number::text
+							END ASC,
+							CASE
+									WHEN $3 = 'Flight Number'
+									AND      $4 = 'DESC' THEN flight_number::text
+							END DESC,
+							CASE
+									WHEN $3 = 'Flight Status'
+									AND      $4 = 'ASC' THEN flight_status::text
+							END ASC,
+							CASE
+									WHEN $3 = 'Flight Status'
+									AND      $4 = 'DESC' THEN flight_status::text
+							END DESC,
+							CASE
+									WHEN $3 = 'Flight Date'
+									AND      $4 = 'ASC' THEN flight_date::text
+							END ASC,
+							CASE
+									WHEN $3 = 'Flight Date'
+									AND      $4 = 'DESC' THEN flight_date::text
+							END DESC
+							offset $1 limit $2`
+
+	offset := (page - 1) * pageSize
+
+	return r.getFlightsData(ctx, query, offset, pageSize, orderBy, sortBy, flightNumber, flightStatus)
 }

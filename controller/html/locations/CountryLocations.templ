@@ -14,6 +14,7 @@ templ CountryLocations(sidebar []models.SidebarItem, c []models.Country, title s
 					@components.SidebarComponent(sidebar)
 				</div>
 				<div class="w-11/12 p-2 ml-10">
+				<span class="loading loading-ring loading-lg htmx-indicator"></span>
 					@CountryMap(c)
 				</div>
 			</div>

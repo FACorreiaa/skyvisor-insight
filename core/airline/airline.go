@@ -151,12 +151,15 @@ func (r *RepositoryAirline) GetAirlineByName(ctx context.Context, airlineName st
                                      al.iata_prefix_accounting, al.airline_name, al.country_name,
                                      al.fleet_size, al.status, al.type, al.created_at,
                                      ap.model_name, ap.plane_owner, ap.plane_age, ap.registration_date,
-                                     c.continent
+                                     c.continent, ct.latitude, ct.longitude
 		FROM airline al
 		RIGHT JOIN airplane
 		    ap ON al.iata_code = ap.airline_iata_code
 		JOIN country
 		    c ON al.country_iso2 = c.country_iso2
+		join airport apt on apt.airport_id = airline_id
+		join city ct on apt.city_iata_code = ct.iata_code
+
 		WHERE
 		    al.airline_name IS NOT NULL
 		AND
@@ -186,6 +189,8 @@ func (r *RepositoryAirline) GetAirlineByName(ctx context.Context, airlineName st
 		&al.PlaneAge,
 		&al.RegistrationDate,
 		&al.Continent,
+		&al.Latitude,
+		&al.Longitude,
 	)
 
 	if err != nil {

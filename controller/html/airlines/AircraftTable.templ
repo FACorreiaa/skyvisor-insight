@@ -22,6 +22,7 @@ templ AirlineAircraftTable(a models.AircraftTable) {
 										<a
 											class="pl-4"
 											href={ templ.URL(fmt.Sprintf("/airlines/aircraft?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
+
 										>
 											@col.Icon
 										</a>

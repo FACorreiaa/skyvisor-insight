@@ -54,6 +54,7 @@ templ AirportDetailsPage(sidebar []models.SidebarItem, a models.Airport, title, 
 				<div class="w-11/12 ml-10">
 					@AirportDetailsCard(a)
 					<div class="z-20 pt-2 ml-2">
+					<span class="loading loading-ring loading-lg htmx-indicator"></span>
 						@AirportDetailedMap(a)
 					</div>
 				</div>

@@ -14,6 +14,7 @@ templ AirlineLayoutPage(title, description string, component templ.Component, si
 					@components.SidebarComponent(sidebar)
 				</div>
 				<div class="w-11/12 overflow-x-auto">
+				<span class="loading loading-ring loading-lg htmx-indicator"></span>
 					@component
 				</div>
 			</div>

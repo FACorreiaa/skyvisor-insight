@@ -6,31 +6,32 @@ import (
 	"fmt"
 )
 
-templ AirlineDetailsCard(a models.Airline) {
-	@components.ExtendedCardLayout() {
-		<h1>We are gonna change the location of this</h1>
-		<div class="flex flex-wrap justify-between gap-4">
-			<div class="flex flex-col">
-				<div class="grid grid-cols-subgrid">
-					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Airline: </label>{ a.AirlineName }</span>
-					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Date Founded: </label>{ fmt.Sprintf("%d", a.DateFounded) }</span>
-					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Country: </label>{ a.CountryName }</span>
-				</div>
-			</div>
-			<div class="flex flex-col">
-				<div class="grid grid-cols-subgrid">
-					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Fleet Size : </label>{ fmt.Sprintf("%d", a.FleetSize) }</span>
-					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Fleet Average Size: </label>{ fmt.Sprintf("%f", a.FleetAverageAge) }</span>
-				</div>
-			</div>
-			<div class="flex flex-col">
-				<div class="grid grid-cols-subgrid">
-					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Call Sign: </label>{ a.CallSign }</span>
-					<span class="flex items-center whitespace-nowrap"><label class="mr-2 font-bold whitespace-nowrap ">Hub Code: </label>{ a.HubCode }</span>
-				</div>
-			</div>
-		</div>
-	}
+templ AirlineDetails(a models.Airline) {
+    <div class="stats stats-vertical shadow">
+      <div class="stat">
+        <div class="stat-title">Airline</div>
+        <div class="stat-value text-sm">{ a.AirlineName }</div>
+        <div class="stat-desc">Date founded: { fmt.Sprintf("%d", a.DateFounded) }</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Country</div>
+        <div class="stat-value">{ a.CountryName }</div>
+        <div class="stat-desc">{ a.Continent }</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Fleet Size</div>
+        <div class="stat-value">{ fmt.Sprintf("%d", a.FleetSize) }</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Fleet Average Size</div>
+        <div class="stat-value">Avg Size: { fmt.Sprintf("%f", a.FleetAverageAge) }</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Code</div>
+        <div class="stat-value">{ a.CallSign }</div>
+        <div class="stat-desc">{ a.HubCode }</div>
+      </div>
+    </div>
 }
 
 templ AirlineDetailsPage(sidebar []models.SidebarItem, a models.Airline, title, description string) {
@@ -40,9 +41,12 @@ templ AirlineDetailsPage(sidebar []models.SidebarItem, a models.Airline, title, 
 			<div class="w-2/12">
 				@components.SidebarComponent(sidebar)
 			</div>
-			<div class="w-11/12 ml-10">
-				@AirlineDetailsCard(a)
+			<div class="w-6/12 ml-10">
+				@AirlineDetails(a)
 			</div>
+			<div class="w-6/12 ml-10">
+			    @AirlineDetailedMap(a)
+            </div>
 		</div>
 	</div>
 }

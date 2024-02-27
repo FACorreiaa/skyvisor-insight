@@ -38,7 +38,10 @@ templ AirlineTable(a models.AirlineTable) {
 							<td hx-boost="true" >
 								<a
                                     hx-trigger="load delay:50ms"
-                                    href={ templ.URL(fmt.Sprintf("/airlines/airline/%s", airline.AirlineName)) }>{ airline.AirlineName }</a>
+                                    hx-target="#detailsSpace"
+                                    hx-swap="outerHTML"
+                                    href={ templ.SafeURL(fmt.Sprintf("/airlines/airline/%s", airline.AirlineName))}>{ airline.AirlineName }
+                                </a>
                                 </td>
 							if airline.DateFounded == 0 {
 								<td class="italic">Not available</td>
@@ -67,5 +70,6 @@ templ AirlineTable(a models.AirlineTable) {
 			strconv.Itoa(a.Page),
 			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.NextPage, a.SearchParam),
 			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.SearchParam))
+		<div id="detailsSpace"></div>
 	</div>
 }

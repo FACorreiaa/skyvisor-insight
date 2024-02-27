@@ -14,6 +14,7 @@ templ FLightsPreviewPage(sidebar []models.SidebarItem, lf []models.LiveFlights, 
 			</div>
 			<div class="w-11/12 ml-10">
 				<div class="w-11/12 mr:px-6">
+				<span class="loading loading-ring loading-lg htmx-indicator"></span>
 					@FlightsPreviewMap(lf)
 				</div>
 			</div>

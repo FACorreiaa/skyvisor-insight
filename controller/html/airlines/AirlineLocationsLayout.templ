@@ -14,6 +14,7 @@ templ AirlineLocationsPage(sidebar []models.SidebarItem, a []models.Airline, tit
 					@components.SidebarComponent(sidebar)
 				</div>
 				<div class="w-11/12 ml-10 pt-2">
+				<span class="loading loading-ring loading-lg htmx-indicator"></span>
 					@AirlineMap(a)
 				</div>
 			</div>

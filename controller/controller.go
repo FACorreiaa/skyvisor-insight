@@ -102,13 +102,13 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
-	optAuth.Use(CacheControlHandler)
+	//optAuth.Use(CacheControlHandler)
 	optAuth.Use(h.authMiddleware)
 	optAuth.HandleFunc("/", handler(h.homePage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users
 	noAuth := r.NewRoute().Subrouter()
-	noAuth.Use(CacheControlHandler)
+	//noAuth.Use(CacheControlHandler)
 	noAuth.Use(h.authMiddleware)
 	noAuth.Use(h.redirectIfAuth)
 
@@ -119,7 +119,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Authenticated routes
 	auth := r.NewRoute().Subrouter()
-	auth.Use(CacheControlHandler)
+	//auth.Use(CacheControlHandler)
 	auth.Use(h.authMiddleware)
 	auth.Use(h.requireAuth)
 
@@ -134,9 +134,9 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	alr.HandleFunc("/airline/{airline_name}", handler(h.airlineDetailsPage)).Methods(http.MethodGet)
 
 	// alr.HandleFunc("/airline/{name}", handler(h.airlineMainPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/aircraft", handler(h.airlineAircraftPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airplane", handler(h.airlineAirplanePage)).Methods(http.MethodGet)
-	alr.HandleFunc("/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airline/aircraft", handler(h.airlineAircraftPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airline/airplane", handler(h.airlineAirplanePage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airline/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
 
 	// locations
 	lr := auth.PathPrefix("/locations").Subrouter()
@@ -165,18 +165,19 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 func handler(fn func(w http.ResponseWriter, r *http.Request) error) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "max-age=2592000")
 		if err := fn(w, r); err != nil {
 			slog.Error("Error handling request", "error", err)
 		}
 	}
 }
 
-func CacheControlHandler(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "max-age=2592000") // 30 days
-		h.ServeHTTP(w, r)
-	})
-}
+//func CacheControlHandler(h http.Handler) http.Handler {
+//	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+//		w.Header().Set("Cache-Control", "max-age=2592000")
+//		h.ServeHTTP(w, r)
+//	})
+//}
 
 func (h *Handlers) formErrors(err error) []string {
 	var decodeErrors form.DecodeErrors
@@ -190,10 +191,10 @@ func (h *Handlers) formErrors(err error) []string {
 		return errs
 	}
 
-	validateErrors, isValidateError := err.(validator.ValidationErrors)
+	// validateErrors, isValidateError := err.(validator.ValidationErrors)
 
-	// var validateErrors validator.ValidationErrors
-	// isValidateError := errors.As(err, &validateErrors)
+	var validateErrors validator.ValidationErrors
+	isValidateError := errors.As(err, &validateErrors)
 	if isValidateError {
 		var errs []string
 		for _, validateError := range validateErrors {

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/FACorreiaa/Aviation-tracker/controller/html/components"
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
 	"github.com/a-h/templ"
@@ -133,6 +134,12 @@ func (h *Handlers) renderFlightsTable(w http.ResponseWriter,
 		return nil, err
 	}
 
+	if len(lf) == 0 {
+		// If empty, return a message component
+		message := components.EmptyPageComponent()
+		return message, nil
+	}
+
 	nextPage := page + 1
 	prevPage := page - 1
 	if prevPage < 1 {
@@ -188,38 +195,6 @@ func (h *Handlers) getAllFlightsService() ([]models.LiveFlights, error) {
 	return lf, nil
 }
 
-func (h *Handlers) getAllFlightsByStatusService(_ http.ResponseWriter,
-	r *http.Request) ([]models.LiveFlights, error) {
-
-	pageSize := 15
-	param := r.FormValue("search")
-	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-	orderBy := r.URL.Query().Get("orderBy")
-	sortBy := r.URL.Query().Get("sortBy")
-
-	if err != nil {
-		// Handle error or set a default page number
-		page = 1
-	}
-
-	vars := mux.Vars(r)
-	flightStatus, ok := vars["flight_status"]
-	if !ok {
-		err := errors.New("flight_status not found in path")
-		HandleError(err, "Error fetching flight_number")
-		return nil, err
-	}
-
-	lf, err := h.core.flights.GetAllFlightsByStatus(context.Background(),
-		page, pageSize, orderBy, sortBy, param, flightStatus)
-	if err != nil {
-		HandleError(err, "Error flights details")
-		return nil, err
-	}
-
-	return lf, nil
-}
-
 func (h *Handlers) allFlightsPage(w http.ResponseWriter, r *http.Request) error {
 	table, err := h.renderFlightsTable(w, r)
 	if err != nil {
@@ -255,17 +230,5 @@ func (h *Handlers) flightsPreview(w http.ResponseWriter, r *http.Request) error 
 	}
 
 	f := flights.FLightsPreviewPage(s, fd, "Live Flights", "Detailed flight data")
-	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
-}
-
-func (h *Handlers) allFlightsByStatusPage(w http.ResponseWriter, r *http.Request) error {
-	table, err := h.renderFlightsTable(w, r)
-	if err != nil {
-		HandleError(err, "Error fetching flights table")
-		return err
-	}
-	s := h.renderLiveLocationsSidebar()
-
-	f := flights.AllFlightsPage(table, s, "Live Flights", "Check all flights going on")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }

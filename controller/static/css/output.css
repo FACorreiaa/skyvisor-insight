@@ -1048,6 +1048,10 @@ select {
   width: 50%;
 }
 
+.w-8 {
+  width: 2rem;
+}
+
 .w-96 {
   width: 24rem;
 }

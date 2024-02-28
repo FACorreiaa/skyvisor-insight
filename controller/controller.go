@@ -102,11 +102,13 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
+	optAuth.Use(CacheControlHandler)
 	optAuth.Use(h.authMiddleware)
 	optAuth.HandleFunc("/", handler(h.homePage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users
 	noAuth := r.NewRoute().Subrouter()
+	noAuth.Use(CacheControlHandler)
 	noAuth.Use(h.authMiddleware)
 	noAuth.Use(h.redirectIfAuth)
 
@@ -117,6 +119,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Authenticated routes
 	auth := r.NewRoute().Subrouter()
+	auth.Use(CacheControlHandler)
 	auth.Use(h.authMiddleware)
 	auth.Use(h.requireAuth)
 
@@ -125,6 +128,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Airlines Router
 	alr := auth.PathPrefix("/airlines").Subrouter()
+
 	alr.HandleFunc("/airline", handler(h.airlineMainPage)).Methods(http.MethodGet)
 	alr.HandleFunc("/airline/location", handler(h.airlineLocationPage)).Methods(http.MethodGet)
 	alr.HandleFunc("/airline/{airline_name}", handler(h.airlineDetailsPage)).Methods(http.MethodGet)
@@ -153,8 +157,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	fr := auth.PathPrefix("/flights").Subrouter()
 	fr.HandleFunc("", handler(h.allFlightsPage)).Methods(http.MethodGet)
 	fr.HandleFunc("/{flight_status}", handler(h.allFlightsPage)).Methods(http.MethodGet)
-
-	fr.HandleFunc("/details/{flight_number}", handler(h.allFlightsByStatusPage)).Methods(http.MethodGet)
+	fr.HandleFunc("/details/{flight_number}", handler(h.detailedFlightsPage)).Methods(http.MethodGet)
 	fr.HandleFunc("/preview", handler(h.flightsPreview)).Methods(http.MethodGet)
 
 	return r
@@ -166,6 +169,13 @@ func handler(fn func(w http.ResponseWriter, r *http.Request) error) http.Handler
 			slog.Error("Error handling request", "error", err)
 		}
 	}
+}
+
+func CacheControlHandler(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "max-age=2592000") // 30 days
+		h.ServeHTTP(w, r)
+	})
 }
 
 func (h *Handlers) formErrors(err error) []string {

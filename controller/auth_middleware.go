@@ -20,14 +20,18 @@ func (h *Handlers) authMiddleware(next http.Handler) http.Handler {
 		session, _ := h.sessions.Get(r, "auth")
 
 		token := session.Values["token"]
+		if token != nil {
+			if token, ok := token.(string); ok {
+				user, err := h.core.accounts.UserFromSessionToken(r.Context(), account.Token(token))
 
-		if token, ok := token.(string); ok {
-			user, err := h.core.accounts.UserFromSessionToken(r.Context(), account.Token(token))
-
-			if err == nil {
-				ctx := context.WithValue(r.Context(), ctxKeyAuthUser, user)
-				r = r.WithContext(ctx)
+				if err == nil {
+					ctx := context.WithValue(r.Context(), ctxKeyAuthUser, user)
+					r = r.WithContext(ctx)
+				}
 			}
+		} else {
+			ctx := context.WithValue(r.Context(), ctxKeyAuthUser, nil)
+			r = r.WithContext(ctx)
 		}
 
 		next.ServeHTTP(w, r)

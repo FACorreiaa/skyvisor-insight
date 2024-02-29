@@ -37,6 +37,7 @@ func (h *Handlers) loginPost(w http.ResponseWriter, r *http.Request) error {
 
 	session, _ := h.sessions.Get(r, "auth")
 	session.Values["token"] = token
+
 	if err := session.Save(r, w); err != nil {
 		return errors.New("error saving session")
 	}

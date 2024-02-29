@@ -27,6 +27,8 @@ func (h *Handlers) logout(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	session.Values["token"] = ""
+	delete(session.Values, "token")
+	delete(session.Values, "user")
 	session.Options.MaxAge = -1
 	if err := session.Save(r, w); err != nil {
 		slog.Error("failed to clear auth session", "err", err)

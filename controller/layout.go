@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 
 	svg2 "github.com/FACorreiaa/Aviation-tracker/controller/svg"
@@ -20,16 +21,21 @@ func (h *Handlers) CreateLayout(_ http.ResponseWriter, r *http.Request, title st
 	var user *account.User
 	userCtx := r.Context().Value(ctxKeyAuthUser)
 	if userCtx != nil {
-		user, _ = userCtx.(*account.User)
+		switch u := userCtx.(type) {
+		case *account.User:
+			user = u
+		default:
+			log.Printf("Unexpected type in userCtx: %T", userCtx)
+		}
 	}
 
 	var nav []models.NavItem
 
 	if user == nil {
 		nav = []models.NavItem{
-			{Path: "/", Label: "Home"},
-			{Path: "/login", Label: "Sign in"},
-			{Path: "/register", Label: "Sign up"},
+			{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
+			{Path: "/login", Label: "Sign in", Icon: svg2.HomeIcon()},
+			{Path: "/register", Label: "Sign up", Icon: svg2.HomeIcon()},
 		}
 	} else {
 		nav = []models.NavItem{

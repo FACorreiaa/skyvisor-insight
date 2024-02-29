@@ -100,7 +100,7 @@ script mapContainer(data []models.Airline) {
       target: document.getElementById('map'),
       view: new ol.View({
          center: [0, 0],
-         zoom: 2,
+         zoom: 1,
       }),
    });
 
@@ -189,6 +189,26 @@ script mapContainer(data []models.Airline) {
       const zoom = view.getZoom();
       view.setZoom(zoom + 1);
    };
+
+   map.on('dblclick', event => {
+    // get the feature you clicked
+    const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
+     return feature
+    })
+    if(feature instanceof ol.Feature){
+      // Fit the feature geometry or extent based on the given map
+      map.getView().fit(feature.getGeometry())
+      // map.getView().fit(feature.getGeometry().getExtent())
+    }
+   })
+
+   map.getView().on('change:resolution', function () {
+               if (map.getView().getZoom() < 4) {
+                   vectorLayer.setVisible(false);
+               } else {
+                   vectorLayer.setVisible(true);
+               }
+           });
 }
 
 templ AirlineMap(data []models.Airline) {

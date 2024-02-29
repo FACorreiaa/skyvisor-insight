@@ -16,8 +16,8 @@ import (
 
 func detailedCountryMapContainer(data models.Country) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedCountryMapContainer_b47d`,
-		Function: `function __templ_detailedCountryMapContainer_b47d(data){function createFeatureFromCity(country) {
+		Name: `__templ_detailedCountryMapContainer_b7ce`,
+		Function: `function __templ_detailedCountryMapContainer_b7ce(data){function createFeatureFromCity(country) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -133,9 +133,21 @@ func detailedCountryMapContainer(data models.Country) templ.ComponentScript {
 	const zoom = view.getZoom()
 	view.setZoom(zoom + 1)
    };
+
+   map.on('dblclick', event => {
+       // get the feature you clicked
+       const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
+        return feature
+       })
+       if(feature instanceof ol.Feature){
+         // Fit the feature geometry or extent based on the given map
+         map.getView().fit(feature.getGeometry())
+         // map.getView().fit(feature.getGeometry().getExtent())
+       }
+      })
 }`,
-		Call:       templ.SafeScript(`__templ_detailedCountryMapContainer_b47d`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedCountryMapContainer_b47d`, data),
+		Call:       templ.SafeScript(`__templ_detailedCountryMapContainer_b7ce`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedCountryMapContainer_b7ce`, data),
 	}
 }
 

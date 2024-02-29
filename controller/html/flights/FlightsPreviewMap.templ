@@ -246,6 +246,19 @@ function addLater(features, timeout) {
       const zoom = view.getZoom();
       view.setZoom(zoom + 1);
    };
+
+   map.on('dblclick', event => {
+       // get the feature you clicked
+       const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
+        return feature
+       })
+       if(feature instanceof ol.Feature){
+         // Fit the feature geometry or extent based on the given map
+         map.getView().fit(feature.getGeometry())
+         // map.getView().fit(feature.getGeometry().getExtent())
+       }
+      })
+
 }
 
 templ FlightsPreviewMap(data []models.LiveFlights) {

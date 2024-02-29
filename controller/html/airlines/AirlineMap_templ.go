@@ -60,8 +60,8 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 // iconFeature.setStyle(iconStyle);
 func mapContainer(data []models.Airline) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_ac70`,
-		Function: `function __templ_mapContainer_ac70(data){function createFeatureFromAirline(airline) {
+		Name: `__templ_mapContainer_a344`,
+		Function: `function __templ_mapContainer_a344(data){function createFeatureFromAirline(airline) {
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
                 anchor: [1, 46],
@@ -111,7 +111,7 @@ func mapContainer(data []models.Airline) templ.ComponentScript {
       target: document.getElementById('map'),
       view: new ol.View({
          center: [0, 0],
-         zoom: 2,
+         zoom: 1,
       }),
    });
 
@@ -200,9 +200,29 @@ func mapContainer(data []models.Airline) templ.ComponentScript {
       const zoom = view.getZoom();
       view.setZoom(zoom + 1);
    };
+
+   map.on('dblclick', event => {
+    // get the feature you clicked
+    const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
+     return feature
+    })
+    if(feature instanceof ol.Feature){
+      // Fit the feature geometry or extent based on the given map
+      map.getView().fit(feature.getGeometry())
+      // map.getView().fit(feature.getGeometry().getExtent())
+    }
+   })
+
+   map.getView().on('change:resolution', function () {
+               if (map.getView().getZoom() < 4) {
+                   vectorLayer.setVisible(false);
+               } else {
+                   vectorLayer.setVisible(true);
+               }
+           });
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_ac70`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_ac70`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_a344`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_a344`, data),
 	}
 }
 

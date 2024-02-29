@@ -14,9 +14,8 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 
 func detailedMapContainer(data models.Airline) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_7d3f`,
-		Function: `function __templ_detailedMapContainer_7d3f(data){console.log('data', data)
-  function createFeatureFromAirline(airline) {
+		Name: `__templ_detailedMapContainer_aa63`,
+		Function: `function __templ_detailedMapContainer_aa63(data){function createFeatureFromAirline(airline) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -129,9 +128,29 @@ func detailedMapContainer(data models.Airline) templ.ComponentScript {
       const zoom = view.getZoom();
       view.setZoom(zoom + 1);
    };
+
+   map.on('dblclick', event => {
+       // get the feature you clicked
+       const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
+        return feature
+       })
+       if(feature instanceof ol.Feature){
+         // Fit the feature geometry or extent based on the given map
+         map.getView().fit(feature.getGeometry())
+         // map.getView().fit(feature.getGeometry().getExtent())
+       }
+      })
+
+    map.getView().on('change:resolution', function () {
+            if (map.getView().getZoom() < 4) {
+                vectorLayer.setVisible(false);
+            } else {
+                vectorLayer.setVisible(true);
+            }
+        });
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_7d3f`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_7d3f`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_aa63`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_aa63`, data),
 	}
 }
 

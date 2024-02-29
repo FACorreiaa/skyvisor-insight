@@ -14,8 +14,8 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 
 func countryMapContainer(data []models.Country) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_countryMapContainer_3e2c`,
-		Function: `function __templ_countryMapContainer_3e2c(data){function createFeatureFromCountry(country) {
+		Name: `__templ_countryMapContainer_f0aa`,
+		Function: `function __templ_countryMapContainer_f0aa(data){function createFeatureFromCountry(country) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -138,9 +138,21 @@ func countryMapContainer(data []models.Country) templ.ComponentScript {
       const zoom = view.getZoom();
       view.setZoom(zoom + 1);
    };
+
+   map.on('dblclick', event => {
+       // get the feature you clicked
+       const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
+        return feature
+       })
+       if(feature instanceof ol.Feature){
+         // Fit the feature geometry or extent based on the given map
+         map.getView().fit(feature.getGeometry())
+         // map.getView().fit(feature.getGeometry().getExtent())
+       }
+   })
 }`,
-		Call:       templ.SafeScript(`__templ_countryMapContainer_3e2c`, data),
-		CallInline: templ.SafeScriptInline(`__templ_countryMapContainer_3e2c`, data),
+		Call:       templ.SafeScript(`__templ_countryMapContainer_f0aa`, data),
+		CallInline: templ.SafeScriptInline(`__templ_countryMapContainer_f0aa`, data),
 	}
 }
 

@@ -164,18 +164,17 @@ func (h *Handlers) renderCityTable(w http.ResponseWriter, r *http.Request) (temp
 }
 
 func (h *Handlers) cityMainPage(w http.ResponseWriter, r *http.Request) error {
-	taxTable, err := h.renderCityTable(w, r)
+	table, err := h.renderCityTable(w, r)
 	sidebar := h.renderLocationsBar()
 	if err != nil {
 		HandleError(err, "Error rendering table")
 		return err
 	}
-	cities, err := h.getCityLocationsService()
 	if err != nil {
 		HandleError(err, "Error fetching locations")
 		return err
 	}
-	c := locations.CityLayoutPage("Cities", "Check cities data around the world", taxTable, sidebar, cities)
+	c := locations.CityLayoutPage("Cities", "Check cities data around the world", table, sidebar)
 	return h.CreateLayout(w, r, "City Page", c).Render(context.Background(), w)
 }
 

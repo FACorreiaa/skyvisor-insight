@@ -14,8 +14,8 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 
 func cityMapContainer(data []models.City) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_cityMapContainer_6227`,
-		Function: `function __templ_cityMapContainer_6227(data){function createFeatureFromCity(city) {
+		Name: `__templ_cityMapContainer_790d`,
+		Function: `function __templ_cityMapContainer_790d(data){function createFeatureFromCity(city) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -148,16 +148,16 @@ func cityMapContainer(data []models.City) templ.ComponentScript {
        }
       })
 
-       map.getView().on('change:resolution', function () {
-                  if (map.getView().getZoom() < 4) {
-                      vectorLayer.setVisible(false);
-                  } else {
-                      vectorLayer.setVisible(true);
-                  }
-              });
+       map.on('postrender', function () {
+               if (map.getView().getZoom() < 4) {
+                   vectorLayer.setVisible(false);
+               } else {
+                   vectorLayer.setVisible(true);
+               }
+           });
 }`,
-		Call:       templ.SafeScript(`__templ_cityMapContainer_6227`, data),
-		CallInline: templ.SafeScriptInline(`__templ_cityMapContainer_6227`, data),
+		Call:       templ.SafeScript(`__templ_cityMapContainer_790d`, data),
+		CallInline: templ.SafeScriptInline(`__templ_cityMapContainer_790d`, data),
 	}
 }
 

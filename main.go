@@ -26,6 +26,7 @@ func main() {
 	}
 
 	var logHandler slog.Handler
+
 	logHandlerOptions := slog.HandlerOptions{
 		AddSource: true,
 		Level:     cfg.Log.Level,

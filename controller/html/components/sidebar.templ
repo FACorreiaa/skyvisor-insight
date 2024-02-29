@@ -15,9 +15,7 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 		<div class="h-full bg-gray-100 dark:bg-gray-800">
 			<ul class="font-normal menu space-y-2">
 				for index, item := range sidebar {
-					<li
-						hx-boost="true"
-					>
+					<li>
 						if len(item.SubItems) == 0 {
 							<a
 								hx-trigger="load delay:50ms"
@@ -25,7 +23,7 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 								class="pr-0 flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ease-in-out"
 							>
 								@item.Icon
-								<span class="ms-3">
+								<span class="m-2">
 									{ item.Label }
 								</span>
 							</a>
@@ -50,7 +48,7 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 											<a
 												hx-trigger="load delay:50ms"
 												href={ templ.SafeURL(subItem.Path) }
-												class="flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group pr-0"
+								                class="pr-0 flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ease-in-out"
 											>
 												@subItem.Icon
 												<span class="m-2">

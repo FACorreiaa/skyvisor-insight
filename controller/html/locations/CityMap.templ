@@ -136,13 +136,13 @@ script cityMapContainer(data []models.City) {
        }
       })
 
-       map.getView().on('change:resolution', function () {
-                  if (map.getView().getZoom() < 4) {
-                      vectorLayer.setVisible(false);
-                  } else {
-                      vectorLayer.setVisible(true);
-                  }
-              });
+       map.on('postrender', function () {
+               if (map.getView().getZoom() < 4) {
+                   vectorLayer.setVisible(false);
+               } else {
+                   vectorLayer.setVisible(true);
+               }
+           });
 }
 
 templ CityMap(data []models.City) {

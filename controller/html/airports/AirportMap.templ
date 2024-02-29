@@ -137,13 +137,13 @@ script mapContainer(data []models.Airport) {
        }
       })
 
-       map.getView().on('change:resolution', function () {
-                  if (map.getView().getZoom() < 4) {
-                      vectorLayer.setVisible(false);
-                  } else {
-                      vectorLayer.setVisible(true);
-                  }
-              });
+       map.on('postrender', function () {
+               if (map.getView().getZoom() < 4) {
+                   vectorLayer.setVisible(false);
+               } else {
+                   vectorLayer.setVisible(true);
+               }
+           });
 }
 
 templ AirportMap(data []models.Airport) {

@@ -5,7 +5,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/controller/models"
 )
 
-templ CityLayoutPage(title, description string, component templ.Component, sidebar []models.SidebarItem, c []models.City) {
+templ CityLayoutPage(title, description string, component templ.Component, sidebar []models.SidebarItem) {
 	<div>
 		@components.BannerComponent(title, description)
 		<div class="flex items-center justify-center flex-grow">
@@ -17,5 +17,6 @@ templ CityLayoutPage(title, description string, component templ.Component, sideb
 					@component
 				</div>
 		</div>
+	</div>
 	</div>
 }

@@ -31,7 +31,7 @@ func InputComponent(label string, route string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"input changed delay:200ms, search\"><label class=\"w-full max-w-xs form-control\"><div class=\"label\"><span class=\"label-text font-semi-bold text-xs pb-0\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"input changed delay:50ms, search\"><label class=\"w-full max-w-xs form-control\"><div class=\"label\"><span class=\"label-text font-semi-bold text-xs pb-0\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

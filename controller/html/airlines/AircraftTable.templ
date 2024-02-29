@@ -11,12 +11,14 @@ templ AirlineAircraftTable(a models.AircraftTable) {
 	<div class="flex flex-col items-left">
 		@components.InputComponent("Search Aircraft Name", "/airlines/aircraft")
 		<div class="overflow-x-auto">
+			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">
 				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range a.Column {
-							<th class="font-extrabold text-sm">								<div class="flex justify-start align-middle" hx-boost>
+							<th class="font-extrabold text-sm">
+							    <div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
 										<a

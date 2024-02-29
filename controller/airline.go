@@ -22,9 +22,9 @@ func (h *Handlers) renderAirlineSidebar() []models.SidebarItem {
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
 		{Path: "/airlines/airline", Label: "Airlines", Icon: svg2.CreditCardIcon()},
 		{Path: "/airlines/airline/location", Label: "Airline location", Icon: svg2.MapIcon()},
-		{Path: "/airlines/airline/tax", Label: "Airline Tax", Icon: svg2.CreditCardIcon()},
-		{Path: "/airlines/airline/aircraft", Label: "Aircraft", Icon: svg2.PaperAirplaneIcon()},
-		{Path: "/airlines/airline/airplane", Label: "Airplane", Icon: svg2.PaperAirplaneIcon()},
+		{Path: "/airlines/tax", Label: "Airline Tax", Icon: svg2.CreditCardIcon()},
+		{Path: "/airlines/aircraft", Label: "Aircraft", Icon: svg2.PaperAirplaneIcon()},
+		{Path: "/airlines/airplane", Label: "Airplane", Icon: svg2.PaperAirplaneIcon()},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
@@ -44,7 +44,7 @@ func (h *Handlers) getAirlinesLocationService() ([]models.Airline, error) {
 
 func (h *Handlers) getAllAirlineService() (int, error) {
 	total, err := h.core.airlines.GetAirlineSum(context.Background())
-	pageSize := 15
+	pageSize := 30
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -53,7 +53,7 @@ func (h *Handlers) getAllAirlineService() (int, error) {
 }
 
 func (h *Handlers) getAirline(_ http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
-	pageSize := 15
+	pageSize := 30
 	param := r.FormValue("search")
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")

@@ -5,6 +5,7 @@ controller/static/fonts/*
 !controller/static/fonts/ionicons*
 controller/static/css/fonts.css
 .env
+.env.compose
 Modelfile
 .java-version
 .DS_Store
@@ -42,4 +43,3 @@ post_cmd.txt
 main
 .main
 .tmp/main
-.env.compose

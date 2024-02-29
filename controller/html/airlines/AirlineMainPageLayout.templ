@@ -13,12 +13,8 @@ templ AirlineMainPageLayout(title, description string, component templ.Component
 				<div class="w-2/12">
 					@components.SidebarComponent(sidebar)
 				</div>
-				<div class="w-6/12 overflow-x-auto mr-10">
+				<div class="w-10/12 overflow-x-auto mr-10">
 					@component
-				</div>
-                <div class="w-6/12 ml-10">
-                <span class="loading loading-ring loading-lg htmx-indicator"></span>
-					@AirlineMap(al)
 				</div>
 			</div>
 		</div>

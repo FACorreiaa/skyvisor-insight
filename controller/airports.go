@@ -18,7 +18,7 @@ import (
 )
 
 func (h *Handlers) getAirports(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
-	pageSize := 15
+	pageSize := 30
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")
@@ -48,7 +48,7 @@ func (h *Handlers) getAirportsLocationService() ([]models.Airport, error) {
 
 func (h *Handlers) getAllAirportsService() (int, error) {
 	total, err := h.core.airports.GetSum(context.Background())
-	pageSize := 15
+	pageSize := 30
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -82,7 +82,7 @@ func (h *Handlers) getAirportDetails(_ http.ResponseWriter, r *http.Request) (mo
 
 func (h *Handlers) getAirportByName(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
 	param := r.FormValue("search")
-	pageSize := 15
+	pageSize := 25
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")

@@ -14,7 +14,7 @@ import (
 )
 
 func (h *Handlers) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []models.Aircraft, error) {
-	pageSize := 15
+	pageSize := 25
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	param := r.FormValue("search")
@@ -35,7 +35,7 @@ func (h *Handlers) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []m
 
 func (h *Handlers) getAllAircraftService() (int, error) {
 	total, err := h.core.airlines.GetAircraftSum(context.Background())
-	pageSize := 15
+	pageSize := 25
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err

@@ -13,7 +13,7 @@ import (
 )
 
 func (h *Handlers) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, []models.Tax, error) {
-	pageSize := 15
+	pageSize := 30
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
@@ -34,7 +34,7 @@ func (h *Handlers) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, [
 
 func (h *Handlers) getAllTax() (int, error) {
 	total, err := h.core.airlines.GetSum(context.Background())
-	pageSize := 15
+	pageSize := 30
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err

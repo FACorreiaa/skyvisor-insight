@@ -18,7 +18,7 @@ import (
 
 func main() {
 	//go:generate npx tailwindcss build -c tailwind.config.js -o ./controller/static/css/style.css -
-
+	//go:generate ./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify
 	cfg, err := config.NewConfig()
 	if err != nil {
 		log.Println(err)

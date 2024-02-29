@@ -13,13 +13,9 @@ templ AirportPage(table templ.Component, sidebar []models.SidebarItem, title, de
 				<div class="w-2/12">
 					@components.SidebarComponent(sidebar)
 				</div>
-				<div class="w-6/12 pl-2 mr-2">
+				<div class="w-10/12 pl-2 mr-2">
 					@table
 				</div>
-				<div class="w-6/12 ml-10 pt-2">
-				<span class="loading loading-ring loading-lg htmx-indicator"></span>
-                					@AirportMap(ap)
-                				</div>
 			</div>
 		</div>
 	</div>

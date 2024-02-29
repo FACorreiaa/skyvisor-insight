@@ -91,13 +91,28 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	r.PathPrefix("/static/").Handler(http.FileServer(http.FS(staticFS)))
 	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, _ *http.Request) {
 		file, _ := staticFS.ReadFile("static/favicon.ico")
-
 		w.Header().Set("Content-Type", "image/x-icon")
+		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set("Content-Type", "image/jpeg")
+		w.Header().Set("Content-Type", "image/svg+xml")
+
 		_, err := w.Write(file)
 		if err != nil {
 			return
 		}
 	})
+	// r.HandleFunc("/icons/marker.png", func(w http.ResponseWriter, _ *http.Request) {
+	//	file, _ := staticFS.ReadFile("icons/marker.png")
+	//	w.Header().Set("Content-Type", "image/x-icon")
+	//	w.Header().Set("Content-Type", "image/png")
+	//	w.Header().Set("Content-Type", "image/jpeg")
+	//	w.Header().Set("Content-Type", "image/svg+xml")
+	//
+	//	_, err := w.Write(file)
+	//	if err != nil {
+	//		return
+	//	}
+	//})
 	// r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
 
 	// Public routes, authentication is optional
@@ -130,10 +145,9 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	alr.HandleFunc("/airline/location", handler(h.airlineLocationPage)).Methods(http.MethodGet)
 	alr.HandleFunc("/airline/{airline_name}", handler(h.airlineDetailsPage)).Methods(http.MethodGet)
 
-	// alr.HandleFunc("/airline/{name}", handler(h.airlineMainPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airline/aircraft", handler(h.airlineAircraftPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airline/airplane", handler(h.airlineAirplanePage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airline/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/aircraft", handler(h.airlineAircraftPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airplane", handler(h.airlineAirplanePage)).Methods(http.MethodGet)
+	alr.HandleFunc("/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
 
 	// locations
 	lr := auth.PathPrefix("/locations").Subrouter()

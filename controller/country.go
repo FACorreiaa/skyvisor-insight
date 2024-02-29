@@ -27,7 +27,7 @@ func (h *Handlers) getCountryLocationsService() ([]models.Country, error) {
 
 func (h *Handlers) getAllCountriesService() (int, error) {
 	total, err := h.core.locations.GetCountrySum(context.Background())
-	pageSize := 15
+	pageSize := 30
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -36,7 +36,7 @@ func (h *Handlers) getAllCountriesService() (int, error) {
 }
 
 func (h *Handlers) getCountries(_ http.ResponseWriter, r *http.Request) (int, []models.Country, error) {
-	pageSize := 15
+	pageSize := 30
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	param := r.FormValue("search")

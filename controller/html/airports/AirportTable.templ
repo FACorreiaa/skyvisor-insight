@@ -46,7 +46,7 @@ templ AirportTableComponent(airport models.AirportTable) {
 						<tr class="hover">
 							<td hx-boost="true">
 								<a
-									hx-trigger="load delay:50ms"
+									hx-trigger="load delay:5ms"
 									href={ templ.SafeURL(fmt.Sprintf("/airports/details/%d", airport.AirportID)) }
 								>{ airport.AirportName }</a>
 							</td>

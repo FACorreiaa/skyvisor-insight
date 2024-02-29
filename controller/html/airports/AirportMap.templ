@@ -48,7 +48,7 @@ script mapContainer(data []models.Airport) {
       target: document.getElementById('map'),
       view: new ol.View({
          center: [0, 0],
-         zoom: 2,
+         zoom: 1,
       }),
    });
 
@@ -160,7 +160,7 @@ templ AirportMap(data []models.Airport) {
 			</style>
 		</head>
 		<body onload={ mapContainer(data) }>
-				<div id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
+				<div hx-boost="true" id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
 			<div class="mt-2 text-center">
 			<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
             			<button id="zoom-in" class="btn btn-secondary">Zoom in</button>

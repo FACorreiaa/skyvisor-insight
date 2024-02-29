@@ -13,13 +13,9 @@ templ CountryLayoutPage(title, description string, component templ.Component, si
 				<div class="w-2/12">
 					@components.SidebarComponent(sidebar)
 				</div>
-				<div class="w-6/12 ml-10 p-2">
+				<div class="w-10/12 ml-10 p-2">
 					@component
 				</div>
-				<div class="w-6/12 ml-10 pt-2">
-				<span class="loading loading-ring loading-lg htmx-indicator"></span>
-                                					@CountryMap(c)
-                                				</div>
 			</div>
 		</div>
 	</div>

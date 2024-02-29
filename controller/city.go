@@ -53,7 +53,7 @@ func (h *Handlers) getCityLocationsService() ([]models.City, error) {
 
 func (h *Handlers) getAllCitiesService() (int, error) {
 	total, err := h.core.locations.GetCitySum(context.Background())
-	pageSize := 15
+	pageSize := 30
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		HandleError(err, "Error fetching sum of cities")
@@ -63,7 +63,7 @@ func (h *Handlers) getAllCitiesService() (int, error) {
 }
 
 func (h *Handlers) getCities(_ http.ResponseWriter, r *http.Request) (int, []models.City, error) {
-	pageSize := 15
+	pageSize := 30
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	param := r.FormValue("search")

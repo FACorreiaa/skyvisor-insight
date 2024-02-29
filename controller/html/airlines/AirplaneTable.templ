@@ -9,13 +9,12 @@ import (
 
 templ AirplaneTable(a models.AirplaneTable) {
 	<div class="flex flex-col items-left">
+		@components.InputComponent("Search Airplane Name", "/airlines/airplane")
 		<div class="overflow-x-auto">
-			@components.InputComponent("Search Airplane Name", "/airlines/airplane")
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">
 				<!-- head -->
 				<thead>
-					<tr>
 						for _, col := range a.Column {
 							<th class="font-extrabold text-sm">
 							    <div class="flex justify-start align-middle" hx-boost>
@@ -31,7 +30,6 @@ templ AirplaneTable(a models.AirplaneTable) {
 								</div>
 							</th>
 						}
-					</tr>
 				</thead>
 				<!-- rows -->
 				<tbody>
@@ -74,27 +72,11 @@ templ AirplaneTable(a models.AirplaneTable) {
 				</tbody>
 			</table>
 			<!-- paginator -->
-			<div class="flex justify-center mt-10">
-				<form class="join" hx-boost="true" method="get">
-					<a
-						class="join-item btn"
-						href={ templ.URL("/airlines/airplane") }
-					>First Page</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airlines/airplane?page=%d", a.PrevPage)) }
-					>«</a>
-					<button class="join-item btn disabled">{ strconv.Itoa(a.Page) }</button>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airlines/airplane?page=%d", a.NextPage)) }
-					>»</a>
-					<a
-						class="join-item btn"
-						href={ templ.URL(fmt.Sprintf("/airlines/airplane?page=%d", a.LastPage)) }
-					>Last Page</a>
-				</form>
-			</div>
+			@components.PaginatorComponent("/airlines/airplane",
+            			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.PrevPage, a.SearchParam),
+            			strconv.Itoa(a.Page),
+            			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.NextPage, a.SearchParam),
+            			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.LastPage, a.SearchParam))
 		</div>
 	</div>
 }

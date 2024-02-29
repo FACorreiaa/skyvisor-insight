@@ -14,8 +14,8 @@ import "github.com/FACorreiaa/Aviation-tracker/controller/models"
 
 func mapContainer(data []models.Airport) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_ec07`,
-		Function: `function __templ_mapContainer_ec07(data){function createFeatureFromAirport(airport) {
+		Name: `__templ_mapContainer_2ef0`,
+		Function: `function __templ_mapContainer_2ef0(data){function createFeatureFromAirport(airport) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -60,7 +60,7 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
       target: document.getElementById('map'),
       view: new ol.View({
          center: [0, 0],
-         zoom: 2,
+         zoom: 1,
       }),
    });
 
@@ -157,8 +157,8 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
                   }
               });
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_ec07`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_ec07`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_2ef0`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_2ef0`, data),
 	}
 }
 
@@ -192,7 +192,7 @@ func AirportMap(data []models.Airport) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"map\" class=\"map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div class=\"mt-2 text-center\"><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></div></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div hx-boost=\"true\" id=\"map\" class=\"map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div class=\"mt-2 text-center\"><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

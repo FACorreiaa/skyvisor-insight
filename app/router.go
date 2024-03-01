@@ -126,8 +126,8 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	noAuth.Use(sessionsHandlers.AuthMiddleware)
 	noAuth.Use(sessionsHandlers.RedirectIfAuth)
 
-	noAuth.HandleFunc("/login", handler(h.loginPage)).Methods(http.MethodGet)
-	noAuth.HandleFunc("/login", handler(h.loginPost)).Methods(http.MethodPost)
+	noAuth.HandleFunc("/login", handler(ha.LoginPage)).Methods(http.MethodGet)
+	noAuth.HandleFunc("/login", handler(ha.LoginPost)).Methods(http.MethodPost)
 	noAuth.HandleFunc("/register", handler(h.registerPage)).Methods(http.MethodGet)
 	noAuth.HandleFunc("/register", handler(h.registerPost)).Methods(http.MethodPost)
 
@@ -137,7 +137,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	auth.Use(sessionsHandlers.RequireAuth)
 
 	auth.HandleFunc("/logout", handler(h.logout)).Methods(http.MethodPost)
-	auth.HandleFunc("/settings", handler(h.settingsPage)).Methods(http.MethodGet)
+	auth.HandleFunc("/settings", handler(ha.SettingsPage)).Methods(http.MethodGet)
 
 	// Airlines Router
 	alr := auth.PathPrefix("/airlines").Subrouter()

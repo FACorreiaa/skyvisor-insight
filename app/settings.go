@@ -4,19 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/FACorreiaa/Aviation-tracker/app/view/user"
-
-	"context"
-
-	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
 )
-
-func (h *Handlers) settingsPage(w http.ResponseWriter, r *http.Request) error {
-	settings := user.SettingsPage(models.SettingsPage{})
-	data := h.CreateLayout(w, r, "Settings", settings).Render(context.Background(), w)
-	return data
-}
 
 func (h *Handlers) logout(w http.ResponseWriter, r *http.Request) error {
 	session, _ := h.sessions.Get(r, "auth")

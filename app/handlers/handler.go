@@ -12,14 +12,22 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"github.com/a-h/templ"
+	"github.com/go-playground/form/v4"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/sessions"
 )
 
 const ASC = "ASC"
 const DESC = "DESC"
 
 type Handler struct {
-	service *services.Service
-	ctx     context.Context
+	service     *services.Service
+	ctx         context.Context
+	formDecoder *form.Decoder
+	validator   *validator.Validate
+	translator  ut.Translator
+	sessions    *sessions.CookieStore
 }
 
 type ctxKey int

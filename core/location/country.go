@@ -3,7 +3,7 @@ package location
 import (
 	"context"
 
-	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
 )
 
 func (r *RepositoryLocation) getCountryData(ctx context.Context, query string,

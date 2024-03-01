@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

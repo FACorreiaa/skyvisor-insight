@@ -75,10 +75,10 @@ upgrade-deps:
 	go get -u ./...
 
 watch-tailwind:
-	./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --watch
+	./tailwindcss -i app/static/css/main.css -o app/static/css/output.css --watch
 
 build-tailwind:
-	./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify
+	./tailwindcss -i app/static/css/main.css -o app/static/css/output.css --minify
 
 templ-local:
 	templ generate -watch -proxy=http://localhost:6969

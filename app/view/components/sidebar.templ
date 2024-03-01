@@ -1,0 +1,74 @@
+package components
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"fmt"
+)
+
+script toggleDropdown(id string) {
+   const details = document.getElementById(id);
+   details.open = !details.open;
+}
+
+templ SidebarComponent(sidebar []models.SidebarItem) {
+	<aside id="sidebar-multi-level-sidebar" class="fixed left-0 z-40 w-50 transition-transform -translate-x-full sm:translate-x-0 " aria-label="Sidebar">
+		<div class="h-full bg-gray-100 dark:bg-gray-800">
+			<ul class="font-normal menu space-y-2">
+				for index, item := range sidebar {
+					<li>
+						if len(item.SubItems) == 0 {
+							<a
+								hx-trigger="load delay:50ms"
+								href={ templ.SafeURL(item.Path) }
+								class="pr-0 flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ease-in-out"
+							>
+								@item.Icon
+								<span class="m-2">
+									{ item.Label }
+								</span>
+							</a>
+						} else {
+							<details class="focus:outline-none">
+								<summary class="flex items-center text-gray-900 rounded-lg space-between dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+									@item.Icon
+									<button
+										onClick={ toggleDropdown(fmt.Sprintf("%d", index)) }
+										class="flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+									>
+										<span class="m-2">
+											{ item.Label }
+										</span>
+									</button>
+								</summary>
+								<ul class="ml-2 space-y-2 focus:outline-none" id={ fmt.Sprintf("%d", index) }>
+									for _, subItem := range item.SubItems {
+										<li
+											hx-boost="true"
+										>
+											<a
+												hx-trigger="load delay:50ms"
+												href={ templ.SafeURL(subItem.Path) }
+								                class="pr-0 flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ease-in-out"
+											>
+												@subItem.Icon
+												<span class="m-2">
+													{ subItem.Label }
+												</span>
+											</a>
+										</li>
+									}
+								</ul>
+							</details>
+						}
+					</li>
+				}
+			</ul>
+		</div>
+		<script>
+            function toggleDropdown(id) {
+                const details = document.getElementById(id);
+                details.open = !details.open;
+            }
+        </script>
+	</aside>
+}

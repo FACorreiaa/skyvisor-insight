@@ -2,7 +2,8 @@ package airline
 
 import (
 	"context" //nolint:goimports //delete later
-	"github.com/FACorreiaa/Aviation-tracker/controller/models"
+
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
 )
 
 // Airplane

@@ -11,13 +11,6 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
 	"github.com/FACorreiaa/Aviation-tracker/app/session"
-	"github.com/FACorreiaa/Aviation-tracker/core/airline"
-	"github.com/FACorreiaa/Aviation-tracker/core/flights"
-
-	"github.com/FACorreiaa/Aviation-tracker/core/location"
-
-	"github.com/FACorreiaa/Aviation-tracker/core/airport"
-
 	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
@@ -34,11 +27,7 @@ import (
 var staticFS embed.FS
 
 type core struct {
-	accounts  *account.RepositoryAccount
-	airports  *airport.RepositoryAirport
-	airlines  *airline.RepositoryAirline
-	locations *location.RepositoryLocation
-	flights   *flights.RepositoryFlights
+	accounts *account.RepositoryAccount
 }
 
 type Handlers struct {
@@ -82,11 +71,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 		sessions:    sessions.NewCookieStore(sessionSecret),
 		redisClient: redisClient,
 		core: &core{
-			accounts:  account.NewAccounts(pool, redisClient, validate),
-			airports:  airport.NewAirports(pool),
-			airlines:  airline.NewAirlines(pool),
-			locations: location.NewLocations(pool),
-			flights:   flights.NewFlights(pool),
+			accounts: account.NewAccounts(pool, redisClient, validate),
 		},
 	}
 
@@ -110,8 +95,12 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// business
 	airlineRepo := repository.NewAirlineRepository(pool)
-	airlineService := services.NewAirlineService(airlineRepo)
-	airlineHandler := handlers.NewAirlineHandler(airlineService)
+	airportRepo := repository.NewAirportRepository(pool)
+	locationRepo := repository.NewLocationsRepository(pool)
+	flightsRepo := repository.NewFlightsRepository(pool)
+
+	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo)
+	ha := handlers.NewHandler(service)
 
 	// r.HandleFunc("/icons/marker.png", func(w http.ResponseWriter, _ *http.Request) {
 	//	file, _ := staticFS.ReadFile("icons/marker.png")
@@ -130,7 +119,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
 	optAuth.Use(sessionsHandlers.AuthMiddleware)
-	optAuth.HandleFunc("/", handler(h.homePage)).Methods(http.MethodGet)
+	optAuth.HandleFunc("/", handler(ha.Homepage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users
 	noAuth := r.NewRoute().Subrouter()
@@ -153,35 +142,35 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	// Airlines Router
 	alr := auth.PathPrefix("/airlines").Subrouter()
 
-	alr.HandleFunc("/airline", handler(airlineHandler.AirlineMainPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airline/location", handler(airlineHandler.AirlineLocationPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airline/{airline_name}", handler(airlineHandler.AirlineDetailsPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airline", handler(ha.AirlineMainPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airline/location", handler(ha.AirlineLocationPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airline/{airline_name}", handler(ha.AirlineDetailsPage)).Methods(http.MethodGet)
 
-	alr.HandleFunc("/aircraft", handler(h.airlineAircraftPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airplane", handler(h.airlineAirplanePage)).Methods(http.MethodGet)
-	alr.HandleFunc("/tax", handler(h.airlineTaxPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/aircraft", handler(ha.AirlineAircraftPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airplane", handler(ha.AirlineAirplanePage)).Methods(http.MethodGet)
+	alr.HandleFunc("/tax", handler(ha.AirlineTaxPage)).Methods(http.MethodGet)
 
 	// locations
 	lr := auth.PathPrefix("/locations").Subrouter()
-	lr.HandleFunc("/city", handler(h.cityMainPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/city/map", handler(h.cityLocationsPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/city/details/{city_id}", handler(h.cityDetailsPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/country", handler(h.countryMainPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/country/map", handler(h.countryLocationPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/country/details/{country_name}", handler(h.countryDetailsPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/city", handler(ha.CityMainPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/city/map", handler(ha.CityLocationsPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/city/details/{city_id}", handler(ha.CityDetailsPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/country", handler(ha.CountryMainPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/country/map", handler(ha.CountryLocationPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/country/details/{country_name}", handler(ha.CountryDetailsPage)).Methods(http.MethodGet)
 
 	// Airports router
 	apr := auth.PathPrefix("/airports").Subrouter()
-	apr.HandleFunc("", handler(h.airportPage)).Methods(http.MethodGet)
-	apr.HandleFunc("/locations", handler(h.airportLocationPage)).Methods(http.MethodGet)
-	apr.HandleFunc("/details/{airport_id}", handler(h.airportDetailsPage)).Methods(http.MethodGet)
+	apr.HandleFunc("", handler(ha.AirportPage)).Methods(http.MethodGet)
+	apr.HandleFunc("/locations", handler(ha.AirportLocationPage)).Methods(http.MethodGet)
+	apr.HandleFunc("/details/{airport_id}", handler(ha.AirportDetailsPage)).Methods(http.MethodGet)
 
 	// Flights router
 	fr := auth.PathPrefix("/flights").Subrouter()
-	fr.HandleFunc("", handler(h.allFlightsPage)).Methods(http.MethodGet)
-	fr.HandleFunc("/{flight_status}", handler(h.allFlightsPage)).Methods(http.MethodGet)
-	fr.HandleFunc("/details/{flight_number}", handler(h.detailedFlightsPage)).Methods(http.MethodGet)
-	fr.HandleFunc("/preview", handler(h.flightsPreview)).Methods(http.MethodGet)
+	fr.HandleFunc("", handler(ha.AllFlightsPage)).Methods(http.MethodGet)
+	fr.HandleFunc("/{flight_status}", handler(ha.AllFlightsPage)).Methods(http.MethodGet)
+	fr.HandleFunc("/details/{flight_number}", handler(ha.DetailedFlightsPage)).Methods(http.MethodGet)
+	fr.HandleFunc("/preview", handler(ha.FlightsPreview)).Methods(http.MethodGet)
 
 	return r
 }

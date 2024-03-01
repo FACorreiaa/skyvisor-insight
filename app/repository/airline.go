@@ -185,3 +185,297 @@ func (r *AirlineRepository) GetAirlineByName(ctx context.Context, airlineName st
 	}
 	return al, nil
 }
+
+// Aircraft
+
+func (r *AirlineRepository) getAircraftData(ctx context.Context, query string,
+	args ...interface{}) ([]models.Aircraft, error) {
+	var aircraft []models.Aircraft
+
+	rows, err := r.pgpool.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var a models.Aircraft
+		err := rows.Scan(
+			&a.ID, &a.AircraftName, &a.ModelName, &a.ConstructionNumber,
+			&a.EnginesCount, &a.EnginesType, &a.FirstFlightDate, &a.LineNumber,
+			&a.ModelCode, &a.PlaneAge, &a.PlaneClass, &a.PlaneOwner, &a.PlaneSeries,
+			&a.PlaneStatus,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		aircraft = append(aircraft, a)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return aircraft, nil
+}
+
+func (r *AirlineRepository) GetAircraft(ctx context.Context, page, pageSize int, name string,
+	orderBy string, sortBy string) ([]models.Aircraft, error) {
+
+	offset := (page - 1) * pageSize
+	query := `SELECT ac.id, ac.aircraft_name, ap.model_name, ap.construction_number,
+											ap.engines_count, ap.engines_type, ap.first_flight_date, ap.line_number,
+											ap.model_code, ap.plane_age, ap.plane_class, ap.plane_owner, ap.plane_series, ap.plane_status
+											FROM
+																		aircraft ac
+											JOIN airplane ap ON ac.plane_type_id = ap.airplane_id
+											WHERE ac.plane_type_id != 0 AND TRIM(UPPER(ac.aircraft_name)) != ''
+       										AND    Trim(Upper(aircraft_name))
+											           ILIKE trim(upper('%' || $1 || '%'))
+											ORDER BY
+			    CASE WHEN $2 = 'Aircraft Name' AND $3 = 'ASC' THEN ac.aircraft_name::text END ASC,
+			    CASE WHEN $2 = 'Aircraft Name' AND $3 = 'DESC' THEN ac.aircraft_name::text END DESC,
+			    CASE WHEN $2 = 'Model Name' AND $3 = 'ASC' THEN ap.model_name::text END ASC,
+			    CASE WHEN $2 = 'Model Name' AND $3 = 'DESC' THEN ap.model_name::text END DESC,
+			    CASE WHEN $2 = 'Construction Number' AND $3 = 'ASC' THEN ap.construction_number::text END ASC,
+			    CASE WHEN $2 = 'Construction Number' AND $3 = 'DESC' THEN ap.construction_number::text END DESC,
+			    CASE WHEN $2 = 'Number of Engines' AND $3 = 'ASC' THEN ap.engines_count::text END ASC,
+			    CASE WHEN $2 = 'Number of Engines' AND $3 = 'DESC' THEN ap.engines_count::text END DESC,
+			    CASE WHEN $2 = 'Type of Engine' AND $3 = 'ASC' THEN ap.engines_type::text END ASC,
+			    CASE WHEN $2 = 'Type of Engine' AND $3 = 'DESC' THEN ap.engines_type::text END DESC,
+			    CASE WHEN $2 = 'Date of first flight' AND $3 = 'ASC' THEN ap.first_flight_date::text END ASC,
+			    CASE WHEN $2 = 'Date of first flight' AND $3 = 'DESC' THEN ap.first_flight_date::text END DESC,
+			    CASE WHEN $2 = 'Line Number' AND $3 = 'ASC' THEN ap.line_number::text END ASC,
+			    CASE WHEN $2 = 'line Number' AND $3 = 'DESC' THEN ap.line_number::text END DESC,
+			    CASE WHEN $2 = 'Model Code' AND $3 = 'ASC' THEN ap.model_name::text END ASC,
+			    CASE WHEN $2 = 'Model Code' AND $3 = 'DESC' THEN ap.model_name::text END DESC,
+			    CASE WHEN $2 = 'Plane Age' AND $3 = 'ASC' THEN ap.plane_age::text END ASC,
+			    CASE WHEN $2 = 'Plane Age' AND $3 = 'DESC' THEN ap.plane_age::text END DESC,
+			    CASE WHEN $2 = 'Plane Class' AND $3 = 'ASC' THEN ap.plane_class::text END ASC,
+			    CASE WHEN $2 = 'Plane Class' AND $3 = 'DESC' THEN ap.plane_class::text END DESC,
+			    CASE WHEN $2 = 'Plane Owner' AND $3 = 'ASC' THEN ap.plane_owner::text END ASC,
+			    CASE WHEN $2 = 'Plane Owner' AND $3 = 'DESC' THEN ap.plane_owner::text END DESC,
+			    CASE WHEN $2 = 'Plane Series' AND $3 = 'ASC' THEN ap.plane_series::text END ASC,
+			    CASE WHEN $2 = 'Plane Series' AND $3 = 'DESC' THEN ap.plane_series::text END DESC
+       										OFFSET $4 LIMIT $5`
+
+	return r.getAircraftData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+
+}
+
+func (r *AirlineRepository) GetAircraftSum(ctx context.Context) (int, error) {
+	var count int
+	row := r.pgpool.QueryRow(ctx, `SELECT Count(ac.id)
+										FROM aircraft ac
+										JOIN airplane ap ON ac.plane_type_id = ap.airplane_id
+										WHERE ac.plane_type_id != 0 AND TRIM(UPPER(ac.aircraft_name)) != ''
+`)
+	if err := row.Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// Airplane
+
+func (r *AirlineRepository) getAirplaneData(ctx context.Context, query string,
+	args ...interface{}) ([]models.Airplane, error) {
+	var ap []models.Airplane
+
+	rows, err := r.pgpool.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var a models.Airplane
+		err := rows.Scan(
+			&a.ID, &a.ModelName, &a.AirlineName, &a.PlaneSeries, &a.PlaneOwner, &a.PlaneClass,
+			&a.PlaneAge, &a.PlaneStatus, &a.LineNumber, &a.FirstFlightDate,
+			&a.EnginesType, &a.EnginesCount, &a.ConstructionNumber, &a.ProductionLine, &a.TestRegistrationNumber,
+			&a.RegistrationDate, &a.RegistrationNumber,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		ap = append(ap, a)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return ap, nil
+}
+
+func (r *AirlineRepository) GetAirplanes(ctx context.Context, page, pageSize int,
+	orderBy string, sortBy string, name string) ([]models.Airplane, error) {
+
+	offset := (page - 1) * pageSize
+	query := `SELECT ap.id, ap.model_name, al.airline_name, ap.plane_series, ap.plane_owner,
+       												ap.plane_class,
+													ap.plane_age, ap.plane_status, ap.line_number, ap.first_flight_date,
+													ap.engines_type, ap.engines_count, ap.construction_number,
+													ap.production_line, ap.test_registration_number,
+													ap.registration_date, ap.registration_number
+				FROM airplane ap
+				JOIN airline al on al.airline_id = ap.airplane_id
+				WHERE ap.model_name IS NOT NULL AND TRIM(UPPER(ap.model_name)) != ''
+       	AND    Trim(Upper(model_name))
+		           ILIKE trim(upper('%' || $1 || '%'))
+		ORDER BY
+	    CASE WHEN $2 = 'Model Name'
+	                  AND $3 = 'ASC' THEN ap.model_name::text END ASC,
+	    CASE WHEN $2 = 'Model Name'
+	                  AND $3 = 'DESC' THEN ap.model_name::text END DESC,
+	    CASE WHEN $2 = 'Airline Name'
+	                  AND $3 = 'ASC' THEN al.airline_name::text END ASC,
+	    CASE WHEN $2 = 'Airline Name'
+	                  AND $3 = 'DESC' THEN al.airline_name::text END DESC,
+	    CASE WHEN $2 = 'Plane Series'
+	                  AND $3 = 'ASC' THEN ap.plane_series::text END ASC,
+	    CASE WHEN $2 = 'Plane Series'
+	                  AND $3 = 'DESC' THEN ap.plane_series::text END DESC,
+		CASE WHEN $2 = 'Plane Owner'
+	                  AND $3 = 'ASC' THEN ap.plane_owner::text END ASC,
+	    CASE WHEN $2 = 'Plane Owner'
+	                  AND $3 = 'DESC' THEN ap.plane_owner::text END DESC,
+		CASE WHEN $2 = 'Plane Class'
+	                  AND $3 = 'ASC' THEN ap.plane_class::text END ASC,
+	    CASE WHEN $2 = 'Plane Class'
+	                  AND $3 = 'DESC' THEN ap.plane_class::text END DESC,
+		CASE WHEN $2 = 'Plane Age'
+	                  AND $3 = 'ASC' THEN ap.plane_age::text END ASC,
+	    CASE WHEN $2 = 'Plane Age'
+	                  AND $3 = 'DESC' THEN ap.plane_age::text END DESC,
+		CASE WHEN $2 = 'Plane Status'
+	                  AND $3 = 'ASC' THEN ap.plane_status::text END ASC,
+	    CASE WHEN $2 = 'Plane Status'
+	                  AND $3 = 'DESC' THEN ap.plane_status::text END DESC,
+		CASE WHEN $2 = 'Line Number'
+	                  AND $3 = 'ASC' THEN ap.line_number::text END ASC,
+	    CASE WHEN $2 = 'Line Number'
+	                  AND $3 = 'DESC' THEN ap.line_number::text END DESC,
+		CASE WHEN $2 = 'First Flight Date'
+	                  AND $3 = 'ASC' THEN ap.first_flight_date::text END ASC,
+	    CASE WHEN $2 = 'First Flight Date'
+	                  AND $3 = 'DESC' THEN ap.first_flight_date::text END DESC,
+		CASE WHEN $2 = 'Engine Type'
+	                  AND $3 = 'ASC' THEN ap.engines_type::text END ASC,
+	    CASE WHEN $2 = 'Engine Type'
+	                  AND $3 = 'DESC' THEN ap.engines_type::text END DESC,
+		CASE WHEN $2 = 'Engine Count'
+	                  AND $3 = 'ASC' THEN ap.engines_count::text END ASC,
+	    CASE WHEN $2 = 'Engine Count'
+	                  AND $3 = 'DESC' THEN ap.engines_count::text END DESC,
+		CASE WHEN $2 = 'Construction Number'
+	                  AND $3 = 'ASC' THEN ap.construction_number::text END ASC,
+	    CASE WHEN $2 = 'Construction Number'
+	                  AND $3 = 'DESC' THEN ap.construction_number::text END DESC,
+		CASE WHEN $2 = 'Production Line'
+	                  AND $3 = 'ASC' THEN ap.production_line::text END ASC,
+	    CASE WHEN $2 = 'Production Line'
+	                  AND $3 = 'DESC' THEN ap.production_line::text END DESC,
+		CASE WHEN $2 = 'Test Registration Date'
+	                  AND $3 = 'ASC' THEN ap.test_registration_number::text END ASC,
+	    CASE WHEN $2 = 'Test Registration Date'
+	                  AND $3 = 'DESC' THEN ap.test_registration_number::text END DESC,
+		CASE WHEN $2 = 'Registration Date'
+	                  AND $3 = 'ASC' THEN ap.registration_date::text END ASC,
+	    CASE WHEN $2 = 'Registration Date'
+	                  AND $3 = 'DESC' THEN ap.registration_date::text END DESC,
+		CASE WHEN $2 = 'Registration Number'
+	                  AND $3 = 'ASC' THEN ap.registration_number::text END ASC,
+	    CASE WHEN $2 = 'Registration Number'
+	                  AND $3 = 'DESC' THEN ap.registration_number::text END DESC
+       	OFFSET $4 LIMIT $5`
+
+	return r.getAirplaneData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+
+}
+
+func (r *AirlineRepository) GetAirplaneSum(ctx context.Context) (int, error) {
+	var count int
+	row := r.pgpool.QueryRow(ctx, `SELECT Count(ap.id)
+	FROM airplane ap
+	JOIN airline al on al.airline_id = ap.airplane_id
+										where ap.model_name IS NOT NULL AND TRIM(UPPER(ap.model_name)) != ''
+`)
+	if err := row.Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// tax
+
+func (r *AirlineRepository) getTaxData(ctx context.Context, query string,
+	args ...interface{}) ([]models.Tax, error) {
+	var tax []models.Tax
+
+	rows, err := r.pgpool.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var t models.Tax
+		err := rows.Scan(
+			&t.ID, &t.TaxName, &t.AirlineName,
+			&t.CountryName,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		tax = append(tax, t)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tax, nil
+}
+
+func (r *AirlineRepository) GetTax(ctx context.Context, page, pageSize int,
+	orderBy string, sortBy string, name string) ([]models.Tax, error) {
+	query := `SELECT
+    										t.id, t.tax_name, a.airline_name, a.country_name
+											FROM tax t
+											         JOIN airline a ON t.iata_code = a.iata_code
+											         JOIN country c ON a.country_name = c.country_name
+											WHERE t.tax_name IS NOT NULL
+											AND t.tax_name != ''
+											AND    Trim(Upper(tax_name))
+											           ILIKE trim(upper('%' || $1 || '%'))
+											ORDER BY
+			    CASE WHEN $2 = 'Tax Name' AND $3 = 'ASC' THEN t.tax_name::text END ASC,
+			    CASE WHEN $2 = 'Tax Name' AND $3 = 'DESC' THEN t.tax_name::text END DESC,
+			    CASE WHEN $2 = 'Airline Name' AND $3 = 'ASC' THEN a.airline_name::text END ASC,
+			    CASE WHEN $2 = 'Airline Name' AND $3 = 'DESC' THEN a.airline_name::text END DESC,
+			    CASE WHEN $2 = 'Country Name' AND $3 = 'ASC' THEN a.country_name::text END ASC,
+			    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN a.country_name::text END DESC
+       										OFFSET $4 LIMIT $5`
+
+	offset := (page - 1) * pageSize
+	return r.getTaxData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+}
+
+func (r *AirlineRepository) GetTaxSum(ctx context.Context) (int, error) {
+	var count int
+	row := r.pgpool.QueryRow(ctx, `SELECT Count(DISTINCT t.id)
+										FROM tax t
+										JOIN airline a ON t.iata_code = a.iata_code
+										JOIN country c ON a.country_name = c.country_name
+										WHERE t.tax_name IS NOT NULL AND t.tax_name != ''
+`)
+	if err := row.Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}

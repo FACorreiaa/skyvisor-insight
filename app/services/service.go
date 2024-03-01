@@ -6,8 +6,11 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 )
 
-type AirlineService struct {
-	repo *repository.AirlineRepository
+type Service struct {
+	airlineRepo  *repository.AirlineRepository
+	airportRepo  *repository.AirportRepository
+	locationRepo *repository.LocationsRepository
+	flightRepo   *repository.FlightsRepository
 }
 
 func HandleError(err error, message string) {
@@ -16,6 +19,16 @@ func HandleError(err error, message string) {
 	}
 }
 
-func NewAirlineService(repo *repository.AirlineRepository) *AirlineService {
-	return &AirlineService{repo: repo}
+func NewService(
+	airlineRepo *repository.AirlineRepository,
+	airportRepo *repository.AirportRepository,
+	locationRepo *repository.LocationsRepository,
+	flightRepo *repository.FlightsRepository) *Service {
+
+	return &Service{
+		airlineRepo:  airlineRepo,
+		airportRepo:  airportRepo,
+		locationRepo: locationRepo,
+		flightRepo:   flightRepo,
+	}
 }

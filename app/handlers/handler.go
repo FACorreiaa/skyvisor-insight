@@ -18,7 +18,7 @@ const ASC = "ASC"
 const DESC = "DESC"
 
 type Handler struct {
-	service *services.AirlineService
+	service *services.Service
 	ctx     context.Context
 }
 
@@ -28,7 +28,7 @@ const (
 	ctxKeyAuthUser ctxKey = iota
 )
 
-func NewAirlineHandler(s *services.AirlineService) *Handler {
+func NewHandler(s *services.Service) *Handler {
 	return &Handler{service: s, ctx: context.Background()}
 }
 
@@ -81,7 +81,7 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 	return components.LayoutPage(l)
 }
 
-func (h *Handler) homePage(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) Homepage(w http.ResponseWriter, r *http.Request) error {
 	home := components.HomePage()
 	return h.CreateLayout(w, r, "Home Page", home).Render(context.Background(), w)
 }

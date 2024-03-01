@@ -2,7 +2,6 @@ package app
 
 import (
 	"embed"
-	"log"
 	"log/slog"
 	"net/http"
 
@@ -10,7 +9,6 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
 	"github.com/FACorreiaa/Aviation-tracker/app/session"
-	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -24,28 +22,28 @@ import (
 //go:embed static
 var staticFS embed.FS
 
-type core struct {
-	accounts *session.AccountRepository
-}
-
-type Handlers struct {
-	pgpool      *pgxpool.Pool
-	formDecoder *form.Decoder
-	validator   *validator.Validate
-	translator  ut.Translator
-	sessions    *sessions.CookieStore
-	core        *core
-	redisClient *redis.Client
-}
-
-const ASC = "ASC"
-const DESC = "DESC"
-
-func HandleError(err error, message string) {
-	if err != nil {
-		log.Printf("%s: %v", message, err)
-	}
-}
+//type core struct {
+//	accounts *session.AccountRepository
+//}
+//
+//type Handlers struct {
+//	pgpool      *pgxpool.Pool
+//	formDecoder *form.Decoder
+//	validator   *validator.Validate
+//	translator  ut.Translator
+//	sessions    *sessions.CookieStore
+//	core        *core
+//	redisClient *redis.Client
+//}
+//
+//const ASC = "ASC"
+//const DESC = "DESC"
+//
+//func HandleError(err error, message string) {
+//	if err != nil {
+//		log.Printf("%s: %v", message, err)
+//	}
+//}
 
 func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client) http.Handler {
 	validate := validator.New()

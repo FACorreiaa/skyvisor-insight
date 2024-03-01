@@ -13,6 +13,7 @@ import (
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/FACorreiaa/Aviation-tracker/app/session"
+	"github.com/go-playground/form/v4"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/gorilla/sessions"
@@ -37,6 +38,8 @@ type AccountRepository struct {
 	RedisClient *redis.Client
 	Validator   *validator.Validate
 	Session     *sessions.CookieStore
+	FormDecoder *form.Decoder
+	Accounts    *session.AccountRepository
 }
 
 func NewAccounts(
@@ -44,6 +47,8 @@ func NewAccounts(
 	redisClient *redis.Client,
 	validator *validator.Validate,
 	session *sessions.CookieStore,
+	formDecoder *form.Decoder,
+	accounts *session.AccountRepository,
 
 ) *AccountRepository {
 	return &AccountRepository{
@@ -51,6 +56,8 @@ func NewAccounts(
 		RedisClient: redisClient,
 		Validator:   validator,
 		Session:     session,
+		FormDecoder: formDecoder,
+		Accounts:    accounts,
 	}
 }
 
@@ -76,7 +83,7 @@ func (a *AccountRepository) Logout(ctx context.Context, token Token) error {
 	// userKey := RedisPrefix + string(token)
 
 	// Check if the token exists
-	exists, err := a.redisClient.Exists(ctx, token).Result()
+	exists, err := a.RedisClient.Exists(ctx, token).Result()
 	if err != nil {
 		return errors.New("error checking token existence")
 	}
@@ -87,7 +94,7 @@ func (a *AccountRepository) Logout(ctx context.Context, token Token) error {
 	}
 
 	// Delete the token
-	if err = a.redisClient.Del(ctx, token).Err(); err != nil {
+	if err = a.RedisClient.Del(ctx, token).Err(); err != nil {
 		return errors.New("error deleting token")
 	}
 
@@ -95,11 +102,11 @@ func (a *AccountRepository) Logout(ctx context.Context, token Token) error {
 }
 
 func (a *AccountRepository) Login(ctx context.Context, form session.LoginForm) (*Token, error) {
-	if err := a.validator.Struct(form); err != nil {
+	if err := a.Validator.Struct(form); err != nil {
 		return nil, err
 	}
 
-	rows, _ := a.pgpool.Query(
+	rows, _ := a.PgPool.Query(
 		ctx,
 		`
 		select
@@ -154,7 +161,7 @@ func (a *AccountRepository) Login(ctx context.Context, form session.LoginForm) (
 
 	// Store the session token in Redis
 	// key := RedisPrefix + string(token)
-	err = a.redisClient.Set(ctx, string(token), (user.ID).String(), MaxAge).Err()
+	err = a.RedisClient.Set(ctx, string(token), (user.ID).String(), MaxAge).Err()
 	if err != nil {
 		log.Println("Error inserting token into Redis:", err)
 		return nil, errors.New("internal server error")
@@ -168,7 +175,7 @@ func (a *AccountRepository) UserFromSessionToken(ctx context.Context, token Toke
 	// key := RedisPrefix + string(token)
 	// Retrieve user ID from Redis
 	log.Println("Retrieving user ID from Redis for token:", token)
-	userID, err := a.redisClient.Get(ctx, token).Result()
+	userID, err := a.RedisClient.Get(ctx, token).Result()
 	log.Println("Retrieved user ID from Redis:", userID)
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
@@ -180,7 +187,7 @@ func (a *AccountRepository) UserFromSessionToken(ctx context.Context, token Toke
 	}
 
 	// Retrieve user details from your data store (PostgreSQL in this case)
-	rows, err := a.pgpool.Query(
+	rows, err := a.PgPool.Query(
 		ctx,
 		`
 		select
@@ -215,7 +222,7 @@ func (a *AccountRepository) UserFromSessionToken(ctx context.Context, token Toke
 }
 
 func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.RegisterForm) (*Token, error) {
-	if err := a.validator.Struct(form); err != nil {
+	if err := a.Validator.Struct(form); err != nil {
 		slog.Warn("Validation error")
 		return nil, err
 	}
@@ -229,7 +236,7 @@ func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.
 	var user User
 	var token Token
 
-	err = pgx.BeginFunc(ctx, a.pgpool, func(tx pgx.Tx) error {
+	err = pgx.BeginFunc(ctx, a.PgPool, func(tx pgx.Tx) error {
 		row, _ := tx.Query(
 			ctx,
 			`
@@ -262,7 +269,7 @@ func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.
 
 		// Store the session token in Redis
 		// redisKey := fmt.Sprintf("user_session:%s", token)
-		if err := a.redisClient.Set(ctx, token, user.ID, time.Hour*24*7).Err(); err != nil {
+		if err := a.RedisClient.Set(ctx, token, user.ID, time.Hour*24*7).Err(); err != nil {
 			return errors.New("error inserting token into Redis")
 		}
 

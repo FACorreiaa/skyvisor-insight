@@ -8,6 +8,8 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/handlers"
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
+	"github.com/FACorreiaa/Aviation-tracker/app/session"
+	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -21,9 +23,10 @@ import (
 //go:embed static
 var staticFS embed.FS
 
-//type core struct {
-//	accounts *session.AccountRepository
-//}
+type core struct {
+	accounts *session.AccountRepository
+}
+
 //
 //type Handlers struct {
 //	pgpool      *pgxpool.Pool
@@ -55,7 +58,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	// flag.StringVar(&dir, "dir", ".", "the directory to serve files from. Defaults to the current dir")
 	// flag.Parse()
 
-	//formDecoder := form.NewDecoder()
+	formDecoder := form.NewDecoder()
 
 	r := mux.NewRouter()
 	//h := Handlers{
@@ -90,8 +93,11 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 		PgPool:      pool,
 		RedisClient: redisClient,
 		Validator:   validate,
-		Session:    sessions.NewCookieStore(sessionSecret),
-		FormDecoder: formDecoder
+		Session:     sessions.NewCookieStore(sessionSecret),
+		FormDecoder: formDecoder,
+		Core: &core{
+			accounts: session.NewAccounts(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret)),
+		},
 	}
 	// business
 	airlineRepo := repository.NewAirlineRepository(pool)

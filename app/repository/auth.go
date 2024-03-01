@@ -15,6 +15,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/session"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
+	"github.com/gorilla/sessions"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -32,21 +33,24 @@ const (
 type Token = string
 
 type AccountRepository struct {
-	pgpool      *pgxpool.Pool
-	redisClient *redis.Client
-	validator   *validator.Validate
+	PgPool      *pgxpool.Pool
+	RedisClient *redis.Client
+	Validator   *validator.Validate
+	Session     *sessions.CookieStore
 }
 
 func NewAccounts(
 	pgpool *pgxpool.Pool,
 	redisClient *redis.Client,
 	validator *validator.Validate,
+	session *sessions.CookieStore,
 
 ) *AccountRepository {
 	return &AccountRepository{
-		pgpool:      pgpool,
-		redisClient: redisClient,
-		validator:   validator,
+		PgPool:      pgpool,
+		RedisClient: redisClient,
+		Validator:   validator,
+		Session:     session,
 	}
 }
 

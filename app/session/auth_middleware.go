@@ -13,7 +13,7 @@ const (
 
 // AuthMiddleware to set the current logged in user in the context.
 // AuthMiddleware See `Handlers.requireAuth` or `Handlers.redirectIfAuth` middleware.
-func (a *AccountRepository) AuthMiddleware(next http.Handler) http.Handler {
+func (a *AccountRepository) authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s, _ := a.sessions.Get(r, "auth")
 

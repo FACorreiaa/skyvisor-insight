@@ -8,11 +8,33 @@ import (
 	"log"
 	"time"
 
-	"github.com/FACorreiaa/Aviation-tracker/core/account"
-	"github.com/google/uuid"
-
 	"github.com/a-h/templ"
+	"github.com/google/uuid"
 )
+
+type UserSession struct {
+	ID           uuid.UUID
+	Username     string
+	Email        string
+	PasswordHash []byte
+	Bio          string
+	Image        *string
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+}
+
+type UserSessionToken struct {
+	Token     string
+	CreatedAt *time.Time
+	User      *UserSession
+}
+
+type RegisterForm struct {
+	Username        string `form:"username" validate:"required"`
+	Email           string `form:"email" validate:"required,email"`
+	Password        string `form:"password" validate:"required,min=8,max=72"`
+	PasswordConfirm string `form:"password_confirm" validate:"required,eqfield=Password"`
+}
 
 type FlightStatus string
 
@@ -49,14 +71,14 @@ type LayoutTempl struct {
 	Title     string
 	Nav       []NavItem
 	ActiveNav string
-	User      *account.User
+	User      *UserSession
 	Content   templ.Component
 }
 
 type SettingsPage struct {
 	Updated bool
 	Errors  []string
-	User    account.User
+	User    UserSession
 }
 
 type LoginPage struct {

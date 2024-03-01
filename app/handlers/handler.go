@@ -10,7 +10,6 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/svg"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
-	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"github.com/a-h/templ"
 	"github.com/go-playground/form/v4"
 	ut "github.com/go-playground/universal-translator"
@@ -48,11 +47,11 @@ func HandleError(err error, message string) {
 
 func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title string,
 	data templ.Component) templ.Component {
-	var user *account.User
+	var user *models.UserSession
 	userCtx := r.Context().Value(ctxKeyAuthUser)
 	if userCtx != nil {
 		switch u := userCtx.(type) {
-		case *account.User:
+		case *models.UserSession:
 			user = u
 		default:
 			log.Printf("Unexpected type in userCtx: %T", userCtx)

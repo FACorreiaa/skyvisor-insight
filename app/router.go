@@ -2,7 +2,6 @@ package app
 
 import (
 	"embed"
-	"errors"
 	"log"
 	"log/slog"
 	"net/http"
@@ -11,7 +10,6 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
 	"github.com/FACorreiaa/Aviation-tracker/app/session"
-	"github.com/FACorreiaa/Aviation-tracker/core/account"
 	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -27,7 +25,7 @@ import (
 var staticFS embed.FS
 
 type core struct {
-	accounts *account.RepositoryAccount
+	accounts *session.AccountRepository
 }
 
 type Handlers struct {
@@ -60,20 +58,20 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	// flag.StringVar(&dir, "dir", ".", "the directory to serve files from. Defaults to the current dir")
 	// flag.Parse()
 
-	formDecoder := form.NewDecoder()
+	//formDecoder := form.NewDecoder()
 
 	r := mux.NewRouter()
-	h := Handlers{
-		pgpool:      pool,
-		formDecoder: formDecoder,
-		validator:   validate,
-		translator:  translator,
-		sessions:    sessions.NewCookieStore(sessionSecret),
-		redisClient: redisClient,
-		core: &core{
-			accounts: account.NewAccounts(pool, redisClient, validate),
-		},
-	}
+	//h := Handlers{
+	//	pgpool:      pool,
+	//	formDecoder: formDecoder,
+	//	validator:   validate,
+	//	translator:  translator,
+	//	sessions:    sessions.NewCookieStore(sessionSecret),
+	//	redisClient: redisClient,
+	//	core: &core{
+	//		accounts: session.NewAccounts(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret)),
+	//	},
+	//}
 
 	// Static files
 	r.PathPrefix("/static/").Handler(http.FileServer(http.FS(staticFS)))
@@ -98,9 +96,10 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	airportRepo := repository.NewAirportRepository(pool)
 	locationRepo := repository.NewLocationsRepository(pool)
 	flightsRepo := repository.NewFlightsRepository(pool)
+	authRepo := repository.NewAccounts(pool, redisClient, validate)
 
-	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo)
-	ha := handlers.NewHandler(service)
+	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, authRepo)
+	h := handlers.NewHandler(service)
 
 	// r.HandleFunc("/icons/marker.png", func(w http.ResponseWriter, _ *http.Request) {
 	//	file, _ := staticFS.ReadFile("icons/marker.png")
@@ -119,58 +118,58 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
 	optAuth.Use(sessionsHandlers.AuthMiddleware)
-	optAuth.HandleFunc("/", handler(ha.Homepage)).Methods(http.MethodGet)
+	optAuth.HandleFunc("/", handler(h.Homepage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users
 	noAuth := r.NewRoute().Subrouter()
 	noAuth.Use(sessionsHandlers.AuthMiddleware)
 	noAuth.Use(sessionsHandlers.RedirectIfAuth)
 
-	noAuth.HandleFunc("/login", handler(ha.LoginPage)).Methods(http.MethodGet)
-	noAuth.HandleFunc("/login", handler(ha.LoginPost)).Methods(http.MethodPost)
-	noAuth.HandleFunc("/register", handler(h.registerPage)).Methods(http.MethodGet)
-	noAuth.HandleFunc("/register", handler(h.registerPost)).Methods(http.MethodPost)
+	noAuth.HandleFunc("/login", handler(h.LoginPage)).Methods(http.MethodGet)
+	noAuth.HandleFunc("/login", handler(h.LoginPost)).Methods(http.MethodPost)
+	noAuth.HandleFunc("/register", handler(h.RegisterPage)).Methods(http.MethodGet)
+	noAuth.HandleFunc("/register", handler(h.RegisterPost)).Methods(http.MethodPost)
 
 	// Authenticated routes
 	auth := r.NewRoute().Subrouter()
 	auth.Use(sessionsHandlers.AuthMiddleware)
 	auth.Use(sessionsHandlers.RequireAuth)
 
-	auth.HandleFunc("/logout", handler(h.logout)).Methods(http.MethodPost)
-	auth.HandleFunc("/settings", handler(ha.SettingsPage)).Methods(http.MethodGet)
+	auth.HandleFunc("/logout", handler(h.Logout)).Methods(http.MethodPost)
+	auth.HandleFunc("/settings", handler(h.SettingsPage)).Methods(http.MethodGet)
 
 	// Airlines Router
 	alr := auth.PathPrefix("/airlines").Subrouter()
 
-	alr.HandleFunc("/airline", handler(ha.AirlineMainPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airline/location", handler(ha.AirlineLocationPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airline/{airline_name}", handler(ha.AirlineDetailsPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airline", handler(h.AirlineMainPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airline/location", handler(h.AirlineLocationPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airline/{airline_name}", handler(h.AirlineDetailsPage)).Methods(http.MethodGet)
 
-	alr.HandleFunc("/aircraft", handler(ha.AirlineAircraftPage)).Methods(http.MethodGet)
-	alr.HandleFunc("/airplane", handler(ha.AirlineAirplanePage)).Methods(http.MethodGet)
-	alr.HandleFunc("/tax", handler(ha.AirlineTaxPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/aircraft", handler(h.AirlineAircraftPage)).Methods(http.MethodGet)
+	alr.HandleFunc("/airplane", handler(h.AirlineAirplanePage)).Methods(http.MethodGet)
+	alr.HandleFunc("/tax", handler(h.AirlineTaxPage)).Methods(http.MethodGet)
 
 	// locations
 	lr := auth.PathPrefix("/locations").Subrouter()
-	lr.HandleFunc("/city", handler(ha.CityMainPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/city/map", handler(ha.CityLocationsPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/city/details/{city_id}", handler(ha.CityDetailsPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/country", handler(ha.CountryMainPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/country/map", handler(ha.CountryLocationPage)).Methods(http.MethodGet)
-	lr.HandleFunc("/country/details/{country_name}", handler(ha.CountryDetailsPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/city", handler(h.CityMainPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/city/map", handler(h.CityLocationsPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/city/details/{city_id}", handler(h.CityDetailsPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/country", handler(h.CountryMainPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/country/map", handler(h.CountryLocationPage)).Methods(http.MethodGet)
+	lr.HandleFunc("/country/details/{country_name}", handler(h.CountryDetailsPage)).Methods(http.MethodGet)
 
 	// Airports router
 	apr := auth.PathPrefix("/airports").Subrouter()
-	apr.HandleFunc("", handler(ha.AirportPage)).Methods(http.MethodGet)
-	apr.HandleFunc("/locations", handler(ha.AirportLocationPage)).Methods(http.MethodGet)
-	apr.HandleFunc("/details/{airport_id}", handler(ha.AirportDetailsPage)).Methods(http.MethodGet)
+	apr.HandleFunc("", handler(h.AirportPage)).Methods(http.MethodGet)
+	apr.HandleFunc("/locations", handler(h.AirportLocationPage)).Methods(http.MethodGet)
+	apr.HandleFunc("/details/{airport_id}", handler(h.AirportDetailsPage)).Methods(http.MethodGet)
 
 	// Flights router
 	fr := auth.PathPrefix("/flights").Subrouter()
-	fr.HandleFunc("", handler(ha.AllFlightsPage)).Methods(http.MethodGet)
-	fr.HandleFunc("/{flight_status}", handler(ha.AllFlightsPage)).Methods(http.MethodGet)
-	fr.HandleFunc("/details/{flight_number}", handler(ha.DetailedFlightsPage)).Methods(http.MethodGet)
-	fr.HandleFunc("/preview", handler(ha.FlightsPreview)).Methods(http.MethodGet)
+	fr.HandleFunc("", handler(h.AllFlightsPage)).Methods(http.MethodGet)
+	fr.HandleFunc("/{flight_status}", handler(h.AllFlightsPage)).Methods(http.MethodGet)
+	fr.HandleFunc("/details/{flight_number}", handler(h.DetailedFlightsPage)).Methods(http.MethodGet)
+	fr.HandleFunc("/preview", handler(h.FlightsPreview)).Methods(http.MethodGet)
 
 	return r
 }
@@ -181,31 +180,4 @@ func handler(fn func(w http.ResponseWriter, r *http.Request) error) http.Handler
 			slog.Error("Error handling request", "error", err)
 		}
 	}
-}
-
-func (h *Handlers) formErrors(err error) []string {
-	var decodeErrors form.DecodeErrors
-	isDecodeError := errors.As(err, &decodeErrors)
-	if isDecodeError {
-		var errs []string
-		for _, decodeError := range decodeErrors {
-			errs = append(errs, decodeError.Error())
-		}
-
-		return errs
-	}
-
-	// validateErrors, isValidateError := err.(validator.ValidationErrors)
-
-	var validateErrors validator.ValidationErrors
-	isValidateError := errors.As(err, &validateErrors)
-	if isValidateError {
-		var errs []string
-		for _, validateError := range validateErrors {
-			errs = append(errs, validateError.Translate(h.translator))
-		}
-		return errs
-	}
-
-	return []string{err.Error()}
 }

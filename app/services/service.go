@@ -11,6 +11,7 @@ type Service struct {
 	airportRepo  *repository.AirportRepository
 	locationRepo *repository.LocationsRepository
 	flightRepo   *repository.FlightsRepository
+	accountRepo  *repository.AccountRepository
 }
 
 func HandleError(err error, message string) {
@@ -23,12 +24,14 @@ func NewService(
 	airlineRepo *repository.AirlineRepository,
 	airportRepo *repository.AirportRepository,
 	locationRepo *repository.LocationsRepository,
-	flightRepo *repository.FlightsRepository) *Service {
+	flightRepo *repository.FlightsRepository,
+	accountRepo *repository.AccountRepository) *Service {
 
 	return &Service{
 		airlineRepo:  airlineRepo,
 		airportRepo:  airportRepo,
 		locationRepo: locationRepo,
 		flightRepo:   flightRepo,
+		accountRepo:  accountRepo,
 	}
 }

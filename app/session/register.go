@@ -8,20 +8,14 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type RegisterForm struct {
-	Username        string `form:"username" validate:"required"`
-	Email           string `form:"email" validate:"required,email"`
-	Password        string `form:"password" validate:"required,min=8,max=72"`
-	PasswordConfirm string `form:"password_confirm" validate:"required,eqfield=Password"`
-}
-
-func (a *RepositoryAccount) RegisterNewAccount(ctx context.Context, form RegisterForm) (*Token, error) {
+func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.RegisterForm) (*Token, error) {
 	if err := a.validator.Struct(form); err != nil {
 		slog.Warn("Validation error")
 		return nil, err
@@ -33,7 +27,7 @@ func (a *RepositoryAccount) RegisterNewAccount(ctx context.Context, form Registe
 		return nil, errors.New("internal server error")
 	}
 
-	var user User
+	var user models.UserSession
 	var token Token
 
 	err = pgx.BeginFunc(ctx, a.pgpool, func(tx pgx.Tx) error {
@@ -56,7 +50,7 @@ func (a *RepositoryAccount) RegisterNewAccount(ctx context.Context, form Registe
 			form.Email,
 			passwordHash,
 		)
-		user, err = pgx.CollectOneRow(row, pgx.RowToStructByPos[User])
+		user, err = pgx.CollectOneRow(row, pgx.RowToStructByPos[models.UserSession])
 		if err != nil {
 			return errors.New("error inserting user")
 		}

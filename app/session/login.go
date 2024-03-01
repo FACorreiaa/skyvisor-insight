@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/crypto/bcrypt"
@@ -19,7 +20,7 @@ type LoginForm struct {
 	Password string `form:"password" validate:"required"`
 }
 
-func (a *RepositoryAccount) Login(ctx context.Context, form LoginForm) (*Token, error) {
+func (a *AccountRepository) Login(ctx context.Context, form LoginForm) (*Token, error) {
 	if err := a.validator.Struct(form); err != nil {
 		return nil, err
 	}
@@ -40,7 +41,7 @@ func (a *RepositoryAccount) Login(ctx context.Context, form LoginForm) (*Token, 
 		`,
 		form.Email,
 	)
-	user, err := pgx.CollectOneRow[User](rows, pgx.RowToStructByPos[User])
+	user, err := pgx.CollectOneRow[models.UserSession](rows, pgx.RowToStructByPos[models.UserSession])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, errors.New("invalid email or password")
@@ -78,7 +79,7 @@ func (a *RepositoryAccount) Login(ctx context.Context, form LoginForm) (*Token, 
 	//}
 
 	// Store the session token in Redis
-	// key := REDIS_PREFIX + string(token)
+	// key := RedisPrefix + string(token)
 	err = a.redisClient.Set(ctx, string(token), (user.ID).String(), MaxAge).Err()
 	if err != nil {
 		log.Println("Error inserting token into Redis:", err)
@@ -89,8 +90,8 @@ func (a *RepositoryAccount) Login(ctx context.Context, form LoginForm) (*Token, 
 	return &token, nil
 }
 
-func (a *RepositoryAccount) UserFromSessionToken(ctx context.Context, token Token) (*User, error) {
-	// key := REDIS_PREFIX + string(token)
+func (a *AccountRepository) UserFromSessionToken(ctx context.Context, token Token) (*models.UserSession, error) {
+	// key := RedisPrefix + string(token)
 	// Retrieve user ID from Redis
 	log.Println("Retrieving user ID from Redis for token:", token)
 	userID, err := a.redisClient.Get(ctx, token).Result()
@@ -126,7 +127,7 @@ func (a *RepositoryAccount) UserFromSessionToken(ctx context.Context, token Toke
 		return nil, errors.New("internal server error")
 	}
 
-	userWithToken, err := pgx.CollectOneRow(rows, pgx.RowToStructByPos[User])
+	userWithToken, err := pgx.CollectOneRow(rows, pgx.RowToStructByPos[models.UserSession])
 	if err != nil {
 		return nil, errors.New("internal server error")
 	}

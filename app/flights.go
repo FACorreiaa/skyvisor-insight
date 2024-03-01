@@ -1,4 +1,4 @@
-package controller
+package app
 
 import (
 	"context"
@@ -21,9 +21,7 @@ import (
 // future feature on this branch for flights with destination
 
 // need to change sql query later
-airlineRepo := repository.NewAirlineRepository(pool)
-airlineService := services.NewAirlineService(airlineRepo)
-airlineHandler := handlers.NewAirlineHandler(airlineService)
+
 func (h *Handlers) renderLiveLocationsSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},

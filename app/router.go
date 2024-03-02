@@ -22,24 +22,6 @@ import (
 //go:embed static
 var staticFS embed.FS
 
-//type core struct {
-//	accounts *session.AccountRepository
-//	//airports  *airport.RepositoryAirport
-//	//airlines  *airline.RepositoryAirline
-//	//locations *location.RepositoryLocation
-//	//flights   *flights.RepositoryFlights
-//}
-//
-//type Handlers struct {
-//	pgpool      *pgxpool.Pool
-//	formDecoder *form.Decoder
-//	validator   *validator.Validate
-//	translator  ut.Translator
-//	sessions    *sessions.CookieStore
-//	core        *core
-//	redisClient *redis.Client
-//}
-
 const ASC = "ASC"
 const DESC = "DESC"
 
@@ -55,25 +37,8 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	if err := enTranslations.RegisterDefaultTranslations(validate, translator); err != nil {
 		slog.Error("Error registering translations", "error", err)
 	}
-	// var dir string
-	//
-	// flag.StringVar(&dir, "dir", ".", "the directory to serve files from. Defaults to the current dir")
-	// flag.Parse()
-
-	//formDecoder := form.NewDecoder()
 
 	r := mux.NewRouter()
-	//h := Handlers{
-	//	pgpool:      pool,
-	//	formDecoder: formDecoder,
-	//	validator:   validate,
-	//	translator:  translator,
-	//	sessions:    sessions.NewCookieStore(sessionSecret),
-	//	redisClient: redisClient,
-	//	core: &core{
-	//		accounts: session.NewAccounts(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret)),
-	//	},
-	//}
 
 	// Static files
 	r.PathPrefix("/static/").Handler(http.FileServer(http.FS(staticFS)))
@@ -90,14 +55,6 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 		}
 	})
 
-	// session
-	//accountsRepo := &repository.AccountRepository{
-	//	PgPool:      pool,
-	//	RedisClient: redisClient,
-	//	Validator:   validate,
-	//	Session:     sessions.NewCookieStore(sessionSecret),
-	//	FormDecoder: formDecoder,
-	//}
 	// business
 	airlineRepo := repository.NewAirlineRepository(pool)
 	airportRepo := repository.NewAirportRepository(pool)
@@ -113,36 +70,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	}
 
 	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, authRepo)
-	h := handlers.NewHandler(service)
-
-	//h := Handlers{
-	//	pgpool:      pool,
-	//	formDecoder: formDecoder,
-	//	validator:   validate,
-	//	translator:  translator,
-	//	sessions:    sessions.NewCookieStore(sessionSecret),
-	//	redisClient: redisClient,
-	//	core: &core{
-	//		accounts: session.NewAccounts(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret)),
-	//		//airports:  airport.NewAirports(pool),
-	//		//airlines:  airline.NewAirlines(pool),
-	//		//locations: location.NewLocations(pool),
-	//		//flights:   flights.NewFlights(pool),
-	//	},
-	//}
-	// r.HandleFunc("/icons/marker.png", func(w http.ResponseWriter, _ *http.Request) {
-	//	file, _ := staticFS.ReadFile("icons/marker.png")
-	//	w.Header().Set("Content-Type", "image/x-icon")
-	//	w.Header().Set("Content-Type", "image/png")
-	//	w.Header().Set("Content-Type", "image/jpeg")
-	//	w.Header().Set("Content-Type", "image/svg+xml")
-	//
-	//	_, err := w.Write(file)
-	//	if err != nil {
-	//		return
-	//	}
-	//})
-	// r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("assets"))))
+	h := handlers.NewHandler(service, sessions.NewCookieStore(sessionSecret), pool, redisClient)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()

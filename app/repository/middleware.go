@@ -5,6 +5,7 @@ import (
 
 	"context"
 
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -20,12 +21,6 @@ type MiddlewareRepository struct {
 
 // middleware
 
-type ctxKey int
-
-const (
-	CtxKeyAuthUser ctxKey = iota
-)
-
 // AuthMiddleware to set the current logged in user in the context.
 // AuthMiddleware See `Handlers.requireAuth` or `Handlers.redirectIfAuth` middleware.
 func (m *MiddlewareRepository) AuthMiddleware(next http.Handler) http.Handler {
@@ -38,12 +33,12 @@ func (m *MiddlewareRepository) AuthMiddleware(next http.Handler) http.Handler {
 				user, err := m.UserFromSessionToken(r.Context(), Token(token))
 
 				if err == nil {
-					ctx := context.WithValue(r.Context(), CtxKeyAuthUser, user)
+					ctx := context.WithValue(r.Context(), models.CtxKeyAuthUser, user)
 					r = r.WithContext(ctx)
 				}
 			}
 		} else {
-			ctx := context.WithValue(r.Context(), CtxKeyAuthUser, nil)
+			ctx := context.WithValue(r.Context(), models.CtxKeyAuthUser, nil)
 			r = r.WithContext(ctx)
 		}
 
@@ -53,7 +48,7 @@ func (m *MiddlewareRepository) AuthMiddleware(next http.Handler) http.Handler {
 
 func (m *MiddlewareRepository) RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user := r.Context().Value(CtxKeyAuthUser)
+		user := r.Context().Value(models.CtxKeyAuthUser)
 		if user == nil {
 			http.Redirect(w, r, "/login?return_to="+r.URL.Path, http.StatusSeeOther)
 			return
@@ -65,7 +60,7 @@ func (m *MiddlewareRepository) RequireAuth(next http.Handler) http.Handler {
 
 func (m *MiddlewareRepository) RedirectIfAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user := r.Context().Value(CtxKeyAuthUser)
+		user := r.Context().Value(models.CtxKeyAuthUser)
 		if user != nil {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return

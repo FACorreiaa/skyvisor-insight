@@ -13,7 +13,6 @@ import (
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
@@ -64,23 +63,6 @@ func NewAccountRepository(db *pgxpool.Pool,
 //	}
 //}
 
-type User struct {
-	ID           uuid.UUID
-	Username     string
-	Email        string
-	PasswordHash []byte
-	Bio          string
-	Image        *string
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-}
-
-type UserToken struct {
-	Token     string
-	CreatedAt *time.Time
-	User      *User
-}
-
 // Logout deletes the user token from the Redis store.
 func (a *AccountRepository) Logout(ctx context.Context, token Token) error {
 	// userKey := RedisPrefix + string(token)
@@ -125,7 +107,7 @@ func (a *AccountRepository) Login(ctx context.Context, form models.LoginForm) (*
 		`,
 		form.Email,
 	)
-	user, err := pgx.CollectOneRow[User](rows, pgx.RowToStructByPos[User])
+	user, err := pgx.CollectOneRow[models.UserSession](rows, pgx.RowToStructByPos[models.UserSession])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, errors.New("invalid email or password")
@@ -174,7 +156,7 @@ func (a *AccountRepository) Login(ctx context.Context, form models.LoginForm) (*
 	return &token, nil
 }
 
-func (m *MiddlewareRepository) UserFromSessionToken(ctx context.Context, token Token) (*User, error) {
+func (m *MiddlewareRepository) UserFromSessionToken(ctx context.Context, token Token) (*models.UserSession, error) {
 	// key := RedisPrefix + string(token)
 	// Retrieve user ID from Redis
 	log.Println("Retrieving user ID from Redis for token:", token)
@@ -211,7 +193,7 @@ func (m *MiddlewareRepository) UserFromSessionToken(ctx context.Context, token T
 		return nil, errors.New("internal server error")
 	}
 
-	userWithToken, err := pgx.CollectOneRow(rows, pgx.RowToStructByPos[User])
+	userWithToken, err := pgx.CollectOneRow(rows, pgx.RowToStructByPos[models.UserSession])
 	if err != nil {
 		return nil, errors.New("internal server error")
 	}
@@ -236,7 +218,7 @@ func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.
 		return nil, errors.New("internal server error")
 	}
 
-	var user User
+	var user models.UserSession
 	var token Token
 
 	err = pgx.BeginFunc(ctx, a.pgpool, func(tx pgx.Tx) error {
@@ -259,7 +241,7 @@ func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.
 			form.Email,
 			passwordHash,
 		)
-		user, err = pgx.CollectOneRow(row, pgx.RowToStructByPos[User])
+		user, err = pgx.CollectOneRow(row, pgx.RowToStructByPos[models.UserSession])
 		if err != nil {
 			return errors.New("error inserting user")
 		}

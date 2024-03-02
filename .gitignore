@@ -33,7 +33,7 @@ api/data
 vendor/
 tmp/
 tmp
-tailwindcss
+# tailwindcss
 # IDE specific files
 .vscode
 

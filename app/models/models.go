@@ -12,6 +12,12 @@ import (
 	"github.com/google/uuid"
 )
 
+type ctxKey int
+
+const (
+	CtxKeyAuthUser ctxKey = iota
+)
+
 type LoginForm struct {
 	Email    string `form:"email" validate:"required,email"`
 	Password string `form:"password" validate:"required"`

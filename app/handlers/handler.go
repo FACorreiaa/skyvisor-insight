@@ -12,9 +12,12 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
 	"github.com/a-h/templ"
 	"github.com/go-playground/form/v4"
+	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/sessions"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 )
 
 const ASC = "ASC"
@@ -22,21 +25,28 @@ const DESC = "DESC"
 
 type Handler struct {
 	service     *services.Service
-	ctx         context.Context
 	formDecoder *form.Decoder
 	validator   *validator.Validate
 	translator  ut.Translator
 	sessions    *sessions.CookieStore
+	pool        *pgxpool.Pool
+	redisClient *redis.Client
 }
 
-type ctxKey int
-
-const (
-	ctxKeyAuthUser ctxKey = iota
-)
-
-func NewHandler(s *services.Service) *Handler {
-	return &Handler{service: s, ctx: context.Background()}
+func NewHandler(s *services.Service, sessions *sessions.CookieStore,
+	pool *pgxpool.Pool, redisClient *redis.Client) *Handler {
+	decoder := form.NewDecoder()
+	validate := validator.New()
+	translator, _ := ut.New(en.New(), en.New()).GetTranslator("en")
+	return &Handler{
+		service:     s,
+		formDecoder: decoder,
+		validator:   validate,
+		translator:  translator,
+		sessions:    sessions,
+		pool:        pool,
+		redisClient: redisClient,
+	}
 }
 
 func HandleError(err error, message string) {
@@ -48,7 +58,7 @@ func HandleError(err error, message string) {
 func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title string,
 	data templ.Component) templ.Component {
 	var user *models.UserSession
-	userCtx := r.Context().Value(ctxKeyAuthUser)
+	userCtx := r.Context().Value(models.CtxKeyAuthUser)
 	if userCtx != nil {
 		switch u := userCtx.(type) {
 		case *models.UserSession:

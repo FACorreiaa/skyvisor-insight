@@ -89,23 +89,22 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	})
 
 	// session
-	accountsRepo := &repository.AccountRepository{
-		PgPool:      pool,
-		RedisClient: redisClient,
-		Validator:   validate,
-		Session:     sessions.NewCookieStore(sessionSecret),
-		FormDecoder: formDecoder,
-		Core: &core{
-			accounts: session.NewAccounts(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret)),
-		},
-	}
+	//accountsRepo := &repository.AccountRepository{
+	//	PgPool:      pool,
+	//	RedisClient: redisClient,
+	//	Validator:   validate,
+	//	Session:     sessions.NewCookieStore(sessionSecret),
+	//	FormDecoder: formDecoder,
+	//}
 	// business
 	airlineRepo := repository.NewAirlineRepository(pool)
 	airportRepo := repository.NewAirportRepository(pool)
 	locationRepo := repository.NewLocationsRepository(pool)
 	flightsRepo := repository.NewFlightsRepository(pool)
-
-	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, authRepo)
+	authRepo := repository.NewAccounts{
+		pgpool:
+	}
+	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, accountsRepo)
 	h := handlers.NewHandler(service)
 
 	// r.HandleFunc("/icons/marker.png", func(w http.ResponseWriter, _ *http.Request) {
@@ -124,7 +123,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
-	optAuth.Use(accountsRepo.authMiddleware)
+	optAuth.Use(accountsRepo.Accounts.authMiddleware)
 	optAuth.HandleFunc("/", handler(h.Homepage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users

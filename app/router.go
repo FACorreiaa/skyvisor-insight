@@ -105,6 +105,13 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	flightsRepo := repository.NewFlightsRepository(pool)
 	authRepo := repository.NewAccountRepository(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret))
 
+	middleware := &repository.MiddlewareRepository{
+		Pgpool:      pool,
+		RedisClient: redisClient,
+		Validator:   validate,
+		Sessions:    sessions.NewCookieStore(sessionSecret),
+	}
+
 	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, authRepo)
 	h := handlers.NewHandler(service)
 
@@ -139,13 +146,13 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
-	optAuth.Use(authRepo.AuthMiddleware)
+	optAuth.Use(middleware.AuthMiddleware)
 	optAuth.HandleFunc("/", handler(h.Homepage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users
 	noAuth := r.NewRoute().Subrouter()
-	noAuth.Use(authRepo.AuthMiddleware)
-	noAuth.Use(authRepo.RedirectIfAuth)
+	noAuth.Use(middleware.AuthMiddleware)
+	noAuth.Use(middleware.RedirectIfAuth)
 
 	noAuth.HandleFunc("/login", handler(h.LoginPage)).Methods(http.MethodGet)
 	noAuth.HandleFunc("/login", handler(h.LoginPost)).Methods(http.MethodPost)
@@ -154,8 +161,8 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Authenticated routes
 	auth := r.NewRoute().Subrouter()
-	auth.Use(authRepo.AuthMiddleware)
-	auth.Use(authRepo.RequireAuth)
+	auth.Use(middleware.AuthMiddleware)
+	auth.Use(middleware.RequireAuth)
 
 	auth.HandleFunc("/logout", handler(h.Logout)).Methods(http.MethodPost)
 	auth.HandleFunc("/settings", handler(h.SettingsPage)).Methods(http.MethodGet)

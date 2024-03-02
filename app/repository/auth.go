@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
-	"net/http"
 	"time"
 
 	"context"
@@ -175,11 +174,11 @@ func (a *AccountRepository) Login(ctx context.Context, form models.LoginForm) (*
 	return &token, nil
 }
 
-func (a *AccountRepository) UserFromSessionToken(ctx context.Context, token Token) (*User, error) {
+func (m *MiddlewareRepository) UserFromSessionToken(ctx context.Context, token Token) (*User, error) {
 	// key := RedisPrefix + string(token)
 	// Retrieve user ID from Redis
 	log.Println("Retrieving user ID from Redis for token:", token)
-	userID, err := a.redisClient.Get(ctx, token).Result()
+	userID, err := m.RedisClient.Get(ctx, token).Result()
 	log.Println("Retrieved user ID from Redis:", userID)
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
@@ -191,7 +190,7 @@ func (a *AccountRepository) UserFromSessionToken(ctx context.Context, token Toke
 	}
 
 	// Retrieve user details from your data store (PostgreSQL in this case)
-	rows, err := a.pgpool.Query(
+	rows, err := m.Pgpool.Query(
 		ctx,
 		`
 		select
@@ -292,61 +291,4 @@ func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.
 
 	slog.Info("Created account", "user_id", user.ID)
 	return &token, nil
-}
-
-// middleware
-
-type ctxKey int
-
-const (
-	CtxKeyAuthUser ctxKey = iota
-)
-
-// AuthMiddleware to set the current logged in user in the context.
-// AuthMiddleware See `Handlers.requireAuth` or `Handlers.redirectIfAuth` middleware.
-func (a *AccountRepository) AuthMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		s, _ := a.sessions.Get(r, "auth")
-
-		token := s.Values["token"]
-		if token != nil {
-			if token, ok := token.(string); ok {
-				user, err := a.UserFromSessionToken(r.Context(), Token(token))
-
-				if err == nil {
-					ctx := context.WithValue(r.Context(), CtxKeyAuthUser, user)
-					r = r.WithContext(ctx)
-				}
-			}
-		} else {
-			ctx := context.WithValue(r.Context(), CtxKeyAuthUser, nil)
-			r = r.WithContext(ctx)
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
-func (a *AccountRepository) RequireAuth(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user := r.Context().Value(CtxKeyAuthUser)
-		if user == nil {
-			http.Redirect(w, r, "/login?return_to="+r.URL.Path, http.StatusSeeOther)
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
-func (a *AccountRepository) RedirectIfAuth(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user := r.Context().Value(CtxKeyAuthUser)
-		if user != nil {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	})
 }

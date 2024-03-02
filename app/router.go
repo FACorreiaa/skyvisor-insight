@@ -9,13 +9,11 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
 	"github.com/FACorreiaa/Aviation-tracker/app/session"
-	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/gorilla/mux"
-	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 )
@@ -58,7 +56,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	// flag.StringVar(&dir, "dir", ".", "the directory to serve files from. Defaults to the current dir")
 	// flag.Parse()
 
-	formDecoder := form.NewDecoder()
+	//formDecoder := form.NewDecoder()
 
 	r := mux.NewRouter()
 	//h := Handlers{
@@ -101,10 +99,9 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	airportRepo := repository.NewAirportRepository(pool)
 	locationRepo := repository.NewLocationsRepository(pool)
 	flightsRepo := repository.NewFlightsRepository(pool)
-	authRepo := repository.NewAccounts{
-		pgpool:
-	}
-	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, accountsRepo)
+	authRepo := repository.NewAccounts(pool, redisClient, validate)
+
+	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, authRepo)
 	h := handlers.NewHandler(service)
 
 	// r.HandleFunc("/icons/marker.png", func(w http.ResponseWriter, _ *http.Request) {
@@ -123,12 +120,12 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
-	optAuth.Use(accountsRepo.Accounts.authMiddleware)
+	optAuth.Use(h.authMiddleware)
 	optAuth.HandleFunc("/", handler(h.Homepage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users
 	noAuth := r.NewRoute().Subrouter()
-	noAuth.Use(accountsRepo.authMiddleware)
+	noAuth.Use(authRepo.authMiddleware)
 	noAuth.Use(accountsRepo.redirectIfAuth)
 
 	noAuth.HandleFunc("/login", handler(h.LoginPage)).Methods(http.MethodGet)

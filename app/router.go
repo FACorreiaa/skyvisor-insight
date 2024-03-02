@@ -9,8 +9,6 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/handlers"
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
-	"github.com/FACorreiaa/Aviation-tracker/app/session"
-	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -105,7 +103,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	airportRepo := repository.NewAirportRepository(pool)
 	locationRepo := repository.NewLocationsRepository(pool)
 	flightsRepo := repository.NewFlightsRepository(pool)
-	authRepo := repository.NewAccountRepository(pool, redisClient, validate)
+	authRepo := repository.NewAccountRepository(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret))
 
 	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, authRepo)
 	h := handlers.NewHandler(service)
@@ -141,13 +139,13 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
-	optAuth.Use(h.)
+	optAuth.Use(authRepo.)
 	optAuth.HandleFunc("/", handler(h.Homepage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users
 	noAuth := r.NewRoute().Subrouter()
-	noAuth.Use(authRepo.authMiddleware)
-	noAuth.Use(accountsRepo.redirectIfAuth)
+	noAuth.Use(authRepo.AuthMiddleware)
+	noAuth.Use(authRepo.RedirectIfAuth)
 
 	noAuth.HandleFunc("/login", handler(h.LoginPage)).Methods(http.MethodGet)
 	noAuth.HandleFunc("/login", handler(h.LoginPost)).Methods(http.MethodPost)
@@ -156,8 +154,8 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Authenticated routes
 	auth := r.NewRoute().Subrouter()
-	auth.Use(accountsRepo.authMiddleware)
-	auth.Use(accountsRepo.requireAuth)
+	auth.Use(authRepo.AuthMiddleware)
+	auth.Use(authRepo.RequireAuth)
 
 	auth.HandleFunc("/logout", handler(h.Logout)).Methods(http.MethodPost)
 	auth.HandleFunc("/settings", handler(h.SettingsPage)).Methods(http.MethodGet)

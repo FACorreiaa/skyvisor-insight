@@ -105,7 +105,7 @@ func (a *AccountRepository) Logout(ctx context.Context, token Token) error {
 	return nil
 }
 
-func (a *AccountRepository) Login(ctx context.Context, form session.LoginForm) (*Token, error) {
+func (a *AccountRepository) Login(ctx context.Context, form models.LoginForm) (*Token, error) {
 	if err := a.validator.Struct(form); err != nil {
 		return nil, err
 	}

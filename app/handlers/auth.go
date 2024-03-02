@@ -9,7 +9,6 @@ import (
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
-	"github.com/FACorreiaa/Aviation-tracker/app/session"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/user"
 	"github.com/go-playground/form/v4"
 	"github.com/go-playground/validator/v10"
@@ -55,7 +54,7 @@ func (h *Handler) LoginPost(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	var f session.LoginForm
+	var f models.LoginForm
 	var token *repository.Token
 
 	err := h.formDecoder.Decode(&f, r.PostForm)
@@ -95,7 +94,7 @@ func (h *Handler) RegisterPost(w http.ResponseWriter, r *http.Request) error {
 	var f models.RegisterForm
 	var err error
 
-	var token *session.Token
+	var token *repository.Token
 	err = h.formDecoder.Decode(&f, r.PostForm)
 	if err == nil {
 		token, err = h.service.RegisterNewAccount(r.Context(), f)
@@ -123,7 +122,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) error {
 	token := s.Values["token"]
 
 	if token, ok := token.(string); ok {
-		_ = h.service.Logout(r.Context(), session.Token(token))
+		_ = h.service.Logout(r.Context(), repository.Token(token))
 	}
 
 	s.Values["token"] = ""

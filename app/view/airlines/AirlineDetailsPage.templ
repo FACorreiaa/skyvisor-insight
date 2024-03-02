@@ -1,0 +1,52 @@
+package airline
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"fmt"
+)
+
+templ AirlineDetails(a models.Airline) {
+    <div class="stats stats-vertical shadow">
+      <div class="stat">
+        <div class="stat-title">Airline</div>
+        <div class="stat-value text-sm">{ a.AirlineName }</div>
+        <div class="stat-desc">Date founded: { fmt.Sprintf("%d", a.DateFounded) }</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Country</div>
+        <div class="stat-value">{ a.CountryName }</div>
+        <div class="stat-desc">{ a.Continent }</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Fleet Size</div>
+        <div class="stat-value">{ fmt.Sprintf("%d", a.FleetSize) }</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Fleet Average Size</div>
+        <div class="stat-value">Avg Size: { fmt.Sprintf("%f", a.FleetAverageAge) }</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Code</div>
+        <div class="stat-value">{ a.CallSign }</div>
+        <div class="stat-desc">{ a.HubCode }</div>
+      </div>
+    </div>
+}
+
+templ AirlineDetailsPage(sidebar []models.SidebarItem, a models.Airline, title, description string) {
+	<div>
+		@components.BannerComponent(title, description)
+		<div class="container flex pt-10 mx-auto mr:px-6">
+			<div class="w-2/12">
+				@components.SidebarComponent(sidebar)
+			</div>
+			<div class="w-6/12 ml-10">
+				@AirlineDetails(a)
+			</div>
+			<div class="w-6/12 ml-10">
+			    @AirlineDetailedMap(a)
+            </div>
+		</div>
+	</div>
+}

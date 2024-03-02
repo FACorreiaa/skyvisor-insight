@@ -1,7 +1,7 @@
 .direnv
 .data
 node_modules
-controller/static/fonts/*
+app/static/fonts/*
 !controller/static/fonts/ionicons*
 controller/static/css/fonts.css
 .env
@@ -32,7 +32,8 @@ api/data
 
 vendor/
 tmp/
-
+tmp
+# tailwindcss
 # IDE specific files
 .vscode
 
@@ -43,3 +44,4 @@ post_cmd.txt
 main
 .main
 .tmp/main
+logfile

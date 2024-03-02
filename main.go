@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/api"
+	"github.com/FACorreiaa/Aviation-tracker/app"
 	"github.com/FACorreiaa/Aviation-tracker/config"
-	"github.com/FACorreiaa/Aviation-tracker/controller"
 	"github.com/FACorreiaa/Aviation-tracker/db"
 	"github.com/redis/go-redis/v9"
 )
@@ -120,7 +120,7 @@ func main() {
 		WriteTimeout: cfg.Server.WriteTimeout,
 		ReadTimeout:  cfg.Server.ReadTimeout,
 		IdleTimeout:  cfg.Server.IdleTimeout,
-		Handler:      controller.Router(pool, []byte(cfg.Server.SessionKey), redisClient),
+		Handler:      app.Router(pool, []byte(cfg.Server.SessionKey), redisClient),
 	}
 
 	jobRepo := api.NewRepositoryJob(pool)

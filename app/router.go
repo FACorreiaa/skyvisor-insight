@@ -5,7 +5,7 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
-	
+
 	"github.com/FACorreiaa/Aviation-tracker/app/handlers"
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
@@ -139,7 +139,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
-	optAuth.Use(authRepo.)
+	optAuth.Use(authRepo.AuthMiddleware)
 	optAuth.HandleFunc("/", handler(h.Homepage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users

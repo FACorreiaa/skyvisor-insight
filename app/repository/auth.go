@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"net/http"
 	"time"
 
 	"context"
@@ -12,9 +13,9 @@ import (
 	"crypto/rand"
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
-	"github.com/FACorreiaa/Aviation-tracker/app/session"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
+	"github.com/gorilla/sessions"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -35,20 +36,34 @@ type AccountRepository struct {
 	pgpool      *pgxpool.Pool
 	redisClient *redis.Client
 	validator   *validator.Validate
+	sessions    *sessions.CookieStore
 }
 
-func NewAccounts(
-	pgpool *pgxpool.Pool,
+func NewAccountRepository(db *pgxpool.Pool,
 	redisClient *redis.Client,
 	validator *validator.Validate,
-
+	sessions *sessions.CookieStore,
 ) *AccountRepository {
 	return &AccountRepository{
-		pgpool:      pgpool,
+		pgpool:      db,
 		redisClient: redisClient,
 		validator:   validator,
+		sessions:    sessions,
 	}
 }
+
+//func NewAccounts(
+//	pgpool *pgxpool.Pool,
+//	redisClient *redis.Client,
+//	validator *validator.Validate,
+//
+//) *AccountRepository {
+//	return &AccountRepository{
+//		pgpool:      pgpool,
+//		redisClient: redisClient,
+//		validator:   validator,
+//	}
+//}
 
 type User struct {
 	ID           uuid.UUID
@@ -277,4 +292,61 @@ func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.
 
 	slog.Info("Created account", "user_id", user.ID)
 	return &token, nil
+}
+
+// middleware
+
+type ctxKey int
+
+const (
+	CtxKeyAuthUser ctxKey = iota
+)
+
+// AuthMiddleware to set the current logged in user in the context.
+// AuthMiddleware See `Handlers.requireAuth` or `Handlers.redirectIfAuth` middleware.
+func (a *AccountRepository) AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		s, _ := a.sessions.Get(r, "auth")
+
+		token := s.Values["token"]
+		if token != nil {
+			if token, ok := token.(string); ok {
+				user, err := a.UserFromSessionToken(r.Context(), Token(token))
+
+				if err == nil {
+					ctx := context.WithValue(r.Context(), CtxKeyAuthUser, user)
+					r = r.WithContext(ctx)
+				}
+			}
+		} else {
+			ctx := context.WithValue(r.Context(), CtxKeyAuthUser, nil)
+			r = r.WithContext(ctx)
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (a *AccountRepository) RequireAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := r.Context().Value(CtxKeyAuthUser)
+		if user == nil {
+			http.Redirect(w, r, "/login?return_to="+r.URL.Path, http.StatusSeeOther)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (a *AccountRepository) RedirectIfAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := r.Context().Value(CtxKeyAuthUser)
+		if user != nil {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

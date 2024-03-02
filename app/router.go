@@ -2,18 +2,21 @@ package app
 
 import (
 	"embed"
+	"log"
 	"log/slog"
 	"net/http"
-
+	
 	"github.com/FACorreiaa/Aviation-tracker/app/handlers"
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
 	"github.com/FACorreiaa/Aviation-tracker/app/session"
+	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 )
@@ -21,10 +24,13 @@ import (
 //go:embed static
 var staticFS embed.FS
 
-type core struct {
-	accounts *session.AccountRepository
-}
-
+//type core struct {
+//	accounts *session.AccountRepository
+//	//airports  *airport.RepositoryAirport
+//	//airlines  *airline.RepositoryAirline
+//	//locations *location.RepositoryLocation
+//	//flights   *flights.RepositoryFlights
+//}
 //
 //type Handlers struct {
 //	pgpool      *pgxpool.Pool
@@ -35,15 +41,15 @@ type core struct {
 //	core        *core
 //	redisClient *redis.Client
 //}
-//
-//const ASC = "ASC"
-//const DESC = "DESC"
-//
-//func HandleError(err error, message string) {
-//	if err != nil {
-//		log.Printf("%s: %v", message, err)
-//	}
-//}
+
+const ASC = "ASC"
+const DESC = "DESC"
+
+func HandleError(err error, message string) {
+	if err != nil {
+		log.Printf("%s: %v", message, err)
+	}
+}
 
 func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client) http.Handler {
 	validate := validator.New()
@@ -99,11 +105,26 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	airportRepo := repository.NewAirportRepository(pool)
 	locationRepo := repository.NewLocationsRepository(pool)
 	flightsRepo := repository.NewFlightsRepository(pool)
-	authRepo := repository.NewAccounts(pool, redisClient, validate)
+	authRepo := repository.NewAccountRepository(pool, redisClient, validate)
 
 	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, authRepo)
 	h := handlers.NewHandler(service)
 
+	//h := Handlers{
+	//	pgpool:      pool,
+	//	formDecoder: formDecoder,
+	//	validator:   validate,
+	//	translator:  translator,
+	//	sessions:    sessions.NewCookieStore(sessionSecret),
+	//	redisClient: redisClient,
+	//	core: &core{
+	//		accounts: session.NewAccounts(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret)),
+	//		//airports:  airport.NewAirports(pool),
+	//		//airlines:  airline.NewAirlines(pool),
+	//		//locations: location.NewLocations(pool),
+	//		//flights:   flights.NewFlights(pool),
+	//	},
+	//}
 	// r.HandleFunc("/icons/marker.png", func(w http.ResponseWriter, _ *http.Request) {
 	//	file, _ := staticFS.ReadFile("icons/marker.png")
 	//	w.Header().Set("Content-Type", "image/x-icon")
@@ -120,7 +141,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()
-	optAuth.Use(h.authMiddleware)
+	optAuth.Use(h.)
 	optAuth.HandleFunc("/", handler(h.Homepage)).Methods(http.MethodGet)
 
 	// Routes that shouldn't be available to authenticated users

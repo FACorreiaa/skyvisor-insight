@@ -1,8 +1,26 @@
 package locations
 
-import "github.com/FACorreiaa/Aviation-tracker/app/models"
+import (
+    "github.com/FACorreiaa/Aviation-tracker/app/models"
+    "fmt"
+)
 
 script cityMapContainer(data []models.City) {
+    //control selector
+    const rangeInput = document.querySelector('.range');
+    const updatePointsOnMap = () => {
+        const selectedValue = parseInt(rangeInput.value, 10);
+        // Logic to update the number of points on the map based on the selected value
+        const filteredData = data.slice(0, selectedValue);
+        // Clear existing features
+        vectorSource.clear();
+        // Add new features based on the filtered data
+        vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
+    };
+
+    // Add event listener for input change
+    rangeInput.addEventListener('input', updatePointsOnMap);
+
   function createFeatureFromCity(city) {
 
         const iconStyle = new ol.style.Style({
@@ -45,6 +63,7 @@ script cityMapContainer(data []models.City) {
    const map = new ol.Map({
       layers: [tileLayer, vectorLayer],
       target: document.getElementById('map'),
+      controls: [],
       view: new ol.View({
          center: [0, 0],
          zoom: 1,
@@ -132,12 +151,12 @@ script cityMapContainer(data []models.City) {
        if(feature instanceof ol.Feature){
          // Fit the feature geometry or extent based on the given map
          map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent())
+         // map.getView().fit(feature.getGeometry().getExtent(), {size:map.getSize(), maxZoom:5})
        }
       })
 
        map.on('postrender', function () {
-               if (map.getView().getZoom() < 4) {
+               if (map.getView().getZoom() < 3) {
                    vectorLayer.setVisible(false);
                } else {
                    vectorLayer.setVisible(true);
@@ -158,11 +177,30 @@ templ CityMap(data []models.City) {
 			</style>
 		</head>
 		<body onload={ cityMapContainer(data) }>
-				<div id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
-	    <div class="mt-2 text-center">
-	    <button id="zoom-out" class="btn btn-secondary">Zoom out</button>
-        			<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
-        			</div>
+		<div class="mb-5 text-left">
+        	    <button id="zoom-out" class="btn btn-ghost mr-5">Zoom out</button>
+                <button id="zoom-in" class="btn btn-ghost">Zoom in</button>
+        </div>
+				<div id="map" class="map mt-10" tabindex="0">
+				    <button aria-describedby="popup" data-tippy-content="popup" id="popup"></button>
+				</div>
+                		<div class="w-full form-control">
+                			<div class="label">
+                				<span class="label-text font-semi-bold text-xs badge-xs badge pb-0">Display number of markers</span>
+                			</div>
+                			<div class="flex items-center mt-2">
+                			    <span class="text-xs">0</span>
+                				<input
+                					type="range"
+                					min="0"
+                					max={fmt.Sprintf("%d", len(data))}
+                					value={fmt.Sprintf("%d", len(data))}
+                					class="range range-xs p-10 mr-2 ml-2"
+                					name="rangeValue"
+                				/>
+                				<span class="text-xs" id="rangeValue">{fmt.Sprintf("%d", len(data))}</span>
+                			</div>
+                		</div>
 		</body>
 	</html>
 }

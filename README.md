@@ -37,6 +37,10 @@ This project uses [Docker](https://www.docker.com/) to deploy and test the websi
 - [ ] Optimise Docker container
 - [ ] Deployment
 
+# Low Priority
+
+- [ ] Add search input on maps
+
 ## Getting Started
 
 Create `.env` file (see `env.sample`), then run `make local-setup` and `make run`. That's it :)

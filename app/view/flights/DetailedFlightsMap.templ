@@ -2,6 +2,7 @@ package flights
 
 import (
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"fmt"
 )
 
 script detailedMapContainer(data models.LiveFlights) {
@@ -284,6 +285,7 @@ templ FlightsDetailMap(data models.LiveFlights) {
 					<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
 				</div>
 			</div>
+
 			<script src="https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js"></script>
 		</body>
 	</html>

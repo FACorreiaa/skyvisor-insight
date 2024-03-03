@@ -1,55 +1,26 @@
 package airline
 
-import "github.com/FACorreiaa/Aviation-tracker/app/models"
-
-// function createMarker(coordinates, name) {
-//     const iconFeature = new ol.Feature({
-//        geometry: new ol.geom.Point(ol.proj.fromLonLat(coordinates)),
-//        name: name || 'Marker',
-//     });
-
-//     const iconStyle = new ol.style.Style({
-//        image: new ol.style.Icon({
-//           anchor: [0.5, 46],
-//           anchorXUnits: 'fraction',
-//           anchorYUnits: 'pixels',
-//           src: '../static/icons/airport.png',
-//           scale: 0.7,
-//        }),
-//     });
-
-//     iconFeature.setStyle(iconStyle);
-
-//     return iconFeature;
-//  }
-
-//  const markers = [
-//     { coordinates: [38.736946, -9.142685], name: 'Marker 1' },
-//     { coordinates: [10, 10], name: 'Marker 2' },
-//     { coordinates: [41.530918, -8.780565], name: 'Marker 3' },
-
-//  ];
-
-//  const iconFeature = new ol.Feature({
-//     geometry: new ol.geom.Point([0, 0]),
-//     name: 'Null Island',
-//     population: 4000,
-//     rainfall: 500,
-//  });
-
-// const iconStyle = new ol.style.Style({
-//     image: new ol.style.Icon({
-//       anchor: [1, 46],
-//       anchorXUnits: 'fraction',
-//       anchorYUnits: 'pixels',
-//       src: '../static/icons/airport.png',
-//       scale: 0.5
-//     }),
-// });
-
-// iconFeature.setStyle(iconStyle);
+import (
+        "github.com/FACorreiaa/Aviation-tracker/app/models"
+        "fmt"
+        )
 
 script mapContainer(data []models.Airline) {
+    //control selector
+            const rangeInput = document.querySelector('.range');
+            const updatePointsOnMap = () => {
+                const selectedValue = parseInt(rangeInput.value, 10);
+                // Logic to update the number of points on the map based on the selected value
+                const filteredData = data.slice(0, selectedValue);
+                // Clear existing features
+                vectorSource.clear();
+                // Add new features based on the filtered data
+                vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
+            };
+
+        // Add event listener for input change
+        rangeInput.addEventListener('input', updatePointsOnMap);
+
   function createFeatureFromAirline(airline) {
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -233,6 +204,23 @@ templ AirlineMap(data []models.Airline) {
 					<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
 					<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
 				</div>
+				<div class="w-full form-control">
+                                			<div class="label">
+                                				<span class="label-text font-semi-bold text-xs badge-xs badge pb-0">Display number of markers</span>
+                                			</div>
+                                			<div class="flex items-center mt-2">
+                                			    <span class="text-xs">0</span>
+                                				<input
+                                					type="range"
+                                					min="0"
+                                					max={fmt.Sprintf("%d", len(data))}
+                                					value={fmt.Sprintf("%d", len(data))}
+                                					class="range range-xs p-10 mr-2 ml-2"
+                                					name="rangeValue"
+                                				/>
+                                				<span class="text-xs" id="rangeValue">{fmt.Sprintf("%d", len(data))}</span>
+                                			</div>
+                                		</div>
 			</div>
 		</body>
 	</html>

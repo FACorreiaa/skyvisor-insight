@@ -101,7 +101,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if ap.AirlineName == "" {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td>Not available</td>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td>N/A</td>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -160,7 +160,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"italic\">Not available</td>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"italic\">N/A</td>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -184,7 +184,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"italic\">Not available</td>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"italic\">N/A</td>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -316,7 +316,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"italic\">Not available</td>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"italic\">N/A</td>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

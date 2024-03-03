@@ -275,11 +275,11 @@ type LiveFlights struct {
 		Terminal        string      `json:"terminal"`
 		Gate            interface{} `json:"gate"`
 		Delay           *int        `json:"delay"`
-		Scheduled       string      `json:"scheduled"`
-		Estimated       string      `json:"estimated"`
-		Actual          interface{} `json:"actual"`
-		EstimatedRunway interface{} `json:"estimated_runway"`
-		ActualRunway    interface{} `json:"actual_runway"`
+		Scheduled       time.Time   `json:"scheduled"`
+		Estimated       time.Time   `json:"estimated"`
+		Actual          time.Time   `json:"actual"`
+		EstimatedRunway time.Time   `json:"estimated_runway"`
+		ActualRunway    time.Time   `json:"actual_runway"`
 		CityCode        string      `json:"departure_city_code"`
 		CountryCode     string      `json:"departure_country_code"`
 	} `json:"departure,omitempty"`
@@ -292,11 +292,11 @@ type LiveFlights struct {
 		Gate            interface{} `json:"gate"`
 		Baggage         interface{} `json:"baggage"`
 		Delay           *int        `json:"delay"`
-		Scheduled       string      `json:"scheduled"`
-		Estimated       string      `json:"estimated"`
-		Actual          interface{} `json:"actual"`
-		EstimatedRunway interface{} `json:"estimated_runway"`
-		ActualRunway    interface{} `json:"actual_runway"`
+		Scheduled       time.Time   `json:"scheduled"`
+		Estimated       time.Time   `json:"estimated"`
+		Actual          time.Time   `json:"actual"`
+		EstimatedRunway time.Time   `json:"estimated_runway"`
+		ActualRunway    time.Time   `json:"actual_runway"`
 		CityCode        string      `json:"arrival_city_code"`
 		CountryCode     string      `json:"arrival_country_code"`
 	} `json:"arrival,omitempty"`

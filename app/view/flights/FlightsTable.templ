@@ -18,8 +18,6 @@ script returnToPreviousPage(page int) {
 templ FlightsTableComponent(live models.FlightsTable) {
 	<div class="flex flex-col items-left" id="table-container">
 		@components.InputComponent("Search Flights Number", "/flights")
-		<h1>Change this page query to include airline name</h1>
-		<h1>Change the job to not import repeated items</h1>
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">
@@ -52,12 +50,25 @@ templ FlightsTableComponent(live models.FlightsTable) {
 									href={ templ.SafeURL(fmt.Sprintf("/flights/details/%s", lf.Flight.Number)) }
 								>{ lf.Flight.Number }</a>
 							</td>
+							if lf.Airline.Name == "" {
+							    <td>N/A</td>
+							} else {
+								<td>{ lf.Airline.Name }</td>
+							}
 							<td>{ fmt.Sprintf("%s", lf.FlightStatus) }</td>
 							<td>{ lf.FlightDate }</td>
 							<td>{ lf.Departure.Airport }</td>
-							<td>{ lf.Departure.Estimated }</td>
+							if lf.Departure.Estimated.IsZero() {
+                                <td>N/A</td>
+							} else {
+							    <td>{ lf.Departure.Estimated.Format("2006-01-02 15:04:05") }</td>
+							}
 							<td>{ lf.Arrival.Airport }</td>
-							<td>{ lf.Arrival.Estimated }</td>
+                            if lf.Arrival.Estimated.IsZero() {
+                                <td>N/A</td>
+							} else {
+							    <td>{ lf.Arrival.Estimated.Format("2006-01-02 15:04:05") }</td>
+							}
 							<td>{ fmt.Sprintf("%d", lf.Arrival.Delay) }</td>
 							<td>{ fmt.Sprintf("%d", lf.Departure.Delay) }</td>
 							<td>{ lf.Departure.Terminal }</td>

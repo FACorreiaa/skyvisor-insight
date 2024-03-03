@@ -11,19 +11,31 @@ import "io"
 import "bytes"
 
 import (
+	"fmt"
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 )
 
 func previewMapContainer(data []models.LiveFlights) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_previewMapContainer_92e0`,
-		Function: `function __templ_previewMapContainer_92e0(data){console.log('data', data)
+		Name: `__templ_previewMapContainer_17a1`,
+		Function: `function __templ_previewMapContainer_17a1(data){//control selector
+            const rangeInput = document.querySelector('.range');
+            const updatePointsOnMap = () => {
+                const selectedValue = parseInt(rangeInput.value, 10);
+                // Logic to update the number of points on the map based on the selected value
+                const filteredData = data.slice(0, selectedValue);
+                // Clear existing features
+                vectorSource.clear();
+                // Add new features based on the filtered data
+                vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
+            };
+
+        // Add event listener for input change
+        rangeInput.addEventListener('input', updatePointsOnMap);
+
     const tileLayer = new ol.layer.Tile({
-    // source: new ol.source.StadiaMaps({
-    //     layer: 'stamen_watercolor',
-    // }),
-    source: new ol.source.OSM(),
-});
+        source: new ol.source.OSM(),
+    });
 
 
 const map = new ol.Map({
@@ -272,8 +284,8 @@ function addLater(features, timeout) {
       })
 
 }`,
-		Call:       templ.SafeScript(`__templ_previewMapContainer_92e0`, data),
-		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_92e0`, data),
+		Call:       templ.SafeScript(`__templ_previewMapContainer_17a1`, data),
+		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_17a1`, data),
 	}
 }
 
@@ -307,7 +319,36 @@ func FlightsPreviewMap(data []models.LiveFlights) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div><div id=\"map\" class=\"map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div class=\"pt-4\"><button id=\"zoom-out\" class=\"btn btn-secondary \">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></div></div><script src=\"https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js\"></script></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div><div id=\"map\" class=\"map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div class=\"pt-4\"><button id=\"zoom-out\" class=\"btn btn-secondary \">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></div></div><div class=\"w-full form-control\"><div class=\"label\"><span class=\"label-text font-semi-bold text-xs badge-xs badge pb-0\">Display number of markers</span></div><div class=\"flex items-center mt-2\"><span class=\"text-xs\">0</span> <input type=\"range\" min=\"0\" max=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("%d", len(data))))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("%d", len(data))))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"range range-xs p-10 mr-2 ml-2\" name=\"rangeValue\"> <span class=\"text-xs\" id=\"rangeValue\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(data)))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/flights/FlightsPreviewMap.templ`, Line: 312, Col: 99}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div></div><script src=\"https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

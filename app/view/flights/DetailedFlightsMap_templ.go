@@ -11,7 +11,6 @@ import "io"
 import "bytes"
 
 import (
-	"fmt"
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 )
 

@@ -1,0 +1,28 @@
+package components
+
+templ RangeComponent(label string, route string, max string) {
+	<form
+		hx-boost="true"
+		method="get"
+		hx-get={ route }
+		hx-trigger="input changed delay:50ms, search"
+	>
+		<label class="w-full max-w-xs form-control">
+			<div class="label">
+				<span class="label-text font-semi-bold text-xs pb-0">{ label }</span>
+			</div>
+			<div class="flex items-center mt-2">
+				<input
+					type="range"
+					min="0"
+					max={max}
+					value="40"
+					class="range range-xs p-10 mr-2"
+					name="rangeValue"
+					hx-indicator=".htmx-indicator"
+				/>
+				<span class="text-xs" id="rangeValue">40</span>
+			</div>
+		</label>
+	</form>
+}

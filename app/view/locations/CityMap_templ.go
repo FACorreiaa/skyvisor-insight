@@ -10,12 +10,16 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/FACorreiaa/Aviation-tracker/app/models"
+import (
+	"fmt"
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+)
 
 func cityMapContainer(data []models.City) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_cityMapContainer_790d`,
-		Function: `function __templ_cityMapContainer_790d(data){function createFeatureFromCity(city) {
+		Name: `__templ_cityMapContainer_f0a3`,
+		Function: `function __templ_cityMapContainer_f0a3(data){function createFeatureFromCity(city) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -144,7 +148,7 @@ func cityMapContainer(data []models.City) templ.ComponentScript {
        if(feature instanceof ol.Feature){
          // Fit the feature geometry or extent based on the given map
          map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent())
+         // map.getView().fit(feature.getGeometry().getExtent(), {size:map.getSize(), maxZoom:5})
        }
       })
 
@@ -156,8 +160,8 @@ func cityMapContainer(data []models.City) templ.ComponentScript {
                }
            });
 }`,
-		Call:       templ.SafeScript(`__templ_cityMapContainer_790d`, data),
-		CallInline: templ.SafeScriptInline(`__templ_cityMapContainer_790d`, data),
+		Call:       templ.SafeScript(`__templ_cityMapContainer_f0a3`, data),
+		CallInline: templ.SafeScriptInline(`__templ_cityMapContainer_f0a3`, data),
 	}
 }
 
@@ -191,7 +195,15 @@ func CityMap(data []models.City) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"map\" class=\"map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div class=\"mt-2 text-center\"><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></div></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div class=\"mb-5 text-left\"><button id=\"zoom-out\" class=\"btn btn-ghost mr-5\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-ghost\">Zoom in</button></div><div id=\"map\" class=\"map mt-10\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div><span class=\"badge badge-xs\">Display number of markers on map</span> <input type=\"range\" min=\"0\" max=\"100\" value=\"40\" class=\"range range-xs p-10 mt-5\"></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.RangeComponent("Display number of markers on map", "/city/map", fmt.Sprintf("%d", len(data))).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

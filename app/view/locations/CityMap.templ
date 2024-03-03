@@ -1,6 +1,10 @@
 package locations
 
-import "github.com/FACorreiaa/Aviation-tracker/app/models"
+import (
+    "github.com/FACorreiaa/Aviation-tracker/app/models"
+    "github.com/FACorreiaa/Aviation-tracker/app/view/components"
+	"fmt"
+)
 
 script cityMapContainer(data []models.City) {
   function createFeatureFromCity(city) {
@@ -132,7 +136,7 @@ script cityMapContainer(data []models.City) {
        if(feature instanceof ol.Feature){
          // Fit the feature geometry or extent based on the given map
          map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent())
+         // map.getView().fit(feature.getGeometry().getExtent(), {size:map.getSize(), maxZoom:5})
        }
       })
 
@@ -158,11 +162,19 @@ templ CityMap(data []models.City) {
 			</style>
 		</head>
 		<body onload={ cityMapContainer(data) }>
-				<div id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
-	    <div class="mt-2 text-center">
-	    <button id="zoom-out" class="btn btn-secondary">Zoom out</button>
-        			<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
-        			</div>
+		<div class="mb-5 text-left">
+        	    <button id="zoom-out" class="btn btn-ghost mr-5">Zoom out</button>
+                <button id="zoom-in" class="btn btn-ghost">Zoom in</button>
+        </div>
+				<div id="map" class="map mt-10" tabindex="0">
+				    <button aria-describedby="popup" data-tippy-content="popup" id="popup"></button>
+				</div>
+				<div>
+                    <span class="badge badge-xs">Display number of markers on map</span>
+                    <input type="range" min="0" max="100" value="40" class="range range-xs p-10 mt-5" />
+                </div>
+                @components.RangeComponent("Display number of markers on map", "/city/map", fmt.Sprintf("%d", len(data)))
+
 		</body>
 	</html>
 }

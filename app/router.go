@@ -2,7 +2,6 @@ package app
 
 import (
 	"embed"
-	"log"
 	"log/slog"
 	"net/http"
 
@@ -22,13 +21,35 @@ import (
 //go:embed static
 var staticFS embed.FS
 
-const ASC = "ASC"
-const DESC = "DESC"
+// func setEtag(name string, data []byte) string {
+//	crc := crc32.ChecksumIEEE(data)
+//	return fmt.Sprintf(`W/"%s-%d-%08X"`, name, len(data), crc)
+//}
 
-func HandleError(err error, message string) {
-	if err != nil {
-		log.Printf("%s: %v", message, err)
+func setupBusinessComponents(pool *pgxpool.Pool, redisClient *redis.Client, validate *validator.Validate,
+	sessionSecret []byte) (*handlers.Handler, *repository.MiddlewareRepository) {
+	// Business components
+	airlineRepo := repository.NewAirlineRepository(pool)
+	airportRepo := repository.NewAirportRepository(pool)
+	locationRepo := repository.NewLocationsRepository(pool)
+	flightsRepo := repository.NewFlightsRepository(pool)
+	authRepo := repository.NewAccountRepository(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret))
+
+	// Middleware
+	middleware := &repository.MiddlewareRepository{
+		Pgpool:      pool,
+		RedisClient: redisClient,
+		Validator:   validate,
+		Sessions:    sessions.NewCookieStore(sessionSecret),
 	}
+
+	// Service
+	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, authRepo)
+
+	// Handler
+	handler := handlers.NewHandler(service, sessions.NewCookieStore(sessionSecret), pool, redisClient)
+
+	return handler, middleware
 }
 
 func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client) http.Handler {
@@ -44,10 +65,11 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	r.PathPrefix("/static/").Handler(http.FileServer(http.FS(staticFS)))
 	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, _ *http.Request) {
 		file, _ := staticFS.ReadFile("static/favicon.ico")
-		w.Header().Set("Content-Type", "image/x-icon")
-		w.Header().Set("Content-Type", "image/png")
-		w.Header().Set("Content-Type", "image/jpeg")
-		w.Header().Set("Content-Type", "image/svg+xml")
+		// etag := setEtag("v1", file)
+
+		w.Header().Set("Cache-Control", "max-age=3600")
+		// w.Header().Set("Content-Type", http.DetectContentType(file))
+		// w.Header().Set("Etag", etag)
 
 		_, err := w.Write(file)
 		if err != nil {
@@ -55,22 +77,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 		}
 	})
 
-	// business
-	airlineRepo := repository.NewAirlineRepository(pool)
-	airportRepo := repository.NewAirportRepository(pool)
-	locationRepo := repository.NewLocationsRepository(pool)
-	flightsRepo := repository.NewFlightsRepository(pool)
-	authRepo := repository.NewAccountRepository(pool, redisClient, validate, sessions.NewCookieStore(sessionSecret))
-
-	middleware := &repository.MiddlewareRepository{
-		Pgpool:      pool,
-		RedisClient: redisClient,
-		Validator:   validate,
-		Sessions:    sessions.NewCookieStore(sessionSecret),
-	}
-
-	service := services.NewService(airlineRepo, airportRepo, locationRepo, flightsRepo, authRepo)
-	h := handlers.NewHandler(service, sessions.NewCookieStore(sessionSecret), pool, redisClient)
+	h, middleware := setupBusinessComponents(pool, redisClient, validate, sessionSecret)
 
 	// Public routes, authentication is optional
 	optAuth := r.NewRoute().Subrouter()

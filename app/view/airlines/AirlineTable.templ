@@ -43,12 +43,12 @@ templ AirlineTable(a models.AirlineTable) {
                                 </a>
                                 </td>
 							if airline.DateFounded == 0 {
-								<td class="italic">Not available</td>
+								<td class="italic">N/A</td>
 							} else {
 								<td>{ fmt.Sprintf("%d",airline.DateFounded) }</td>
 							}
 							if airline.DateFounded == 0 {
-								<td class="italic">Not available</td>
+								<td class="italic">N/A</td>
 							} else {
 								<td>{ fmt.Sprintf("%.1f",airline.FleetAverageAge) }</td>
 							}

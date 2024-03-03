@@ -105,6 +105,7 @@ func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 
 	columnNames := []models.ColumnItems{
 		{Title: "Flight Number", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
+		{Title: "Airline", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Flight Status", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Flight Date", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Airport Departure", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},

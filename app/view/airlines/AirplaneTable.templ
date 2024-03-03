@@ -37,7 +37,7 @@ templ AirplaneTable(a models.AirplaneTable) {
 						<tr class="hover">
 							<td>{ ap.ModelName }</td>
 							if ap.AirlineName == "" {
-							    <td>Not available</td>
+							    <td>N/A</td>
 							} else {
 							    <td>{ ap.AirlineName }</td>
 							}
@@ -45,12 +45,12 @@ templ AirplaneTable(a models.AirplaneTable) {
 							if ap.PlaneOwner != nil {
 								<td>{ fmt.Sprintf("%v", ap.PlaneOwner) }</td>
 							} else {
-								<td class="italic">Not available</td>
+								<td class="italic">N/A</td>
 							}
 							if ap.PlaneClass != nil {
 								<td>{ fmt.Sprintf("%v", ap.PlaneClass) }</td>
 							} else {
-								<td class="italic">Not available</td>
+								<td class="italic">N/A</td>
 							}
 							<td>{ fmt.Sprintf("%d",ap.PlaneAge) }</td>
 							<td>{ ap.PlaneStatus }</td>
@@ -63,7 +63,7 @@ templ AirplaneTable(a models.AirplaneTable) {
 							if ap.TestRegistrationNumber != nil {
 								<td>{ fmt.Sprintf("%v", ap.TestRegistrationNumber) }</td>
 							} else {
-								<td class="italic">Not available</td>
+								<td class="italic">N/A</td>
 							}
 							<td>{ ap.RegistrationDate.GetTime().Format("2006-01-01") }</td>
 							<td>{ ap.RegistrationNumber }</td>

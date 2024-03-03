@@ -1,11 +1,9 @@
 package structs
 
 import (
-	"encoding/json"
-	"log"
+	"time"
 
 	"github.com/google/uuid"
-	"github.com/valyala/fastjson"
 )
 
 type FlightStatus string
@@ -20,7 +18,7 @@ const (
 )
 
 type LiveFlights struct {
-	ID           uuid.UUID    `db:"id"`
+	ID           uuid.UUID    `json:"id" db:"id"`
 	FlightDate   string       `json:"flight_date,omitempty"`
 	FlightStatus FlightStatus `json:"flight_status,omitempty"`
 	Departure    struct {
@@ -31,11 +29,11 @@ type LiveFlights struct {
 		Terminal        string      `json:"terminal"`
 		Gate            interface{} `json:"gate"`
 		Delay           *int        `json:"delay"`
-		Scheduled       string      `json:"scheduled"`
-		Estimated       string      `json:"estimated"`
-		Actual          interface{} `json:"actual"`
-		EstimatedRunway interface{} `json:"estimated_runway"`
-		ActualRunway    interface{} `json:"actual_runway"`
+		Scheduled       time.Time   `json:"scheduled"`
+		Estimated       time.Time   `json:"estimated"`
+		Actual          time.Time   `json:"actual"`
+		EstimatedRunway time.Time   `json:"estimated_runway"`
+		ActualRunway    time.Time   `json:"actual_runway"`
 	} `json:"departure,omitempty"`
 	Arrival struct {
 		Airport         string      `json:"airport"`
@@ -46,11 +44,11 @@ type LiveFlights struct {
 		Gate            interface{} `json:"gate"`
 		Baggage         interface{} `json:"baggage"`
 		Delay           *int        `json:"delay"`
-		Scheduled       string      `json:"scheduled"`
-		Estimated       string      `json:"estimated"`
-		Actual          interface{} `json:"actual"`
-		EstimatedRunway interface{} `json:"estimated_runway"`
-		ActualRunway    interface{} `json:"actual_runway"`
+		Scheduled       time.Time   `json:"scheduled"`
+		Estimated       time.Time   `json:"estimated"`
+		Actual          time.Time   `json:"actual"`
+		EstimatedRunway time.Time   `json:"estimated_runway"`
+		ActualRunway    time.Time   `json:"actual_runway"`
 	} `json:"arrival,omitempty"`
 	Airline struct {
 		Name string `json:"name"`
@@ -92,35 +90,4 @@ type LiveFlights struct {
 type FlightAPIData struct {
 	Pagination Pagination    `json:"pagination"`
 	Data       []LiveFlights `json:"data"`
-}
-
-func ValidateLiveFlights(flights *FlightAPIData) error {
-	for i := range flights.Data {
-		// Convert Aircraft struct to JSON string
-		aircraftJSON, err := json.Marshal(flights.Data[i].Aircraft)
-		if err != nil {
-			log.Println("Error marshaling Aircraft to JSON:", err)
-			return err
-		}
-
-		// Parse the JSON string with fastjson
-		v, err := fastjson.Parse(string(aircraftJSON))
-		if err != nil {
-			log.Println("Error parsing JSON:", err)
-			return err
-		}
-
-		// Use fastjson to modify the JSON object
-		v.Get("aircraft").Set("null",
-			fastjson.MustParse(`{"aircraft_registration":"N/A",
-				"aircraft_iata": "N/A", "aircraft_icao": "N/A", "aircraft_icao24":"N/A"
-			}`))
-
-		// Optional: Print the modified JSON
-		modifiedJSON := v.MarshalTo(nil)
-
-		log.Printf("Modified JSON: %s\n", modifiedJSON)
-	}
-
-	return nil
 }

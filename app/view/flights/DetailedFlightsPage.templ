@@ -23,7 +23,7 @@ templ FlightHeader(lf models.LiveFlights) {
 					<div class="justify-center w-full text-center">
 						<h1 class="font-bold">Flight { lf.Flight.Number }</h1>
 						if (lf.Flight.Codeshared.AirlineName == "") {
-							<span>Airline not available</span>
+							<span>{lf.Airline.Name}</span>
 						} else {
 							{ lf.Flight.Codeshared.AirlineName }
 						}
@@ -91,26 +91,26 @@ templ FlightDetailedDeparture(title string, lf models.LiveFlights) {
 				<div class="flex items-center justify-end p-2 bg-gray-200 ">
 					<div class="flex-col">
 						<p class="text-xs font-semibold text-slate-400">Scheduled: </p>
-						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.Scheduled }</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.Scheduled.Format("2006-01-02 15:04:05") }</p>
 					</div>
 				</div>
 				<div class="flex items-center justify-start p-2 bg-gray-200 ">
 					<div class="flex-col">
 						<p class="text-xs font-semibold text-slate-400">Estimated: </p>
-						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.Estimated }</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.Estimated.Format("2006-01-02 15:04:05") }</p>
 					</div>
 				</div>
 				<div class="flex items-center justify-end p-2 bg-gray-200 ">
 					<div class="flex-col">
 						<p class="text-xs font-semibold text-slate-400">Actual: </p>
-						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.Actual.(string) }</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.Actual.Format("2006-01-02 15:04:05") }</p>
 					</div>
 				</div>
 				<div class="flex items-center justify-start p-2 bg-gray-200 ">
 					<div class="flex-col">
 						<p class="text-xs font-semibold text-slate-400">Runaway: </p>
 						<p>Query RunAway</p>
-						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.ActualRunway.(string) }</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Departure.ActualRunway.Format("2006-01-02 15:04:05") }</p>
 					</div>
 				</div>
 			</div>
@@ -176,26 +176,26 @@ templ FlightDetailedArrival(title string, lf models.LiveFlights) {
 				<div class="flex items-center justify-end p-2 bg-gray-200 ">
 					<div class="flex-col">
 						<p class="text-xs font-semibold text-slate-400">Scheduled: </p>
-						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.Scheduled }</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.Scheduled.Format("2006-01-02 15:04:05") }</p>
 					</div>
 				</div>
 				<div class="flex items-center justify-start p-2 bg-gray-200 ">
 					<div class="flex-col">
 						<p class="text-xs font-semibold text-slate-400">Estimated: </p>
-						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.Estimated }</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.Estimated.Format("2006-01-02 15:04:05") }</p>
 					</div>
 				</div>
 				<div class="flex items-center justify-end p-2 bg-gray-200 ">
 					<div class="flex-col">
 						<p class="text-xs font-semibold text-slate-400">Actual: </p>
-						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.Actual.(string) }</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.Actual.Format("2006-01-02 15:04:05") }</p>
 					</div>
 				</div>
 				<div class="flex items-center justify-start p-2 bg-gray-200 ">
 					<div class="flex-col">
 						<p class="text-xs font-semibold text-slate-400">Runaway: </p>
 						<p>Query RunAway</p>
-						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.ActualRunway.(string) }</p>
+						<p class="text-xs font-semibold text-slate-200">{ lf.Arrival.ActualRunway.Format("2006-01-02 15:04:05") }</p>
 					</div>
 				</div>
 			</div>

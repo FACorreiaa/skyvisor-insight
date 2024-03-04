@@ -49,10 +49,10 @@ func (h *Service) GetAllAircraft() (int, error) {
 	return lastPage, nil
 }
 
-func (h *Service) GetAircraft(ctx context.Context, page, pageSize int, name string,
-	orderBy string, sortBy string) ([]models.Aircraft, error) {
+func (h *Service) GetAircraft(ctx context.Context, page, pageSize int, aircraftName,
+	orderBy, sortBy, typeEngine, model, owner string) ([]models.Aircraft, error) {
 
-	return h.airlineRepo.GetAircraft(ctx, page, pageSize, name, orderBy, sortBy)
+	return h.airlineRepo.GetAircraft(ctx, page, pageSize, aircraftName, orderBy, sortBy, typeEngine, model, owner)
 }
 
 // Airplane

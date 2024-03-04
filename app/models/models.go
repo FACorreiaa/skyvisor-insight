@@ -394,15 +394,18 @@ type TaxTable struct {
 }
 
 type AircraftTable struct {
-	Column      []ColumnItems
-	Aircraft    []Aircraft
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column             []ColumnItems
+	Aircraft           []Aircraft
+	PrevPage           int
+	NextPage           int
+	Page               int
+	LastPage           int
+	FilterAircraft     string
+	FilterTypeOfEngine string
+	FilterModelCode    string
+	FilterPlaneOwner   string
+	OrderParam         string
+	SortParam          string
 }
 
 // ColumnItems Need to change this to improve all the sorting on the tables.

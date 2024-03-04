@@ -174,7 +174,10 @@ func (h *Handler) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Requ
 	var sortAux string
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
-	param := r.FormValue("search")
+	aircraftName := r.FormValue("aircraft_name")
+	typeEngine := r.FormValue("type_engine")
+	modelCode := r.FormValue("model_code")
+	planeOwner := r.FormValue("plane_owner")
 
 	if sortBy == ASC {
 		sortAux = DESC
@@ -211,15 +214,18 @@ func (h *Handler) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Requ
 		return nil, err
 	}
 	data := models.AircraftTable{
-		Column:      columnNames,
-		Aircraft:    a,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:             columnNames,
+		Aircraft:           a,
+		PrevPage:           prevPage,
+		NextPage:           nextPage,
+		Page:               page,
+		LastPage:           lastPage,
+		FilterAircraft:     aircraftName,
+		FilterTypeOfEngine: typeEngine,
+		FilterModelCode:    modelCode,
+		FilterPlaneOwner:   planeOwner,
+		OrderParam:         orderBy,
+		SortParam:          sortAux,
 	}
 	taxTable := airline.AirlineAircraftTable(data)
 
@@ -230,14 +236,19 @@ func (h *Handler) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []mo
 	pageSize := 25
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
-	param := r.FormValue("search")
+	aircraftName := r.FormValue("aircraft_name")
+	typeEngine := r.FormValue("type_engine")
+	modelCode := r.FormValue("model_code")
+	planeOwner := r.FormValue("plane_owner")
+
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	a, err := h.service.GetAircraft(context.Background(), page, pageSize, param, orderBy, sortBy)
+	a, err := h.service.GetAircraft(context.Background(), page, pageSize, aircraftName, orderBy, sortBy,
+		typeEngine, modelCode, planeOwner)
 	if err != nil {
 		HandleError(err, "Error fetching aircrafts")
 		return 0, nil, err

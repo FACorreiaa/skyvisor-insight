@@ -75,9 +75,9 @@ func (h *Service) GetAirplanes(ctx context.Context, page, pageSize int,
 // tax
 
 func (h *Service) GetTax(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, name string) ([]models.Tax, error) {
+	orderBy, sortBy, taxName, countryName, airlineName string) ([]models.Tax, error) {
 
-	return h.airlineRepo.GetTax(ctx, page, pageSize, orderBy, sortBy, name)
+	return h.airlineRepo.GetTax(ctx, page, pageSize, orderBy, sortBy, taxName, countryName, airlineName)
 }
 func (h *Service) GetSum() (int, error) {
 	total, err := h.airlineRepo.GetTaxSum(context.Background())

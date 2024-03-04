@@ -448,7 +448,7 @@ func (r *AirlineRepository) getTaxData(ctx context.Context, query string,
 }
 
 func (r *AirlineRepository) GetTax(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, name string) ([]models.Tax, error) {
+	orderBy, sortBy, taxName, countryName, airlineName string) ([]models.Tax, error) {
 	query := `SELECT
     										t.id, t.tax_name, a.airline_name, a.country_name
 											FROM tax t
@@ -456,8 +456,12 @@ func (r *AirlineRepository) GetTax(ctx context.Context, page, pageSize int,
 											         JOIN country c ON a.country_name = c.country_name
 											WHERE t.tax_name IS NOT NULL
 											AND t.tax_name != ''
-											AND    Trim(Upper(tax_name))
+											AND    Trim(Upper(t.tax_name))
 											           ILIKE trim(upper('%' || $1 || '%'))
+											AND    Trim(Upper(a.country_name))
+											           ILIKE trim(upper('%' || $6 || '%'))
+											AND    Trim(Upper(a.airline_name))
+											           ILIKE trim(upper('%' || $7 || '%'))
 											ORDER BY
 			    CASE WHEN $2 = 'Tax Name' AND $3 = 'ASC' THEN t.tax_name::text END ASC,
 			    CASE WHEN $2 = 'Tax Name' AND $3 = 'DESC' THEN t.tax_name::text END DESC,
@@ -468,7 +472,7 @@ func (r *AirlineRepository) GetTax(ctx context.Context, page, pageSize int,
        										OFFSET $4 LIMIT $5`
 
 	offset := (page - 1) * pageSize
-	return r.getTaxData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+	return r.getTaxData(ctx, query, taxName, orderBy, sortBy, offset, pageSize, countryName, airlineName)
 }
 
 func (r *AirlineRepository) GetTaxSum(ctx context.Context) (int, error) {

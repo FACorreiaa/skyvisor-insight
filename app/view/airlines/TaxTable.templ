@@ -10,7 +10,17 @@ import (
 
 templ AirlineTaxTable(tax models.TaxTable) {
 	<div class="flex flex-col items-left">
-		@components.InputComponent("Search Tax Name", "/airlines/tax", "search")
+		@components.InputGroupContainer() {
+                   <div class="mr-2">
+                      @components.InputComponent("Filter by Tax", "/airlines/tax", "tax_name")
+                   </div>
+                   <div class="mr-2">
+                  	      @components.InputComponent("Filter by Airline", "/airlines/tax", "airline_name")
+                   </div>
+                   <div class="mr-2">
+                          @components.InputComponent("Filter by Country", "/airlines/tax", "country_name")
+                   </div>
+        	    }
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">
@@ -18,7 +28,8 @@ templ AirlineTaxTable(tax models.TaxTable) {
 				<thead>
 					<tr>
 						for _, col := range tax.Column {
-							<th class="font-extrabold text-sm">								<div class="flex justify-start align-middle" hx-boost>
+							<th class="font-extrabold text-sm">
+							    <div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
 										<a

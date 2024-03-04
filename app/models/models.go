@@ -380,15 +380,17 @@ type AirportTable struct {
 }
 
 type TaxTable struct {
-	Column      []ColumnItems
-	Tax         []Tax
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column        []ColumnItems
+	Tax           []Tax
+	PrevPage      int
+	NextPage      int
+	Page          int
+	LastPage      int
+	FilterTax     string
+	FilterAirline string
+	FilterCountry string
+	OrderParam    string
+	SortParam     string
 }
 
 type AircraftTable struct {

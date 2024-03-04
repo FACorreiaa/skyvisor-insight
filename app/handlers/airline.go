@@ -353,14 +353,16 @@ func (h *Handler) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, []
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-	param := r.FormValue("search")
+	taxName := r.FormValue("tax_name")
+	countryName := r.FormValue("country_name")
+	airlineName := r.FormValue("airline_name")
 
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	t, err := h.service.GetTax(context.Background(), page, pageSize, orderBy, sortBy, param)
+	t, err := h.service.GetTax(context.Background(), page, pageSize, orderBy, sortBy, taxName, countryName, airlineName)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -372,7 +374,9 @@ func (h *Handler) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request) 
 	var page int
 	var sortAux string
 
-	param := r.FormValue("search")
+	taxName := r.FormValue("tax_name")
+	airlineName := r.FormValue("airline_name")
+	countryName := r.FormValue("country_name")
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
@@ -402,15 +406,17 @@ func (h *Handler) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request) 
 		return nil, err
 	}
 	taxData := models.TaxTable{
-		Column:      columnNames,
-		Tax:         tax,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:        columnNames,
+		Tax:           tax,
+		PrevPage:      prevPage,
+		NextPage:      nextPage,
+		Page:          page,
+		LastPage:      lastPage,
+		FilterTax:     taxName,
+		FilterAirline: airlineName,
+		FilterCountry: countryName,
+		OrderParam:    orderBy,
+		SortParam:     sortAux,
 	}
 	taxTable := airline.AirlineTaxTable(taxData)
 

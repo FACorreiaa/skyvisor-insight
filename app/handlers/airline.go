@@ -36,6 +36,7 @@ func (h *Handler) getAirline(_ http.ResponseWriter, r *http.Request) (int, []mod
 	callSign := r.FormValue("call_sign")
 	hubCode := r.FormValue("hub_code")
 	countryName := r.FormValue("country_name")
+
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 

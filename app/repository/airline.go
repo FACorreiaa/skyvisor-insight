@@ -45,7 +45,8 @@ func (r *AirlineRepository) getAirlineData(ctx context.Context, query string,
 }
 
 func (r *AirlineRepository) GetAirlines(ctx context.Context, page,
-	pageSize int, orderBy, sortBy, name, callSign, hubCode, countryName string) ([]models.Airline, error) {
+	pageSize int, orderBy, sortBy, name, callSign, hubCode,
+	countryName string) ([]models.Airline, error) {
 	offset := (page - 1) * pageSize
 	query := `select al.id, al.airline_name, al.date_founded, al.fleet_average_age, al.fleet_size,
 						al.callsign, al.hub_code, al.status, al.type, al.country_name
@@ -76,7 +77,8 @@ func (r *AirlineRepository) GetAirlines(ctx context.Context, page,
 						    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN al.country_name::text END DESC
 						OFFSET $4 LIMIT $5`
 
-	return r.getAirlineData(ctx, query, name, orderBy, sortBy, offset, pageSize, callSign, hubCode, countryName)
+	return r.getAirlineData(ctx, query, name, orderBy, sortBy, offset,
+		pageSize, callSign, hubCode, countryName)
 }
 
 func (r *AirlineRepository) GetAirlineSum(ctx context.Context) (int, error) {

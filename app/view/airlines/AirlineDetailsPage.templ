@@ -6,32 +6,88 @@ import (
 	"fmt"
 )
 
+templ CarrousselComponent(a models.Airline) {
+	<div class="carousel w-full">
+		<div id="slide1" class="carousel-item relative w-full justify-center">
+			<div class="stats stats-vertical shadow text-center">
+				<div class="stat">
+					<div class="stat-title">Airline</div>
+					<div class="stat-value text-sm">{ a.AirlineName }</div>
+					<div class="stat-desc">Date founded: { fmt.Sprintf("%d", a.DateFounded) }</div>
+				</div>
+			</div>
+			<div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+				<a href="#slide4" class="btn btn-circle">❮</a>
+				<a href="#slide2" class="btn btn-circle">❯</a>
+			</div>
+		</div>
+		<div id="slide2" class="carousel-item relative w-full justify-center">
+			<div class="stats stats-vertical shadow text-center justify-center">
+				<div class="stat">
+					<div class="stat-title">Country</div>
+					<div class="stat-value">{ a.CountryName }</div>
+					<div class="stat-desc">{ a.Continent }</div>
+				</div>
+			</div>
+			<div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+				<a href="#slide1" class="btn btn-circle">❮</a>
+				<a href="#slide3" class="btn btn-circle">❯</a>
+			</div>
+		</div>
+		<div id="slide3" class="carousel-item relative w-full justify-center">
+			<div class="stats stats-vertical shadow text-center justify-center">
+				<div class="stat">
+					<div class="stat-title">Fleet Size</div>
+					<div class="stat-value">{ fmt.Sprintf("%d", a.FleetSize) }</div>
+				</div>
+			</div>
+			<div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+				<a href="#slide2" class="btn btn-circle">❮</a>
+				<a href="#slide4" class="btn btn-circle">❯</a>
+			</div>
+		</div>
+		<div id="slide4" class="carousel-item relative w-full justify-center">
+			<div class="stats stats-vertical shadow text-center justify-center">
+				<div class="stat">
+					<div class="stat-title">Code</div>
+					<div class="stat-value">{ a.CallSign }</div>
+					<div class="stat-desc">{ a.HubCode }</div>
+				</div>
+			</div>
+			<div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+				<a href="#slide3" class="btn btn-circle">❮</a>
+				<a href="#slide1" class="btn btn-circle">❯</a>
+			</div>
+		</div>
+	</div>
+}
+
 templ AirlineDetails(a models.Airline) {
-    <div class="stats stats-vertical shadow">
-      <div class="stat">
-        <div class="stat-title">Airline</div>
-        <div class="stat-value text-sm">{ a.AirlineName }</div>
-        <div class="stat-desc">Date founded: { fmt.Sprintf("%d", a.DateFounded) }</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Country</div>
-        <div class="stat-value">{ a.CountryName }</div>
-        <div class="stat-desc">{ a.Continent }</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Fleet Size</div>
-        <div class="stat-value">{ fmt.Sprintf("%d", a.FleetSize) }</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Fleet Average Size</div>
-        <div class="stat-value">Avg Size: { fmt.Sprintf("%f", a.FleetAverageAge) }</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Code</div>
-        <div class="stat-value">{ a.CallSign }</div>
-        <div class="stat-desc">{ a.HubCode }</div>
-      </div>
-    </div>
+	<div class="stats stats-vertical shadow">
+		<div class="stat">
+			<div class="stat-title">Airline</div>
+			<div class="stat-value text-sm">{ a.AirlineName }</div>
+			<div class="stat-desc">Date founded: { fmt.Sprintf("%d", a.DateFounded) }</div>
+		</div>
+		<div class="stat">
+			<div class="stat-title">Country</div>
+			<div class="stat-value">{ a.CountryName }</div>
+			<div class="stat-desc">{ a.Continent }</div>
+		</div>
+		<div class="stat">
+			<div class="stat-title">Fleet Size</div>
+			<div class="stat-value">{ fmt.Sprintf("%d", a.FleetSize) }</div>
+		</div>
+		<div class="stat">
+			<div class="stat-title">Fleet Average Size</div>
+			<div class="stat-value">Avg Size: { fmt.Sprintf("%f", a.FleetAverageAge) }</div>
+		</div>
+		<div class="stat">
+			<div class="stat-title">Code</div>
+			<div class="stat-value">{ a.CallSign }</div>
+			<div class="stat-desc">{ a.HubCode }</div>
+		</div>
+	</div>
 }
 
 templ AirlineDetailsPage(sidebar []models.SidebarItem, a models.Airline, title, description string) {
@@ -41,12 +97,12 @@ templ AirlineDetailsPage(sidebar []models.SidebarItem, a models.Airline, title, 
 			<div class="w-2/12">
 				@components.SidebarComponent(sidebar)
 			</div>
-			<div class="w-6/12 ml-10">
-				@AirlineDetails(a)
+			<div class="w-10/12 ml-10 w-full">
+				@AirlineDetailedMap(a)
 			</div>
-			<div class="w-6/12 ml-10">
-			    @AirlineDetailedMap(a)
-            </div>
+		</div>
+		<div class="mt-10">
+			@CarrousselComponent(a)
 		</div>
 	</div>
 }

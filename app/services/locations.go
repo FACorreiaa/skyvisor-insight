@@ -70,5 +70,5 @@ func (h *Service) GetCountry(ctx context.Context, page, pageSize int,
 }
 
 func (h *Service) GetCountryByName(ctx context.Context, name string) (models.Country, error) {
-	return h.GetCountryByName(ctx, name)
+	return h.locationRepo.GetCountryByName(ctx, name)
 }

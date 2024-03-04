@@ -81,7 +81,7 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 			{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
 			{Path: "/airlines/airline", Label: "Airlines", Icon: svg2.TicketIcon()},
 			{Path: "/airports", Label: "Airports", Icon: svg2.BuildingOfficeIcon()},
-			{Path: "/flights", Label: "Flights", Icon: svg2.PaperAirplaneIcon()},
+			{Path: "/flights/flight", Label: "Flights", Icon: svg2.PaperAirplaneIcon()},
 			{Path: "/locations/city", Label: "Locations", Icon: svg2.LocationsIcon()},
 			{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 		}

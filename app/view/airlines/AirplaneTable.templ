@@ -9,7 +9,7 @@ import (
 
 templ AirplaneTable(a models.AirplaneTable) {
 	<div class="flex flex-col items-left">
-		@components.InputComponent("Search Airplane Name", "/airlines/airplane")
+		@components.InputComponent("Search Airplane Name", "/airlines/airplane", "search")
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">

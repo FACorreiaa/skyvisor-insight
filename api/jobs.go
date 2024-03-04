@@ -816,7 +816,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 		handleError(err, "Error checking for new aircraft")
 	})
 
-	_, err = c.AddFunc("@weekly", func() {
+	_, err = c.AddFunc("@every 6h", func() {
 		startTime := time.Now()
 		err := s.insertNewFlight()
 		duration := time.Since(startTime)

@@ -28,9 +28,9 @@ func (h *Service) GetAllAirline() (int, error) {
 }
 
 func (h *Service) GetAirlines(ctx context.Context, page,
-	pageSize int, orderBy, sortBy, name string) ([]models.Airline, error) {
+	pageSize int, orderBy, sortBy, name, callSign, hubCode, countryName string) ([]models.Airline, error) {
 
-	return h.airlineRepo.GetAirlines(ctx, page, pageSize, orderBy, sortBy, name)
+	return h.airlineRepo.GetAirlines(ctx, page, pageSize, orderBy, sortBy, name, callSign, hubCode, countryName)
 }
 
 func (h *Service) GetAirlineByName(ctx context.Context, airlineName string) (models.Airline, error) {

@@ -53,7 +53,7 @@ CREATE TABLE flights
     aircraft_registration      varchar(10),
     aircraft_iata              varchar(10),
     aircraft_icao              varchar(10),
-    aircraft_icao25            varchar(10),
+    aircraft_icao24            varchar(10),
     live_updated               varchar(100),
     live_latitude              float,
     live_longitude             float,

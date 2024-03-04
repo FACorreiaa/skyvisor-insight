@@ -780,12 +780,20 @@ select {
   left: 0px;
 }
 
+.left-5 {
+  left: 1.25rem;
+}
+
 .left-\[max\(-7rem\2c calc\(50\%-52rem\)\)\] {
   left: max(-7rem,calc(50% - 52rem));
 }
 
 .left-\[max\(45rem\2c calc\(50\%\+8rem\)\)\] {
   left: max(45rem,calc(50% + 8rem));
+}
+
+.right-5 {
+  right: 1.25rem;
 }
 
 .top-1 {
@@ -1010,6 +1018,10 @@ select {
 
 .w-0\.5 {
   width: 0.125rem;
+}
+
+.w-1 {
+  width: 0.25rem;
 }
 
 .w-10 {
@@ -1354,6 +1366,11 @@ select {
 .px-12 {
   padding-left: 3rem;
   padding-right: 3rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .px-3 {

@@ -15,11 +15,11 @@ script countryMapContainer(data []models.Country) {
             // Clear existing features
             vectorSource.clear();
             // Add new features based on the filtered data
-            vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
+            vectorSource.addFeatures(filteredData.map(country => createFeatureFromCountry(country)));
         };
 
     // Add event listener for input change
-    rangeInput.addEventListener('input', updatePointsOnMap);
+   rangeInput.addEventListener('input', updatePointsOnMap);
 
   function createFeatureFromCountry(country) {
 
@@ -156,6 +156,14 @@ script countryMapContainer(data []models.Country) {
          // map.getView().fit(feature.getGeometry().getExtent())
        }
    })
+
+   map.on('postrender', function () {
+                  if (map.getView().getZoom() < 3) {
+                      vectorLayer.setVisible(false);
+                  } else {
+                      vectorLayer.setVisible(true);
+                  }
+              });
 }
 
 templ CountryMap(data []models.Country) {
@@ -173,8 +181,8 @@ templ CountryMap(data []models.Country) {
 		<body onload={ countryMapContainer(data) }>
 				<div id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
 			<div class="mt-2 text-center">
-			<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
-            			<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
+                <button id="zoom-out" class="btn btn-secondary">Zoom out</button>
+                <button id="zoom-in" class="btn btn-secondary">Zoom in</button>
             </div>
             <div class="w-full form-control">
                             			<div class="label">
@@ -187,7 +195,7 @@ templ CountryMap(data []models.Country) {
                             					min="0"
                             					max={fmt.Sprintf("%d", len(data))}
                             					value={fmt.Sprintf("%d", len(data))}
-                            					class="range range-xs p-10 mr-2 ml-2"
+                            					class="range range-xs p-2 mr-2 ml-2"
                             					name="rangeValue"
                             				/>
                             				<span class="text-xs" id="rangeValue">{fmt.Sprintf("%d", len(data))}</span>

@@ -9,7 +9,20 @@ import (
 
 templ AirplaneTable(a models.AirplaneTable) {
 	<div class="flex flex-col items-left">
-		@components.InputComponent("Search Airplane Name", "/airlines/airplane", "search")
+	    @components.InputGroupContainer() {
+                               <div class="mr-2">
+                                  @components.InputComponent("Filter Airline Name", "/airlines/airplane", "airline_name")
+                               </div>
+                               <div class="mr-2">
+                              	      @components.InputComponent("Filter Model Name", "/airlines/airplane", "model_name")
+                               </div>
+                               <div class="mr-2">
+                                      @components.InputComponent("Filter Production Line", "/airlines/airplane", "production_line")
+                               </div>
+                               <div class="mr-2">
+                                      @components.InputComponent("Filter Registration Number", "/airlines/airplane", "registration_number")
+                               </div>
+                    	    }
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">
@@ -73,10 +86,10 @@ templ AirplaneTable(a models.AirplaneTable) {
 			</table>
 			<!-- paginator -->
 			@components.PaginatorComponent("/airlines/airplane",
-            			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.PrevPage, a.SearchParam),
+            			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.PrevPage, a.FilterAirlineName),
             			strconv.Itoa(a.Page),
-            			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.NextPage, a.SearchParam),
-            			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.LastPage, a.SearchParam))
+            			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.NextPage, a.FilterAirlineName),
+            			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.LastPage, a.FilterAirlineName))
 		</div>
 	</div>
 }

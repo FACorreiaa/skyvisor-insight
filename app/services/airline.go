@@ -68,8 +68,8 @@ func (h *Service) GetAllAirplanes() (int, error) {
 }
 
 func (h *Service) GetAirplanes(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, name string) ([]models.Airplane, error) {
-	return h.airlineRepo.GetAirplanes(ctx, page, pageSize, orderBy, sortBy, name)
+	orderBy, sortBy, airlineName, modelName, productionLine, registrationNumber string) ([]models.Airplane, error) {
+	return h.airlineRepo.GetAirplanes(ctx, page, pageSize, orderBy, sortBy, airlineName, modelName, productionLine, registrationNumber)
 }
 
 // tax

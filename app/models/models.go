@@ -430,15 +430,18 @@ type AirlineTable struct {
 }
 
 type AirplaneTable struct {
-	Column      []ColumnItems
-	Airplane    []Airplane
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column                   []ColumnItems
+	Airplane                 []Airplane
+	PrevPage                 int
+	NextPage                 int
+	Page                     int
+	LastPage                 int
+	FilterAirlineName        string
+	FilterModelName          string
+	FilterProductionLine     string
+	FilterRegistrationNumber string
+	OrderParam               string
+	SortParam                string
 }
 
 type CityTable struct {

@@ -274,13 +274,17 @@ func (h *Handler) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []mo
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
-	param := r.FormValue("search")
+	airlineName := r.FormValue("airline_name")
+	modelName := r.FormValue("model_name")
+	productionLine := r.FormValue("production_line")
+	registrationNumber := r.FormValue("registration_number")
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	a, err := h.service.GetAirplanes(context.Background(), page, pageSize, orderBy, sortBy, param)
+	a, err := h.service.GetAirplanes(context.Background(), page, pageSize, orderBy, sortBy,
+		airlineName, modelName, productionLine, registrationNumber)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -291,7 +295,11 @@ func (h *Handler) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []mo
 func (h *Handler) renderAirlineAirplaneTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
 	var sortAux string
 
-	param := r.FormValue("search")
+	airlineName := r.FormValue("airlineName")
+	modelName := r.FormValue("model_name")
+	productionLine := r.FormValue("production_line")
+	registrationNumber := r.FormValue("registration_number")
+
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
@@ -332,15 +340,18 @@ func (h *Handler) renderAirlineAirplaneTable(w http.ResponseWriter, r *http.Requ
 		return nil, err
 	}
 	a := models.AirplaneTable{
-		Column:      columnNames,
-		Airplane:    ap,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:                   columnNames,
+		Airplane:                 ap,
+		PrevPage:                 prevPage,
+		NextPage:                 nextPage,
+		Page:                     page,
+		LastPage:                 lastPage,
+		FilterAirlineName:        airlineName,
+		FilterModelName:          modelName,
+		FilterProductionLine:     productionLine,
+		FilterRegistrationNumber: registrationNumber,
+		OrderParam:               orderBy,
+		SortParam:                sortAux,
 	}
 	airlineTable := airline.AirplaneTable(a)
 

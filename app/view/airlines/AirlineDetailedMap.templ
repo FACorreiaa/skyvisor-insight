@@ -41,6 +41,7 @@ script detailedMapContainer(data models.Airline) {
    const map = new ol.Map({
       layers: [tileLayer, vectorLayer],
       target: document.getElementById('map'),
+      controls: [],
       view: new ol.View({
          center: ol.proj.fromLonLat([data.longitude, data.latitude]),
          zoom: 10,

@@ -47,6 +47,7 @@ script detailedMapContainer(data models.Airport) {
    const map = new ol.Map({
       layers: [tileLayer, vectorLayer],
       target: document.getElementById('map'),
+      controls: [],
       view: new ol.View({
          center: ol.proj.fromLonLat([data.longitude, data.latitude]),
          zoom: 10,
@@ -170,11 +171,12 @@ templ AirportDetailedMap(data models.Airport) {
 			</style>
 		</head>
 		<body onload={ detailedMapContainer(data) }>
+		        <div class="mb-5 text-left">
+                	    <button id="zoom-out" class="btn btn-ghost mr-5">Zoom out</button>
+                        <button id="zoom-in" class="btn btn-ghost">Zoom in</button>
+                </div>
 				<div id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
-			<div class="pt-2 text-center">
-			<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
-            			<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
-            			</div>
+
 		</body>
 	</html>
 }

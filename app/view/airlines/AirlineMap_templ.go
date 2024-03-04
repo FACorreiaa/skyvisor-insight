@@ -17,8 +17,8 @@ import (
 
 func mapContainer(data []models.Airline) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_f96c`,
-		Function: `function __templ_mapContainer_f96c(data){//control selector
+		Name: `__templ_mapContainer_3d1f`,
+		Function: `function __templ_mapContainer_3d1f(data){//control selector
             const rangeInput = document.querySelector('.range');
             const updatePointsOnMap = () => {
                 const selectedValue = parseInt(rangeInput.value, 10);
@@ -81,6 +81,7 @@ func mapContainer(data []models.Airline) templ.ComponentScript {
    const map = new ol.Map({
       layers: [tileLayer, vectorLayer],
       target: document.getElementById('map'),
+      controls: [],
       view: new ol.View({
          center: [0, 0],
          zoom: 1,
@@ -192,9 +193,17 @@ func mapContainer(data []models.Airline) templ.ComponentScript {
                    vectorLayer.setVisible(true);
                }
            });
+
+   map.on('postrender', function () {
+                     if (map.getView().getZoom() < 3) {
+                         vectorLayer.setVisible(false);
+                     } else {
+                         vectorLayer.setVisible(true);
+                     }
+                 });
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_f96c`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_f96c`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_3d1f`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_3d1f`, data),
 	}
 }
 
@@ -228,7 +237,7 @@ func AirlineMap(data []models.Airline) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div><div id=\"map\" class=\" map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div class=\"mt-2 text-center\"><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></div><div class=\"w-full form-control\"><div class=\"label\"><span class=\"label-text font-semi-bold text-xs badge-xs badge pb-0\">Display number of markers</span></div><div class=\"flex items-center mt-2\"><span class=\"text-xs\">0</span> <input type=\"range\" min=\"0\" max=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div><div class=\"mb-5 text-left\"><button id=\"zoom-out\" class=\"btn btn-ghost mr-5\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-ghost\">Zoom in</button></div><div id=\"map\" class=\" map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div class=\"w-full form-control\"><div class=\"label\"><span class=\"label-text font-semi-bold text-xs badge-xs badge pb-0\">Display number of markers</span></div><div class=\"flex items-center mt-2\"><span class=\"text-xs\">0</span> <input type=\"range\" min=\"0\" max=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -251,7 +260,7 @@ func AirlineMap(data []models.Airline) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(data)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/airlines/AirlineMap.templ`, Line: 220, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/airlines/AirlineMap.templ`, Line: 230, Col: 103}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

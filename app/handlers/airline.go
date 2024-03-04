@@ -32,7 +32,10 @@ func (h *Handler) renderAirlineSidebar() []models.SidebarItem {
 
 func (h *Handler) getAirline(_ http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
 	pageSize := 30
-	param := r.FormValue("search")
+	name := r.FormValue("airline_name")
+	callSign := r.FormValue("call_sign")
+	hubCode := r.FormValue("hub_code")
+	countryName := r.FormValue("country_name")
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
@@ -42,7 +45,8 @@ func (h *Handler) getAirline(_ http.ResponseWriter, r *http.Request) (int, []mod
 		page = 1
 	}
 
-	al, err := h.service.GetAirlines(context.Background(), page, pageSize, orderBy, sortBy, param)
+	al, err := h.service.GetAirlines(context.Background(), page, pageSize, orderBy, sortBy,
+		name, callSign, hubCode, countryName)
 	if err != nil {
 		HandleError(err, "Error fetching airlines")
 		return 0, nil, err
@@ -70,7 +74,10 @@ func (h *Handler) getAirlineDetails(_ http.ResponseWriter, r *http.Request) (mod
 }
 
 func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	param := r.FormValue("search")
+	name := r.FormValue("airline_name")
+	callSign := r.FormValue("call_sign")
+	hubCode := r.FormValue("hub_Code")
+	countryName := r.FormValue("country_name")
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	var sortAux string
@@ -108,15 +115,18 @@ func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (te
 		return nil, err
 	}
 	a := models.AirlineTable{
-		Column:      columnNames,
-		Airline:     al,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:            columnNames,
+		Airline:           al,
+		PrevPage:          prevPage,
+		NextPage:          nextPage,
+		Page:              page,
+		LastPage:          lastPage,
+		FilterName:        name,
+		FilterCallSign:    callSign,
+		FilterHubCode:     hubCode,
+		FilterCountryName: countryName,
+		OrderParam:        orderBy,
+		SortParam:         sortAux,
 	}
 	airlineTable := airline.AirlineTable(a)
 

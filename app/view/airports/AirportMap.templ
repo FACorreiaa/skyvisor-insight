@@ -62,6 +62,7 @@ script mapContainer(data []models.Airport) {
    const map = new ol.Map({
       layers: [tileLayer, vectorLayer],
       target: document.getElementById('map'),
+      controls: [],
       view: new ol.View({
          center: [0, 0],
          zoom: 1,

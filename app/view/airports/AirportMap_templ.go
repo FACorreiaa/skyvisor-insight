@@ -17,8 +17,8 @@ import (
 
 func mapContainer(data []models.Airport) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_62a2`,
-		Function: `function __templ_mapContainer_62a2(data){//control selector
+		Name: `__templ_mapContainer_4553`,
+		Function: `function __templ_mapContainer_4553(data){//control selector
           const rangeInput = document.querySelector('.range');
           const updatePointsOnMap = () => {
               const selectedValue = parseInt(rangeInput.value, 10);
@@ -76,6 +76,7 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
    const map = new ol.Map({
       layers: [tileLayer, vectorLayer],
       target: document.getElementById('map'),
+      controls: [],
       view: new ol.View({
          center: [0, 0],
          zoom: 1,
@@ -175,8 +176,8 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
                }
            });
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_62a2`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_62a2`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_4553`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_4553`, data),
 	}
 }
 
@@ -233,7 +234,7 @@ func AirportMap(data []models.Airport) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(data)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/airports/AirportMap.templ`, Line: 197, Col: 99}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/airports/AirportMap.templ`, Line: 198, Col: 99}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

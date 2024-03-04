@@ -14,8 +14,8 @@ import "github.com/FACorreiaa/Aviation-tracker/app/models"
 
 func detailedMapContainer(data models.Airline) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_aa63`,
-		Function: `function __templ_detailedMapContainer_aa63(data){function createFeatureFromAirline(airline) {
+		Name: `__templ_detailedMapContainer_3a45`,
+		Function: `function __templ_detailedMapContainer_3a45(data){function createFeatureFromAirline(airline) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -53,6 +53,7 @@ func detailedMapContainer(data models.Airline) templ.ComponentScript {
    const map = new ol.Map({
       layers: [tileLayer, vectorLayer],
       target: document.getElementById('map'),
+      controls: [],
       view: new ol.View({
          center: ol.proj.fromLonLat([data.longitude, data.latitude]),
          zoom: 10,
@@ -149,8 +150,8 @@ func detailedMapContainer(data models.Airline) templ.ComponentScript {
             }
         });
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_aa63`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_aa63`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_3a45`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_3a45`, data),
 	}
 }
 

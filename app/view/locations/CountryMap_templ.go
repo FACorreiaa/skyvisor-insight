@@ -17,8 +17,8 @@ import (
 
 func countryMapContainer(data []models.Country) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_countryMapContainer_2eee`,
-		Function: `function __templ_countryMapContainer_2eee(data){//control selector
+		Name: `__templ_countryMapContainer_e8a9`,
+		Function: `function __templ_countryMapContainer_e8a9(data){//control selector
         const rangeInput = document.querySelector('.range');
         const updatePointsOnMap = () => {
             const selectedValue = parseInt(rangeInput.value, 10);
@@ -27,11 +27,11 @@ func countryMapContainer(data []models.Country) templ.ComponentScript {
             // Clear existing features
             vectorSource.clear();
             // Add new features based on the filtered data
-            vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
+            vectorSource.addFeatures(filteredData.map(country => createFeatureFromCountry(country)));
         };
 
     // Add event listener for input change
-    rangeInput.addEventListener('input', updatePointsOnMap);
+   rangeInput.addEventListener('input', updatePointsOnMap);
 
   function createFeatureFromCountry(country) {
 
@@ -168,9 +168,17 @@ func countryMapContainer(data []models.Country) templ.ComponentScript {
          // map.getView().fit(feature.getGeometry().getExtent())
        }
    })
+
+   map.on('postrender', function () {
+                  if (map.getView().getZoom() < 3) {
+                      vectorLayer.setVisible(false);
+                  } else {
+                      vectorLayer.setVisible(true);
+                  }
+              });
 }`,
-		Call:       templ.SafeScript(`__templ_countryMapContainer_2eee`, data),
-		CallInline: templ.SafeScriptInline(`__templ_countryMapContainer_2eee`, data),
+		Call:       templ.SafeScript(`__templ_countryMapContainer_e8a9`, data),
+		CallInline: templ.SafeScriptInline(`__templ_countryMapContainer_e8a9`, data),
 	}
 }
 
@@ -227,7 +235,7 @@ func CountryMap(data []models.Country) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(data)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/locations/CountryMap.templ`, Line: 192, Col: 99}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/locations/CountryMap.templ`, Line: 200, Col: 99}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

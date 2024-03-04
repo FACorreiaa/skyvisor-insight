@@ -9,7 +9,7 @@ import (
 
 templ CityTable(c models.CityTable) {
 	<div class="flex flex-col items-left" id="table-container">
-		@components.InputComponent("Search City name", "/locations/city")
+		@components.InputComponent("Search City name", "/locations/city", "search")
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">
@@ -17,7 +17,8 @@ templ CityTable(c models.CityTable) {
 				<thead>
 					<tr>
 						for _, col := range c.Column {
-							<th class="font-extrabold text-sm">								<div class="flex justify-start align-middle" hx-boost>
+							<th class="font-extrabold text-sm">
+							    <div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
 										<a

@@ -14,8 +14,8 @@ import "github.com/FACorreiaa/Aviation-tracker/app/models"
 
 func detailedMapContainer(data models.Airport) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_7716`,
-		Function: `function __templ_detailedMapContainer_7716(data){function createFeatureFromAirport(airport) {
+		Name: `__templ_detailedMapContainer_4cf9`,
+		Function: `function __templ_detailedMapContainer_4cf9(data){function createFeatureFromAirport(airport) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -59,6 +59,7 @@ func detailedMapContainer(data models.Airport) templ.ComponentScript {
    const map = new ol.Map({
       layers: [tileLayer, vectorLayer],
       target: document.getElementById('map'),
+      controls: [],
       view: new ol.View({
          center: ol.proj.fromLonLat([data.longitude, data.latitude]),
          zoom: 10,
@@ -151,8 +152,8 @@ func detailedMapContainer(data models.Airport) templ.ComponentScript {
        }
       })
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_7716`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_7716`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_4cf9`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_4cf9`, data),
 	}
 }
 
@@ -186,7 +187,7 @@ func AirportDetailedMap(data models.Airport) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"map\" class=\"map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div><div class=\"pt-2 text-center\"><button id=\"zoom-out\" class=\"btn btn-secondary\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-secondary\">Zoom in</button></div></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div class=\"mb-5 text-left\"><button id=\"zoom-out\" class=\"btn btn-ghost mr-5\">Zoom out</button> <button id=\"zoom-in\" class=\"btn btn-ghost\">Zoom in</button></div><div id=\"map\" class=\"map\" tabindex=\"0\"><button aria-describedby=\"popup\" data-tippy-content=\"popup\" id=\"popup\"></button></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

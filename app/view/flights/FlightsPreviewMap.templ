@@ -2,24 +2,9 @@ package flights
 
 import (
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
-	"fmt"
 )
 
 script previewMapContainer(data []models.LiveFlights) {
-    //control selector
-            const rangeInput = document.querySelector('.range');
-            const updatePointsOnMap = () => {
-                const selectedValue = parseInt(rangeInput.value, 10);
-                // Logic to update the number of points on the map based on the selected value
-                const filteredData = data.slice(0, selectedValue);
-                // Clear existing features
-                vectorSource.clear();
-                // Add new features based on the filtered data
-                vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
-            };
-
-        // Add event listener for input change
-        rangeInput.addEventListener('input', updatePointsOnMap);
 
     const tileLayer = new ol.layer.Tile({
         source: new ol.source.OSM(),
@@ -29,6 +14,7 @@ script previewMapContainer(data []models.LiveFlights) {
 const map = new ol.Map({
     layers: [tileLayer],
     target: 'map',
+    controls: [],
     view: new ol.View({
         center: [-11000000, 4600000],
         zoom: 1,
@@ -270,7 +256,6 @@ function addLater(features, timeout) {
          // map.getView().fit(feature.getGeometry().getExtent())
        }
       })
-
 }
 
 templ FlightsPreviewMap(data []models.LiveFlights) {
@@ -296,23 +281,6 @@ templ FlightsPreviewMap(data []models.LiveFlights) {
 					<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
 				</div>
 			</div>
-			<div class="w-full form-control">
-                            			<div class="label">
-                            				<span class="label-text font-semi-bold text-xs badge-xs badge pb-0">Display number of markers</span>
-                            			</div>
-                            			<div class="flex items-center mt-2">
-                            			    <span class="text-xs">0</span>
-                            				<input
-                            					type="range"
-                            					min="0"
-                            					max={fmt.Sprintf("%d", len(data))}
-                            					value={fmt.Sprintf("%d", len(data))}
-                            					class="range range-xs p-10 mr-2 ml-2"
-                            					name="rangeValue"
-                            				/>
-                            				<span class="text-xs" id="rangeValue">{fmt.Sprintf("%d", len(data))}</span>
-                            			</div>
-                            		</div>
 			<script src="https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js"></script>
 		</body>
 	</html>

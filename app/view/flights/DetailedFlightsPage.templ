@@ -22,11 +22,7 @@ templ FlightHeader(lf models.LiveFlights) {
 				<div class="items-start ">
 					<div class="justify-center w-full text-center">
 						<h1 class="font-bold">Flight { lf.Flight.Number }</h1>
-						if (lf.Flight.Codeshared.AirlineName == "") {
-							<span>{lf.Airline.Name}</span>
-						} else {
-							{ lf.Flight.Codeshared.AirlineName }
-						}
+						<span>{lf.Airline.Name}</span>
 					</div>
 				</div>
 				<div class="mx-auto mr:px-6">

@@ -477,15 +477,17 @@ type CountryTable struct {
 }
 
 type FlightsTable struct {
-	Column      []ColumnItems
-	Flights     []LiveFlights
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column             []ColumnItems
+	Flights            []LiveFlights
+	PrevPage           int
+	NextPage           int
+	Page               int
+	LastPage           int
+	FilterFlightStatus string
+	FilterFlightNumber string
+	FilterAirlineName  string
+	OrderParam         string
+	SortParam          string
 }
 
 type CustomTime struct {

@@ -62,7 +62,10 @@ func (h *Handler) getFlights(_ http.ResponseWriter, r *http.Request) (int, []mod
 	pageSize := 15
 	vars := mux.Vars(r)
 	flightStatus := vars["flight_status"]
-	param := r.FormValue("search")
+
+	airlineName := r.FormValue("airline_name")
+	flightNumber := r.FormValue("flight_number")
+	flightStats := r.FormValue("flight_status")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")
@@ -75,10 +78,11 @@ func (h *Handler) getFlights(_ http.ResponseWriter, r *http.Request) (int, []mod
 	var lf []models.LiveFlights
 
 	if flightStatus == "" {
-		lf, err = h.service.GetAllFlights(context.Background(), page, pageSize, orderBy, sortBy, param)
+		lf, err = h.service.GetAllFlights(context.Background(), page, pageSize, orderBy,
+			sortBy, flightNumber, airlineName, flightStats)
 	} else {
 		lf, err = h.service.GetAllFlightsByStatus(context.Background(),
-			page, pageSize, orderBy, sortBy, param, flightStatus)
+			page, pageSize, orderBy, sortBy, flightNumber, flightStatus)
 	}
 
 	if err != nil {
@@ -93,7 +97,10 @@ func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 
 	var sortAux string
 
-	param := r.FormValue("search")
+	airlineName := r.FormValue("airline_name")
+	flightNumber := r.FormValue("flight_number")
+	flightStatus := r.FormValue("flight_status")
+
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
@@ -142,15 +149,17 @@ func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 		return nil, err
 	}
 	f := models.FlightsTable{
-		Column:      columnNames,
-		Flights:     lf,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:             columnNames,
+		Flights:            lf,
+		PrevPage:           prevPage,
+		NextPage:           nextPage,
+		Page:               page,
+		LastPage:           lastPage,
+		FilterFlightNumber: flightNumber,
+		FilterFlightStatus: flightStatus,
+		FilterAirlineName:  airlineName,
+		OrderParam:         orderBy,
+		SortParam:          sortAux,
 	}
 	flightsTable := flights.FlightsTableComponent(f)
 

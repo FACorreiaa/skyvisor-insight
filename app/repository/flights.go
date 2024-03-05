@@ -146,7 +146,7 @@ func (r *FlightsRepository) getFlightsLocationsData(ctx context.Context, query s
 }
 
 func (r *FlightsRepository) GetAllFlights(ctx context.Context,
-	page, pageSize int, orderBy, sortBy, flightNumber string) ([]models.LiveFlights, error) {
+	page, pageSize int, orderBy, sortBy, flightNumber, airlineName, flightStatus string) ([]models.LiveFlights, error) {
 	query := `select
 							       f.flight_number,
 							       f.flight_date,
@@ -176,6 +176,8 @@ func (r *FlightsRepository) GetAllFlights(ctx context.Context,
 							       
 							from flights f
 							WHERE	Trim(Upper(f.flight_number)) ILIKE trim(upper('%' || $5 || '%'))
+							AND Trim(Upper(f.airline_name)) ILIKE trim(upper('%' || $6 || '%'))
+							AND Trim(Upper(f.flight_status)) ILIKE trim(upper('%' || $7 || '%'))
 							
 							ORDER BY
 							CASE
@@ -206,7 +208,7 @@ func (r *FlightsRepository) GetAllFlights(ctx context.Context,
 
 	offset := (page - 1) * pageSize
 
-	return r.getFlightsData(ctx, query, offset, pageSize, orderBy, sortBy, flightNumber)
+	return r.getFlightsData(ctx, query, offset, pageSize, orderBy, sortBy, flightNumber, airlineName, flightStatus)
 }
 
 func (r *FlightsRepository) GetAllFlightsSum(ctx context.Context) (int, error) {

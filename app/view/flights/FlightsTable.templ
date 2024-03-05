@@ -17,7 +17,17 @@ script returnToPreviousPage(page int) {
 
 templ FlightsTableComponent(live models.FlightsTable) {
 	<div class="flex flex-col items-left" id="table-container">
-		@components.InputComponent("Search Flights Number", "/flights", "search")
+		@components.InputGroupContainer() {
+                           <div class="mr-2">
+                              @components.InputComponent("Filter Flight Number", "/flights", "flight_number")
+                           </div>
+                           <div class="mr-2">
+                          	      @components.InputComponent("Filter Airline", "/flights", "airline_name")
+                           </div>
+                           <div class="mr-2">
+                                  @components.InputComponent("Filter Flight Status", "/flights", "flight_status")
+                           </div>
+                	    }
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">
@@ -47,7 +57,7 @@ templ FlightsTableComponent(live models.FlightsTable) {
 							<td hx-boost="true">
 								<a
 									hx-trigger="load delay:50ms"
-									href={ templ.SafeURL(fmt.Sprintf("/flights/details/%s", lf.Flight.Number)) }
+									href={ templ.SafeURL(fmt.Sprintf("/flights/flight/%s", lf.Flight.Number)) }
 								>{ lf.Flight.Number }</a>
 							</td>
 							if lf.Airline.Name == "" {
@@ -80,9 +90,9 @@ templ FlightsTableComponent(live models.FlightsTable) {
 		</div>
 		<!-- paginator -->
 		@components.PaginatorComponent("/flights",
-			fmt.Sprintf("/flights?page=%d&search=%s", live.PrevPage, live.SearchParam),
+			fmt.Sprintf("/flights?page=%d&search=%s", live.PrevPage, live.FilterFlightStatus),
 			strconv.Itoa(live.Page),
-			fmt.Sprintf("/flights?page=%d&search=%s", live.NextPage, live.SearchParam),
-			fmt.Sprintf("/flights?page=%d&search=%s", live.LastPage, live.SearchParam))
+			fmt.Sprintf("/flights?page=%d&search=%s", live.NextPage, live.FilterFlightStatus),
+			fmt.Sprintf("/flights?page=%d&search=%s", live.LastPage, live.FilterFlightStatus))
 	</div>
 }

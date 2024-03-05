@@ -55,7 +55,7 @@ func (r *LocationsRepository) getCountryData(ctx context.Context, query string,
 }
 
 func (r *LocationsRepository) GetCountry(ctx context.Context, page, pageSize int,
-	orderBy, sortBy, name string) ([]models.Country, error) {
+	orderBy, sortBy, countryName, capital, continent, currencyCode string) ([]models.Country, error) {
 	offset := (page - 1) * pageSize
 	query := `SELECT
 			    cou.country_name,
@@ -79,6 +79,15 @@ func (r *LocationsRepository) GetCountry(ctx context.Context, page, pageSize int
 			  AND    Trim(Upper(country_name)) ILIKE trim(upper('%'
 				                  || $1
 				                  || '%'))
+			AND    Trim(Upper(capital)) ILIKE trim(upper('%'
+				                  || $6
+				                  || '%'))
+			AND    Trim(Upper(continent)) ILIKE trim(upper('%'
+				                  || $7
+				                  || '%'))
+			AND    Trim(Upper(currency_code)) ILIKE trim(upper('%'
+				                  || $8
+				                  || '%'))
 			ORDER BY
 			    CASE WHEN $2 = 'Country Name' AND $3 = 'ASC' THEN cou.country_name::text END ASC,
 			    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN cou.country_name::text END DESC,
@@ -100,7 +109,7 @@ func (r *LocationsRepository) GetCountry(ctx context.Context, page, pageSize int
 			    CASE WHEN $2 = 'Longitude' and $3 = 'DESC' THEN ct.longitude::text END DESC
             OFFSET $4 LIMIT $5`
 
-	return r.getCountryData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+	return r.getCountryData(ctx, query, countryName, orderBy, sortBy, offset, pageSize, capital, continent, currencyCode)
 }
 
 func (r *LocationsRepository) GetCountryLocation(ctx context.Context) ([]models.Country, error) {
@@ -231,8 +240,7 @@ func (r *LocationsRepository) getCityData(ctx context.Context, query string,
 	return city, nil
 }
 
-func (r *LocationsRepository) GetCity(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, name string) ([]models.City, error) {
+func (r *LocationsRepository) GetCity(ctx context.Context, page, pageSize int, orderBy, sortBy, cityName, currencyName, phonePrefix, gmt string) ([]models.City, error) {
 	offset := (page - 1) * pageSize
 	query := `SELECT
 			    ct.id,
@@ -251,6 +259,15 @@ func (r *LocationsRepository) GetCity(ctx context.Context, page, pageSize int,
 			WHERE ct.city_name IS NOT NULL AND TRIM(UPPER(ct.city_name)) != ''
 			AND    Trim(Upper(city_name)) ILIKE trim(upper('%'
 				                  || $1
+				                  || '%'))
+			AND    Trim(Upper(currency_name)) ILIKE trim(upper('%'
+				                  || $6
+				                  || '%'))
+			AND    Trim(Upper(phone_prefix)) ILIKE trim(upper('%'
+				                  || $7
+				                  || '%'))
+			AND    Trim(Upper(gmt)) ILIKE trim(upper('%'
+				                  || $8
 				                  || '%'))
 			ORDER BY
 		    CASE WHEN $2 = 'City Name' AND $3 = 'ASC' THEN ct.city_name::text END ASC,
@@ -273,7 +290,7 @@ func (r *LocationsRepository) GetCity(ctx context.Context, page, pageSize int,
 		    CASE WHEN $2 = 'Longitude' and $3 = 'DESC' THEN ct.longitude::text END DESC
 			OFFSET $4 LIMIT $5;`
 
-	return r.getCityData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+	return r.getCityData(ctx, query, cityName, orderBy, sortBy, offset, pageSize, currencyName, phonePrefix, gmt)
 }
 
 func (r *LocationsRepository) GetCityLocation(ctx context.Context) ([]models.City, error) {

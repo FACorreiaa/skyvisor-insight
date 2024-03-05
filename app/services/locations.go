@@ -32,9 +32,9 @@ func (h *Service) GetAllCities() (int, error) {
 }
 
 func (h *Service) GetCity(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, name string) ([]models.City, error) {
+	orderBy string, sortBy string, cityName, currencyName, phonePrefix, gmt string) ([]models.City, error) {
 
-	return h.locationRepo.GetCity(ctx, page, pageSize, orderBy, sortBy, name)
+	return h.locationRepo.GetCity(ctx, page, pageSize, orderBy, sortBy, cityName, currencyName, phonePrefix, gmt)
 }
 
 func (h *Service) GetCityByID(ctx context.Context, cityID int) (models.City, error) {
@@ -64,9 +64,9 @@ func (h *Service) GetAllCountries() (int, error) {
 }
 
 func (h *Service) GetCountry(ctx context.Context, page, pageSize int,
-	orderBy, sortBy, name string) ([]models.Country, error) {
+	orderBy, sortBy, countryName, capital, continent, currencyCode string) ([]models.Country, error) {
 
-	return h.locationRepo.GetCountry(ctx, page, pageSize, orderBy, sortBy, name)
+	return h.locationRepo.GetCountry(ctx, page, pageSize, orderBy, sortBy, countryName, capital, continent, currencyCode)
 }
 
 func (h *Service) GetCountryByName(ctx context.Context, name string) (models.Country, error) {

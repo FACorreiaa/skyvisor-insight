@@ -9,7 +9,20 @@ import (
 
 templ CityTable(c models.CityTable) {
 	<div class="flex flex-col items-left" id="table-container">
-		@components.InputComponent("Search City name", "/locations/city", "search")
+	@components.InputGroupContainer() {
+                                       <div class="mr-2">
+                                              @components.InputComponent("Filter City Name", "/locations/city", "city_name")
+                                       </div>
+                                       <div class="mr-2">
+                                      	      @components.InputComponent("Filter Currency", "/locations/city", "currency_name")
+                                       </div>
+                                       <div class="mr-2">
+                                              @components.InputComponent("Filter Phone Prefix", "/locations/city", "phone_prefix")
+                                       </div>
+                                        <div class="mr-2">
+                                              @components.InputComponent("Filter GMT", "/locations/city", "gmt")
+                                        </div>
+                            	    }
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">
@@ -45,7 +58,7 @@ templ CityTable(c models.CityTable) {
 							</td>
 							<td>{ city.CountryName }</td>
 							<td>{ city.Continent }</td>
-							<td>{ city.CurrencyName }></td>
+							<td>{ city.CurrencyName }</td>
 							<td>{ city.Timezone }</td>
 							<td>{ city.GMT }</td>
 							<td>{ city.PhonePrefix }</td>
@@ -58,9 +71,9 @@ templ CityTable(c models.CityTable) {
 		</div>
 		<!-- paginator -->
 		@components.PaginatorComponent("/locations/city",
-			fmt.Sprintf("/locations/city?page=%d&search=%s", c.PrevPage, c.SearchParam),
+			fmt.Sprintf("/locations/city?page=%d&search=%s", c.PrevPage, c.FilterCityName),
 			strconv.Itoa(c.Page),
-			fmt.Sprintf("/locations/city?page=%d&search=%s", c.NextPage, c.SearchParam),
-			fmt.Sprintf("/locations/city?page=%d&search=%s", c.LastPage, c.SearchParam))
+			fmt.Sprintf("/locations/city?page=%d&search=%s", c.NextPage, c.FilterCityName),
+			fmt.Sprintf("/locations/city?page=%d&search=%s", c.LastPage, c.FilterCityName))
 	</div>
 }

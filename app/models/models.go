@@ -447,27 +447,33 @@ type AirplaneTable struct {
 }
 
 type CityTable struct {
-	Column      []ColumnItems
-	City        []City
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column             []ColumnItems
+	City               []City
+	PrevPage           int
+	NextPage           int
+	Page               int
+	LastPage           int
+	FilterCityName     string
+	FilterCurrencyName string
+	FilterPhonePrefix  string
+	FilterGMT          string
+	OrderParam         string
+	SortParam          string
 }
 
 type CountryTable struct {
-	Column      []ColumnItems
-	Country     []Country
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column             []ColumnItems
+	Country            []Country
+	PrevPage           int
+	NextPage           int
+	Page               int
+	LastPage           int
+	FilterCountry      string
+	FilterCapital      string
+	FilterContinent    string
+	FilterCurrencyCode string
+	OrderParam         string
+	SortParam          string
 }
 
 type FlightsTable struct {

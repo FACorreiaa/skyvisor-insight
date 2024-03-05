@@ -7,7 +7,7 @@ import (
 )
 
 templ CountryDetails(c models.Country) {
-    <div class="stats shadow flex flex-wrap justify-between">
+    <div class="stats shadow flex flex-wrap justify-between self-center">
       <div class="stat">
         <div class="stat-figure text-secondary">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -59,20 +59,19 @@ templ CountryDetails(c models.Country) {
 templ CountryDetailsPage(sidebar []models.SidebarItem, c models.Country, title, description string) {
 	<div>
 		@components.BannerComponent(title, description)
+		<div class="mt-10 text-center w-full">
+                                                			@CountryDetails(c)
+                                                		</div>
 		<div class="flex items-center justify-center flex-grow">
 			<div class="container flex flex-col pt-10 mx-auto mr:px-6 lg:flex-row">
 				<div class="w-2/12">
 					@components.SidebarComponent(sidebar)
 				</div>
 				<div class="w-10/12 ml-10">
-
-					<span class="loading loading-ring loading-lg htmx-indicator"></span>
 						@CountryDetailedMap(c)
 				</div>
 			</div>
 		</div>
-		<div class="mt-10 text-center">
-		    @CountryDetails(c)
-		</div>
+
 	</div>
 }

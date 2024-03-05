@@ -13,7 +13,7 @@ script mapContainer(data []models.Airport) {
               // Clear existing features
               vectorSource.clear();
               // Add new features based on the filtered data
-              vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
+              vectorSource.addFeatures(filteredData.map(airport => createFeatureFromAirport(airport)));
           };
 
       // Add event listener for input change
@@ -143,16 +143,26 @@ script mapContainer(data []models.Airport) {
    };
 
    map.on('dblclick', event => {
-       // get the feature you clicked
+       const zoomLevel = 8;
        const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
-        return feature
-       })
-       if(feature instanceof ol.Feature){
-         // Fit the feature geometry or extent based on the given map
-         map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent())
+           return feature;
+       });
+       if (feature instanceof ol.Feature) {
+           map.getView().fit(feature.getGeometry().getExtent(), {
+               size: map.getSize(),
+               padding: [10, 10, 10, 10],
+               minResolution: map.getView().getResolutionForZoom(zoomLevel),
+           });
        }
-      })
+   });
+
+         map.getView().on('change:resolution', function () {
+                     if (map.getView().getZoom() < 4) {
+                         vectorLayer.setVisible(false);
+                     } else {
+                         vectorLayer.setVisible(true);
+                     }
+                 });
 
        map.on('postrender', function () {
                if (map.getView().getZoom() < 4) {

@@ -157,6 +157,15 @@ script countryMapContainer(data []models.Country) {
        }
    })
 
+
+   map.getView().on('change:resolution', function () {
+                  if (map.getView().getZoom() < 4) {
+                      vectorLayer.setVisible(false);
+                  } else {
+                      vectorLayer.setVisible(true);
+                  }
+              });
+
    map.on('postrender', function () {
                   if (map.getView().getZoom() < 3) {
                       vectorLayer.setVisible(false);

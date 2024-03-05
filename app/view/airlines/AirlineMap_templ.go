@@ -17,8 +17,8 @@ import (
 
 func mapContainer(data []models.Airline) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_3d1f`,
-		Function: `function __templ_mapContainer_3d1f(data){//control selector
+		Name: `__templ_mapContainer_735d`,
+		Function: `function __templ_mapContainer_735d(data){//control selector
             const rangeInput = document.querySelector('.range');
             const updatePointsOnMap = () => {
                 const selectedValue = parseInt(rangeInput.value, 10);
@@ -27,7 +27,7 @@ func mapContainer(data []models.Airline) templ.ComponentScript {
                 // Clear existing features
                 vectorSource.clear();
                 // Add new features based on the filtered data
-                vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
+                vectorSource.addFeatures(filteredData.map(airline => createFeatureFromAirline(airline)));
             };
 
         // Add event listener for input change
@@ -202,8 +202,8 @@ func mapContainer(data []models.Airline) templ.ComponentScript {
                      }
                  });
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_3d1f`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_3d1f`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_735d`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_735d`, data),
 	}
 }
 

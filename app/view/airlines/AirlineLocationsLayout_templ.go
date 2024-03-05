@@ -44,7 +44,7 @@ func AirlineLocationsPage(sidebar []models.SidebarItem, a []models.Airline, titl
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-11/12 ml-10 pt-2\"><span class=\"loading loading-ring loading-lg htmx-indicator\"></span>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"w-11/12 ml-10 pt-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

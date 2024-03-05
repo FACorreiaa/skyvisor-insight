@@ -15,7 +15,7 @@ script mapContainer(data []models.Airline) {
                 // Clear existing features
                 vectorSource.clear();
                 // Add new features based on the filtered data
-                vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
+                vectorSource.addFeatures(filteredData.map(airline => createFeatureFromAirline(airline)));
             };
 
         // Add event listener for input change

@@ -17,8 +17,8 @@ import (
 
 func mapContainer(data []models.Airport) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_mapContainer_4553`,
-		Function: `function __templ_mapContainer_4553(data){//control selector
+		Name: `__templ_mapContainer_9732`,
+		Function: `function __templ_mapContainer_9732(data){//control selector
           const rangeInput = document.querySelector('.range');
           const updatePointsOnMap = () => {
               const selectedValue = parseInt(rangeInput.value, 10);
@@ -27,7 +27,7 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
               // Clear existing features
               vectorSource.clear();
               // Add new features based on the filtered data
-              vectorSource.addFeatures(filteredData.map(city => createFeatureFromCity(city)));
+              vectorSource.addFeatures(filteredData.map(airport => createFeatureFromAirport(airport)));
           };
 
       // Add event listener for input change
@@ -157,16 +157,26 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
    };
 
    map.on('dblclick', event => {
-       // get the feature you clicked
+       const zoomLevel = 8;
        const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
-        return feature
-       })
-       if(feature instanceof ol.Feature){
-         // Fit the feature geometry or extent based on the given map
-         map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent())
+           return feature;
+       });
+       if (feature instanceof ol.Feature) {
+           map.getView().fit(feature.getGeometry().getExtent(), {
+               size: map.getSize(),
+               padding: [10, 10, 10, 10],
+               minResolution: map.getView().getResolutionForZoom(zoomLevel),
+           });
        }
-      })
+   });
+
+         map.getView().on('change:resolution', function () {
+                     if (map.getView().getZoom() < 4) {
+                         vectorLayer.setVisible(false);
+                     } else {
+                         vectorLayer.setVisible(true);
+                     }
+                 });
 
        map.on('postrender', function () {
                if (map.getView().getZoom() < 4) {
@@ -176,8 +186,8 @@ func mapContainer(data []models.Airport) templ.ComponentScript {
                }
            });
 }`,
-		Call:       templ.SafeScript(`__templ_mapContainer_4553`, data),
-		CallInline: templ.SafeScriptInline(`__templ_mapContainer_4553`, data),
+		Call:       templ.SafeScript(`__templ_mapContainer_9732`, data),
+		CallInline: templ.SafeScriptInline(`__templ_mapContainer_9732`, data),
 	}
 }
 
@@ -234,7 +244,7 @@ func AirportMap(data []models.Airport) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(data)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/airports/AirportMap.templ`, Line: 199, Col: 99}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/airports/AirportMap.templ`, Line: 209, Col: 99}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

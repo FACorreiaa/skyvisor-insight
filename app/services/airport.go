@@ -33,10 +33,10 @@ func (h *Service) GetAllAirports() (int, error) {
 	return lastPage, nil
 }
 
-func (h *Service) GetAirportByName(ctx context.Context, name string,
-	page, pageSize int, orderBy string, sortBy string) ([]models.Airport, error) {
+func (h *Service) GetAirportByName(ctx context.Context, page, pageSize int,
+	orderBy, sortBy, airportName, countryName, gmt string) ([]models.Airport, error) {
 
-	return h.airportRepo.GetAirportByName(ctx, name, page, pageSize, orderBy, sortBy)
+	return h.airportRepo.GetAirportByName(ctx, page, pageSize, orderBy, sortBy, airportName, countryName, gmt)
 }
 
 func (h *Service) GetAirportByID(ctx context.Context, id int) (models.Airport, error) {

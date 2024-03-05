@@ -58,7 +58,9 @@ func (h *Handler) getAirportDetails(_ http.ResponseWriter, r *http.Request) (mod
 }
 
 func (h *Handler) getAirportByName(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
-	param := r.FormValue("search")
+	airportName := r.FormValue("airport_name")
+	countryName := r.FormValue("country_name")
+	gmt := r.FormValue("gmt")
 	pageSize := 25
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
@@ -67,7 +69,7 @@ func (h *Handler) getAirportByName(_ http.ResponseWriter, r *http.Request) (int,
 		// Handle error or set a default page number
 		page = 1
 	}
-	ap, err := h.service.GetAirportByName(context.Background(), param, page, pageSize, orderBy, sortBy)
+	ap, err := h.service.GetAirportByName(context.Background(), page, pageSize, orderBy, sortBy, airportName, countryName, gmt)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -79,7 +81,9 @@ func (h *Handler) renderAirportTable(w http.ResponseWriter, r *http.Request) (te
 	var page int
 	var sortAux string
 
-	param := r.FormValue("search")
+	airportName := r.FormValue("airport_name")
+	countryName := r.FormValue("country_name")
+	gmt := r.FormValue("gmt")
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
@@ -102,7 +106,7 @@ func (h *Handler) renderAirportTable(w http.ResponseWriter, r *http.Request) (te
 	fullPage, airportList, _ := h.getAirports(w, r)
 	filteredPage, filteredAirport, _ := h.getAirportByName(w, r)
 
-	if len(param) > 0 {
+	if len(airportName) > 0 {
 		ap = filteredAirport
 		page = filteredPage
 	} else {
@@ -120,15 +124,17 @@ func (h *Handler) renderAirportTable(w http.ResponseWriter, r *http.Request) (te
 		return nil, err
 	}
 	a := models.AirportTable{
-		Column:      columnNames,
-		Airports:    ap,
-		PrevPage:    page - 1,
-		NextPage:    page + 1,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:            columnNames,
+		Airports:          ap,
+		PrevPage:          page - 1,
+		NextPage:          page + 1,
+		Page:              page,
+		LastPage:          lastPage,
+		FilterAirportName: airportName,
+		FilterCountryName: countryName,
+		FilterGMT:         gmt,
+		OrderParam:        orderBy,
+		SortParam:         sortAux,
 	}
 	airportTable := airport.AirportTableComponent(a)
 

@@ -17,7 +17,17 @@ script returnToPreviousPage(page int) {
 
 templ AirportTableComponent(airport models.AirportTable) {
 	<div class="flex flex-col items-left" id="table-container">
-		@components.InputComponent("Search Airport Name", "/airports", "search")
+		@components.InputGroupContainer() {
+                               <div class="mr-2">
+                                  @components.InputComponent("Filter Airport Name", "/airports", "airport_name")
+                               </div>
+                               <div class="mr-2">
+                              	      @components.InputComponent("Filter Country Name", "/airports", "country_name")
+                               </div>
+                               <div class="mr-2">
+                                      @components.InputComponent("Filter GMT", "/airports", "gmt")
+                               </div>
+                    	    }
 		<div class="overflow-x-auto">
 			<span class="loading loading-ring loading-lg htmx-indicator"></span>
 			<table class="table table-xs">
@@ -69,9 +79,9 @@ templ AirportTableComponent(airport models.AirportTable) {
 		</div>
 		<!-- paginator -->
 		@components.PaginatorComponent("/airports",
-			fmt.Sprintf("/airports?page=%d&search=%s", airport.PrevPage, airport.SearchParam),
+			fmt.Sprintf("/airports?page=%d&search=%s", airport.PrevPage, airport.FilterAirportName),
 			strconv.Itoa(airport.Page),
-			fmt.Sprintf("/airports?page=%d&search=%s", airport.NextPage, airport.SearchParam),
-			fmt.Sprintf("/airports?page=%d&search=%s", airport.LastPage, airport.SearchParam))
+			fmt.Sprintf("/airports?page=%d&search=%s", airport.NextPage, airport.FilterAirportName),
+			fmt.Sprintf("/airports?page=%d&search=%s", airport.LastPage, airport.FilterAirportName))
 	</div>
 }

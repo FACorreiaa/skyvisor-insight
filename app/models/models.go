@@ -368,15 +368,17 @@ type Table[T any, V any] struct {
 }
 
 type AirportTable struct {
-	Column      []ColumnItems
-	Airports    []Airport
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column            []ColumnItems
+	Airports          []Airport
+	PrevPage          int
+	NextPage          int
+	Page              int
+	LastPage          int
+	FilterAirportName string
+	FilterCountryName string
+	FilterGMT         string
+	OrderParam        string
+	SortParam         string
 }
 
 type TaxTable struct {

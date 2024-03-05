@@ -225,8 +225,8 @@ func (r *AirlineRepository) getAircraftData(ctx context.Context, query string,
 	return aircraft, nil
 }
 
-func (r *AirlineRepository) GetAircraft(ctx context.Context, page, pageSize int, name string,
-	orderBy string, sortBy string) ([]models.Aircraft, error) {
+func (r *AirlineRepository) GetAircraft(ctx context.Context, page, pageSize int, aircraftName,
+	orderBy, sortBy, typeEngine, modelCode, planeOwner string) ([]models.Aircraft, error) {
 
 	offset := (page - 1) * pageSize
 	query := `SELECT ac.id, ac.aircraft_name, ap.model_name, ap.construction_number,
@@ -238,6 +238,12 @@ func (r *AirlineRepository) GetAircraft(ctx context.Context, page, pageSize int,
 											WHERE ac.plane_type_id != 0 AND TRIM(UPPER(ac.aircraft_name)) != ''
        										AND    Trim(Upper(aircraft_name))
 											           ILIKE trim(upper('%' || $1 || '%'))
+											AND    Trim(Upper(ap.engines_type))
+											           ILIKE trim(upper('%' || $6 || '%'))
+											AND    Trim(Upper(ap.model_code))
+											           ILIKE trim(upper('%' || $7 || '%'))
+											AND    Trim(Upper(ap.plane_owner))
+											           ILIKE trim(upper('%' || $8 || '%'))
 											ORDER BY
 			    CASE WHEN $2 = 'Aircraft Name' AND $3 = 'ASC' THEN ac.aircraft_name::text END ASC,
 			    CASE WHEN $2 = 'Aircraft Name' AND $3 = 'DESC' THEN ac.aircraft_name::text END DESC,
@@ -265,7 +271,8 @@ func (r *AirlineRepository) GetAircraft(ctx context.Context, page, pageSize int,
 			    CASE WHEN $2 = 'Plane Series' AND $3 = 'DESC' THEN ap.plane_series::text END DESC
        										OFFSET $4 LIMIT $5`
 
-	return r.getAircraftData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+	return r.getAircraftData(ctx, query, aircraftName, orderBy, sortBy, offset,
+		pageSize, typeEngine, modelCode, planeOwner)
 
 }
 
@@ -317,7 +324,7 @@ func (r *AirlineRepository) getAirplaneData(ctx context.Context, query string,
 }
 
 func (r *AirlineRepository) GetAirplanes(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, name string) ([]models.Airplane, error) {
+	orderBy, sortBy, airlineName, modelName, productionLine, registrationNumber string) ([]models.Airplane, error) {
 
 	offset := (page - 1) * pageSize
 	query := `SELECT ap.id, ap.model_name, al.airline_name, ap.plane_series, ap.plane_owner,
@@ -329,8 +336,14 @@ func (r *AirlineRepository) GetAirplanes(ctx context.Context, page, pageSize int
 				FROM airplane ap
 				JOIN airline al on al.airline_id = ap.airplane_id
 				WHERE ap.model_name IS NOT NULL AND TRIM(UPPER(ap.model_name)) != ''
-       	AND    Trim(Upper(model_name))
+       	AND    Trim(Upper(al.airline_name))
 		           ILIKE trim(upper('%' || $1 || '%'))
+		AND    Trim(Upper(ap.model_name))
+		           ILIKE trim(upper('%' || $6 || '%'))
+		AND    Trim(Upper(ap.production_line))
+		           ILIKE trim(upper('%' || $7 || '%'))
+		AND    Trim(Upper(ap.registration_number))
+		           ILIKE trim(upper('%' || $8 || '%'))
 		ORDER BY
 	    CASE WHEN $2 = 'Model Name'
 	                  AND $3 = 'ASC' THEN ap.model_name::text END ASC,
@@ -398,7 +411,8 @@ func (r *AirlineRepository) GetAirplanes(ctx context.Context, page, pageSize int
 	                  AND $3 = 'DESC' THEN ap.registration_number::text END DESC
        	OFFSET $4 LIMIT $5`
 
-	return r.getAirplaneData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+	return r.getAirplaneData(ctx, query, airlineName, orderBy, sortBy, offset, pageSize,
+		modelName, productionLine, registrationNumber)
 
 }
 
@@ -448,7 +462,7 @@ func (r *AirlineRepository) getTaxData(ctx context.Context, query string,
 }
 
 func (r *AirlineRepository) GetTax(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, name string) ([]models.Tax, error) {
+	orderBy, sortBy, taxName, countryName, airlineName string) ([]models.Tax, error) {
 	query := `SELECT
     										t.id, t.tax_name, a.airline_name, a.country_name
 											FROM tax t
@@ -456,8 +470,12 @@ func (r *AirlineRepository) GetTax(ctx context.Context, page, pageSize int,
 											         JOIN country c ON a.country_name = c.country_name
 											WHERE t.tax_name IS NOT NULL
 											AND t.tax_name != ''
-											AND    Trim(Upper(tax_name))
+											AND    Trim(Upper(t.tax_name))
 											           ILIKE trim(upper('%' || $1 || '%'))
+											AND    Trim(Upper(a.country_name))
+											           ILIKE trim(upper('%' || $6 || '%'))
+											AND    Trim(Upper(a.airline_name))
+											           ILIKE trim(upper('%' || $7 || '%'))
 											ORDER BY
 			    CASE WHEN $2 = 'Tax Name' AND $3 = 'ASC' THEN t.tax_name::text END ASC,
 			    CASE WHEN $2 = 'Tax Name' AND $3 = 'DESC' THEN t.tax_name::text END DESC,
@@ -468,7 +486,7 @@ func (r *AirlineRepository) GetTax(ctx context.Context, page, pageSize int,
        										OFFSET $4 LIMIT $5`
 
 	offset := (page - 1) * pageSize
-	return r.getTaxData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+	return r.getTaxData(ctx, query, taxName, orderBy, sortBy, offset, pageSize, countryName, airlineName)
 }
 
 func (r *AirlineRepository) GetTaxSum(ctx context.Context) (int, error) {

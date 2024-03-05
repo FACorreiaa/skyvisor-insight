@@ -187,8 +187,8 @@ func (r *AirportRepository) GetAirportsLocation(ctx context.Context) ([]models.A
 	return airport, nil
 }
 
-func (r *AirportRepository) GetAirportByName(ctx context.Context, name string,
-	page, pageSize int, orderBy string, sortBy string) ([]models.Airport, error) {
+func (r *AirportRepository) GetAirportByName(ctx context.Context, page, pageSize int,
+	orderBy, sortBy, airportName, countryName, gmt string) ([]models.Airport, error) {
 	query := `SELECT   id,
 				         gmt,
 				         airport_id,
@@ -208,6 +208,13 @@ func (r *AirportRepository) GetAirportByName(ctx context.Context, name string,
 				WHERE    Trim(Upper(airport_name)) ilike trim(upper('%'
 				                  || $1
 				                  || '%'))
+				AND Trim(Upper(country_name)) ilike trim(upper('%'
+				                  || $6
+				                  || '%'))
+				AND Trim(Upper(gmt)) ilike trim(upper('%'
+				                  || $7
+				                  || '%'))
+				
 				ORDER BY
 			         CASE
 			                  WHEN $2 = 'Airport Name'
@@ -268,7 +275,7 @@ func (r *AirportRepository) GetAirportByName(ctx context.Context, name string,
 				offset $4 limit $5`
 	offset := (page - 1) * pageSize
 
-	return r.getAirportData(ctx, query, name, orderBy, sortBy, offset, pageSize)
+	return r.getAirportData(ctx, query, airportName, orderBy, sortBy, offset, pageSize, countryName, gmt)
 }
 
 func (r *AirportRepository) GetAirportByID(ctx context.Context, id int) (models.Airport, error) {

@@ -174,7 +174,10 @@ func (h *Handler) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Requ
 	var sortAux string
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
-	param := r.FormValue("search")
+	aircraftName := r.FormValue("aircraft_name")
+	typeEngine := r.FormValue("type_engine")
+	modelCode := r.FormValue("model_code")
+	planeOwner := r.FormValue("plane_owner")
 
 	if sortBy == ASC {
 		sortAux = DESC
@@ -211,15 +214,18 @@ func (h *Handler) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Requ
 		return nil, err
 	}
 	data := models.AircraftTable{
-		Column:      columnNames,
-		Aircraft:    a,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:             columnNames,
+		Aircraft:           a,
+		PrevPage:           prevPage,
+		NextPage:           nextPage,
+		Page:               page,
+		LastPage:           lastPage,
+		FilterAircraft:     aircraftName,
+		FilterTypeOfEngine: typeEngine,
+		FilterModelCode:    modelCode,
+		FilterPlaneOwner:   planeOwner,
+		OrderParam:         orderBy,
+		SortParam:          sortAux,
 	}
 	taxTable := airline.AirlineAircraftTable(data)
 
@@ -230,14 +236,19 @@ func (h *Handler) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []mo
 	pageSize := 25
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
-	param := r.FormValue("search")
+	aircraftName := r.FormValue("aircraft_name")
+	typeEngine := r.FormValue("type_engine")
+	modelCode := r.FormValue("model_code")
+	planeOwner := r.FormValue("plane_owner")
+
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	a, err := h.service.GetAircraft(context.Background(), page, pageSize, param, orderBy, sortBy)
+	a, err := h.service.GetAircraft(context.Background(), page, pageSize, aircraftName, orderBy, sortBy,
+		typeEngine, modelCode, planeOwner)
 	if err != nil {
 		HandleError(err, "Error fetching aircrafts")
 		return 0, nil, err
@@ -263,13 +274,17 @@ func (h *Handler) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []mo
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
-	param := r.FormValue("search")
+	airlineName := r.FormValue("airline_name")
+	modelName := r.FormValue("model_name")
+	productionLine := r.FormValue("production_line")
+	registrationNumber := r.FormValue("registration_number")
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	a, err := h.service.GetAirplanes(context.Background(), page, pageSize, orderBy, sortBy, param)
+	a, err := h.service.GetAirplanes(context.Background(), page, pageSize, orderBy, sortBy,
+		airlineName, modelName, productionLine, registrationNumber)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -280,7 +295,11 @@ func (h *Handler) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []mo
 func (h *Handler) renderAirlineAirplaneTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
 	var sortAux string
 
-	param := r.FormValue("search")
+	airlineName := r.FormValue("airlineName")
+	modelName := r.FormValue("model_name")
+	productionLine := r.FormValue("production_line")
+	registrationNumber := r.FormValue("registration_number")
+
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
@@ -321,15 +340,18 @@ func (h *Handler) renderAirlineAirplaneTable(w http.ResponseWriter, r *http.Requ
 		return nil, err
 	}
 	a := models.AirplaneTable{
-		Column:      columnNames,
-		Airplane:    ap,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:                   columnNames,
+		Airplane:                 ap,
+		PrevPage:                 prevPage,
+		NextPage:                 nextPage,
+		Page:                     page,
+		LastPage:                 lastPage,
+		FilterAirlineName:        airlineName,
+		FilterModelName:          modelName,
+		FilterProductionLine:     productionLine,
+		FilterRegistrationNumber: registrationNumber,
+		OrderParam:               orderBy,
+		SortParam:                sortAux,
 	}
 	airlineTable := airline.AirplaneTable(a)
 
@@ -353,14 +375,16 @@ func (h *Handler) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, []
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-	param := r.FormValue("search")
+	taxName := r.FormValue("tax_name")
+	countryName := r.FormValue("country_name")
+	airlineName := r.FormValue("airline_name")
 
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	t, err := h.service.GetTax(context.Background(), page, pageSize, orderBy, sortBy, param)
+	t, err := h.service.GetTax(context.Background(), page, pageSize, orderBy, sortBy, taxName, countryName, airlineName)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -372,7 +396,9 @@ func (h *Handler) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request) 
 	var page int
 	var sortAux string
 
-	param := r.FormValue("search")
+	taxName := r.FormValue("tax_name")
+	airlineName := r.FormValue("airline_name")
+	countryName := r.FormValue("country_name")
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
@@ -402,15 +428,17 @@ func (h *Handler) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request) 
 		return nil, err
 	}
 	taxData := models.TaxTable{
-		Column:      columnNames,
-		Tax:         tax,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:        columnNames,
+		Tax:           tax,
+		PrevPage:      prevPage,
+		NextPage:      nextPage,
+		Page:          page,
+		LastPage:      lastPage,
+		FilterTax:     taxName,
+		FilterAirline: airlineName,
+		FilterCountry: countryName,
+		OrderParam:    orderBy,
+		SortParam:     sortAux,
 	}
 	taxTable := airline.AirlineTaxTable(taxData)
 

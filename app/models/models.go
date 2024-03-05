@@ -368,39 +368,46 @@ type Table[T any, V any] struct {
 }
 
 type AirportTable struct {
-	Column      []ColumnItems
-	Airports    []Airport
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column            []ColumnItems
+	Airports          []Airport
+	PrevPage          int
+	NextPage          int
+	Page              int
+	LastPage          int
+	FilterAirportName string
+	FilterCountryName string
+	FilterGMT         string
+	OrderParam        string
+	SortParam         string
 }
 
 type TaxTable struct {
-	Column      []ColumnItems
-	Tax         []Tax
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column        []ColumnItems
+	Tax           []Tax
+	PrevPage      int
+	NextPage      int
+	Page          int
+	LastPage      int
+	FilterTax     string
+	FilterAirline string
+	FilterCountry string
+	OrderParam    string
+	SortParam     string
 }
 
 type AircraftTable struct {
-	Column      []ColumnItems
-	Aircraft    []Aircraft
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column             []ColumnItems
+	Aircraft           []Aircraft
+	PrevPage           int
+	NextPage           int
+	Page               int
+	LastPage           int
+	FilterAircraft     string
+	FilterTypeOfEngine string
+	FilterModelCode    string
+	FilterPlaneOwner   string
+	OrderParam         string
+	SortParam          string
 }
 
 // ColumnItems Need to change this to improve all the sorting on the tables.
@@ -425,39 +432,48 @@ type AirlineTable struct {
 }
 
 type AirplaneTable struct {
-	Column      []ColumnItems
-	Airplane    []Airplane
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column                   []ColumnItems
+	Airplane                 []Airplane
+	PrevPage                 int
+	NextPage                 int
+	Page                     int
+	LastPage                 int
+	FilterAirlineName        string
+	FilterModelName          string
+	FilterProductionLine     string
+	FilterRegistrationNumber string
+	OrderParam               string
+	SortParam                string
 }
 
 type CityTable struct {
-	Column      []ColumnItems
-	City        []City
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column             []ColumnItems
+	City               []City
+	PrevPage           int
+	NextPage           int
+	Page               int
+	LastPage           int
+	FilterCityName     string
+	FilterCurrencyName string
+	FilterPhonePrefix  string
+	FilterGMT          string
+	OrderParam         string
+	SortParam          string
 }
 
 type CountryTable struct {
-	Column      []ColumnItems
-	Country     []Country
-	PrevPage    int
-	NextPage    int
-	Page        int
-	LastPage    int
-	SearchParam string
-	OrderParam  string
-	SortParam   string
+	Column             []ColumnItems
+	Country            []Country
+	PrevPage           int
+	NextPage           int
+	Page               int
+	LastPage           int
+	FilterCountry      string
+	FilterCapital      string
+	FilterContinent    string
+	FilterCurrencyCode string
+	OrderParam         string
+	SortParam          string
 }
 
 type FlightsTable struct {

@@ -44,7 +44,10 @@ func (h *Handler) getCities(_ http.ResponseWriter, r *http.Request) (int, []mode
 	pageSize := 30
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
-	param := r.FormValue("search")
+	cityName := r.FormValue("city_name")
+	currencyName := r.FormValue("currency_name")
+	phonePrefix := r.FormValue("phone_prefix")
+	gmt := r.FormValue("gmt")
 
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
@@ -52,7 +55,7 @@ func (h *Handler) getCities(_ http.ResponseWriter, r *http.Request) (int, []mode
 		page = 1
 	}
 
-	c, err := h.service.GetCity(context.Background(), page, pageSize, orderBy, sortBy, param)
+	c, err := h.service.GetCity(context.Background(), page, pageSize, orderBy, sortBy, cityName, currencyName, phonePrefix, gmt)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -89,7 +92,10 @@ func (h *Handler) getCityDetails(_ http.ResponseWriter, r *http.Request) (models
 func (h *Handler) renderCityTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
 	var sortAux string
 
-	param := r.FormValue("search")
+	cityName := r.FormValue("city_name")
+	currencyName := r.FormValue("currency_name")
+	phonePrefix := r.FormValue("phone_prefix")
+	gmt := r.FormValue("gmt")
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
@@ -126,15 +132,18 @@ func (h *Handler) renderCityTable(w http.ResponseWriter, r *http.Request) (templ
 		return nil, err
 	}
 	ct := models.CityTable{
-		Column:      columnNames,
-		City:        c,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:             columnNames,
+		City:               c,
+		PrevPage:           prevPage,
+		NextPage:           nextPage,
+		Page:               page,
+		LastPage:           lastPage,
+		FilterCityName:     cityName,
+		FilterCurrencyName: currencyName,
+		FilterGMT:          gmt,
+		FilterPhonePrefix:  phonePrefix,
+		OrderParam:         orderBy,
+		SortParam:          sortAux,
 	}
 	cityTable := locations.CityTable(ct)
 
@@ -180,14 +189,17 @@ func (h *Handler) getCountries(_ http.ResponseWriter, r *http.Request) (int, []m
 	pageSize := 30
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
-	param := r.FormValue("search")
+	countryName := r.FormValue("country_name")
+	capital := r.FormValue("capital")
+	continent := r.FormValue("continent")
+	currencyCode := r.FormValue("currency_code")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
 		// Handle error or set a default page number
 		page = 1
 	}
 
-	c, err := h.service.GetCountry(context.Background(), page, pageSize, orderBy, sortBy, param)
+	c, err := h.service.GetCountry(context.Background(), page, pageSize, orderBy, sortBy, countryName, capital, continent, currencyCode)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -217,7 +229,11 @@ func (h *Handler) renderCountryTable(w http.ResponseWriter, r *http.Request) (te
 	var page int
 	var sortAux string
 
-	param := r.FormValue("search")
+	countryName := r.FormValue("country_name")
+	capital := r.FormValue("capital")
+	continent := r.FormValue("continent")
+	currencyCode := r.FormValue("currency_code")
+
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 
@@ -231,7 +247,6 @@ func (h *Handler) renderCountryTable(w http.ResponseWriter, r *http.Request) (te
 		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Capital", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Continent", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
-		{Title: "Currency Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Population", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Currency Code", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Currency Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
@@ -254,15 +269,18 @@ func (h *Handler) renderCountryTable(w http.ResponseWriter, r *http.Request) (te
 	}
 
 	ct := models.CountryTable{
-		Column:      columnNames,
-		Country:     c,
-		PrevPage:    prevPage,
-		NextPage:    nextPage,
-		Page:        page,
-		LastPage:    lastPage,
-		SearchParam: param,
-		OrderParam:  orderBy,
-		SortParam:   sortAux,
+		Column:             columnNames,
+		Country:            c,
+		PrevPage:           prevPage,
+		NextPage:           nextPage,
+		Page:               page,
+		LastPage:           lastPage,
+		FilterCountry:      countryName,
+		FilterCapital:      capital,
+		FilterContinent:    continent,
+		FilterCurrencyCode: currencyCode,
+		OrderParam:         orderBy,
+		SortParam:          sortAux,
 	}
 	cityTable := locations.CountryTable(ct)
 

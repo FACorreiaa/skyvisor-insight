@@ -804,14 +804,6 @@ select {
   top: 50%;
 }
 
-.left-5 {
-  left: 1.25rem;
-}
-
-.right-5 {
-  right: 1.25rem;
-}
-
 .isolate {
   isolation: isolate;
 }
@@ -1068,10 +1060,6 @@ select {
   width: 1.5rem;
 }
 
-.w-6\/12 {
-  width: 50%;
-}
-
 .w-8 {
   width: 2rem;
 }
@@ -1086,14 +1074,6 @@ select {
 
 .w-full {
   width: 100%;
-}
-
-.w-1\/12 {
-  width: 8.333333%;
-}
-
-.w-1 {
-  width: 0.25rem;
 }
 
 .max-w-lg {
@@ -1401,11 +1381,6 @@ select {
 .py-2\.5 {
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
-}
-
-.px-2 {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
 }
 
 .pb-0 {

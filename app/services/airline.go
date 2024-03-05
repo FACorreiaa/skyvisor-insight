@@ -49,10 +49,10 @@ func (h *Service) GetAllAircraft() (int, error) {
 	return lastPage, nil
 }
 
-func (h *Service) GetAircraft(ctx context.Context, page, pageSize int, name string,
-	orderBy string, sortBy string) ([]models.Aircraft, error) {
+func (h *Service) GetAircraft(ctx context.Context, page, pageSize int, aircraftName,
+	orderBy, sortBy, typeEngine, model, owner string) ([]models.Aircraft, error) {
 
-	return h.airlineRepo.GetAircraft(ctx, page, pageSize, name, orderBy, sortBy)
+	return h.airlineRepo.GetAircraft(ctx, page, pageSize, aircraftName, orderBy, sortBy, typeEngine, model, owner)
 }
 
 // Airplane
@@ -68,16 +68,16 @@ func (h *Service) GetAllAirplanes() (int, error) {
 }
 
 func (h *Service) GetAirplanes(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, name string) ([]models.Airplane, error) {
-	return h.airlineRepo.GetAirplanes(ctx, page, pageSize, orderBy, sortBy, name)
+	orderBy, sortBy, airlineName, modelName, productionLine, registrationNumber string) ([]models.Airplane, error) {
+	return h.airlineRepo.GetAirplanes(ctx, page, pageSize, orderBy, sortBy, airlineName, modelName, productionLine, registrationNumber)
 }
 
 // tax
 
 func (h *Service) GetTax(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, name string) ([]models.Tax, error) {
+	orderBy, sortBy, taxName, countryName, airlineName string) ([]models.Tax, error) {
 
-	return h.airlineRepo.GetTax(ctx, page, pageSize, orderBy, sortBy, name)
+	return h.airlineRepo.GetTax(ctx, page, pageSize, orderBy, sortBy, taxName, countryName, airlineName)
 }
 func (h *Service) GetSum() (int, error) {
 	total, err := h.airlineRepo.GetTaxSum(context.Background())

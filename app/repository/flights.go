@@ -370,11 +370,11 @@ func (r *FlightsRepository) GetAllFlightsPreview(ctx context.Context) ([]models.
 			        LEFT JOIN
 			    airport aa ON f.arrival_iata = aa.iata_code
 			        LEFT JOIN
-			    airline al on f.codeshared_airline_iata = al.iata_code
+			    airline al on f.airline_iata = al.iata_code
 			WHERE
 			    ad.latitude IS NOT NULL
 			  AND ad.longitude IS NOT NULL
-			  ORDER BY f.flight_number;`
+			  ORDER BY f.flight_number`
 
 	return r.getFlightsLocationsData(ctx, query)
 }

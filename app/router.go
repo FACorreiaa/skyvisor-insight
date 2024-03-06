@@ -135,7 +135,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, redisClient *redis.Client)
 	fr.HandleFunc("/flight", handler(h.AllFlightsPage)).Methods(http.MethodGet)
 	fr.HandleFunc("/flight/{flight_status}", handler(h.AllFlightsPage)).Methods(http.MethodGet)
 	fr.HandleFunc("/flight/status/{flight_status}", handler(h.FilteredFlightsPage)).Methods(http.MethodGet)
-
+	fr.HandleFunc("/flight/status/location/{flight_status}", handler(h.FlightsLocationsByStatus)).Methods(http.MethodGet)
 	return r
 }
 

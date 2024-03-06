@@ -16,8 +16,8 @@ import (
 
 func previewMapContainer(data []models.LiveFlights) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_previewMapContainer_1a59`,
-		Function: `function __templ_previewMapContainer_1a59(data){const tileLayer = new ol.layer.Tile({
+		Name: `__templ_previewMapContainer_5386`,
+		Function: `function __templ_previewMapContainer_5386(data){const tileLayer = new ol.layer.Tile({
         source: new ol.source.OSM(),
     });
 
@@ -62,7 +62,7 @@ for (let i = 0; i < data.length; i++) {
             anchor: [0.5, 46],
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
-            src: '../../../static/icons/airplane-take-off.svg',
+            src: '../../../../static/icons/airplane-take-off.svg',
             scale: 0.5,
         }),
     });
@@ -268,8 +268,8 @@ function addLater(features, timeout) {
        }
       })
 }`,
-		Call:       templ.SafeScript(`__templ_previewMapContainer_1a59`, data),
-		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_1a59`, data),
+		Call:       templ.SafeScript(`__templ_previewMapContainer_5386`, data),
+		CallInline: templ.SafeScriptInline(`__templ_previewMapContainer_5386`, data),
 	}
 }
 

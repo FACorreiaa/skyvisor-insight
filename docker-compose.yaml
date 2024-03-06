@@ -55,7 +55,7 @@ services:
       - ./:/app
 #    environment:
 #      APP_ENV: development
-    command: [ "air", "-c", ".air.toml" ]
+
     networks:
       - aviation-client
 #  release-stage:

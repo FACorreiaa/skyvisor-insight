@@ -448,3 +448,59 @@ func (r *FlightsRepository) GetAllFlightsByStatus(ctx context.Context,
 
 	return r.getFlightsData(ctx, query, offset, pageSize, orderBy, sortBy, flightNumber, flightStatus)
 }
+
+func (r *FlightsRepository) GetAllFlightsLocationsByStatus(ctx context.Context, flightStatus string) ([]models.LiveFlights, error) {
+	query := `
+				SELECT
+				DISTINCT ON (f.flight_number)
+			    f.flight_number,
+			    COALESCE(al.airline_name, 'N/A') as airline_name,
+			    COALESCE(ad.airport_name, 'N/A') AS departure_airport,
+			    COALESCE(ad.latitude, 0.0) AS departure_latitude,
+			    COALESCE(ad.longitude, 0.0) AS departure_longitude,
+			    COALESCE(aa.airport_name, 'N/A') AS arrival_airport,
+			    COALESCE(aa.latitude, 0.0) AS arrival_latitude,
+			    COALESCE(aa.longitude, 0.0) AS arrival_longitude,
+			    f.flight_date,
+			    f.flight_status,
+			    f.live_updated,
+			    f.id,
+			    f.arrival_actual,
+			    f.arrival_actual_runway,
+			    f.arrival_airport,
+			    COALESCE(f.arrival_baggage, 'N/A'),
+			    COALESCE(FLOOR(f.arrival_delay / (1000 * 60)), 0) as arrival_delay,
+				f.arrival_estimated,
+			    COALESCE(f.arrival_terminal, 'N/A'),
+			    COALESCE(f.arrival_gate, 'N/A'),
+			    f.arrival_timezone,
+			    f.departure_scheduled,
+			    departure_estimated_runway,
+			    f.departure_timezone,
+			    f.departure_terminal,
+			    COALESCE(f.departure_gate, 'N/A'),
+			    f.departure_actual,
+			    f.departure_actual_runway,
+				f.departure_airport,
+				f.departure_estimated,
+			    COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay,
+				COALESCE(ad.city_iata_code, 'N/A') AS departure_city_code,
+			    COALESCE(ad.country_iso2 , 'N/A') AS departure_country_code,
+			    COALESCE(aa.city_iata_code, 'N/A') AS arrival_city_code,
+			    COALESCE(aa.country_iso2, 'N/A') AS arrival_country_code
+			FROM
+			    flights f
+			        LEFT JOIN
+			    airport ad ON f.departure_iata = ad.iata_code
+			        LEFT JOIN
+			    airport aa ON f.arrival_iata = aa.iata_code
+			        LEFT JOIN
+			    airline al on f.airline_iata = al.iata_code
+			WHERE
+			    ad.latitude IS NOT NULL
+			  AND ad.longitude IS NOT NULL
+			  AND flight_status = $1
+			  ORDER BY f.flight_number`
+
+	return r.getFlightsLocationsData(ctx, query, flightStatus)
+}

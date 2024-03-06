@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -36,19 +37,19 @@ func (h *Handler) renderLiveLocationsSidebar() []models.SidebarItem {
 			Label: "Live Flights",
 			Icon:  svg2.GlobeEuropeIcon(),
 			SubItems: []models.SidebarItem{
-				{Path: "/flights/flight/active/data", Label: "Live Flights", Icon: svg2.GlobeEuropeIcon()},
-				{Path: "/flights/flight/active/map", Label: "Live Flights Locations", Icon: svg2.MapIcon()},
+				{Path: "/flights/flight/status/active", Label: "Live Flights", Icon: svg2.GlobeEuropeIcon()},
+				{Path: "/flights/flight/status/location/active", Label: "Live Flights Locations", Icon: svg2.MapIcon()},
 			},
 		},
 		{
 			Label: "Landed Flights",
 			Icon:  svg2.GlobeEuropeIcon(),
 			SubItems: []models.SidebarItem{
-				{Path: "/flights/flight/landed/data", Label: "Landed Flights", Icon: svg2.GlobeEuropeIcon()},
-				{Path: "/flights/flight/landed/map", Label: "Landed Flights Location", Icon: svg2.MapIcon()},
+				{Path: "/flights/flight/status/landed", Label: "Landed Flights", Icon: svg2.GlobeEuropeIcon()},
+				{Path: "/flights/flight/status/location/landed", Label: "Landed Flights Location", Icon: svg2.MapIcon()},
 			},
 		},
-		{Path: "/flights/flight/scheduled", Label: "Scheduled Flights", Icon: svg2.HomeIcon()},
+		{Path: "/flights/flight/status/scheduled", Label: "Scheduled Flights", Icon: svg2.HomeIcon()},
 		{Path: "/flights/flight/status/cancelled", Label: "Cancelled Flights", Icon: svg2.HomeIcon()},
 		{Path: "/flights/flight/status/incident", Label: "Incident Flights", Icon: svg2.HomeIcon()},
 		{Path: "/flights/flight/status/diverted", Label: "Diverted Flights", Icon: svg2.HomeIcon()},
@@ -231,5 +232,21 @@ func (h *Handler) FilteredFlightsPage(w http.ResponseWriter, r *http.Request) er
 	s := h.renderLiveLocationsSidebar()
 
 	f := flights.AllFlightsPage(table, s, "Live Flights", "Check all flights going on")
+	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
+}
+
+func (h *Handler) FlightsLocationsByStatus(w http.ResponseWriter, r *http.Request) error {
+	vars := mux.Vars(r)
+	flightStatus := vars["flight_status"]
+	fmt.Printf("%s", flightStatus)
+	s := h.renderLiveLocationsSidebar()
+	fd, err := h.service.GetAllFlightsLocationsByStatus(context.Background(), flightStatus)
+
+	if err != nil {
+		HandleError(err, "Error fetching flights details page")
+		return err
+	}
+
+	f := flights.FLightsPreviewPage(s, fd, "Live Flights", "Detailed flight data")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }

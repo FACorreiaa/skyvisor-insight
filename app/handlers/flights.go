@@ -49,9 +49,9 @@ func (h *Handler) renderLiveLocationsSidebar() []models.SidebarItem {
 			},
 		},
 		{Path: "/flights/flight/scheduled", Label: "Scheduled Flights", Icon: svg2.HomeIcon()},
-		{Path: "/flights/flight/cancelled", Label: "Cancelled Flights", Icon: svg2.HomeIcon()},
-		{Path: "/flights/flight/incident", Label: "Incident Flights", Icon: svg2.HomeIcon()},
-		{Path: "/flights/flight/diverted", Label: "Diverted Flights", Icon: svg2.HomeIcon()},
+		{Path: "/flights/flight/status/cancelled", Label: "Cancelled Flights", Icon: svg2.HomeIcon()},
+		{Path: "/flights/flight/status/incident", Label: "Incident Flights", Icon: svg2.HomeIcon()},
+		{Path: "/flights/flight/status/diverted", Label: "Diverted Flights", Icon: svg2.HomeIcon()},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 		{Path: "/log-out", Label: "Log out", Icon: svg2.LogoutIcon()},
 	}
@@ -219,5 +219,17 @@ func (h *Handler) FlightsPreview(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	f := flights.FLightsPreviewPage(s, fd, "Live Flights", "Detailed flight data")
+	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
+}
+
+func (h *Handler) FilteredFlightsPage(w http.ResponseWriter, r *http.Request) error {
+	table, err := h.renderFlightsTable(w, r)
+	if err != nil {
+		HandleError(err, "Error fetching flights table")
+		return err
+	}
+	s := h.renderLiveLocationsSidebar()
+
+	f := flights.AllFlightsPage(table, s, "Live Flights", "Check all flights going on")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }

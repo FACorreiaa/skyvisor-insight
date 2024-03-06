@@ -62,10 +62,10 @@ func (r *FlightsRepository) getFlightsData(ctx context.Context, query string,
 			return nil, err
 		}
 
-		if f.Arrival.Delay != nil {
-			minutes := *f.Arrival.Delay / (millis * minutes)
-			f.Arrival.Delay = &minutes
-		}
+		//if f.Arrival.Delay != nil {
+		//	minutes := *f.Arrival.Delay / (millis * minutes)
+		//	f.Arrival.Delay = &minutes
+		//}
 
 		lf = append(lf, f)
 	}
@@ -405,7 +405,8 @@ func (r *FlightsRepository) GetAllFlightsByStatus(ctx context.Context,
 							       f.departure_actual_runway,
 							       f.departure_airport,
 							       f.departure_estimated,
-							       COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay
+							       COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay,
+							       COALESCE(f.airline_name, 'N/A') as airline_name
 							from flights f
 							WHERE	Trim(Upper(f.flight_number))
 							          ILIKE trim(upper('%' || $5 || '%'))

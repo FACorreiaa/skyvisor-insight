@@ -1,0 +1,217 @@
+package flights
+
+import (
+    "github.com/FACorreiaa/Aviation-tracker/app/models"
+    "fmt"
+)
+
+script liveFlightsMapContainer(data []models.LiveFlights) {
+    //control selector
+    console.log('data', data)
+    const rangeInput = document.querySelector('.range');
+    const updatePointsOnMap = () => {
+        const selectedValue = parseInt(rangeInput.value, 10);
+        // Logic to update the number of points on the map based on the selected value
+        const filteredData = data.slice(0, selectedValue);
+        // Clear existing features
+        vectorSource.clear();
+        // Add new features based on the filtered data
+        vectorSource.addFeatures(filteredData.map(flights => createFeatureFromLiveFlights(flights)));
+    };
+
+    // Add event listener for input change
+    rangeInput.addEventListener('input', updatePointsOnMap);
+
+  function createFeatureFromLiveFlights(flights) {
+
+        const iconStyle = new ol.style.Style({
+            image: new ol.style.Icon({
+                anchor: [1, 46],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                src: '../../../../static/icons/marker.png',
+                scale: 0.5,
+            }),
+        });
+
+        const feature = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([flights.live.longitude, flights.live.latitude])),
+            status: flights.flight_status,
+            latitude: flights.live.latitude,
+            longitude: flights.live.longitude,
+            altitude: flights.live.longitude,
+            speed_h: flights.live.speed_horizontal,
+            speed_v: flights.live.speed_vertical,
+            is_ground:flights.live.is_ground,
+            style: iconStyle,
+        });
+
+        feature.setStyle(iconStyle);
+
+        return feature;
+    }
+
+
+    const vectorSource = new ol.source.Vector({
+        features: data.map(f => createFeatureFromLiveFlights(f)),
+    });
+
+   const vectorLayer = new ol.layer.Vector({
+      source: vectorSource,
+   });
+
+  const tileLayer = new ol.layer.Tile({
+            source: new ol.source.OSM(),
+         })
+
+   const map = new ol.Map({
+      layers: [tileLayer, vectorLayer],
+      target: document.getElementById('map'),
+      controls: [],
+      view: new ol.View({
+         center: [0, 0],
+         zoom: 1,
+      }),
+   });
+
+   const element = document.getElementById('popup');
+   const popup = new ol.Overlay({
+      element: element,
+      positioning: 'bottom-center',
+      stopEvent: false,
+   });
+   map.addOverlay(popup);
+
+   let popover;
+
+   function disposePopover() {
+      if (popover) {
+         popover.dispose();
+         popover = undefined;
+      }
+   }
+
+   const tippyButton = document.getElementById('popup');
+    tippy(tippyButton, {
+      content: document.createElement('div'),
+      interactive: true,
+      trigger: 'click',
+      placement: 'top',
+      animation: 'scale'  ,
+      theme: 'translucent'
+    });
+
+   map.on('click', function (evt) {
+      const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+         return feature;
+      });
+      disposePopover();
+      if (!feature) {
+         return;
+      }
+      popup.setPosition(evt.coordinate);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.innerHTML = `
+            <strong>Flight status:</strong> ${feature.get('status')}<br>
+            <strong>Lat:</strong> ${feature.get('latitude')}<br>
+            <strong>Lon:</strong> ${feature.get('longitude')}<br>
+            <strong>Alt:</strong> ${feature.get('altitude')}<br>
+            <strong>Speed Hor:</strong> ${feature.get('speed_h')}<br>
+            <strong>Speed Ver:</strong> ${feature.get('speed_v')}<br>
+            <strong>Is ground:</strong> ${feature.get('is_ground')}<br>
+
+
+
+
+    `;
+
+      tippyButton._tippy.setContent(contentDiv);
+      tippyButton._tippy.show();
+   });
+
+
+
+   map.on('pointermove', function (e) {
+      const pixel = map.getEventPixel(e.originalEvent);
+      const hit = map.hasFeatureAtPixel(pixel);
+      map.getTarget().style.cursor = hit ? "pointer" : "";
+   });
+
+
+   map.on('movestart', disposePopover);
+
+
+   document.getElementById('zoom-out').onclick = function () {
+      const view = map.getView();
+      const zoom = view.getZoom();
+      view.setZoom(zoom - 1);
+   };
+
+   document.getElementById('zoom-in').onclick = function () {
+      const view = map.getView();
+      const zoom = view.getZoom();
+      view.setZoom(zoom + 1);
+   };
+
+   map.on('dblclick', event => {
+       // get the feature you clicked
+       const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
+        return feature
+       })
+       if(feature instanceof ol.Feature){
+         // Fit the feature geometry or extent based on the given map
+         map.getView().fit(feature.getGeometry())
+         // map.getView().fit(feature.getGeometry().getExtent(), {size:map.getSize(), maxZoom:5})
+       }
+      })
+
+       map.on('postrender', function () {
+               if (map.getView().getZoom() < 3) {
+                   vectorLayer.setVisible(false);
+               } else {
+                   vectorLayer.setVisible(true);
+               }
+           });
+}
+
+templ LiveFlightsPreviewMap(data []models.LiveFlights) {
+	<html>
+		<head>
+			<style scoped>
+				.map {
+					width: 100%;
+					height: 700px;				}
+				#map:focus {
+					outline: #4A74A8 solid 0.15em;
+				}
+			</style>
+		</head>
+		<body onload={ liveFlightsMapContainer(data) }>
+		<div class="mb-5 text-left">
+        	    <button id="zoom-out" class="btn btn-ghost mr-5">Zoom out</button>
+                <button id="zoom-in" class="btn btn-ghost">Zoom in</button>
+        </div>
+				<div id="map" class="map mt-10" tabindex="0">
+				    <button aria-describedby="popup" data-tippy-content="popup" id="popup"></button>
+				</div>
+                		<div class="w-full form-control">
+                			<div class="label">
+                				<span class="label-text font-semi-bold text-xs badge-xs badge pb-0">Display number of markers</span>
+                			</div>
+                			<div class="flex items-center mt-2">
+                			    <span class="text-xs">0</span>
+                				<input
+                					type="range"
+                					min="0"
+                					max={fmt.Sprintf("%d", len(data))}
+                					value={fmt.Sprintf("%d", len(data))}
+                					class="range range-xs p-2 mr-2 ml-2"
+                					name="rangeValue"
+                				/>
+                				<span class="text-xs" id="rangeValue">{fmt.Sprintf("%d", len(data))}</span>
+                			</div>
+                		</div>
+		</body>
+	</html>
+}

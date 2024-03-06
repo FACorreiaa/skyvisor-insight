@@ -43,6 +43,18 @@ func (h *Service) GetAllFlights(ctx context.Context,
 	return h.flightRepo.GetAllFlights(ctx, page, pageSize, orderBy, sortBy, flightNumber, airlineName, flightStatus)
 }
 
-func (h *Service) GetAllFlightsLocationsByStatus(ctx context.Context, flightStatus string) ([]models.LiveFlights, error) {
+func (h *Service) GetAllFlightsLocationsByStatus(ctx context.Context,
+	flightStatus string) ([]models.LiveFlights, error) {
 	return h.flightRepo.GetAllFlightsLocationsByStatus(ctx, flightStatus)
+}
+
+func (h *Service) GetLiveFlights(ctx context.Context,
+	page, pageSize int, orderBy, sortBy, flightNumber, airlineName, flightStatus string) ([]models.LiveFlights, error) {
+
+	return h.flightRepo.GetLiveFlights(ctx, page, pageSize, orderBy, sortBy, flightNumber, airlineName, flightStatus)
+}
+
+func (h *Service) GetLiveFlightsLocations(ctx context.Context) ([]models.LiveFlights, error) {
+
+	return h.flightRepo.GetLiveFlightsLocations(ctx)
 }

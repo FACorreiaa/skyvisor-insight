@@ -23,7 +23,7 @@ func InputGroupContainer() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"border-dashed border-2 border-sky-500 rounded p-2 flex flex-row justify-between shadow-xl\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"border-dashed border-2 border-gray-500 rounded p-2 flex flex-row justify-between shadow-xl mb-10 mt-5\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

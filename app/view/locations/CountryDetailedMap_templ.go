@@ -16,8 +16,8 @@ import (
 
 func detailedCountryMapContainer(data models.Country) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedCountryMapContainer_b7ce`,
-		Function: `function __templ_detailedCountryMapContainer_b7ce(data){function createFeatureFromCity(country) {
+		Name: `__templ_detailedCountryMapContainer_4bf1`,
+		Function: `function __templ_detailedCountryMapContainer_4bf1(data){function createFeatureFromCity(country) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -135,19 +135,21 @@ func detailedCountryMapContainer(data models.Country) templ.ComponentScript {
    };
 
    map.on('dblclick', event => {
-       // get the feature you clicked
+       const zoomLevel = 8;
        const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
-        return feature
-       })
-       if(feature instanceof ol.Feature){
-         // Fit the feature geometry or extent based on the given map
-         map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent())
+           return feature;
+       });
+       if (feature instanceof ol.Feature) {
+           map.getView().fit(feature.getGeometry().getExtent(), {
+               size: map.getSize(),
+               padding: [10, 10, 10, 10],
+               minResolution: map.getView().getResolutionForZoom(zoomLevel),
+           });
        }
-      })
+   });
 }`,
-		Call:       templ.SafeScript(`__templ_detailedCountryMapContainer_b7ce`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedCountryMapContainer_b7ce`, data),
+		Call:       templ.SafeScript(`__templ_detailedCountryMapContainer_4bf1`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedCountryMapContainer_4bf1`, data),
 	}
 }
 

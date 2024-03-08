@@ -17,8 +17,8 @@ import (
 
 func cityMapContainer(data []models.City) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_cityMapContainer_ff5b`,
-		Function: `function __templ_cityMapContainer_ff5b(data){//control selector
+		Name: `__templ_cityMapContainer_fda0`,
+		Function: `function __templ_cityMapContainer_fda0(data){//control selector
     const rangeInput = document.querySelector('.range');
     const updatePointsOnMap = () => {
         const selectedValue = parseInt(rangeInput.value, 10);
@@ -156,16 +156,18 @@ func cityMapContainer(data []models.City) templ.ComponentScript {
    };
 
    map.on('dblclick', event => {
-       // get the feature you clicked
+       const zoomLevel = 8;
        const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
-        return feature
-       })
-       if(feature instanceof ol.Feature){
-         // Fit the feature geometry or extent based on the given map
-         map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent(), {size:map.getSize(), maxZoom:5})
+           return feature;
+       });
+       if (feature instanceof ol.Feature) {
+           map.getView().fit(feature.getGeometry().getExtent(), {
+               size: map.getSize(),
+               padding: [10, 10, 10, 10],
+               minResolution: map.getView().getResolutionForZoom(zoomLevel),
+           });
        }
-      })
+   });
 
        map.on('postrender', function () {
                if (map.getView().getZoom() < 3) {
@@ -175,8 +177,8 @@ func cityMapContainer(data []models.City) templ.ComponentScript {
                }
            });
 }`,
-		Call:       templ.SafeScript(`__templ_cityMapContainer_ff5b`, data),
-		CallInline: templ.SafeScriptInline(`__templ_cityMapContainer_ff5b`, data),
+		Call:       templ.SafeScript(`__templ_cityMapContainer_fda0`, data),
+		CallInline: templ.SafeScriptInline(`__templ_cityMapContainer_fda0`, data),
 	}
 }
 
@@ -233,7 +235,7 @@ func CityMap(data []models.City) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(data)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/locations/CityMap.templ`, Line: 200, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/locations/CityMap.templ`, Line: 202, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

@@ -12,13 +12,13 @@ templ AirlineTaxTable(tax models.TaxTable) {
 	<div class="flex flex-col items-left">
 		@components.InputGroupContainer() {
                    <div class="mr-2">
-                      @components.InputComponent("Filter  Tax", "/airlines/tax", "tax_name")
+                      @components.InputComponent("Filter  Tax", "/airlines/tax", "tax_name", "#searchResults")
                    </div>
                    <div class="mr-2">
-                  	      @components.InputComponent("Filter  Airline", "/airlines/tax", "airline_name")
+                  	      @components.InputComponent("Filter  Airline", "/airlines/tax", "airline_name", "#searchResults")
                    </div>
                    <div class="mr-2">
-                          @components.InputComponent("Filter  Country", "/airlines/tax", "country_name")
+                          @components.InputComponent("Filter  Country", "/airlines/tax", "country_name", "#searchResults")
                    </div>
         	    }
 		<div class="overflow-x-auto">
@@ -59,7 +59,8 @@ templ AirlineTaxTable(tax models.TaxTable) {
 				fmt.Sprintf("/airlines/tax?page=%d", tax.PrevPage),
 				strconv.Itoa(tax.Page),
 				fmt.Sprintf("/airlines/tax?page=%d", tax.NextPage),
-				fmt.Sprintf("/airlines/tax?page=%d", tax.LastPage))
+				fmt.Sprintf("/airlines/tax?page=%d", tax.LastPage),
+				strconv.Itoa(tax.LastPage))
 		</div>
 	</div>
 }

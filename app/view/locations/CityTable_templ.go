@@ -44,7 +44,7 @@ func CityTable(c models.CityTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter City Name", "/locations/city", "city_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter City Name", "/locations/city", "city_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -52,7 +52,7 @@ func CityTable(c models.CityTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Currency", "/locations/city", "currency_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Currency", "/locations/city", "currency_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -60,7 +60,7 @@ func CityTable(c models.CityTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Phone Prefix", "/locations/city", "phone_prefix").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Phone Prefix", "/locations/city", "phone_prefix", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -68,7 +68,7 @@ func CityTable(c models.CityTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter GMT", "/locations/city", "gmt").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter GMT", "/locations/city", "gmt", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -269,7 +269,8 @@ func CityTable(c models.CityTable) templ.Component {
 			fmt.Sprintf("/locations/city?page=%d&search=%s", c.PrevPage, c.FilterCityName),
 			strconv.Itoa(c.Page),
 			fmt.Sprintf("/locations/city?page=%d&search=%s", c.NextPage, c.FilterCityName),
-			fmt.Sprintf("/locations/city?page=%d&search=%s", c.LastPage, c.FilterCityName)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/locations/city?page=%d&search=%s", c.LastPage, c.FilterCityName),
+			strconv.Itoa(c.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

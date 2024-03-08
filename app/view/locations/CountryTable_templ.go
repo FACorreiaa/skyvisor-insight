@@ -44,7 +44,7 @@ func CountryTable(c models.CountryTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Country Name", "/locations/country", "country_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Country Name", "/locations/country", "country_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -52,7 +52,7 @@ func CountryTable(c models.CountryTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Capital", "/locations/country", "capital").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Capital", "/locations/country", "capital", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -60,7 +60,7 @@ func CountryTable(c models.CountryTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Continent", "/locations/country", "continent").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Continent", "/locations/country", "continent", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -68,7 +68,7 @@ func CountryTable(c models.CountryTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Currency Code", "/locations/country", "currency_code").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Currency Code", "/locations/country", "currency_code", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -269,7 +269,8 @@ func CountryTable(c models.CountryTable) templ.Component {
 			fmt.Sprintf("/locations/country?page=%d&search=%s", c.PrevPage, c.FilterCountry),
 			strconv.Itoa(c.Page),
 			fmt.Sprintf("/locations/country?page=%d&search=%s", c.NextPage, c.FilterCountry),
-			fmt.Sprintf("/locations/country?page=%d&search=%s", c.LastPage, c.FilterCountry)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/locations/country?page=%d&search=%s", c.LastPage, c.FilterCountry),
+			strconv.Itoa(c.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

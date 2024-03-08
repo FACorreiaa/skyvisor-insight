@@ -44,7 +44,7 @@ func AirlineAircraftTable(a models.AircraftTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Aircraft Name", "/airlines/aircraft", "aircraft_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Aircraft Name", "/airlines/aircraft", "aircraft_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -52,7 +52,7 @@ func AirlineAircraftTable(a models.AircraftTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Engine Type", "/airlines/aircraft", "type_engine").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Engine Type", "/airlines/aircraft", "type_engine", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -60,7 +60,7 @@ func AirlineAircraftTable(a models.AircraftTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Mode Code", "/airlines/aircraft", "model_code").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Mode Code", "/airlines/aircraft", "model_code", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -68,7 +68,7 @@ func AirlineAircraftTable(a models.AircraftTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Plane Owner", "/airlines/aircraft", "plane_owner").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Plane Owner", "/airlines/aircraft", "plane_owner", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -353,7 +353,8 @@ func AirlineAircraftTable(a models.AircraftTable) templ.Component {
 			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.PrevPage, a.FilterAircraft),
 			strconv.Itoa(a.Page),
 			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.NextPage, a.FilterAircraft),
-			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.LastPage, a.FilterAircraft)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.LastPage, a.FilterAircraft),
+			strconv.Itoa(a.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

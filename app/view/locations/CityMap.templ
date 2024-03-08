@@ -144,16 +144,18 @@ script cityMapContainer(data []models.City) {
    };
 
    map.on('dblclick', event => {
-       // get the feature you clicked
+       const zoomLevel = 8;
        const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
-        return feature
-       })
-       if(feature instanceof ol.Feature){
-         // Fit the feature geometry or extent based on the given map
-         map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent(), {size:map.getSize(), maxZoom:5})
+           return feature;
+       });
+       if (feature instanceof ol.Feature) {
+           map.getView().fit(feature.getGeometry().getExtent(), {
+               size: map.getSize(),
+               padding: [10, 10, 10, 10],
+               minResolution: map.getView().getResolutionForZoom(zoomLevel),
+           });
        }
-      })
+   });
 
        map.on('postrender', function () {
                if (map.getView().getZoom() < 3) {

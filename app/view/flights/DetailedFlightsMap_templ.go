@@ -16,8 +16,8 @@ import (
 
 func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_4f84`,
-		Function: `function __templ_detailedMapContainer_4f84(data){const tileLayer = new ol.layer.Tile({
+		Name: `__templ_detailedMapContainer_5902`,
+		Function: `function __templ_detailedMapContainer_5902(data){const tileLayer = new ol.layer.Tile({
         // source: new ol.source.StadiaMaps({
         //     layer: 'stamen_toner',
         // }),
@@ -260,19 +260,21 @@ func detailedMapContainer(data models.LiveFlights) templ.ComponentScript {
    };
 
    map.on('dblclick', event => {
-       // get the feature you clicked
+       const zoomLevel = 8;
        const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
-        return feature
-       })
-       if(feature instanceof ol.Feature){
-         // Fit the feature geometry or extent based on the given map
-         map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent())
+           return feature;
+       });
+       if (feature instanceof ol.Feature) {
+           map.getView().fit(feature.getGeometry().getExtent(), {
+               size: map.getSize(),
+               padding: [10, 10, 10, 10],
+               minResolution: map.getView().getResolutionForZoom(zoomLevel),
+           });
        }
-      })
+   });
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_4f84`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_4f84`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_5902`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_5902`, data),
 	}
 }
 

@@ -44,7 +44,7 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter  Airline", "/airlines/airline", "airline_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter  Airline", "/airlines/airline", "airline_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -52,7 +52,7 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter  Call Sign", "/airlines/airline", "call_sign").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter  Call Sign", "/airlines/airline", "call_sign", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -60,7 +60,7 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter  Hub Code", "/airlines/airline", "hub_code").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter  Hub Code", "/airlines/airline", "hub_code", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -68,7 +68,7 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter  Country", "/airlines/airline", "country_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter  Country", "/airlines/airline", "country_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -85,7 +85,7 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"overflow-x-auto\"><table class=\"table table-xs\"><!-- head --><thead>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"overflow-x-auto\"><table class=\"table table-xs\" id=\"searchResults\"><!-- head --><thead>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -295,7 +295,8 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.PrevPage, a.FilterName),
 			strconv.Itoa(a.Page),
 			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.NextPage, a.FilterName),
-			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.FilterName)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.FilterName),
+			strconv.Itoa(a.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -19,13 +19,13 @@ templ AirportTableComponent(airport models.AirportTable) {
 	<div class="flex flex-col items-left" id="table-container">
 		@components.InputGroupContainer() {
                                <div class="mr-2">
-                                  @components.InputComponent("Filter Airport Name", "/airports", "airport_name")
+                                  @components.InputComponent("Filter Airport Name", "/airports", "airport_name", "#searchResults")
                                </div>
                                <div class="mr-2">
-                              	      @components.InputComponent("Filter Country Name", "/airports", "country_name")
+                              	      @components.InputComponent("Filter Country Name", "/airports", "country_name", "#searchResults")
                                </div>
                                <div class="mr-2">
-                                      @components.InputComponent("Filter GMT", "/airports", "gmt")
+                                      @components.InputComponent("Filter GMT", "/airports", "gmt", "#searchResults")
                                </div>
                     	    }
 		<div class="overflow-x-auto">
@@ -81,6 +81,7 @@ templ AirportTableComponent(airport models.AirportTable) {
 			fmt.Sprintf("/airports?page=%d&search=%s", airport.PrevPage, airport.FilterAirportName),
 			strconv.Itoa(airport.Page),
 			fmt.Sprintf("/airports?page=%d&search=%s", airport.NextPage, airport.FilterAirportName),
-			fmt.Sprintf("/airports?page=%d&search=%s", airport.LastPage, airport.FilterAirportName))
+			fmt.Sprintf("/airports?page=%d&search=%s", airport.LastPage, airport.FilterAirportName),
+			strconv.Itoa(airport.LastPage))
 	</div>
 }

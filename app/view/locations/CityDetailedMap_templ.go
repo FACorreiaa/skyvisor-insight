@@ -16,8 +16,8 @@ import (
 
 func detailedMapContainer(data models.City) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_detailedMapContainer_167d`,
-		Function: `function __templ_detailedMapContainer_167d(data){function createFeatureFromCity(city) {
+		Name: `__templ_detailedMapContainer_ac17`,
+		Function: `function __templ_detailedMapContainer_ac17(data){function createFeatureFromCity(city) {
 
         const iconStyle = new ol.style.Style({
             image: new ol.style.Icon({
@@ -136,19 +136,21 @@ func detailedMapContainer(data models.City) templ.ComponentScript {
    };
 
    map.on('dblclick', event => {
-       // get the feature you clicked
+       const zoomLevel = 8;
        const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
-        return feature
-       })
-       if(feature instanceof ol.Feature){
-         // Fit the feature geometry or extent based on the given map
-         map.getView().fit(feature.getGeometry())
-         // map.getView().fit(feature.getGeometry().getExtent())
+           return feature;
+       });
+       if (feature instanceof ol.Feature) {
+           map.getView().fit(feature.getGeometry().getExtent(), {
+               size: map.getSize(),
+               padding: [10, 10, 10, 10],
+               minResolution: map.getView().getResolutionForZoom(zoomLevel),
+           });
        }
-      })
+   });
 }`,
-		Call:       templ.SafeScript(`__templ_detailedMapContainer_167d`, data),
-		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_167d`, data),
+		Call:       templ.SafeScript(`__templ_detailedMapContainer_ac17`, data),
+		CallInline: templ.SafeScriptInline(`__templ_detailedMapContainer_ac17`, data),
 	}
 }
 

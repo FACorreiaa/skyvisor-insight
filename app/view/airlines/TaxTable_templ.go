@@ -45,7 +45,7 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter  Tax", "/airlines/tax", "tax_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter  Tax", "/airlines/tax", "tax_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -53,7 +53,7 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter  Airline", "/airlines/tax", "airline_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter  Airline", "/airlines/tax", "airline_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -61,7 +61,7 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter  Country", "/airlines/tax", "country_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter  Country", "/airlines/tax", "country_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -175,7 +175,8 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 			fmt.Sprintf("/airlines/tax?page=%d", tax.PrevPage),
 			strconv.Itoa(tax.Page),
 			fmt.Sprintf("/airlines/tax?page=%d", tax.NextPage),
-			fmt.Sprintf("/airlines/tax?page=%d", tax.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/airlines/tax?page=%d", tax.LastPage),
+			strconv.Itoa(tax.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

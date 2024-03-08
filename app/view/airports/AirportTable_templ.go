@@ -64,7 +64,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Airport Name", "/airports", "airport_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Airport Name", "/airports", "airport_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -72,7 +72,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Country Name", "/airports", "country_name").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter Country Name", "/airports", "country_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -80,7 +80,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter GMT", "/airports", "gmt").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputComponent("Filter GMT", "/airports", "gmt", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -270,7 +270,8 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			fmt.Sprintf("/airports?page=%d&search=%s", airport.PrevPage, airport.FilterAirportName),
 			strconv.Itoa(airport.Page),
 			fmt.Sprintf("/airports?page=%d&search=%s", airport.NextPage, airport.FilterAirportName),
-			fmt.Sprintf("/airports?page=%d&search=%s", airport.LastPage, airport.FilterAirportName)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/airports?page=%d&search=%s", airport.LastPage, airport.FilterAirportName),
+			strconv.Itoa(airport.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

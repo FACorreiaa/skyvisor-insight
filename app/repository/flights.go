@@ -324,7 +324,7 @@ func (r *FlightsRepository) GetFlightByID(ctx context.Context, flightNumber stri
 	return f, nil
 }
 
-func (r *FlightsRepository) GetAllFlightsPreview(ctx context.Context) ([]models.LiveFlights, error) {
+func (r *FlightsRepository) GetAllFlightsLocation(ctx context.Context) ([]models.LiveFlights, error) {
 	query := `
 				SELECT
 				DISTINCT ON (f.flight_number)

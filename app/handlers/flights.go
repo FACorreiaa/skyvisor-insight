@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -30,7 +29,7 @@ func (h *Handler) renderLiveLocationsSidebar() []models.SidebarItem {
 			Icon:  svg2.AcademicCapIcon(),
 			SubItems: []models.SidebarItem{
 				{Path: "/flights/flight", Label: "Flights", Icon: svg2.HomeIcon()},
-				{Path: "/flights/flight/preview", Label: "Preview Flights", Icon: svg2.HomeIcon()},
+				{Path: "/flights/flight/location", Label: "Preview Flights", Icon: svg2.HomeIcon()},
 			},
 		},
 		{
@@ -134,6 +133,9 @@ func (h *Handler) getLiveFlights(_ http.ResponseWriter, r *http.Request) (int, [
 func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 	r *http.Request) (templ.Component, error) {
 
+	// vars := mux.Vars(r)
+	// flightStatusRoute := vars["flight_status"]
+
 	var sortAux string
 
 	airlineName := r.FormValue("airline_name")
@@ -200,7 +202,7 @@ func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 		OrderParam:         orderBy,
 		SortParam:          sortAux,
 	}
-	flightsTable := flights.FlightsTableComponent(f)
+	flightsTable := flights.AllFlightsTableComponent(f)
 
 	return flightsTable, nil
 }
@@ -320,9 +322,9 @@ func (h *Handler) DetailedFlightsPage(w http.ResponseWriter, r *http.Request) er
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }
 
-func (h *Handler) FlightsPreview(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) FlightsLocation(w http.ResponseWriter, r *http.Request) error {
 	s := h.renderLiveLocationsSidebar()
-	fd, err := h.service.GetAllFlightsPreview()
+	fd, err := h.service.GetAllFlightsLocation()
 
 	if err != nil {
 		HandleError(err, "Error fetching flights details page")
@@ -348,7 +350,6 @@ func (h *Handler) FilteredFlightsPage(w http.ResponseWriter, r *http.Request) er
 func (h *Handler) FlightsLocationsByStatus(w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	flightStatus := vars["flight_status"]
-	fmt.Printf("%s", flightStatus)
 	s := h.renderLiveLocationsSidebar()
 	fd, err := h.service.GetAllFlightsLocationsByStatus(context.Background(), flightStatus)
 
@@ -382,6 +383,6 @@ func (h *Handler) LiveFlightsLocationsPage(w http.ResponseWriter, r *http.Reques
 		return err
 	}
 
-	f := flights.LiveFlightsPreviewPage(s, fd, "Live Flights", "Detailed flight data")
+	f := flights.LiveFlightsLocationPage(s, fd, "Live Flights", "Detailed flight data")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -104,7 +103,6 @@ func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (te
 	var page int
 
 	page, al, _ := h.getAirline(w, r)
-	fmt.Println("%d", page)
 
 	nextPage := page + 1
 	prevPage := page - 1
@@ -113,7 +111,7 @@ func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (te
 	}
 
 	lastPage, err := h.service.GetAllAirline()
-	fmt.Println("%s", lastPage)
+
 	if err != nil {
 		HandleError(err, "error fetching total airline")
 		return nil, err

@@ -17,8 +17,8 @@ func (h *Service) GetAllFlightsSum() (int, error) {
 	return lastPage, nil
 }
 
-func (h *Service) GetAllFlightsPreview() ([]models.LiveFlights, error) {
-	lf, err := h.flightRepo.GetAllFlightsPreview(context.Background())
+func (h *Service) GetAllFlightsLocation() ([]models.LiveFlights, error) {
+	lf, err := h.flightRepo.GetAllFlightsLocation(context.Background())
 	if err != nil {
 		HandleError(err, "Error flights details")
 		return nil, err

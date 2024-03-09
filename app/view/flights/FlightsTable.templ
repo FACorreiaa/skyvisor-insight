@@ -15,7 +15,7 @@ script returnToPreviousPage(page int) {
   return page - 1
 }
 
-templ FlightsTableComponent(live models.FlightsTable) {
+templ AllFlightsTableComponent(live models.FlightsTable) {
 	<div class="flex flex-col items-left" id="table-container">
 		@components.InputGroupContainer() {
                            <div class="mr-2">

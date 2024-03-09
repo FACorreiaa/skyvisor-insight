@@ -15,7 +15,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
 )
 
-func LiveFlightsPreviewPage(sidebar []models.SidebarItem, lf []models.LiveFlights, title, description string) templ.Component {
+func LiveFlightsLocationPage(sidebar []models.SidebarItem, lf []models.LiveFlights, title, description string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -48,7 +48,7 @@ func LiveFlightsPreviewPage(sidebar []models.SidebarItem, lf []models.LiveFlight
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = LiveFlightsPreviewMap(lf).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = LiveFlightsLocationMap(lf).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

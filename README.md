@@ -33,7 +33,7 @@ This project uses [Docker](https://www.docker.com/) to deploy and test the websi
 - [x] Live flights endpoint
 - [x] Fix all flighst status css pages
 - [ ] Fix order on flights (duplicate table?)
-- [ ] Restructure code to use generics and delete repeated functions
+- [ ] Work on routes (Flights WIP)
 - [ ] Review the methods to bulk import with [Postgres](https://www.postgresql.org/docs/current/sql-copy.html)
 - [ ] Optimise Docker container
 - [ ] Deployment

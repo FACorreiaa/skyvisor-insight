@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ['./app/**/*.{css,view,js,templ}'],
+    content: ['./app/**/*.{css,view,js,templ,html}'],
     theme: {
         colors: {
             blue: '#1fb6ff',
@@ -36,6 +36,7 @@ module.exports = {
             'cyberpunk',
             'pastel',
             'cupcake',
+            'night',
             {
                 'catppuccin-latte': {
                     primary: '#1e66f5', // blue
@@ -84,5 +85,5 @@ module.exports = {
             },
         ],
     },
-    plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
+    plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography'), require("daisyui")],
 };

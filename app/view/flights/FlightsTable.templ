@@ -39,7 +39,7 @@ templ FlightsTableComponent(live models.FlightsTable) {
 									<form class="join" hx-boost="true" method="get">
 										<a
 											class="pl-4"
-											href={ templ.URL(fmt.Sprintf("/flights?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
+											href={ templ.URL(fmt.Sprintf("/flights/flight?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
 										>
 											@col.Icon
 										</a>

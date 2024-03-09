@@ -6,8 +6,8 @@ templ InputComponent(placeholder, route, search, target string) {
     <form
         hx-boost="true"
         method="get"
-        hx-post={route}
-        hx-trigger="input changed delay:500ms, search"
+        hx-get={route}
+        hx-trigger={fmt.Sprintf("input changed delay:500ms, %s", search)}
         hx-include={fmt.Sprintf("[name='%s']", search)}
         hx-indicator=".htmx-indicator"
         hx-target={target}
@@ -15,6 +15,8 @@ templ InputComponent(placeholder, route, search, target string) {
         <label class="w-full max-w-xs form-control relative">
             <div class="relative">
                 <input
+                                    x-model={search}
+
                     type="search"
                     placeholder={placeholder}
                     class="w-full max-w-xs input input-bordered border-2 input-sm pr-8"

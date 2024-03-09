@@ -27,7 +27,7 @@ func NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav s
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"bg-gray-600 border-gray-200 dark:bg-gray-900\"><div class=\"flex items-center justify-between px-6 py-2\"><!-- Logo at the left --><a href=\"/\" class=\"flex items-center space-x-3 rtl:space-x-reverse\"><img src=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"bg-slate-100 border-gray-200 dark:bg-gray-900\"><div class=\"flex items-center justify-between px-6 py-2\"><!-- Logo at the left --><a href=\"/\" class=\"flex items-center space-x-3 rtl:space-x-reverse\"><img src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

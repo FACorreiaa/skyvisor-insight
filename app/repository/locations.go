@@ -106,7 +106,8 @@ func (r *LocationsRepository) GetCountry(ctx context.Context, page, pageSize int
 			    CASE WHEN $2 = 'Latitude' and $3 = 'ASC' THEN ct.latitude::text END ASC,
 			    CASE WHEN $2 = 'Latitude' and $3 = 'DESC' THEN ct.latitude::text END DESC,
 			    CASE WHEN $2 = 'Longitude' and $3 = 'ASC' THEN ct.longitude::text END ASC,
-			    CASE WHEN $2 = 'Longitude' and $3 = 'DESC' THEN ct.longitude::text END DESC
+			    CASE WHEN $2 = 'Longitude' and $3 = 'DESC' THEN ct.longitude::text END DESC,
+			    country_name
             OFFSET $4 LIMIT $5`
 
 	return r.getCountryData(ctx, query, countryName, orderBy, sortBy, offset, pageSize, capital, continent, currencyCode)
@@ -287,7 +288,8 @@ func (r *LocationsRepository) GetCity(ctx context.Context, page, pageSize int, o
 		    CASE WHEN $2 = 'Latitude' and $3 = 'ASC' THEN ct.latitude::text END ASC,
 		    CASE WHEN $2 = 'Latitude' and $3 = 'DESC' THEN ct.latitude::text END DESC,
 		    CASE WHEN $2 = 'Longitude' and $3 = 'ASC' THEN ct.longitude::text END ASC,
-		    CASE WHEN $2 = 'Longitude' and $3 = 'DESC' THEN ct.longitude::text END DESC
+		    CASE WHEN $2 = 'Longitude' and $3 = 'DESC' THEN ct.longitude::text END DESC,
+		    city_name
 			OFFSET $4 LIMIT $5;`
 
 	return r.getCityData(ctx, query, cityName, orderBy, sortBy, offset, pageSize, currencyName, phonePrefix, gmt)

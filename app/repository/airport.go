@@ -123,7 +123,8 @@ func (r *AirportRepository) GetAirports(ctx context.Context,
 			         CASE
 			                  WHEN $1 = 'Longitude'
 			                  AND      $2 = 'DESC' THEN timezone::text
-			         END DESC
+			         END DESC,
+			         airport_name
 			         offset $3 limit $4`
 	offset := (page - 1) * pageSize
 
@@ -214,7 +215,7 @@ func (r *AirportRepository) GetAirportByName(ctx context.Context, page, pageSize
 				AND Trim(Upper(gmt)) ilike trim(upper('%'
 				                  || $7
 				                  || '%'))
-				
+
 				ORDER BY
 			         CASE
 			                  WHEN $2 = 'Airport Name'

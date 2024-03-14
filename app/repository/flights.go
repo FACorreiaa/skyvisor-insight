@@ -173,12 +173,12 @@ func (r *FlightsRepository) GetAllFlights(ctx context.Context,
 							       f.departure_estimated,
 							       COALESCE(FLOOR(f.departure_delay / (1000 * 60)), 0) as departure_delay,
 							       COALESCE(f.codeshared_airline_name, 'N/A') as airline_name
-							       
+
 							from flights f
 							WHERE	Trim(Upper(f.flight_number)) ILIKE trim(upper('%' || $5 || '%'))
 							AND Trim(Upper(f.airline_name)) ILIKE trim(upper('%' || $6 || '%'))
 							AND Trim(Upper(f.flight_status)) ILIKE trim(upper('%' || $7 || '%'))
-							
+
 							ORDER BY
 							CASE
 									WHEN $3 = 'Flight Number'
@@ -203,7 +203,8 @@ func (r *FlightsRepository) GetAllFlights(ctx context.Context,
 							CASE
 									WHEN $3 = 'Flight Date'
 									AND      $4 = 'DESC' THEN flight_date::text
-							END DESC
+							END DESC,
+							departure_estimated
 							offset $1 limit $2`
 
 	offset := (page - 1) * pageSize
@@ -441,7 +442,8 @@ func (r *FlightsRepository) GetAllFlightsByStatus(ctx context.Context,
 							CASE
 									WHEN $3 = 'Flight Date'
 									AND      $4 = 'DESC' THEN flight_date::text
-							END DESC
+							END DESC,
+							departure_estimated
 							offset $1 limit $2`
 
 	offset := (page - 1) * pageSize
@@ -594,7 +596,7 @@ func (r *FlightsRepository) GetLiveFlights(ctx context.Context,
 							       COALESCE(f.codeshared_airline_name, 'N/A') as airline_namel,
 							       f.live_latitude,
 									f.live_longitude
-							  
+
 							from flights f
 							WHERE	Trim(Upper(f.flight_number)) ILIKE trim(upper('%' || $5 || '%'))
 							AND Trim(Upper(f.airline_name)) ILIKE trim(upper('%' || $6 || '%'))
@@ -624,7 +626,8 @@ func (r *FlightsRepository) GetLiveFlights(ctx context.Context,
 							CASE
 									WHEN $3 = 'Flight Date'
 									AND      $4 = 'DESC' THEN flight_date::text
-							END DESC
+							END DESC,
+							departure_estimated
 							offset $1 limit $2`
 
 	offset := (page - 1) * pageSize
@@ -660,7 +663,7 @@ func (r *FlightsRepository) GetLiveFlightsLocations(ctx context.Context) ([]mode
 							       COALESCE(f.codeshared_airline_name, 'N/A') as airline_namel,
 							       f.live_latitude,
 									f.live_longitude
-							  
+
 							from flights f
 							WHERE f.live_latitude != 0 AND f.live_longitude != 0
 							`

@@ -74,7 +74,8 @@ func (r *AirlineRepository) GetAirlines(ctx context.Context, page,
 						    CASE WHEN $2 = 'Type' AND $3 = 'ASC' THEN al.type::text END ASC,
 						    CASE WHEN $2 = 'Type' AND $3 = 'DESC' THEN al.type::text END DESC,
 							CASE WHEN $2 = 'Country Name' AND $3 = 'ASC' THEN al.country_name::text END ASC,
-						    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN al.country_name::text END DESC
+						    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN al.country_name::text END DESC,
+						airline_name
 						OFFSET $4 LIMIT $5`
 
 	return r.getAirlineData(ctx, query, name, orderBy, sortBy, offset,
@@ -268,8 +269,9 @@ func (r *AirlineRepository) GetAircraft(ctx context.Context, page, pageSize int,
 			    CASE WHEN $2 = 'Plane Owner' AND $3 = 'ASC' THEN ap.plane_owner::text END ASC,
 			    CASE WHEN $2 = 'Plane Owner' AND $3 = 'DESC' THEN ap.plane_owner::text END DESC,
 			    CASE WHEN $2 = 'Plane Series' AND $3 = 'ASC' THEN ap.plane_series::text END ASC,
-			    CASE WHEN $2 = 'Plane Series' AND $3 = 'DESC' THEN ap.plane_series::text END DESC
-       										OFFSET $4 LIMIT $5`
+			    CASE WHEN $2 = 'Plane Series' AND $3 = 'DESC' THEN ap.plane_series::text END DESC,
+				aircraft_name::text
+       			OFFSET $4 LIMIT $5`
 
 	return r.getAircraftData(ctx, query, aircraftName, orderBy, sortBy, offset,
 		pageSize, typeEngine, modelCode, planeOwner)
@@ -408,7 +410,8 @@ func (r *AirlineRepository) GetAirplanes(ctx context.Context, page, pageSize int
 		CASE WHEN $2 = 'Registration Number'
 	                  AND $3 = 'ASC' THEN ap.registration_number::text END ASC,
 	    CASE WHEN $2 = 'Registration Number'
-	                  AND $3 = 'DESC' THEN ap.registration_number::text END DESC
+	                  AND $3 = 'DESC' THEN ap.registration_number::text END DESC,
+		airline_name
        	OFFSET $4 LIMIT $5`
 
 	return r.getAirplaneData(ctx, query, airlineName, orderBy, sortBy, offset, pageSize,
@@ -482,7 +485,8 @@ func (r *AirlineRepository) GetTax(ctx context.Context, page, pageSize int,
 			    CASE WHEN $2 = 'Airline Name' AND $3 = 'ASC' THEN a.airline_name::text END ASC,
 			    CASE WHEN $2 = 'Airline Name' AND $3 = 'DESC' THEN a.airline_name::text END DESC,
 			    CASE WHEN $2 = 'Country Name' AND $3 = 'ASC' THEN a.country_name::text END ASC,
-			    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN a.country_name::text END DESC
+			    CASE WHEN $2 = 'Country Name' AND $3 = 'DESC' THEN a.country_name::text END DESC,
+			    tax_name
        										OFFSET $4 LIMIT $5`
 
 	offset := (page - 1) * pageSize

@@ -3,7 +3,7 @@ module github.com/FACorreiaa/Aviation-tracker
 go 1.22.0
 
 require (
-	github.com/a-h/templ v0.2.639
+	github.com/a-h/templ v0.2.648
 	github.com/go-playground/form/v4 v4.2.1
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1

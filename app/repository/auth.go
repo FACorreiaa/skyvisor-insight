@@ -50,19 +50,6 @@ func NewAccountRepository(db *pgxpool.Pool,
 	}
 }
 
-//func NewAccounts(
-//	pgpool *pgxpool.Pool,
-//	redisClient *redis.Client,
-//	validator *validator.Validate,
-//
-//) *AccountRepository {
-//	return &AccountRepository{
-//		pgpool:      pgpool,
-//		redisClient: redisClient,
-//		validator:   validator,
-//	}
-//}
-
 // Logout deletes the user token from the Redis store.
 func (a *AccountRepository) Logout(ctx context.Context, token Token) error {
 	// userKey := RedisPrefix + string(token)

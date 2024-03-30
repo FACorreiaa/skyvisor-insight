@@ -1,12 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
 	"strconv"
-
-	"context"
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/svg"

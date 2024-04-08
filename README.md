@@ -41,6 +41,7 @@ This project uses [Docker](https://www.docker.com/) to deploy and test the websi
 # Low Priority
 
 - [ ] Add search input on maps
+- [ ] Improve run functions separating logs, migrations and dependency injection
 
 ## Getting Started
 

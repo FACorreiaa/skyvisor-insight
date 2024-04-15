@@ -22,6 +22,9 @@ func run(ctx context.Context, w io.Writer, args []string) error {
 	//go:generate npx tailwindcss build -c tailwind.config.js -o ./controller/static/css/style.css -
 	//go:generate ./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify
 	cfg, err := config.NewConfig()
+
+	//config, err := configs.InitConfig()
+
 	if err != nil {
 		return err
 	}
@@ -120,6 +123,13 @@ func run(ctx context.Context, w io.Writer, args []string) error {
 			slog.Error("ListenAndServe", "error", err)
 		}
 	}()
+
+	// TODO change for Viper config
+	err = config.InitPprof("0.0.0.0", "5050")
+	if err != nil {
+		fmt.Printf("Error initializing pprof config: %s", err)
+		panic(err)
+	}
 
 	<-ctx.Done() // Wait for cancellation signal
 

@@ -103,6 +103,8 @@ func NewLogConfig() *LogConfig {
 	}
 }
 
+// NewDatabaseConfig TODO VIBER CONFIG
+
 func NewDatabaseConfig() (*DatabaseConfig, error) {
 	err := godotenv.Load(".env")
 	if err != nil {

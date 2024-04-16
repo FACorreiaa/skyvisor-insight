@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/api"
@@ -123,7 +124,7 @@ func run(ctx context.Context) error {
 		}
 	}()
 
-	err = config.InitPprof(c.Pprof.Addr, c.Pprof.Port)
+	err = config.InitPprof(c.Pprof.Addr, strconv.Itoa(c.Pprof.Port))
 	if err != nil {
 		fmt.Printf("Error initializing pprof config: %s", err)
 		panic(err)

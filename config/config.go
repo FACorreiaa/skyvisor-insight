@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/url"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -17,7 +18,7 @@ type StructConfig struct {
 	Dotenv string `mapstructure:"dotenv"`
 	Server struct {
 		Addr            string        `mapstructure:"addr"`
-		Port            string        `mapstructure:"port"`
+		Port            int           `mapstructure:"port"`
 		WriteTimeout    time.Duration `mapstructure:"write_timeout"`
 		ReadTimeout     time.Duration `mapstructure:"read_timeout"`
 		IdleTimeout     time.Duration `mapstructure:"idle_timeout"`
@@ -26,7 +27,7 @@ type StructConfig struct {
 	Postgres struct {
 		DBName string `mapstructure:"name"`
 		User   string `mapstructure:"user"`
-		Port   string `mapstructure:"port"`
+		Port   int    `mapstructure:"port"`
 		Host   string `mapstructure:"host"`
 	} `mapstructure:"postgres"`
 	Redis struct {
@@ -35,7 +36,7 @@ type StructConfig struct {
 	} `mapstructure:"postgres"`
 	Pprof struct {
 		Addr string `mapstructure:"addr"`
-		Port string `mapstructure:"port"`
+		Port int    `mapstructure:"port"`
 	}
 }
 
@@ -148,7 +149,7 @@ func NewLogConfig() *LogConfig {
 }
 
 func NewDatabaseConfig() (*DatabaseConfig, error) {
-	err := godotenv.Load(".env.compose")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Println(err)
 		log.Fatal("Error loading .env file")
@@ -173,10 +174,12 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 	connURL := url.URL{
 		Scheme:   "postgres",
 		User:     url.UserPassword(cfg.Postgres.User, pass),
-		Host:     cfg.Postgres.Host + ":" + cfg.Postgres.Port,
+		Host:     cfg.Postgres.Host + ":" + strconv.Itoa(cfg.Postgres.Port),
 		Path:     cfg.Postgres.DBName,
 		RawQuery: query.Encode(),
 	}
+	println("DB")
+	println(connURL.String())
 	return &DatabaseConfig{
 		ConnectionURL: connURL.String(),
 	}, nil
@@ -204,7 +207,10 @@ func NewRedisConfig() (*RedisConfig, error) {
 		log.Fatal("Error loading .env file")
 	}
 	host := os.Getenv("REDIS_HOST")
-	pass := os.Getenv("REDIS_PASS")
+	pass := os.Getenv("REDIS_PASSWORD")
+	println(host)
+	println(pass)
+
 	// rdb := redis.NewClient(&redis.Options{
 	//	Addr:     host,
 	//	Password: pass, // no password set
@@ -229,11 +235,13 @@ func NewServerConfig() (*ServerConfig, error) {
 		log.Println(err)
 		log.Fatal("Error loading yml config")
 	}
+	println(cfg.Server.Addr)
+	println(cfg.Server.Port)
 
 	sessionKey := os.Getenv("session_key")
 
 	return &ServerConfig{
-		Addr:            cfg.Server.Addr + ":" + cfg.Server.Port,
+		Addr:            cfg.Server.Addr + ":" + strconv.Itoa(cfg.Server.Port),
 		GracefulTimeout: cfg.Server.GracefulTimeout,
 		WriteTimeout:    cfg.Server.WriteTimeout,
 		ReadTimeout:     cfg.Server.ReadTimeout,

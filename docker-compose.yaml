@@ -129,20 +129,5 @@ services:
 #      POSTGRES_HOST_AUTH_METHOD: trust
 
 
-#  server:
-#    build: .
-#    networks:
-#      - gollama-assistant
-#    depends_on:
-#      - postgres
-#      - redis
-#    environment:
-#      LOG_FORMAT: json
-#      DB_HOST: postgres
-#      REDIS_HOST: redis
-#      ADDR: "0.0.0.0:6969"
-#    ports:
-#      - 6969:6969
-
 networks:
   aviation-client:

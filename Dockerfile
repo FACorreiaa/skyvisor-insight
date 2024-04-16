@@ -31,7 +31,8 @@ FROM gcr.io/distroless/static-debian11 AS release-stage
 WORKDIR /
 COPY --from=build-stage /entrypoint /entrypoint
 COPY --from=build-stage /app/app/static /app/static
-COPY --from=build-stage /app/config /config
+
+COPY ./config /app/config
 
 EXPOSE 8080
 USER nonroot:nonroot

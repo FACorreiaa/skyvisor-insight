@@ -115,6 +115,12 @@ func NewConfig() (*Config, error) {
 }
 
 func NewLogConfig() *LogConfig {
+	err := godotenv.Load(".env.compose")
+	if err != nil {
+		log.Println(err)
+		log.Fatal("Error loading .env file")
+	}
+
 	var level slog.Level
 	levelStr := os.Getenv("LOG_LEVEL")
 	switch levelStr {
@@ -193,6 +199,10 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 //}
 
 func NewRedisConfig() (*RedisConfig, error) {
+	err := godotenv.Load(".env.compose")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	host := os.Getenv("REDIS_HOST")
 	pass := os.Getenv("REDIS_PASS")
 	// rdb := redis.NewClient(&redis.Options{

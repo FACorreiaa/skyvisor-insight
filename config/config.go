@@ -1,16 +1,63 @@
 package config
 
 import (
-	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/url"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
+
+type StructConfig struct {
+	Mode   string `mapstructure:"mode"`
+	Dotenv string `mapstructure:"dotenv"`
+	Server struct {
+		Addr            string        `mapstructure:"addr"`
+		Port            string        `mapstructure:"port"`
+		WriteTimeout    time.Duration `mapstructure:"write_timeout"`
+		ReadTimeout     time.Duration `mapstructure:"read_timeout"`
+		IdleTimeout     time.Duration `mapstructure:"idle_timeout"`
+		GracefulTimeout time.Duration `mapstructure:"graceful_timeout"`
+	} `mapstructure:"server"`
+	Postgres struct {
+		DBName string `mapstructure:"name"`
+		User   string `mapstructure:"user"`
+		Port   string `mapstructure:"port"`
+		Host   string `mapstructure:"host"`
+	} `mapstructure:"postgres"`
+	Redis struct {
+		Host string `mapstructure:"host"`
+		DB   int    `mapstructure:"db"`
+	} `mapstructure:"postgres"`
+	Pprof struct {
+		Addr string `mapstructure:"addr"`
+		Port string `mapstructure:"port"`
+	}
+}
+
+func InitConfig() (StructConfig, error) {
+	var config StructConfig
+	v := viper.New()
+
+	v.AddConfigPath("config")
+	v.AddConfigPath("app/config")
+	v.AddConfigPath("entrypoint/config")
+
+	v.SetConfigName("config_dev")
+	fmt.Println("Configuration paths:", v.ConfigFileUsed())
+
+	if err := v.ReadInConfig(); err != nil {
+		return config, err
+	}
+	if err := v.Unmarshal(&config); err != nil {
+		return config, err
+	}
+	return config, nil
+}
 
 type Config struct {
 	Log      *LogConfig
@@ -94,30 +141,20 @@ func NewLogConfig() *LogConfig {
 	}
 }
 
-// NewDatabaseConfig TODO VIBER CONFIG
-
 func NewDatabaseConfig() (*DatabaseConfig, error) {
-	err := godotenv.Load(".env")
+	err := godotenv.Load(".env.compose")
 	if err != nil {
 		log.Println(err)
 		log.Fatal("Error loading .env file")
 	}
 
-	if os.Getenv("APP_ENV") == "dev" {
-		if err != nil {
-			log.Println(err)
-			log.Fatal("Error loading .env file")
-		}
+	cfg, err := InitConfig()
+	if err != nil {
+		log.Println(err)
+		log.Fatal("Error loading yml config")
 	}
 
-	host := os.Getenv("DB_HOST")
-	port, err := strconv.Atoi(os.Getenv("DB_PORT"))
-	if err != nil {
-		return nil, errors.New("invalid DB_PORT")
-	}
-	user := os.Getenv("DB_USER")
 	pass := os.Getenv("DB_PASS")
-	dbname := os.Getenv("DB_NAME")
 	schema := os.Getenv("")
 
 	query := url.Values{
@@ -129,15 +166,31 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 	}
 	connURL := url.URL{
 		Scheme:   "postgres",
-		User:     url.UserPassword(user, pass),
-		Host:     host + ":" + strconv.Itoa(port),
-		Path:     dbname,
+		User:     url.UserPassword(cfg.Postgres.User, pass),
+		Host:     cfg.Postgres.Host + ":" + cfg.Postgres.Port,
+		Path:     cfg.Postgres.DBName,
 		RawQuery: query.Encode(),
 	}
 	return &DatabaseConfig{
 		ConnectionURL: connURL.String(),
 	}, nil
 }
+
+//func NewRedisConfig() (*RedisConfig, error) {
+//	err := godotenv.Load(".env.compose")
+//	cfg, err := InitConfig()
+//	if err != nil {
+//		log.Println(err)
+//		log.Fatal("Error loading yml config")
+//	}
+//	pass := os.Getenv("REDIS_PASSWORD")
+//
+//	return &RedisConfig{
+//		Host:     cfg.Redis.Host,
+//		Password: pass,
+//		DB:       cfg.Redis.DB,
+//	}, nil
+//}
 
 func NewRedisConfig() (*RedisConfig, error) {
 	host := os.Getenv("REDIS_HOST")
@@ -161,31 +214,20 @@ func NewServerConfig() (*ServerConfig, error) {
 		log.Fatal("Error loading .env file")
 	}
 
-	addr := os.Getenv("ADDR")
-	writeTimeout, err := time.ParseDuration(os.Getenv("write_timeout"))
+	cfg, err := InitConfig()
 	if err != nil {
-		return nil, errors.New("invalid WRITE_TIMEOUT")
+		log.Println(err)
+		log.Fatal("Error loading yml config")
 	}
-	readTimeout, err := time.ParseDuration(os.Getenv("read_timeout"))
-	if err != nil {
-		return nil, errors.New("invalid READ_TIMEOUT")
-	}
-	idleTimeout, err := time.ParseDuration(os.Getenv("idle_timeout"))
-	if err != nil {
-		return nil, errors.New("invalid IDLE_TIMEOUT")
-	}
-	gracefulTimeout, err := time.ParseDuration(os.Getenv("graceful_timeout"))
-	if err != nil {
-		return nil, errors.New("invalid GRACEFUL_TIMEOUT")
-	}
+
 	sessionKey := os.Getenv("session_key")
 
 	return &ServerConfig{
-		Addr:            addr,
-		GracefulTimeout: gracefulTimeout,
-		WriteTimeout:    writeTimeout,
-		ReadTimeout:     readTimeout,
-		IdleTimeout:     idleTimeout,
+		Addr:            cfg.Server.Addr + ":" + cfg.Server.Port,
+		GracefulTimeout: cfg.Server.GracefulTimeout,
+		WriteTimeout:    cfg.Server.WriteTimeout,
+		ReadTimeout:     cfg.Server.ReadTimeout,
+		IdleTimeout:     cfg.Server.IdleTimeout,
 		SessionKey:      sessionKey,
 	}, nil
 }

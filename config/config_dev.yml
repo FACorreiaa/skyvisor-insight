@@ -1,0 +1,22 @@
+mode: "dev"
+dotenv: ".env/dev"
+
+server:
+  addr: "0.0.0.0"
+  port: "6969"
+  write_timeout: 15s
+  read_timeout: 15s
+  idle_timeout: 15s
+  graceful_timeout: 2s
+postgres:
+  host: host.docker.internal
+  name: aviation-tracker-dev
+  user: postgres
+  port: "5435"
+  schema: ""
+redis:
+  host: redis:6380
+  db: 0
+pprof:
+  addr: "0.0.0.0"
+  port: "5050"

@@ -62,7 +62,6 @@ func run(ctx context.Context) error {
 			os.Exit(1)
 		}
 	}(redisClient)
-	// db.WaitForRedis(redisClient)
 
 	if err = db.Migrate(pool); err != nil {
 		return fmt.Errorf("failed to migrate database: %w", err)

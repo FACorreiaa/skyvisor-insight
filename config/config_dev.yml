@@ -9,14 +9,14 @@ server:
   idle_timeout: 100s
   graceful_timeout: 60s
 postgres:
-  host: "host.docker.internal"
+  host: "postgres"
   name: "aviation-tracker-dev"
   user: "postgres"
-  port: 5435
+  port: 5432
   schema: ""
 redis:
   host: "redis:6380"
   db: 0
 pprof:
-  addr: "0.0.0.0"
+  addr: "localhost"
   port: 5050

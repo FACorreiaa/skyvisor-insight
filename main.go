@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"io"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/api"
@@ -18,12 +18,12 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func run(ctx context.Context, w io.Writer, args []string) error {
+func run(ctx context.Context) error {
 	//go:generate npx tailwindcss build -c tailwind.config.js -o ./controller/static/css/style.css -
 	//go:generate ./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify
 	cfg, err := config.NewConfig()
 
-	//config, err := configs.InitConfig()
+	c, err := config.InitConfig()
 
 	if err != nil {
 		return err
@@ -62,7 +62,6 @@ func run(ctx context.Context, w io.Writer, args []string) error {
 			os.Exit(1)
 		}
 	}(redisClient)
-	// db.WaitForRedis(redisClient)
 
 	if err = db.Migrate(pool); err != nil {
 		return fmt.Errorf("failed to migrate database: %w", err)
@@ -124,8 +123,7 @@ func run(ctx context.Context, w io.Writer, args []string) error {
 		}
 	}()
 
-	// TODO change for Viper config
-	err = config.InitPprof("0.0.0.0", "5050")
+	err = config.InitPprof(c.Pprof.Addr, strconv.Itoa(c.Pprof.Port))
 	if err != nil {
 		fmt.Printf("Error initializing pprof config: %s", err)
 		panic(err)
@@ -150,7 +148,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
-	if err := run(ctx, os.Stdout, os.Args); err != nil {
+	if err := run(ctx); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		cancel()
 		os.Exit(1)

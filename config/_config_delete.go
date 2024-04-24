@@ -104,7 +104,7 @@ func NewLogConfig() *LogConfig {
 }
 
 func NewDatabaseConfig() (*DatabaseConfig, error) {
-	err := godotenv.Load(".env")
+	err := godotenv.Load(".env.compose")
 	if err != nil {
 		log.Println(err)
 		log.Fatal("Error loading .env file")

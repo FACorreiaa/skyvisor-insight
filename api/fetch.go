@@ -79,8 +79,8 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 }
 
 func FetchAndInsertCityData(conn *pgxpool.Pool) error {
-	// data, err := fetchAviationStackData("cities", "limit=1000000")
-	data, err := os.ReadFile("./api/data/cities.json")
+	data, err := fetchAviationStackData("cities", "limit=1000000")
+	//data, err := os.ReadFile("./api/data/cities.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -128,8 +128,8 @@ func FetchAndInsertCityData(conn *pgxpool.Pool) error {
 
 func FetchAndInsertCountryData(conn *pgxpool.Pool) error {
 	res := new(structs.CountryAPIData)
-	//data, err := fetchAviationStackData("countries", "limit=1000000")
-	data, err := os.ReadFile("./api/data/countries.json")
+	data, err := fetchAviationStackData("countries", "limit=1000000")
+	//data, err := os.ReadFile("./api/data/countries.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -177,8 +177,8 @@ func FetchAndInsertCountryData(conn *pgxpool.Pool) error {
 
 func FetchAndInsertAirportData(conn *pgxpool.Pool) error {
 	res := new(structs.AirportAPIData)
-	//data, err := fetchAviationStackData("airports", "limit=1000000")
-	data, err := os.ReadFile("./api/data/airports.json")
+	data, err := fetchAviationStackData("airports", "limit=1000000")
+	//data, err := os.ReadFile("./api/data/airports.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -217,8 +217,8 @@ func FetchAndInsertAirportData(conn *pgxpool.Pool) error {
 }
 
 func FetchAndInsertAirplaneData(conn *pgxpool.Pool) error {
-	//data, err := fetchAviationStackData("airplanes", "limit=1000000")
-	data, err := os.ReadFile("./api/data/airplane.json")
+	data, err := fetchAviationStackData("airplanes", "limit=1000000")
+	//data, err := os.ReadFile("./api/data/airplane.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -282,8 +282,8 @@ func FetchAndInsertAirplaneData(conn *pgxpool.Pool) error {
 }
 
 func FetchAndInsertTaxData(conn *pgxpool.Pool) error {
-	// data, err := fetchAviationStackData("taxes", "limit=1000000")
-	data, err := os.ReadFile("./api/data/tax.json")
+	data, err := fetchAviationStackData("taxes", "limit=1000000")
+	//data, err := os.ReadFile("./api/data/tax.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -318,8 +318,8 @@ func FetchAndInsertTaxData(conn *pgxpool.Pool) error {
 
 func FetchAndInsertAircraftData(conn *pgxpool.Pool) error {
 	res := new(structs.AircraftAPIData)
-	//data, err := fetchAviationStackData("aircraft_types", "limit=1000000")
-	data, err := os.ReadFile("./api/data/aircraft.json")
+	data, err := fetchAviationStackData("aircraft_types", "limit=1000000")
+	// data, err := os.ReadFile("./api/data/aircraft.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -356,8 +356,8 @@ func FetchAndInsertAircraftData(conn *pgxpool.Pool) error {
 }
 
 func FetchAndInsertAirlineData(conn *pgxpool.Pool) error {
-	//data, err := fetchAviationStackData("airlines", "limit=1000000")
-	data, err := os.ReadFile("./api/data/airline.json")
+	data, err := fetchAviationStackData("airlines", "limit=1000000")
+	// data, err := os.ReadFile("./api/data/airline.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -406,8 +406,8 @@ func FetchAndInsertAirlineData(conn *pgxpool.Pool) error {
 }
 
 func FetchAndInsertFlightData(conn *pgxpool.Pool) error {
-	//data, err := fetchAviationStackData("flights", "limit=1000000")
-	data, err := os.ReadFile("./api/data/flights.json")
+	data, err := fetchAviationStackData("flights", "limit=1000000")
+	// data, err := os.ReadFile("./api/data/flights.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")

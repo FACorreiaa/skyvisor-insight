@@ -33,7 +33,7 @@ COPY --from=build-stage /entrypoint /entrypoint
 COPY --from=build-stage /app/app/static /app/static
 
 COPY ./config /app/config
-
+COPY .env.compose .
 EXPOSE 8080
 USER nonroot:nonroot
 ENTRYPOINT ["/entrypoint"]

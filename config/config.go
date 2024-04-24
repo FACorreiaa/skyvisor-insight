@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 )
 
@@ -150,6 +151,14 @@ func NewLogConfig() *LogConfig {
 
 func NewDatabaseConfig() (*DatabaseConfig, error) {
 	err := godotenv.Load(".env.compose")
+	env := os.Getenv("APP_ENV")
+
+	if env == "production" {
+		connURL := os.Getenv("DB_PG_PROD")
+		return &DatabaseConfig{
+			ConnectionURL: connURL,
+		}, nil
+	}
 	if err != nil {
 		log.Println(err)
 		log.Fatal("Error loading .env file")
@@ -185,37 +194,27 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 	}, nil
 }
 
-//func NewRedisConfig() (*RedisConfig, error) {
-//	err := godotenv.Load(".env.compose")
-//	cfg, err := InitConfig()
-//	if err != nil {
-//		log.Println(err)
-//		log.Fatal("Error loading yml config")
-//	}
-//	pass := os.Getenv("REDIS_PASSWORD")
-//
-//	return &RedisConfig{
-//		Host:     cfg.Redis.Host,
-//		Password: pass,
-//		DB:       cfg.Redis.DB,
-//	}, nil
-//}
-
 func NewRedisConfig() (*RedisConfig, error) {
 	err := godotenv.Load(".env.compose")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	host := os.Getenv("REDIS_HOST")
-	pass := os.Getenv("REDIS_PASSWORD")
-	println(host)
-	println(pass)
 
-	// rdb := redis.NewClient(&redis.Options{
-	//	Addr:     host,
-	//	Password: pass, // no password set
-	//	DB:       0,    // use default DB
-	// })
+	var host, pass string
+
+	env := os.Getenv("APP_ENV")
+
+	if env == "production" {
+		opt, err := redis.ParseURL(os.Getenv("UPSTASH_URL"))
+		if err != nil {
+			return nil, err
+		}
+		host = opt.Addr
+		pass = opt.Password
+	} else {
+		host = os.Getenv("REDIS_HOST")
+		pass = os.Getenv("REDIS_PASSWORD")
+	}
 
 	return &RedisConfig{
 		Host:     host,
@@ -235,9 +234,6 @@ func NewServerConfig() (*ServerConfig, error) {
 		log.Println(err)
 		log.Fatal("Error loading yml config")
 	}
-	println(cfg.Server.Addr)
-	println(cfg.Server.Port)
-
 	sessionKey := os.Getenv("session_key")
 
 	return &ServerConfig{

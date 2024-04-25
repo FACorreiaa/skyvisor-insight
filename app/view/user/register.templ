@@ -10,9 +10,9 @@ templ RegisterPage(register models.RegisterPage) {
 			<div class="container mx-auto my-24 md:px-6">
 				<div class="row">
 					<div class="col-md-6 offset-md-3 col-xs-12">
-						<h1 class="text-center">Register</h1>
+						<p class="text-center text-6xl">Register</p>
 						if register.Errors != nil {
-							<ul class="error-messages">
+							<ul class="error-messages text-center">
 								for _, err := range register.Errors {
 									<li>{ err }</li>
 								}
@@ -23,7 +23,7 @@ templ RegisterPage(register models.RegisterPage) {
 								<fieldset class="max-w-lg mx-auto mt-2">
 									<label for="username" class="block text-sm font-medium text-gray-900 dark:text-white">Username</label>
 									<input
-										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+										class="bg-gray-50 border border-gray-300 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-grey-900 dark:focus:ring-blue-500 dark:focus:border-blue-500"
 										type="text"
 										placeholder="Username"
 										required

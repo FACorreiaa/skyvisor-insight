@@ -10,9 +10,9 @@ templ LoginPage(login models.LoginPage) {
 			<div class="container mx-auto my-24 md:px-6">
 				<div class="row">
 					<div class="col-md-6 offset-md-3 col-xs-12">
-						<h1 class="text-center">Sign in</h1>
+						<p class="text-center text-6xl">Sign in</p>
 						if login.Errors != nil {
-							<ul class="error-messages">
+							<ul class="error-messages text-center">
 								for _, err := range login.Errors {
 									<li>{ err }</li>
 								}

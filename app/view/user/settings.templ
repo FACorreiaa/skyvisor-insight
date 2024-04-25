@@ -8,14 +8,14 @@ templ SettingsPage(settings models.SettingsPage) {
 	<div class="container mx-auto my-24 md:px-6">
 		<div class="row">
 			<div class="col-md-6 offset-md-3 col-xs-12">
-				<h1 class="text-center">Your Settings</h1>
+				<p class="text-center text-6xl">Your Settings</p>
 				if settings.Updated {
 					<div class="alert alert-success">
 						Settings saved successfully.
 					</div>
 				}
 				if len(settings.Errors)>0 {
-					<ul class="error-messages">
+					<ul class="error-messages text-center">
 						for _, error := range settings.Errors {
 							<li>{ error }</li>
 						}
@@ -57,9 +57,9 @@ templ SettingsPage(settings models.SettingsPage) {
 							/>
 						</fieldset>
 						<fieldset class="max-w-lg mx-auto mt-2">
-							<label class="block text-sm font-medium text-gray-900 dark:text-white" for="user_avatar">Upload file</label>
+							<label class="block text-sm font-medium text-gray-900 dark:text-white" for="avatar">Upload file</label>
 							<input class="form-control" type="file" name="image" accept="image/*"/>
-							<div class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="user_avatar_help">A profile picture is useful to confirm your are logged into your account</div>
+							<div class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="avatar_help">A profile picture is useful to confirm you are logged into your account</div>
 						</fieldset>
 						<fieldset class="max-w-lg mx-auto mt-2">
 							<label for="message" class="block text-sm font-medium text-gray-900 dark:text-white">About you</label>

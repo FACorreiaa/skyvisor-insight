@@ -23,11 +23,11 @@ func run(ctx context.Context) error {
 	//go:generate ./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify
 	cfg, err := config.NewConfig()
 
-	c, err := config.InitConfig()
-
 	if err != nil {
 		return err
 	}
+
+	c, err := config.InitConfig()
 
 	var logHandler slog.Handler
 

@@ -166,6 +166,7 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 	err := godotenv.Load(".env.compose")
 	env := GetProdEnv()
 
+	println(env)
 	if env {
 		connURL := os.Getenv("DB_PG_PROD")
 		return &DatabaseConfig{
@@ -216,6 +217,7 @@ func NewRedisConfig() (*RedisConfig, error) {
 	var host, pass string
 
 	env := GetProdEnv()
+	println(env)
 
 	if env {
 		opt, err := redis.ParseURL(os.Getenv("UPSTASH_URL"))
@@ -228,6 +230,8 @@ func NewRedisConfig() (*RedisConfig, error) {
 		host = os.Getenv("REDIS_HOST")
 		pass = os.Getenv("REDIS_PASSWORD")
 	}
+	println(host)
+	println(pass)
 
 	return &RedisConfig{
 		Host:     host,

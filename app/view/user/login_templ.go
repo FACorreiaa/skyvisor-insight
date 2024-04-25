@@ -27,12 +27,12 @@ func LoginPage(login models.LoginPage) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col h-screen font-lato\" id=\"contents\"><div class=\"h-full\"><div class=\"container mx-auto my-24 md:px-6\"><div class=\"row\"><div class=\"col-md-6 offset-md-3 col-xs-12\"><h1 class=\"text-center\">Sign in</h1>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col h-screen font-lato\" id=\"contents\"><div class=\"h-full\"><div class=\"container mx-auto my-24 md:px-6\"><div class=\"row\"><div class=\"col-md-6 offset-md-3 col-xs-12\"><p class=\"text-center text-6xl\">Sign in</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if login.Errors != nil {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul class=\"error-messages\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul class=\"error-messages text-center\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

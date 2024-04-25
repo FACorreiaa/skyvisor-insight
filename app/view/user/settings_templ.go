@@ -27,7 +27,7 @@ func SettingsPage(settings models.SettingsPage) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container mx-auto my-24 md:px-6\"><div class=\"row\"><div class=\"col-md-6 offset-md-3 col-xs-12\"><h1 class=\"text-center\">Your Settings</h1>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container mx-auto my-24 md:px-6\"><div class=\"row\"><div class=\"col-md-6 offset-md-3 col-xs-12\"><p class=\"text-center text-6xl\">Your Settings</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -38,7 +38,7 @@ func SettingsPage(settings models.SettingsPage) templ.Component {
 			}
 		}
 		if len(settings.Errors) > 0 {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul class=\"error-messages\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ul class=\"error-messages text-center\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -92,7 +92,7 @@ func SettingsPage(settings models.SettingsPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></fieldset><fieldset class=\"max-w-lg mx-auto mt-2\"><label class=\"block text-sm font-medium text-gray-900 dark:text-white\" for=\"user_avatar\">Upload file</label> <input class=\"form-control\" type=\"file\" name=\"image\" accept=\"image/*\"><div class=\"mt-1 text-sm text-gray-500 dark:text-gray-300\" id=\"user_avatar_help\">A profile picture is useful to confirm your are logged into your account</div></fieldset><fieldset class=\"max-w-lg mx-auto mt-2\"><label for=\"message\" class=\"block text-sm font-medium text-gray-900 dark:text-white\">About you</label> <textarea class=\"block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500\" rows=\"8\" placeholder=\"Short bio about you\" name=\"bio\" required id=\"message\">bio</textarea></fieldset></fieldset><div class=\"max-w-lg mx-auto mt-2\"><button type=\"submit\" class=\"focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800\">Update Settings</button></div></form><form class=\"max-w-lg mx-auto mt-2\" method=\"post\" action=\"/logout\"><button type=\"submit\" class=\"focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900\">Logout</button></form></div></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></fieldset><fieldset class=\"max-w-lg mx-auto mt-2\"><label class=\"block text-sm font-medium text-gray-900 dark:text-white\" for=\"avatar\">Upload file</label> <input class=\"form-control\" type=\"file\" name=\"image\" accept=\"image/*\"><div class=\"mt-1 text-sm text-gray-500 dark:text-gray-300\" id=\"avatar_help\">A profile picture is useful to confirm you are logged into your account</div></fieldset><fieldset class=\"max-w-lg mx-auto mt-2\"><label for=\"message\" class=\"block text-sm font-medium text-gray-900 dark:text-white\">About you</label> <textarea class=\"block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500\" rows=\"8\" placeholder=\"Short bio about you\" name=\"bio\" required id=\"message\">bio</textarea></fieldset></fieldset><div class=\"max-w-lg mx-auto mt-2\"><button type=\"submit\" class=\"focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800\">Update Settings</button></div></form><form class=\"max-w-lg mx-auto mt-2\" method=\"post\" action=\"/logout\"><button type=\"submit\" class=\"focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900\">Logout</button></form></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

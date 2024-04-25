@@ -92,6 +92,19 @@ type ServerConfig struct {
 	SessionKey      string
 }
 
+func GetProdEnv() bool {
+	err := godotenv.Load(".env.compose")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	env := os.Getenv("APP_ENV")
+	if env == "production" {
+		return true
+	}
+
+	return false
+}
+
 func NewConfig() (*Config, error) {
 	database, err := NewDatabaseConfig()
 	if err != nil {
@@ -151,9 +164,9 @@ func NewLogConfig() *LogConfig {
 
 func NewDatabaseConfig() (*DatabaseConfig, error) {
 	err := godotenv.Load(".env.compose")
-	env := os.Getenv("APP_ENV")
+	env := GetProdEnv()
 
-	if env == "production" {
+	if env {
 		connURL := os.Getenv("DB_PG_PROD")
 		return &DatabaseConfig{
 			ConnectionURL: connURL,
@@ -202,9 +215,9 @@ func NewRedisConfig() (*RedisConfig, error) {
 
 	var host, pass string
 
-	env := os.Getenv("APP_ENV")
+	env := GetProdEnv()
 
-	if env == "production" {
+	if env {
 		opt, err := redis.ParseURL(os.Getenv("UPSTASH_URL"))
 		if err != nil {
 			return nil, err
@@ -224,6 +237,10 @@ func NewRedisConfig() (*RedisConfig, error) {
 }
 
 func NewServerConfig() (*ServerConfig, error) {
+	env := GetProdEnv()
+	println(env)
+	// TODO prepare app for prod
+
 	err := godotenv.Load(".env.compose")
 	if err != nil {
 		log.Fatal("Error loading .env file")

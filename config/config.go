@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"log/slog"
 	"net/url"
@@ -11,55 +10,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
-	"github.com/spf13/viper"
 )
-
-type StructConfig struct {
-	Mode   string `mapstructure:"mode"`
-	Dotenv string `mapstructure:"dotenv"`
-	Server struct {
-		Addr            string        `mapstructure:"addr"`
-		Port            int           `mapstructure:"port"`
-		WriteTimeout    time.Duration `mapstructure:"write_timeout"`
-		ReadTimeout     time.Duration `mapstructure:"read_timeout"`
-		IdleTimeout     time.Duration `mapstructure:"idle_timeout"`
-		GracefulTimeout time.Duration `mapstructure:"graceful_timeout"`
-	} `mapstructure:"server"`
-	Postgres struct {
-		DBName string `mapstructure:"name"`
-		User   string `mapstructure:"user"`
-		Port   int    `mapstructure:"port"`
-		Host   string `mapstructure:"host"`
-	} `mapstructure:"postgres"`
-	Redis struct {
-		Host string `mapstructure:"host"`
-		DB   int    `mapstructure:"db"`
-	} `mapstructure:"postgres"`
-	Pprof struct {
-		Addr string `mapstructure:"addr"`
-		Port int    `mapstructure:"port"`
-	}
-}
-
-func InitConfig() (StructConfig, error) {
-	var config StructConfig
-	v := viper.New()
-
-	v.AddConfigPath("config")
-	v.AddConfigPath("app/config")
-	v.AddConfigPath("entrypoint/config")
-
-	v.SetConfigName("config_dev")
-	fmt.Println("Configuration paths:", v.ConfigFileUsed())
-
-	if err := v.ReadInConfig(); err != nil {
-		return config, err
-	}
-	if err := v.Unmarshal(&config); err != nil {
-		return config, err
-	}
-	return config, nil
-}
 
 type Config struct {
 	Log      *LogConfig
@@ -93,12 +44,14 @@ type ServerConfig struct {
 }
 
 func GetProdEnv() bool {
-	err := godotenv.Load(".env.compose")
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	env := os.Getenv("APP_ENV")
-	if env == "production" {
+
+	mode := os.Getenv("MODE")
+
+	if mode == "production" {
 		return true
 	}
 
@@ -130,12 +83,6 @@ func NewConfig() (*Config, error) {
 }
 
 func NewLogConfig() *LogConfig {
-	err := godotenv.Load(".env.compose")
-	if err != nil {
-		log.Println(err)
-		log.Fatal("Error loading .env file")
-	}
-
 	var level slog.Level
 	levelStr := os.Getenv("LOG_LEVEL")
 	switch levelStr {
@@ -163,29 +110,29 @@ func NewLogConfig() *LogConfig {
 }
 
 func NewDatabaseConfig() (*DatabaseConfig, error) {
-	err := godotenv.Load(".env.compose")
 	env := GetProdEnv()
 
-	println(env)
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	user := os.Getenv("DB_USER")
+	host := os.Getenv("DB_HOST")
+	pass := os.Getenv("DB_PASS")
+	port := os.Getenv("DB_PORT")
+	name := os.Getenv("DB_NAME")
+	schema := os.Getenv("SCHEMA")
 	if env {
 		connURL := os.Getenv("DB_PG_PROD")
 		return &DatabaseConfig{
 			ConnectionURL: connURL,
 		}, nil
 	}
-	if err != nil {
-		log.Println(err)
-		log.Fatal("Error loading .env file")
-	}
 
-	cfg, err := InitConfig()
-	if err != nil {
-		log.Println(err)
-		log.Fatal("Error loading yml config")
-	}
-
-	pass := os.Getenv("DB_PASS")
-	schema := os.Getenv("")
+	println(user)
+	println(host)
+	println(pass)
 
 	query := url.Values{
 		"sslmode":  []string{"disable"},
@@ -196,9 +143,9 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 	}
 	connURL := url.URL{
 		Scheme:   "postgres",
-		User:     url.UserPassword(cfg.Postgres.User, pass),
-		Host:     cfg.Postgres.Host + ":" + strconv.Itoa(cfg.Postgres.Port),
-		Path:     cfg.Postgres.DBName,
+		User:     url.UserPassword(user, pass),
+		Host:     host + ":" + port,
+		Path:     name,
 		RawQuery: query.Encode(),
 	}
 	println("DB")
@@ -209,15 +156,14 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 }
 
 func NewRedisConfig() (*RedisConfig, error) {
-	err := godotenv.Load(".env.compose")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	var host, pass string
 
 	env := GetProdEnv()
-	println(env)
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	if env {
 		opt, err := redis.ParseURL(os.Getenv("UPSTASH_URL"))
@@ -241,28 +187,39 @@ func NewRedisConfig() (*RedisConfig, error) {
 }
 
 func NewServerConfig() (*ServerConfig, error) {
-	env := GetProdEnv()
-	println(env)
-	// TODO prepare app for prod
-
-	err := godotenv.Load(".env.compose")
+	// Load .env file
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	cfg, err := InitConfig()
-	if err != nil {
-		log.Println(err)
-		log.Fatal("Error loading yml config")
-	}
+	// Get environment variable values
+	addr := os.Getenv("SERVER_ADDR")
+	port := os.Getenv("SERVER_PORT")
+	gtStr := os.Getenv("SERVER_GRACEFUL_TIMEOUT")
+	wtStr := os.Getenv("SERVER_WRITE_TIMEOUT")
+	rtStr := os.Getenv("SERVER_READ_TIMEOUT")
+	itStr := os.Getenv("SERVER_IDLE_TIMEOUT")
 	sessionKey := os.Getenv("session_key")
 
+	// Convert string values to integers
+	gt, _ := strconv.Atoi(gtStr)
+	wt, _ := strconv.Atoi(wtStr)
+	rt, _ := strconv.Atoi(rtStr)
+	it, _ := strconv.Atoi(itStr)
+
+	// Convert integers to time.Duration
+	gracefulTimeout := time.Duration(gt) * time.Second
+	writeTimeout := time.Duration(wt) * time.Second
+	readTimeout := time.Duration(rt) * time.Second
+	idleTimeout := time.Duration(it) * time.Second
+
 	return &ServerConfig{
-		Addr:            cfg.Server.Addr + ":" + strconv.Itoa(cfg.Server.Port),
-		GracefulTimeout: cfg.Server.GracefulTimeout,
-		WriteTimeout:    cfg.Server.WriteTimeout,
-		ReadTimeout:     cfg.Server.ReadTimeout,
-		IdleTimeout:     cfg.Server.IdleTimeout,
+		Addr:            addr + ":" + port,
+		GracefulTimeout: gracefulTimeout,
+		WriteTimeout:    writeTimeout,
+		ReadTimeout:     readTimeout,
+		IdleTimeout:     idleTimeout,
 		SessionKey:      sessionKey,
 	}, nil
 }

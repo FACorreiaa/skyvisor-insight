@@ -22,13 +22,14 @@ import (
 )
 
 func GetProdEnv() bool {
-	err := godotenv.Load(".env.compose")
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	env := os.Getenv("APP_ENV")
-	println(env)
-	if env == "production" {
+
+	mode := os.Getenv("MODE")
+
+	if mode == "production" {
 		return true
 	}
 

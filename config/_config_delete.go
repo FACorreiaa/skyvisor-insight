@@ -9,8 +9,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -104,12 +102,6 @@ func NewLogConfig() *LogConfig {
 }
 
 func NewDatabaseConfig() (*DatabaseConfig, error) {
-	err := godotenv.Load(".env.compose")
-	if err != nil {
-		log.Println(err)
-		log.Fatal("Error loading .env file")
-	}
-
 	if os.Getenv("APP_ENV") == "dev" {
 		if err != nil {
 			log.Println(err)
@@ -163,7 +155,7 @@ func NewRedisConfig() (*RedisConfig, error) {
 }
 
 func NewServerConfig() (*ServerConfig, error) {
-	addr := GetEnv("ADDR", "0.0.0.0:6969")
+	addr := GetEnv("ADDR", "localhost:6969")
 	writeTimeout, err := time.ParseDuration(GetEnv("write_timeout", "15s"))
 	if err != nil {
 		return nil, errors.New("invalid WRITE_TIMEOUT")

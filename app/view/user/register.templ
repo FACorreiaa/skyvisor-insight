@@ -10,7 +10,7 @@ templ RegisterPage(register models.RegisterPage) {
 			<div class="container mx-auto my-24 md:px-6">
 				<div class="row">
 					<div class="col-md-6 offset-md-3 col-xs-12">
-						<p class="text-center text-6xl">Register</p>
+						<p class="text-center text-4xl pb-2">Register</p>
 						if register.Errors != nil {
 							<ul class="error-messages text-center">
 								for _, err := range register.Errors {

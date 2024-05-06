@@ -8,27 +8,32 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/api"
 	"github.com/FACorreiaa/Aviation-tracker/app"
 	"github.com/FACorreiaa/Aviation-tracker/config"
 	"github.com/FACorreiaa/Aviation-tracker/db"
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
 func run(ctx context.Context) error {
 	//go:generate npx tailwindcss build -c tailwind.config.js -o ./controller/static/css/style.css -
 	//go:generate ./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	cfg, err := config.NewConfig()
 
 	if err != nil {
 		return err
 	}
 
-	c, err := config.InitConfig()
-
+	pprofAddr := os.Getenv("PPROF_ADDR")
+	pprofPort := os.Getenv("PPROF_PORT")
 	var logHandler slog.Handler
 
 	logHandlerOptions := slog.HandlerOptions{
@@ -123,7 +128,7 @@ func run(ctx context.Context) error {
 		}
 	}()
 
-	err = config.InitPprof(c.Pprof.Addr, strconv.Itoa(c.Pprof.Port))
+	err = config.InitPprof(pprofAddr, pprofPort)
 	if err != nil {
 		fmt.Printf("Error initializing pprof config: %s", err)
 		panic(err)

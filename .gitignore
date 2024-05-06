@@ -45,3 +45,4 @@ main
 .main
 .tmp/main
 tailwindcss
+.env.docker

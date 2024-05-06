@@ -5,12 +5,12 @@ import (
 )
 
 templ LoginPage(login models.LoginPage) {
-	<div class="flex flex-col h-screen font-lato" id="contents">
+	<div class="flex flex-col h-screen" id="contents">
 		<div class="h-full">
 			<div class="container mx-auto my-24 md:px-6">
 				<div class="row">
 					<div class="col-md-6 offset-md-3 col-xs-12">
-						<p class="text-center text-6xl">Sign in</p>
+						<p class="text-center text-4xl pb-2">Sign in</p>
 						if login.Errors != nil {
 							<ul class="error-messages text-center">
 								for _, err := range login.Errors {

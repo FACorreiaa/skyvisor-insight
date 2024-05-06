@@ -3,7 +3,7 @@ version: "3.9"
 services:
   postgres:
     env_file:
-      - .env.compose
+      - .env
     hostname: postgres
     image: postgres:alpine
     environment:
@@ -21,7 +21,7 @@ services:
       - aviation-client
   redis:
     env_file:
-      - .env.compose
+      - .env
     container_name: redis
     hostname: redis
     image: redis:latest
@@ -39,26 +39,26 @@ services:
     networks:
       - aviation-client
 
-  app-dev:
-    env_file:
-      - .env.compose
-    platform: linux/amd64
-    container_name: "skyvisor-insight-dev"
-    image: "skyvisor-insight-dev"
-    build:
-      dockerfile: Dockerfile
-      target: app-dev
-      context: ./
-    ports:
-      - "6969:6969"
-      - "5050:5050"
-    volumes:
-      - ./:/app
-#    environment:
-#      APP_ENV: development
-
-    networks:
-      - aviation-client
+#  app-dev:
+#    env_file:
+#      - .env.compose
+#    platform: linux/amd64
+#    container_name: "skyvisor-insight-dev"
+#    image: "skyvisor-insight-dev"
+#    build:
+#      dockerfile: Dockerfile
+#      target: app-dev
+#      context: ./
+#    ports:
+#      - "6969:6969"
+#      - "5050:5050"
+#    volumes:
+#      - ./:/app
+##    environment:
+##      APP_ENV: development
+#
+#    networks:
+#      - aviation-client
 
 #  release-stage:
 #    platform: linux/amd64

@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/api"
 	"github.com/FACorreiaa/Aviation-tracker/app"
@@ -72,8 +71,6 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("failed to migrate database: %w", err)
 
 	}
-
-	startTime := time.Now()
 
 	tableDataMigration := api.NewRepository(pool)
 	if err = tableDataMigration.MigrateAirlineAPIData(); err != nil {

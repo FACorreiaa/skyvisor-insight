@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/api"
@@ -107,7 +108,7 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
-	slog.Info("This operation took: ", time.Since(startTime))
+	slog.Info("This operation took: ", strconv.FormatInt(int64(time.Since(startTime)), 10))
 
 	srv := &http.Server{
 		Addr:         cfg.Server.Addr,

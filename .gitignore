@@ -46,4 +46,5 @@ main
 .tmp/main
 tailwindcss
 .env.docker
-tmp
+report.xml
+

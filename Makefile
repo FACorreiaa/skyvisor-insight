@@ -65,8 +65,10 @@ run:
 stop:
 	@docker compose down
 
-lint:
-	@golangci-lint run -c .golangci.yml
+lint: ## Runs linter for .go files
+	@golangci-lint run --config .config/go.yml
+	@echo "Go lint passed successfully"
+
 
 list-deps:
 	go list -u -m all

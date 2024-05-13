@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<checkstyle version="5.0">
+  <file name="main.go">
+    <error column="3" line="154" message="exitAfterDefer: os.Exit will exit, and `defer cancel()` will not run" severity="error" source="gocritic"></error>
+    <error column="1" line="20" message="cyclomatic complexity 19 of func `run` is high (&gt; 12)" severity="error" source="gocyclo"></error>
+  </file>
+</checkstyle>

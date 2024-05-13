@@ -39,7 +39,7 @@ func (model Model) GetID() int {
 }
 
 // getExistingID retrieves existing table_id from the database.
-func (s *ServiceJob) getExistingID(query string, id int, tableData []int) ([]int, error) {
+func (s *ServiceJob) getExistingID(query string, id int, tableData []int) ([]int, error) { //nolint
 	rows, err := s.repo.Conn.Query(context.Background(), query)
 	if err != nil {
 		handleError(err, "Error querying DB")

@@ -459,7 +459,7 @@ func (s *ServiceJob) insertNewTax() error {
 	apiData, err := fetchAviationStackData("countries")
 	query := `select tax_id from tax`
 	tableData := make([]int, 0)
-	var tax_id int
+	var taxID int
 
 	// apiData, err := os.ReadFile("./api/data//tax.json")
 	if err != nil {
@@ -475,7 +475,7 @@ func (s *ServiceJob) insertNewTax() error {
 	}
 
 	// Check for existing data in the database
-	existingData, err := s.getExistingID(query, tax_id, tableData)
+	existingData, err := s.getExistingID(query, taxID, tableData)
 
 	if err != nil {
 		handleError(err, "error fetching existing data from the database")
@@ -672,7 +672,7 @@ func (s *ServiceJob) insertNewFlight() error {
 			"created_at",
 		},
 		pgx.CopyFromSlice(len(res.Data), func(i int) ([]interface{}, error) {
-			//id := uuid.New()
+			// id := uuid.New()
 			departure := res.Data[i].Departure
 			arrival := res.Data[i].Arrival
 			airline := res.Data[i].Airline
@@ -680,7 +680,7 @@ func (s *ServiceJob) insertNewFlight() error {
 			aircraft := res.Data[i].Aircraft
 			live := res.Data[i].Live
 			return []interface{}{
-				//id,
+				// id,
 				res.Data[i].FlightDate,
 				res.Data[i].FlightStatus,
 				departure.Airport,

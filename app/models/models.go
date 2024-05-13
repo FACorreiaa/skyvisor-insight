@@ -49,14 +49,14 @@ type RegisterForm struct {
 
 type FlightStatus string
 
-const (
-	Scheduled FlightStatus = "scheduled"
-	Active    FlightStatus = "active"
-	Landed    FlightStatus = "landed"
-	Cancelled FlightStatus = "cancelled"
-	Incident  FlightStatus = "incident"
-	Diverted  FlightStatus = "diverted"
-)
+// const (
+//	Scheduled FlightStatus = "scheduled"
+//	Active    FlightStatus = "active"
+//	Landed    FlightStatus = "landed"
+//	Canceled FlightStatus = "canceled"
+//	Incident  FlightStatus = "incident"
+//	Diverted  FlightStatus = "diverted"
+// )
 
 type NavItem struct {
 	Path  string

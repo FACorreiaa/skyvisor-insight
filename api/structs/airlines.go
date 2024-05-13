@@ -29,7 +29,7 @@ type Airline struct {
 	CreatedAt            CustomTime `db:"created_at" json:"created_at"`
 }
 
-// aircrafts
+// aircraft
 
 type Aircraft struct {
 	ID           string     `json:"id"`

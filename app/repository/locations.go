@@ -137,7 +137,7 @@ func (r *LocationsRepository) GetCountryLocation(ctx context.Context) ([]models.
 			ORDER BY
 			    cou.country_name
 			`
-	//OFFSET 0 LIMIT $1
+	// OFFSET 0 LIMIT $1
 
 	return r.getCountryData(ctx, query)
 }

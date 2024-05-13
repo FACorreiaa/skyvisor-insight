@@ -114,7 +114,7 @@ func (a *AccountRepository) Login(ctx context.Context, form models.LoginForm) (*
 		return nil, errors.New("internal server error")
 	}
 
-	token := Token(fmt.Sprintf("%x", tokenBytes))
+	token := fmt.Sprintf("%x", tokenBytes)
 	log.Printf("Generated token: %s", token)
 
 	// if _, err := a.pgpool.Exec(
@@ -133,7 +133,7 @@ func (a *AccountRepository) Login(ctx context.Context, form models.LoginForm) (*
 
 	// Store the session token in Redis
 	// key := RedisPrefix + string(token)
-	err = a.redisClient.Set(ctx, string(token), (user.ID).String(), MaxAge).Err()
+	err = a.redisClient.Set(ctx, token, (user.ID).String(), MaxAge).Err()
 	if err != nil {
 		log.Println("Error inserting token into Redis:", err)
 		return nil, errors.New("internal server error")
@@ -237,7 +237,7 @@ func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.
 		if _, err = rand.Read(tokenBytes); err != nil {
 			return errors.New("error generating token")
 		}
-		token = Token(fmt.Sprintf("%x", tokenBytes))
+		token = fmt.Sprintf("%x", tokenBytes)
 
 		// Store the session token in Redis
 		// redisKey := fmt.Sprintf("user_session:%s", token)

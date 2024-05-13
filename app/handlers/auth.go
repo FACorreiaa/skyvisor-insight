@@ -122,7 +122,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) error {
 	token := s.Values["token"]
 
 	if token, ok := token.(string); ok {
-		_ = h.service.Logout(r.Context(), repository.Token(token))
+		_ = h.service.Logout(r.Context(), token)
 	}
 
 	s.Values["token"] = ""

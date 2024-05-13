@@ -29,11 +29,7 @@ func GetProdEnv() bool {
 
 	mode := os.Getenv("MODE")
 
-	if mode == "production" {
-		return true
-	}
-
-	return false
+	return mode == "production"
 }
 
 func getData(endpoint, queryParam, file string) ([]byte, error) {
@@ -89,7 +85,7 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 
 	finalURL := parsedURL.String()
 
-	response, err := http.Get(finalURL)
+	response, err := http.Get(finalURL) //nolint
 	if err != nil {
 		return nil, errors.New("failed to make GET request")
 	}
@@ -111,7 +107,7 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 
 func FetchAndInsertCityData(conn *pgxpool.Pool) error {
 	res := new(structs.CityAPIData)
-	data, err := getData("cities", "limit=1000000", "./api/data/cities.json")
+	data, err := getData("cities", "limit=100", "./api/data/cities.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")

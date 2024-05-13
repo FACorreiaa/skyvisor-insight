@@ -137,13 +137,19 @@ func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (te
 
 func (h *Handler) AirlineMainPage(w http.ResponseWriter, r *http.Request) error {
 	var table, err = h.renderAirlineTable(w, r)
-	al, err := h.service.GetAirlinesLocation()
-
-	sidebar := h.renderAirlineSidebar()
 	if err != nil {
 		HandleError(err, "Error rendering airline table")
 		return err
 	}
+
+	al, err := h.service.GetAirlinesLocation()
+	if err != nil {
+		HandleError(err, "Error rendering airlines location")
+		return err
+	}
+
+	sidebar := h.renderAirlineSidebar()
+
 	a := airline.AirlineMainPageLayout("Airline", "Check data about Airlines", table, sidebar, al)
 	return h.CreateLayout(w, r, "Airline Tax Page", a).Render(context.Background(), w)
 }
@@ -251,7 +257,7 @@ func (h *Handler) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []mo
 	a, err := h.service.GetAircraft(context.Background(), page, pageSize, aircraftName, orderBy, sortBy,
 		typeEngine, modelCode, planeOwner)
 	if err != nil {
-		HandleError(err, "Error fetching aircrafts")
+		HandleError(err, "Error fetching aircraft")
 		return 0, nil, err
 	}
 
@@ -264,7 +270,7 @@ func (h *Handler) AirlineAircraftPage(w http.ResponseWriter, r *http.Request) er
 	if err != nil {
 		return err
 	}
-	a := airline.AirlineLayoutPage("Aircrafts", "Check models about aircrafts", taxTable, sidebar)
+	a := airline.AirlineLayoutPage("Aircraft", "Check models about aircraft", taxTable, sidebar)
 	return h.CreateLayout(w, r, "Aircraft Tax Page", a).Render(context.Background(), w)
 }
 

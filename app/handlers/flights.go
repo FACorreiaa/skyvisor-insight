@@ -58,7 +58,7 @@ func (h *Handler) renderLiveLocationsSidebar() []models.SidebarItem {
 			},
 		},
 		{Path: "/flights/flight/status/scheduled", Label: "Scheduled Flights", Icon: svg2.HomeIcon()},
-		{Path: "/flights/flight/status/cancelled", Label: "Cancelled Flights", Icon: svg2.HomeIcon()},
+		{Path: "/flights/flight/status/canceled", Label: "Canceled Flights", Icon: svg2.HomeIcon()},
 		{Path: "/flights/flight/status/incident", Label: "Incident Flights", Icon: svg2.HomeIcon()},
 		{Path: "/flights/flight/status/diverted", Label: "Diverted Flights", Icon: svg2.HomeIcon()},
 		{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
@@ -103,8 +103,8 @@ func (h *Handler) getFlights(_ http.ResponseWriter, r *http.Request) (int, []mod
 
 func (h *Handler) getLiveFlights(_ http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
 	pageSize := 30
-	//vars := mux.Vars(r)
-	//flightStatus := vars["flight_status"]
+	// vars := mux.Vars(r)
+	// flightStatus := vars["flight_status"]
 
 	airlineName := r.FormValue("airline_name")
 	flightNumber := r.FormValue("flight_number")

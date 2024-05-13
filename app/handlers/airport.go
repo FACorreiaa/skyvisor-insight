@@ -77,7 +77,7 @@ func (h *Handler) getAirportByName(_ http.ResponseWriter, r *http.Request) (int,
 }
 
 func (h *Handler) renderAirportTable(w http.ResponseWriter, r *http.Request) (templ.Component, error) {
-	var ap = make([]models.Airport, 0)
+	var ap []models.Airport
 	var page int
 	var sortAux string
 
@@ -154,7 +154,15 @@ func (h *Handler) renderSidebar() []models.SidebarItem {
 
 func (h *Handler) AirportPage(w http.ResponseWriter, r *http.Request) error {
 	at, err := h.renderAirportTable(w, r)
+	if err != nil {
+		HandleError(err, "Error fetching airport data table")
+		return err
+	}
 	al, err := h.service.GetAirportsLocation()
+	if err != nil {
+		HandleError(err, "Error getting airport locations")
+		return err
+	}
 
 	sidebar := h.renderSidebar()
 	if err != nil {

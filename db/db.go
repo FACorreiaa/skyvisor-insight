@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"crypto/md5"
+	"crypto/md5" //nolint
 	"embed"
 	"errors"
 	"fmt"
@@ -83,7 +83,7 @@ func Migrate(conn *pgxpool.Pool) error {
 			return err
 		}
 
-		contentHash := fmt.Sprintf("%x", md5.Sum(contents))
+		contentHash := fmt.Sprintf("%x", md5.Sum(contents)) //nolint
 
 		if prevHash, ok := appliedMigrations[file.Name()]; ok {
 			if prevHash != contentHash {

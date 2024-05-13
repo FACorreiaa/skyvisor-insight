@@ -51,11 +51,7 @@ func GetProdEnv() bool {
 
 	mode := os.Getenv("MODE")
 
-	if mode == "production" {
-		return true
-	}
-
-	return false
+	return mode == "production"
 }
 
 func NewConfig() (*Config, error) {

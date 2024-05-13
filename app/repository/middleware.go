@@ -30,7 +30,7 @@ func (m *MiddlewareRepository) AuthMiddleware(next http.Handler) http.Handler {
 		token := s.Values["token"]
 		if token != nil {
 			if token, ok := token.(string); ok {
-				user, err := m.UserFromSessionToken(r.Context(), Token(token))
+				user, err := m.UserFromSessionToken(r.Context(), token)
 
 				if err == nil {
 					ctx := context.WithValue(r.Context(), models.CtxKeyAuthUser, user)

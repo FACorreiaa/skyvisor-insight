@@ -62,10 +62,10 @@ func (r *FlightsRepository) getFlightsData(ctx context.Context, query string,
 			return nil, err
 		}
 
-		//if f.Arrival.Delay != nil {
+		// if f.Arrival.Delay != nil {
 		//	minutes := *f.Arrival.Delay / (millis * minutes)
 		//	f.Arrival.Delay = &minutes
-		//}
+		// }
 
 		lf = append(lf, f)
 	}
@@ -415,7 +415,7 @@ func (r *FlightsRepository) GetAllFlightsByStatus(ctx context.Context,
 -- 							AND (
 -- 						        $6 = '' -- No status provided, include all flights
 -- 						        OR ($6 = 'active' AND f.flight_status = 'active')
--- 						        OR ($6 = 'cancelled' AND f.flight_status = 'cancelled')
+-- 						        OR ($6 = 'canceled' AND f.flight_status = 'canceled')
 -- 						        -- Add more conditions for other statuses as needed
 --     						)
 							ORDER BY
@@ -552,10 +552,10 @@ func (r *FlightsRepository) getLiveFlightsData(ctx context.Context, query string
 			return nil, err
 		}
 
-		//if f.Arrival.Delay != nil {
+		// if f.Arrival.Delay != nil {
 		//	minutes := *f.Arrival.Delay / (millis * minutes)
 		//	f.Arrival.Delay = &minutes
-		//}
+		// }
 
 		lf = append(lf, f)
 	}

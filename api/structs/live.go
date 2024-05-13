@@ -12,7 +12,7 @@ const (
 	Scheduled FlightStatus = "scheduled"
 	Active    FlightStatus = "active"
 	Landed    FlightStatus = "landed"
-	Cancelled FlightStatus = "cancelled"
+	Canceled  FlightStatus = "canceled"
 	Incident  FlightStatus = "incident"
 	Diverted  FlightStatus = "diverted"
 )

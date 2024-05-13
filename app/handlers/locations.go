@@ -288,13 +288,18 @@ func (h *Handler) renderCountryTable(w http.ResponseWriter, r *http.Request) (te
 
 func (h *Handler) CountryMainPage(w http.ResponseWriter, r *http.Request) error {
 	taxTable, err := h.renderCountryTable(w, r)
-	country, err := h.service.GetCountryLocations()
-
-	sidebar := h.renderLocationsBar()
 	if err != nil {
 		HandleError(err, "Error rendering table")
 		return err
 	}
+	country, err := h.service.GetCountryLocations()
+	if err != nil {
+		HandleError(err, "Error rendering country locations")
+		return err
+	}
+
+	sidebar := h.renderLocationsBar()
+
 	c := locations.CountryLayoutPage("Countries", "Check countries of the world", taxTable, sidebar, country)
 	return h.CreateLayout(w, r, "Country Page", c).Render(context.Background(), w)
 }

@@ -1,43 +1,41 @@
 #.PHONY: build clean
-#project_name = skyvisor-container
-#image_name = skyvisor-container
-#
-#compose-up:
-#	make delete-container-if-exist
-#	docker-compose up -d
-#
-#compose-down:
-#	@docker compose down \
-#  @docker volume rm postgres_db \
-#  @docker compose up -d \
-#  @rm-rf .data
-#
-#stop:
-#	docker stop $(project_name)
-#
-#start:
-#	docker start $(project_name)
-#
-#swag-init:
-#	swag init --parseDependency
-#
-#go-test:
-#	go test -v
-#
-#go-bench:
-#	go test -bench .
-#
-#run-app:
-#	docker compose run --rm app air init
-#
-#run-tidy:
-#	docker compose run --rm app go mod tidy
-#
-#watch-tcss:
-#	./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --watch
-#
-#build-tcss:
-#	./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify
+project_name = skyvisor-container
+image_name = a11199/skyvisor-insight
+image_name_dev = skyvisor-insight-dev:latest
+image_name_debug = skyvisor-insight-debug:latest
+
+compose-up:
+	make delete-container-if-exist
+	docker-compose up -d
+
+compose-down:
+	@docker compose down \
+  @docker volume rm postgres_db \
+  @docker compose up -d \
+  @rm-rf .data
+
+stop:
+	docker stop $(project_name)
+
+start:
+	docker start $(project_name)
+
+swag-init:
+	swag init --parseDependency
+
+go-test:
+	go test -v
+
+go-bench:
+	go test -bench .
+
+run-app:
+	docker compose run --rm app air init
+
+run-tidy:
+	docker compose run --rm app go mod tidy
+
+
 ifeq ("$(wildcard .env)","")
     $(shell cp env.sample .env)
 	$(shell echo "DB_NAME=$($1)" > .env)
@@ -76,4 +74,26 @@ list-deps:
 upgrade-deps:
 	go get -u ./...
 
+watch-tailwind:
+	./tailwindcss -i app/static/css/main.css -o app/static/css/output.css --watch
 
+build-tailwind:
+	./tailwindcss -i app/static/css/main.css -o app/static/css/output.css --minify
+
+templ-local:
+	templ generate -watch -proxy=http://localhost:6969
+
+build:
+	docker buildx build -t ${image_name} --annotation "index,manifest,tagname=a11199/skyvisor-insight" --push .
+
+push:
+	docker push ${image_name}
+
+up:
+	docker compose up -d
+
+delete-container-if-exist:
+	docker stop $(project_name) || true && docker rm $(project_name) || true
+
+down:
+	docker compose down

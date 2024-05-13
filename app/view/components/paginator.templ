@@ -1,0 +1,25 @@
+package components
+
+templ PaginatorComponent(firstPage, prevPage, currentPage, goToNextPage, goToLastPage, lasPage string) {
+	<div class="flex justify-center mt-2">
+		<form class="join " hx-boost="true" method="get">
+			<a
+				class="join-item btn"
+				href={ templ.URL(firstPage) }
+			>First Page</a>
+			<a
+				class="join-item btn"
+				href={ templ.URL(prevPage) }
+			>«</a>
+			<button class="join-item btn disabled">{currentPage} / {lasPage}</button>
+			<a
+				class="join-item btn"
+				href={ templ.URL(goToNextPage) }
+			>»</a>
+			<a
+				class="join-item btn"
+				href={ templ.URL(goToLastPage) }
+			>Last Page</a>
+		</form>
+	</div>
+}

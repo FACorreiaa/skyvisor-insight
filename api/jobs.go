@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/api/structs"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/robfig/cron/v3"
@@ -164,7 +163,7 @@ func (s *ServiceJob) insertNewCities() error {
 	var tableData []int
 	var cityID int
 
-	// apiData, err := os.ReadFile("./api/data/cities.json")
+	// apiData, err := os.ReadFile("./api/data//cities.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -187,7 +186,7 @@ func (s *ServiceJob) insertNewCities() error {
 	existingData, err := s.getExistingID(query, cityID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -235,7 +234,7 @@ func (s *ServiceJob) insertNewCountries() error {
 	tableData := make([]int, 0)
 	var countryIsoNumeric int
 
-	// apiData, err := os.ReadFile("./api/data/countries.json")
+	// apiData, err := os.ReadFile("./api/data//countries.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -253,7 +252,7 @@ func (s *ServiceJob) insertNewCountries() error {
 	existingData, err := s.getExistingID(query, countryIsoNumeric, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -305,7 +304,7 @@ func (s *ServiceJob) insertNewAirports() error {
 	tableData := make([]int, 0)
 	var airportID int
 
-	// apiData, err := os.ReadFile("./api/data/airports.json")
+	// apiData, err := os.ReadFile("./api/data//airports.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -323,7 +322,7 @@ func (s *ServiceJob) insertNewAirports() error {
 	existingData, err := s.getExistingID(query, airportID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -376,7 +375,7 @@ func (s *ServiceJob) insertNewAirplanes() error {
 	tableData := make([]int, 0)
 	var airplaneID int
 
-	// apiData, err := os.ReadFile("./api/data/airplane.json")
+	// apiData, err := os.ReadFile("./api/data//airplane.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -394,7 +393,7 @@ func (s *ServiceJob) insertNewAirplanes() error {
 	existingData, err := s.getExistingID(query, airplaneID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -460,9 +459,9 @@ func (s *ServiceJob) insertNewTax() error {
 	apiData, err := fetchAviationStackData("countries")
 	query := `select tax_id from tax`
 	tableData := make([]int, 0)
-	var tax_id int
+	var taxID int
 
-	// apiData, err := os.ReadFile("./api/data/tax.json")
+	// apiData, err := os.ReadFile("./api/data//tax.json")
 	if err != nil {
 		handleError(err, "error fetching data")
 		return err
@@ -476,10 +475,10 @@ func (s *ServiceJob) insertNewTax() error {
 	}
 
 	// Check for existing data in the database
-	existingData, err := s.getExistingID(query, tax_id, tableData)
+	existingData, err := s.getExistingID(query, taxID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -518,7 +517,7 @@ func (s *ServiceJob) insertNewAirline() error {
 	tableData := make([]int, 0)
 	var airlineID int
 
-	// apiData, err := os.ReadFile("./api/data/airline.json")
+	// apiData, err := os.ReadFile("./api/data//airline.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -536,7 +535,7 @@ func (s *ServiceJob) insertNewAirline() error {
 	existingData, err := s.getExistingID(query, airlineID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -590,7 +589,7 @@ func (s *ServiceJob) insertNewAircraft() error {
 	tableData := make([]int, 0)
 	var planeTypeID int
 
-	// apiData, err := os.ReadFile("./api/data/aircraft.json")
+	// apiData, err := os.ReadFile("./api/data//aircraft.json")
 
 	if err != nil {
 		handleError(err, "error fetching data")
@@ -608,7 +607,7 @@ func (s *ServiceJob) insertNewAircraft() error {
 	existingData, err := s.getExistingID(query, planeTypeID, tableData)
 
 	if err != nil {
-		handleError(err, "error getting existing data from the database")
+		handleError(err, "error fetching existing data from the database")
 		return err
 	}
 
@@ -654,21 +653,18 @@ func (s *ServiceJob) insertNewFlight() error {
 		handleError(err, "error unmarshaling API response")
 		return err
 	}
-	if err := structs.ValidateLiveFlights(res); err != nil {
-		handleError(err, "error validating live flights")
-		return err
-	}
 
 	// Insert data from the JSON
 	if _, err := s.repo.Conn.CopyFrom(
 		context.Background(),
 		pgx.Identifier{"flights"},
-		[]string{"id", "flight_date", "flight_status", "departure_airport", "departure_timezone", "departure_iata",
+		[]string{"flight_date", "flight_status", "departure_airport", "departure_timezone", "departure_iata",
 			"departure_icao", "departure_terminal", "departure_gate", "departure_delay", "departure_scheduled",
 			"departure_estimated", "departure_actual", "departure_estimated_runway", "departure_actual_runway",
 			"arrival_airport", "arrival_timezone", "arrival_iata", "arrival_icao", "arrival_terminal",
 			"arrival_gate", "arrival_baggage", "arrival_delay", "arrival_scheduled", "arrival_estimated",
-			"arrival_actual", "arrival_estimated_runway", "arrival_actual_runway", "flight_number", "flight_iata",
+			"arrival_actual", "arrival_estimated_runway", "arrival_actual_runway", "airline_name",
+			"airline_iata", "airline_icao", "flight_number", "flight_iata",
 			"flight_icao", "codeshared_airline_name", "codeshared_airline_iata", "codeshared_airline_icao",
 			"codeshared_flight_number", "codeshared_flight_iata", "codeshared_flight_icao", "aircraft_registration",
 			"aircraft_icao24", "aircraft_iata", "aircraft_icao", "live_updated", "live_latitude", "live_longitude",
@@ -676,14 +672,15 @@ func (s *ServiceJob) insertNewFlight() error {
 			"created_at",
 		},
 		pgx.CopyFromSlice(len(res.Data), func(i int) ([]interface{}, error) {
-			id := uuid.New()
+			// id := uuid.New()
 			departure := res.Data[i].Departure
 			arrival := res.Data[i].Arrival
+			airline := res.Data[i].Airline
 			flight := res.Data[i].Flight
 			aircraft := res.Data[i].Aircraft
 			live := res.Data[i].Live
 			return []interface{}{
-				id,
+				// id,
 				res.Data[i].FlightDate,
 				res.Data[i].FlightStatus,
 				departure.Airport,
@@ -711,6 +708,9 @@ func (s *ServiceJob) insertNewFlight() error {
 				arrival.Actual,
 				arrival.EstimatedRunway,
 				arrival.ActualRunway,
+				airline.Name,
+				airline.Iata,
+				airline.Icao,
 				flight.Number,
 				flight.Iata,
 				flight.Icao,
@@ -816,7 +816,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 		handleError(err, "Error checking for new aircraft")
 	})
 
-	_, err = c.AddFunc("@weekly", func() {
+	_, err = c.AddFunc("@every 3h", func() {
 		startTime := time.Now()
 		err := s.insertNewFlight()
 		duration := time.Since(startTime)

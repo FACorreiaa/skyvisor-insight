@@ -1,0 +1,91 @@
+package airline
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+	"fmt"
+	"strconv"
+)
+
+templ AirlineAircraftTable(a models.AircraftTable) {
+	<div class="flex flex-col items-left">
+	       	@components.InputGroupContainer() {
+                       <div class="mr-2">
+                          @components.InputComponent("Filter Aircraft Name", "/airlines/aircraft", "aircraft_name", "#searchResults")
+                       </div>
+                       <div class="mr-2">
+                      	      @components.InputComponent("Filter Engine Type", "/airlines/aircraft", "type_engine", "#searchResults")
+                       </div>
+                       <div class="mr-2">
+                              @components.InputComponent("Filter Mode Code", "/airlines/aircraft", "model_code", "#searchResults")
+                       </div>
+                       <div class="mr-2">
+                              @components.InputComponent("Filter Plane Owner", "/airlines/aircraft", "plane_owner", "#searchResults")
+                       </div>
+            	    }
+		<div class="overflow-x-auto">
+			<table class="table table-xs">
+				<!-- head -->
+				<thead>
+					<tr>
+						for _, col := range a.Column {
+							<th class="font-extrabold text-sm">
+							    <div class="flex justify-start align-middle" hx-boost>
+									{ col.Title }
+									<form class="join" hx-boost="true" method="get">
+										<a
+											class="pl-4"
+											href={ templ.URL(fmt.Sprintf("/airlines/aircraft?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
+
+										>
+											@col.Icon
+										</a>
+									</form>
+								</div>
+							</th>
+						}
+					</tr>
+				</thead>
+				<!-- rows -->
+				<tbody>
+					for _, aircraft := range a.Aircraft {
+						<tr class="hover">
+							<td>{ aircraft.AircraftName }</td>
+							<td>{ aircraft.ModelName }</td>
+							<td>{ aircraft.ConstructionNumber }</td>
+							<td>{ fmt.Sprintf("%d",aircraft.EnginesCount) }</td>
+							<td>{ aircraft.EnginesType }</td>
+							<td>{ aircraft.FirstFlightDate.GetTime().Format("2006-01-02") }</td>
+							if aircraft.LineNumber != nil {
+								<td>{ aircraft.LineNumber.(string) }</td>
+							} else {
+								<td class="italic">N/A</td>
+							}
+							<td>{ aircraft.ModelCode }</td>
+							<td>{ fmt.Sprintf("%d", aircraft.PlaneAge) }</td>
+							if aircraft.PlaneClass != nil {
+								<td>{ aircraft.PlaneClass.(string) }</td>
+							} else {
+								<td class="italic">N/A</td>
+							}
+							if aircraft.PlaneOwner != nil {
+								<td>{ aircraft.PlaneOwner.(string) }</td>
+							} else {
+								<td class="italic">N/A</td>
+							}
+							<td>{ aircraft.PlaneSeries }</td>
+							<td>{ aircraft.PlaneStatus }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<!-- paginator -->
+		</div>
+		@components.PaginatorComponent("/airlines/aircraft",
+			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.PrevPage, a.FilterAircraft),
+			strconv.Itoa(a.Page),
+			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.NextPage, a.FilterAircraft),
+			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.LastPage, a.FilterAircraft),
+			strconv.Itoa(a.LastPage))
+	</div>
+}

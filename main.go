@@ -2,30 +2,39 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/api"
+	"github.com/FACorreiaa/Aviation-tracker/app"
 	"github.com/FACorreiaa/Aviation-tracker/config"
-	"github.com/FACorreiaa/Aviation-tracker/controller"
 	"github.com/FACorreiaa/Aviation-tracker/db"
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
-func main() {
+func run(ctx context.Context) error {
 	//go:generate npx tailwindcss build -c tailwind.config.js -o ./controller/static/css/style.css -
-
-	cfg, err := config.NewConfig()
+	//go:generate ./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify
+	err := godotenv.Load()
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		log.Fatal("Error loading .env file")
 	}
 
+	cfg, err := config.NewConfig()
+
+	if err != nil {
+		return err
+	}
+
+	pprofAddr := os.Getenv("PPROF_ADDR")
+	pprofPort := os.Getenv("PPROF_PORT")
 	var logHandler slog.Handler
+
 	logHandlerOptions := slog.HandlerOptions{
 		AddSource: true,
 		Level:     cfg.Log.Level,
@@ -40,7 +49,6 @@ func main() {
 	pool, err := db.Init(cfg.Database.ConnectionURL)
 	if err != nil {
 		log.Println(err)
-		os.Exit(1)
 	}
 	defer pool.Close()
 
@@ -48,8 +56,8 @@ func main() {
 
 	redisClient, err := db.InitRedis(cfg.Redis.Host, cfg.Redis.Password, cfg.Redis.DB)
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return fmt.Errorf("failed to set config: %w", err)
+
 	}
 	defer func(redisClient *redis.Client) {
 		err = redisClient.Close()
@@ -58,74 +66,54 @@ func main() {
 			os.Exit(1)
 		}
 	}(redisClient)
-	// db.WaitForRedis(redisClient)
 
 	if err = db.Migrate(pool); err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
+		return fmt.Errorf("failed to migrate database: %w", err)
 
-	startTime := time.Now()
+	}
 
 	tableDataMigration := api.NewRepository(pool)
 	if err = tableDataMigration.MigrateAirlineAPIData(); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
 	if err = tableDataMigration.MigrateAircraftAPIData(); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
 	if err = tableDataMigration.MigrateTaxAPIData(); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
 	if err = tableDataMigration.MigrateAirplaneAPIData(); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
 	if err = tableDataMigration.MigrateAirportAPIData(); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
 	if err = tableDataMigration.MigrateCountryAPIData(); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
 	if err = tableDataMigration.MigrateCityAPIData(); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 	if err = tableDataMigration.MigrateFlightAPIData(); err != nil {
-		log.Println(err)
-		os.Exit(1)
+		return fmt.Errorf("failed to migrate database: %w", err)
 	}
-
-	log.Println("This operation took: ", time.Since(startTime))
-
-	// if err = db.MigrateRedis(redisClient); err != nil {
-	//	log.Println(err)
-	//	os.Exit(1)
-	//}
 
 	srv := &http.Server{
 		Addr:         cfg.Server.Addr,
 		WriteTimeout: cfg.Server.WriteTimeout,
 		ReadTimeout:  cfg.Server.ReadTimeout,
 		IdleTimeout:  cfg.Server.IdleTimeout,
-		Handler:      controller.Router(pool, []byte(cfg.Server.SessionKey), redisClient),
+		Handler:      app.Router(pool, []byte(cfg.Server.SessionKey), redisClient),
 	}
 
 	jobRepo := api.NewRepositoryJob(pool)
-
 	jobService := api.NewServiceJob(jobRepo)
-
 	jobService.StartAPICheckCronJob()
 
 	go func() {
@@ -135,14 +123,34 @@ func main() {
 		}
 	}()
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	<-c
+	err = config.InitPprof(pprofAddr, pprofPort)
+	if err != nil {
+		fmt.Printf("Error initializing pprof config: %s", err)
+		panic(err)
+	}
 
-	// shutdown server
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.Server.GracefulTimeout)
+	<-ctx.Done() // Wait for cancellation signal
+
+	// Shutdown server
+	ctxShutdown, cancel := context.WithTimeout(context.Background(), cfg.Server.GracefulTimeout)
 	defer cancel()
-	srv.Shutdown(ctx)
-	slog.Info("shutting down")
-	os.Exit(0)
+
+	if err = srv.Shutdown(ctxShutdown); err != nil {
+		slog.Error("Error shutting down server", err)
+	}
+
+	slog.Info("Shutting down")
+	return nil
+}
+
+func main() {
+	ctx := context.Background()
+	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
+	defer cancel()
+
+	if err := run(ctx); err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		cancel()
+		os.Exit(1)
+	}
 }

@@ -1,0 +1,78 @@
+package locations
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+	"fmt"
+	"strconv"
+)
+
+templ CountryTable(c models.CountryTable) {
+	<div class="flex flex-col items-left" id="table-container">
+	@components.InputGroupContainer() {
+                                   <div class="mr-2">
+                                          @components.InputComponent("Filter Country Name", "/locations/country", "country_name", "#searchResults")
+                                   </div>
+                                   <div class="mr-2">
+                                  	      @components.InputComponent("Filter Capital", "/locations/country", "capital", "#searchResults")
+                                   </div>
+                                   <div class="mr-2">
+                                          @components.InputComponent("Filter Continent", "/locations/country", "continent", "#searchResults")
+                                   </div>
+                                    <div class="mr-2">
+                                          @components.InputComponent("Filter Currency Code", "/locations/country", "currency_code", "#searchResults")
+                                    </div>
+                        	    }
+		<div class="overflow-x-auto">
+			<table class="table table-xs">
+				<!-- head -->
+				<thead>
+					<tr>
+						for _, col := range c.Column {
+							<th class="font-extrabold text-sm">								<div class="flex justify-start align-middle" hx-boost>
+									{ col.Title }
+									<form class="join" hx-boost="true" method="get">
+										<a
+											class="pl-4"
+											href={ templ.URL(fmt.Sprintf("/locations/country?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
+										>
+											@col.Icon
+										</a>
+									</form>
+								</div>
+							</th>
+						}
+					</tr>
+				</thead>
+				<!-- rows -->
+				<tbody>
+					for _, ct := range c.Country {
+						<tr class="hover">
+							<td hx-boost="true">
+								<a
+									hx-trigger="load delay:50ms"
+									href={ templ.SafeURL(fmt.Sprintf("/locations/country/details/%s", ct.CountryName)) }
+								>{ ct.CountryName }</a>
+							</td>
+							<td>{ ct.Capital }</td>
+							<td>{ ct.Continent }</td>
+							<td>{ ct.CurrencyName }></td>
+							<td>{ fmt.Sprintf("%d", ct.Population) }</td>
+							<td>{ ct.CurrencyCode }</td>
+							<td>{ ct.PhonePrefix }</td>
+							<td>{ fmt.Sprintf("%f", ct.Latitude) }</td>
+							<td>{ fmt.Sprintf("%f", ct.Longitude) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		<!-- paginator -->
+		@components.PaginatorComponent("/locations/country",
+			fmt.Sprintf("/locations/country?page=%d&search=%s", c.PrevPage, c.FilterCountry),
+			strconv.Itoa(c.Page),
+			fmt.Sprintf("/locations/country?page=%d&search=%s", c.NextPage, c.FilterCountry),
+			fmt.Sprintf("/locations/country?page=%d&search=%s", c.LastPage, c.FilterCountry),
+			strconv.Itoa(c.LastPage))
+	</div>
+}

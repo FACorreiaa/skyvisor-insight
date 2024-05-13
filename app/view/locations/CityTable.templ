@@ -1,0 +1,79 @@
+package locations
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+	"fmt"
+	"strconv"
+)
+
+templ CityTable(c models.CityTable) {
+	<div class="flex flex-col items-left" id="table-container">
+	@components.InputGroupContainer() {
+                                       <div class="mr-2">
+                                              @components.InputComponent("Filter City Name", "/locations/city", "city_name", "#searchResults")
+                                       </div>
+                                       <div class="mr-2">
+                                      	      @components.InputComponent("Filter Currency", "/locations/city", "currency_name", "#searchResults")
+                                       </div>
+                                       <div class="mr-2">
+                                              @components.InputComponent("Filter Phone Prefix", "/locations/city", "phone_prefix", "#searchResults")
+                                       </div>
+                                        <div class="mr-2">
+                                              @components.InputComponent("Filter GMT", "/locations/city", "gmt", "#searchResults")
+                                        </div>
+                            	    }
+		<div class="overflow-x-auto">
+			<table class="table table-xs">
+				<!-- head -->
+				<thead>
+					<tr>
+						for _, col := range c.Column {
+							<th class="font-extrabold text-sm">
+							    <div class="flex justify-start align-middle" hx-boost>
+									{ col.Title }
+									<form class="join" hx-boost="true" method="get">
+										<a
+											class="pl-4"
+											href={ templ.URL(fmt.Sprintf("/locations/city?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
+										>
+											@col.Icon
+										</a>
+									</form>
+								</div>
+							</th>
+						}
+					</tr>
+				</thead>
+				<!-- rows -->
+				<tbody>
+					for _, city := range c.City {
+						<tr class="hover">
+							<td hx-boost="true">
+								<a
+									hx-trigger="load delay:50ms"
+									href={ templ.SafeURL(fmt.Sprintf("/locations/city/details/%d", city.CityID)) }
+								>{ city.CityName }</a>
+							</td>
+							<td>{ city.CountryName }</td>
+							<td>{ city.Continent }</td>
+							<td>{ city.CurrencyName }</td>
+							<td>{ city.Timezone }</td>
+							<td>{ city.GMT }</td>
+							<td>{ city.PhonePrefix }</td>
+							<td>{ fmt.Sprintf("%f", city.Latitude) }</td>
+							<td>{ fmt.Sprintf("%f", city.Longitude) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		<!-- paginator -->
+		@components.PaginatorComponent("/locations/city",
+			fmt.Sprintf("/locations/city?page=%d&search=%s", c.PrevPage, c.FilterCityName),
+			strconv.Itoa(c.Page),
+			fmt.Sprintf("/locations/city?page=%d&search=%s", c.NextPage, c.FilterCityName),
+			fmt.Sprintf("/locations/city?page=%d&search=%s", c.LastPage, c.FilterCityName),
+			strconv.Itoa(c.LastPage))
+	</div>
+}

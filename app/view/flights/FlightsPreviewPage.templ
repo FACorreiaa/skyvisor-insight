@@ -1,0 +1,22 @@
+package flights
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+)
+
+templ FLightsPreviewPage(sidebar []models.SidebarItem, lf []models.LiveFlights, title, description string) {
+	<div>
+		@components.BannerComponent(title, description)
+		<div class="container flex pt-10 mx-auto mb-24 mr:px-6">
+			<div class="w-2/12">
+				@components.SidebarComponent(sidebar)
+			</div>
+			<div class="w-11/12 ml-10">
+				<div class="w-11/12 mr:px-6">
+					@FlightsLocationMap(lf)
+				</div>
+			</div>
+		</div>
+	</div>
+}

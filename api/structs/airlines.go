@@ -29,7 +29,7 @@ type Airline struct {
 	CreatedAt            CustomTime `db:"created_at" json:"created_at"`
 }
 
-// aircrafts
+// aircraft
 
 type Aircraft struct {
 	ID           string     `json:"id"`
@@ -135,7 +135,6 @@ func (ct *CustomTime) UnmarshalJSON(data []byte) error {
 // Implement driver.Valuer interface.
 
 func (ct CustomTime) Value() (driver.Value, error) {
-	// Return the underlying time value as a string in RFC3339 format
 	return ct.Time.Format(time.RFC3339), nil
 }
 

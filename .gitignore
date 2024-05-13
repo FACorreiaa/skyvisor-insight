@@ -46,3 +46,4 @@ main
 .tmp/main
 tailwindcss
 .env.docker
+tmp

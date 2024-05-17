@@ -9,20 +9,20 @@ import (
 
 templ CityTable(c models.CityTable) {
 	<div class="flex flex-col items-left" id="table-container">
-	@components.InputGroupContainer() {
-                                       <div class="mr-2">
-                                              @components.InputComponent("Filter City Name", "/locations/city", "city_name", "#searchResults")
-                                       </div>
-                                       <div class="mr-2">
-                                      	      @components.InputComponent("Filter Currency", "/locations/city", "currency_name", "#searchResults")
-                                       </div>
-                                       <div class="mr-2">
-                                              @components.InputComponent("Filter Phone Prefix", "/locations/city", "phone_prefix", "#searchResults")
-                                       </div>
-                                        <div class="mr-2">
-                                              @components.InputComponent("Filter GMT", "/locations/city", "gmt", "#searchResults")
-                                        </div>
-                            	    }
+		@components.InputGroupContainer() {
+			<div class="mr-2">
+				@components.InputComponent("Filter City Name", "/locations/city", "city_name", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Currency", "/locations/city", "currency_name", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Phone Prefix", "/locations/city", "phone_prefix", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter GMT", "/locations/city", "gmt", "#searchResults")
+			</div>
+		}
 		<div class="overflow-x-auto">
 			<table class="table table-xs">
 				<!-- head -->
@@ -30,7 +30,7 @@ templ CityTable(c models.CityTable) {
 					<tr>
 						for _, col := range c.Column {
 							<th class="font-extrabold text-sm">
-							    <div class="flex justify-start align-middle" hx-boost>
+								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
 										<a

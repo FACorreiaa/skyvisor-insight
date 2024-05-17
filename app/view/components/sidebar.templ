@@ -48,7 +48,7 @@ templ SidebarComponent(sidebar []models.SidebarItem) {
 											<a
 												hx-trigger="load delay:50ms"
 												href={ templ.SafeURL(subItem.Path) }
-								                class="pr-0 flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ease-in-out"
+												class="pr-0 flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 ease-in-out"
 											>
 												@subItem.Icon
 												<span class="m-2">

@@ -28,16 +28,15 @@ templ NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav 
 						</li>
 					}
 					if user != nil {
-                        <li>
-                            <a href={ templ.SafeURL("/profile/" + user.Username) } class="font-bold nav-link">
-                                if user.Image != nil {
-                                    <img src={ templ.EscapeString(*user.Image) } class="user-pic"/>
-                                }
-                                { user.Username }
-                            </a>
-                        </li>
-                    }
-
+						<li>
+							<a href={ templ.SafeURL("/profile/" + user.Username) } class="font-bold nav-link">
+								if user.Image != nil {
+									<img src={ templ.EscapeString(*user.Image) } class="user-pic"/>
+								}
+								{ user.Username }
+							</a>
+						</li>
+					}
 				</ul>
 			</div>
 		</div>

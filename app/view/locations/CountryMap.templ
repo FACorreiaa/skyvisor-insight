@@ -1,9 +1,9 @@
 package locations
 
 import (
-    "fmt"
-    "github.com/FACorreiaa/Aviation-tracker/app/models"
-    )
+	"fmt"
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+)
 
 script countryMapContainer(data []models.Country) {
     //control selector
@@ -190,28 +190,28 @@ templ CountryMap(data []models.Country) {
 			</style>
 		</head>
 		<body onload={ countryMapContainer(data) }>
-				<div id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
+			<div id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
 			<div class="mt-2 text-center">
-                <button id="zoom-out" class="btn btn-secondary">Zoom out</button>
-                <button id="zoom-in" class="btn btn-secondary">Zoom in</button>
-            </div>
-            <div class="w-full form-control">
-                            			<div class="label">
-                            				<span class="label-text font-semi-bold text-xs badge-xs badge pb-0">Display number of markers</span>
-                            			</div>
-                            			<div class="flex items-center mt-2">
-                            			    <span class="text-xs">0</span>
-                            				<input
-                            					type="range"
-                            					min="0"
-                            					max={fmt.Sprintf("%d", len(data))}
-                            					value={fmt.Sprintf("%d", len(data))}
-                            					class="range range-xs p-2 mr-2 ml-2"
-                            					name="rangeValue"
-                            				/>
-                            				<span class="text-xs" id="rangeValue">{fmt.Sprintf("%d", len(data))}</span>
-                            			</div>
-                            		</div>
+				<button id="zoom-out" class="btn btn-secondary">Zoom out</button>
+				<button id="zoom-in" class="btn btn-secondary">Zoom in</button>
+			</div>
+			<div class="w-full form-control">
+				<div class="label">
+					<span class="label-text font-semi-bold text-xs badge-xs badge pb-0">Display number of markers</span>
+				</div>
+				<div class="flex items-center mt-2">
+					<span class="text-xs">0</span>
+					<input
+						type="range"
+						min="0"
+						max={ fmt.Sprintf("%d", len(data)) }
+						value={ fmt.Sprintf("%d", len(data)) }
+						class="range range-xs p-2 mr-2 ml-2"
+						name="rangeValue"
+					/>
+					<span class="text-xs" id="rangeValue">{ fmt.Sprintf("%d", len(data)) }</span>
+				</div>
+			</div>
 		</body>
 	</html>
 }

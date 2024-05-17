@@ -1,15 +1,16 @@
 package config
 
 import (
+	"errors"
 	"log"
 	"log/slog"
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/redis/go-redis/v9"
 )
 
 type Config struct {
@@ -43,17 +44,6 @@ type ServerConfig struct {
 	SessionKey      string
 }
 
-func GetProdEnv() bool {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	mode := os.Getenv("MODE")
-
-	return mode == "production"
-}
-
 func NewConfig() (*Config, error) {
 	database, err := NewDatabaseConfig()
 	if err != nil {
@@ -78,9 +68,17 @@ func NewConfig() (*Config, error) {
 	}, nil
 }
 
+func GetEnv(key, defaultVal string) string {
+	key = strings.ToUpper(key)
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return defaultVal
+}
+
 func NewLogConfig() *LogConfig {
 	var level slog.Level
-	levelStr := os.Getenv("LOG_LEVEL")
+	levelStr := GetEnv("LOG_LEVEL", "info")
 	switch levelStr {
 	case "debug":
 		level = slog.LevelDebug
@@ -94,7 +92,7 @@ func NewLogConfig() *LogConfig {
 		level = slog.LevelInfo
 	}
 
-	format := os.Getenv("LOG_FORMAT")
+	format := GetEnv("LOG_FORMAT", "text")
 	if format != "json" {
 		format = "text"
 	}
@@ -106,29 +104,28 @@ func NewLogConfig() *LogConfig {
 }
 
 func NewDatabaseConfig() (*DatabaseConfig, error) {
-	env := GetProdEnv()
-
-	err := godotenv.Load()
+	err := godotenv.Load(".env")
 	if err != nil {
+		log.Println(err)
 		log.Fatal("Error loading .env file")
 	}
 
-	user := os.Getenv("DB_USER")
-	host := os.Getenv("DB_HOST")
-	pass := os.Getenv("DB_PASS")
-	port := os.Getenv("DB_PORT")
-	name := os.Getenv("DB_NAME")
-	schema := os.Getenv("SCHEMA")
-	if env {
-		connURL := os.Getenv("DB_PG_PROD")
-		return &DatabaseConfig{
-			ConnectionURL: connURL,
-		}, nil
+	if os.Getenv("APP_ENV") == "dev" {
+		if err != nil {
+			log.Println(err)
+			log.Fatal("Error loading .env file")
+		}
 	}
 
-	println(user)
-	println(host)
-	println(pass)
+	host := GetEnv("DB_HOST", "localhost")
+	port, err := strconv.Atoi(GetEnv("DB_PORT", "5435"))
+	if err != nil {
+		return nil, errors.New("invalid DB_PORT")
+	}
+	user := GetEnv("DB_USER", "postgres")
+	pass := GetEnv("DB_PASS", "postgres")
+	dbname := GetEnv("DB_NAME", "aviation-tracker-dev")
+	schema := GetEnv("DB_SCHEMA", "")
 
 	query := url.Values{
 		"sslmode":  []string{"disable"},
@@ -140,40 +137,23 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 	connURL := url.URL{
 		Scheme:   "postgres",
 		User:     url.UserPassword(user, pass),
-		Host:     host + ":" + port,
-		Path:     name,
+		Host:     host + ":" + strconv.Itoa(port),
+		Path:     dbname,
 		RawQuery: query.Encode(),
 	}
-	println("DB")
-	println(connURL.String())
 	return &DatabaseConfig{
 		ConnectionURL: connURL.String(),
 	}, nil
 }
 
 func NewRedisConfig() (*RedisConfig, error) {
-	var host, pass string
-
-	env := GetProdEnv()
-
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	if env {
-		opt, err := redis.ParseURL(os.Getenv("UPSTASH_URL"))
-		if err != nil {
-			return nil, err
-		}
-		host = opt.Addr
-		pass = opt.Password
-	} else {
-		host = os.Getenv("REDIS_HOST")
-		pass = os.Getenv("REDIS_PASSWORD")
-	}
-	println(host)
-	println(pass)
+	host := GetEnv("REDIS_HOST", "redis:6380")
+	pass := GetEnv("REDIS_PASS", "qwerty")
+	// rdb := redis.NewClient(&redis.Options{
+	//	Addr:     host,
+	//	Password: pass, // no password set
+	//	DB:       0,    // use default DB
+	// })
 
 	return &RedisConfig{
 		Host:     host,
@@ -183,35 +163,27 @@ func NewRedisConfig() (*RedisConfig, error) {
 }
 
 func NewServerConfig() (*ServerConfig, error) {
-	// Load .env file
-	err := godotenv.Load()
+	addr := GetEnv("ADDR", "0.0.0.0:6969")
+	writeTimeout, err := time.ParseDuration(GetEnv("write_timeout", "15s"))
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		return nil, errors.New("invalid WRITE_TIMEOUT")
 	}
-
-	// Get environment variable values
-	addr := os.Getenv("SERVER_ADDR")
-	port := os.Getenv("SERVER_PORT")
-	gtStr := os.Getenv("SERVER_GRACEFUL_TIMEOUT")
-	wtStr := os.Getenv("SERVER_WRITE_TIMEOUT")
-	rtStr := os.Getenv("SERVER_READ_TIMEOUT")
-	itStr := os.Getenv("SERVER_IDLE_TIMEOUT")
-	sessionKey := os.Getenv("session_key")
-
-	// Convert string values to integers
-	gt, _ := strconv.Atoi(gtStr)
-	wt, _ := strconv.Atoi(wtStr)
-	rt, _ := strconv.Atoi(rtStr)
-	it, _ := strconv.Atoi(itStr)
-
-	// Convert integers to time.Duration
-	gracefulTimeout := time.Duration(gt) * time.Second
-	writeTimeout := time.Duration(wt) * time.Second
-	readTimeout := time.Duration(rt) * time.Second
-	idleTimeout := time.Duration(it) * time.Second
+	readTimeout, err := time.ParseDuration(GetEnv("read_timeout", "15s"))
+	if err != nil {
+		return nil, errors.New("invalid READ_TIMEOUT")
+	}
+	idleTimeout, err := time.ParseDuration(GetEnv("idle_timeout", "60s"))
+	if err != nil {
+		return nil, errors.New("invalid IDLE_TIMEOUT")
+	}
+	gracefulTimeout, err := time.ParseDuration(GetEnv("graceful_timeout", "5s"))
+	if err != nil {
+		return nil, errors.New("invalid GRACEFUL_TIMEOUT")
+	}
+	sessionKey := GetEnv("session_key", "super-secret")
 
 	return &ServerConfig{
-		Addr:            addr + ":" + port,
+		Addr:            addr,
 		GracefulTimeout: gracefulTimeout,
 		WriteTimeout:    writeTimeout,
 		ReadTimeout:     readTimeout,

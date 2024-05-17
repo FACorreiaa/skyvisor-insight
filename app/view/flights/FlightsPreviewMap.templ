@@ -273,12 +273,12 @@ templ FlightsLocationMap(data []models.LiveFlights) {
 		</head>
 		<body onload={ previewMapContainer(data) }>
 			<div class="mb-5 text-left">
-                                    	    <button id="zoom-out" class="btn btn-ghost mr-5">Zoom out</button>
-                                            <button id="zoom-in" class="btn btn-ghost">Zoom in</button>
-                                    </div>
-				<div id="map" class="map" tabindex="0">
-					<button aria-describedby="popup" data-tippy-content="popup" id="popup"></button>
-				</div>
+				<button id="zoom-out" class="btn btn-ghost mr-5">Zoom out</button>
+				<button id="zoom-in" class="btn btn-ghost">Zoom in</button>
+			</div>
+			<div id="map" class="map" tabindex="0">
+				<button aria-describedby="popup" data-tippy-content="popup" id="popup"></button>
+			</div>
 			<script src="https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js"></script>
 		</body>
 	</html>

@@ -10,23 +10,24 @@ import (
 templ LiveFlightsTableComponent(live models.FlightsTable) {
 	<div class="flex flex-col items-left" id="table-container">
 		@components.InputGroupContainer() {
-                           <div class="mr-2">
-                              @components.InputComponent("Filter Flight Number", "/flights", "flight_number", "#searchResults")
-                           </div>
-                           <div class="mr-2">
-                          	      @components.InputComponent("Filter Airline", "/flights", "airline_name", "#searchResults")
-                           </div>
-                           <div class="mr-2">
-                                  @components.InputComponent("Filter Flight Status", "/flights", "flight_status", "#searchResults")
-                           </div>
-                	    }
+			<div class="mr-2">
+				@components.InputComponent("Filter Flight Number", "/flights", "flight_number", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Airline", "/flights", "airline_name", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Flight Status", "/flights", "flight_status", "#searchResults")
+			</div>
+		}
 		<div class="overflow-x-auto">
 			<table class="table table-xs">
 				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range live.Column {
-							<th class="font-extrabold text-sm">								<div class="flex justify-start align-middle" hx-boost>
+							<th class="font-extrabold text-sm">
+								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
 										<a
@@ -52,21 +53,21 @@ templ LiveFlightsTableComponent(live models.FlightsTable) {
 								>{ lf.Flight.Number }</a>
 							</td>
 							if lf.Airline.Name == "" {
-							    <td>N/A</td>
+								<td>N/A</td>
 							} else {
 								<td>{ lf.Airline.Name }</td>
 							}
 							<td>{ lf.Departure.Airport }</td>
 							if lf.Departure.Estimated.IsZero() {
-                                <td>N/A</td>
+								<td>N/A</td>
 							} else {
-							    <td>{ lf.Departure.Estimated.Format("2006-01-02 15:04:05") }</td>
+								<td>{ lf.Departure.Estimated.Format("2006-01-02 15:04:05") }</td>
 							}
 							<td>{ lf.Arrival.Airport }</td>
-                            if lf.Arrival.Estimated.IsZero() {
-                                <td>N/A</td>
+							if lf.Arrival.Estimated.IsZero() {
+								<td>N/A</td>
 							} else {
-							    <td>{ lf.Arrival.Estimated.Format("2006-01-02 15:04:05") }</td>
+								<td>{ lf.Arrival.Estimated.Format("2006-01-02 15:04:05") }</td>
 							}
 							<td>{ fmt.Sprintf("%d", lf.Arrival.Delay) }</td>
 							<td>{ fmt.Sprintf("%d", lf.Departure.Delay) }</td>

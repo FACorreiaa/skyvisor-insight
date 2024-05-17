@@ -11,6 +11,7 @@ import (
 
 	"github.com/FACorreiaa/Aviation-tracker/api"
 	"github.com/FACorreiaa/Aviation-tracker/app"
+	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/config"
 	"github.com/FACorreiaa/Aviation-tracker/db"
 	"github.com/joho/godotenv"
@@ -136,7 +137,7 @@ func run(ctx context.Context) error {
 	defer cancel()
 
 	if err = srv.Shutdown(ctxShutdown); err != nil {
-		slog.Error("Error shutting down server", err)
+		repository.HandleError(err, "Error shutting down server")
 	}
 
 	slog.Info("Shutting down")

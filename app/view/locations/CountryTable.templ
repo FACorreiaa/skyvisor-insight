@@ -9,27 +9,28 @@ import (
 
 templ CountryTable(c models.CountryTable) {
 	<div class="flex flex-col items-left" id="table-container">
-	@components.InputGroupContainer() {
-                                   <div class="mr-2">
-                                          @components.InputComponent("Filter Country Name", "/locations/country", "country_name", "#searchResults")
-                                   </div>
-                                   <div class="mr-2">
-                                  	      @components.InputComponent("Filter Capital", "/locations/country", "capital", "#searchResults")
-                                   </div>
-                                   <div class="mr-2">
-                                          @components.InputComponent("Filter Continent", "/locations/country", "continent", "#searchResults")
-                                   </div>
-                                    <div class="mr-2">
-                                          @components.InputComponent("Filter Currency Code", "/locations/country", "currency_code", "#searchResults")
-                                    </div>
-                        	    }
+		@components.InputGroupContainer() {
+			<div class="mr-2">
+				@components.InputComponent("Filter Country Name", "/locations/country", "country_name", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Capital", "/locations/country", "capital", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Continent", "/locations/country", "continent", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Currency Code", "/locations/country", "currency_code", "#searchResults")
+			</div>
+		}
 		<div class="overflow-x-auto">
 			<table class="table table-xs">
 				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range c.Column {
-							<th class="font-extrabold text-sm">								<div class="flex justify-start align-middle" hx-boost>
+							<th class="font-extrabold text-sm">
+								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
 										<a

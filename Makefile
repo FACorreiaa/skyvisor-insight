@@ -99,3 +99,6 @@ delete-container-if-exist:
 
 down:
 	docker compose down
+
+tfmt:
+	templ fmt .

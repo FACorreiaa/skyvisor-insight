@@ -33,9 +33,9 @@ templ AirlineDetails(a models.Airline) {
 templ AirlineDetailsPage(sidebar []models.SidebarItem, a models.Airline, title, description string) {
 	<div>
 		@components.BannerComponent(title, description)
-		    		<div class="mt-10 text-center w-full">
-                                        			@AirlineDetails(a)
-                                        		</div>
+		<div class="mt-10 text-center w-full">
+			@AirlineDetails(a)
+		</div>
 		<div class="container flex pt-10 mx-auto mr:px-6">
 			<div class="w-2/12">
 				@components.SidebarComponent(sidebar)

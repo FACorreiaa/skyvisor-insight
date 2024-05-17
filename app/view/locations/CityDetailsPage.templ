@@ -95,14 +95,14 @@ templ CityDetailsPage(sidebar []models.SidebarItem, c models.City, title, descri
 	<div>
 		@components.BannerComponent(title, description)
 		<div class="mt-10 text-center w-full">
-                                                			@CityDetails(c)
-                                                		</div>
+			@CityDetails(c)
+		</div>
 		<div class="container flex pt-10 mx-auto mr:px-6">
 			<div class="w-2/12">
 				@components.SidebarComponent(sidebar)
 			</div>
 			<div class="w-10/12 ml-10">
-					@CityDetailedMap(c)
+				@CityDetailedMap(c)
 			</div>
 		</div>
 	</div>

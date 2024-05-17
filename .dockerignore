@@ -4,3 +4,4 @@ node_modules
 app/static/fonts/*
 !controller/static/fonts/ionicons*
 controller/static/css/fonts.css
+tailwindcss

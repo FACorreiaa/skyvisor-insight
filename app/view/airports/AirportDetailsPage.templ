@@ -61,18 +61,17 @@ templ AirportDetails(a models.Airport) {
 
 templ AirportDetailsPage(sidebar []models.SidebarItem, a models.Airport, title, description string) {
 	<div>
-    		@components.BannerComponent(title, description)
-    		<div class="mt-10 text-center w-full">
-                                			@AirportDetails(a)
-                                		</div>
-    		<div class="container flex pt-10 mx-auto mr:px-6">
-    			<div class="w-2/12">
-    				@components.SidebarComponent(sidebar)
-    			</div>
-    			<div class="w-10/12 ml-10 w-full">
-    				@AirportDetailedMap(a)
-    			</div>
-    		</div>
-
-    	</div>
+		@components.BannerComponent(title, description)
+		<div class="mt-10 text-center w-full">
+			@AirportDetails(a)
+		</div>
+		<div class="container flex pt-10 mx-auto mr:px-6">
+			<div class="w-2/12">
+				@components.SidebarComponent(sidebar)
+			</div>
+			<div class="w-10/12 ml-10 w-full">
+				@AirportDetailedMap(a)
+			</div>
+		</div>
+	</div>
 }

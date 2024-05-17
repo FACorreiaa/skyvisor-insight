@@ -8,7 +8,7 @@ templ SettingsPage(settings models.SettingsPage) {
 	<div class="container mx-auto my-24 md:px-6">
 		<div class="row">
 			<div class="col-md-6 offset-md-3 col-xs-12">
-				<p class="text-center text-6xl">Your Settings</p>
+				<p class="text-center text-gray-900 text-6xl">Your Settings</p>
 				if settings.Updated {
 					<div class="alert alert-success">
 						Settings saved successfully.
@@ -24,13 +24,13 @@ templ SettingsPage(settings models.SettingsPage) {
 				<form method="post" enctype="multipart/form-data">
 					<fieldset>
 						<fieldset class="max-w-lg mx-auto mt-2">
-							<label for="username" class="block text-sm font-medium text-gray-900 dark:text-white">Email</label>
+							<label for="username" class="block text-sm font-medium text-gray-900 dark:text-white">Username</label>
 							<input
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+								class="bg-gray-50 border border-gray-300 light:text-black	 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 								type="text"
-								placeholder="Username"
-								name="username"
-								id="username"
+								placeholder="Email"
+								name="email"
+								id="email"
 								required
 								value={ settings.User.Username }
 							/>

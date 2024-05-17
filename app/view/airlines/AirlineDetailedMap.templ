@@ -169,12 +169,11 @@ templ AirlineDetailedMap(data models.Airline) {
 			</style>
 		</head>
 		<body onload={ detailedMapContainer(data) }>
-		<div class="mb-5 text-left">
-                	    <button id="zoom-out" class="btn btn-ghost mr-5">Zoom out</button>
-                        <button id="zoom-in" class="btn btn-ghost">Zoom in</button>
-                </div>
-				<div id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
-
+			<div class="mb-5 text-left">
+				<button id="zoom-out" class="btn btn-ghost mr-5">Zoom out</button>
+				<button id="zoom-in" class="btn btn-ghost">Zoom in</button>
+			</div>
+			<div id="map" class="map" tabindex="0"><button aria-describedby="popup" data-tippy-content="popup" id="popup"></button></div>
 		</body>
 	</html>
 }

@@ -9,34 +9,32 @@ import (
 
 templ AirlineAircraftTable(a models.AircraftTable) {
 	<div class="flex flex-col items-left">
-	       	@components.InputGroupContainer() {
-                       <div class="mr-2">
-                          @components.InputComponent("Filter Aircraft Name", "/airlines/aircraft", "aircraft_name", "#searchResults")
-                       </div>
-                       <div class="mr-2">
-                      	      @components.InputComponent("Filter Engine Type", "/airlines/aircraft", "type_engine", "#searchResults")
-                       </div>
-                       <div class="mr-2">
-                              @components.InputComponent("Filter Mode Code", "/airlines/aircraft", "model_code", "#searchResults")
-                       </div>
-                       <div class="mr-2">
-                              @components.InputComponent("Filter Plane Owner", "/airlines/aircraft", "plane_owner", "#searchResults")
-                       </div>
-            	    }
+		@components.InputGroupContainer() {
+			<div class="mr-2">
+				@components.InputComponent("Filter Aircraft Name", "/airlines/aircraft", "aircraft_name", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Engine Type", "/airlines/aircraft", "type_engine", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Mode Code", "/airlines/aircraft", "model_code", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Plane Owner", "/airlines/aircraft", "plane_owner", "#searchResults")
+			</div>
+		}
 		<div class="overflow-x-auto">
 			<table class="table table-xs">
-				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range a.Column {
 							<th class="font-extrabold text-sm">
-							    <div class="flex justify-start align-middle" hx-boost>
+								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
 										<a
 											class="pl-4"
 											href={ templ.URL(fmt.Sprintf("/airlines/aircraft?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
-
 										>
 											@col.Icon
 										</a>
@@ -46,7 +44,6 @@ templ AirlineAircraftTable(a models.AircraftTable) {
 						}
 					</tr>
 				</thead>
-				<!-- rows -->
 				<tbody>
 					for _, aircraft := range a.Aircraft {
 						<tr class="hover">
@@ -79,7 +76,6 @@ templ AirlineAircraftTable(a models.AircraftTable) {
 					}
 				</tbody>
 			</table>
-			<!-- paginator -->
 		</div>
 		@components.PaginatorComponent("/airlines/aircraft",
 			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.PrevPage, a.FilterAircraft),

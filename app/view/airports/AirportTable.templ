@@ -18,23 +18,24 @@ script returnToPreviousPage(page int) {
 templ AirportTableComponent(airport models.AirportTable) {
 	<div class="flex flex-col items-left" id="table-container">
 		@components.InputGroupContainer() {
-                               <div class="mr-2">
-                                  @components.InputComponent("Filter Airport Name", "/airports", "airport_name", "#searchResults")
-                               </div>
-                               <div class="mr-2">
-                              	      @components.InputComponent("Filter Country Name", "/airports", "country_name", "#searchResults")
-                               </div>
-                               <div class="mr-2">
-                                      @components.InputComponent("Filter GMT", "/airports", "gmt", "#searchResults")
-                               </div>
-                    	    }
+			<div class="mr-2">
+				@components.InputComponent("Filter Airport Name", "/airports", "airport_name", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter Country Name", "/airports", "country_name", "#searchResults")
+			</div>
+			<div class="mr-2">
+				@components.InputComponent("Filter GMT", "/airports", "gmt", "#searchResults")
+			</div>
+		}
 		<div class="overflow-x-auto">
 			<table class="table table-xs">
 				<!-- head -->
 				<thead>
 					<tr>
 						for _, col := range airport.Column {
-							<th class="font-extrabold text-sm">								<div class="flex justify-start align-middle" hx-boost>
+							<th class="font-extrabold text-sm">
+								<div class="flex justify-start align-middle" hx-boost>
 									{ col.Title }
 									<form class="join" hx-boost="true" method="get">
 										<a

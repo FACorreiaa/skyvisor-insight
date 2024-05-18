@@ -36,6 +36,9 @@ templ NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav 
 								{ user.Username }
 							</a>
 						</li>
+						<li>
+							@ThemeController()
+						</li>
 					}
 				</ul>
 			</div>

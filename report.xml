@@ -2,8 +2,7 @@
 
 <checkstyle version="5.0">
   <file name="main.go">
-    <error column="3" line="154" message="exitAfterDefer: os.Exit will exit, and `defer cancel()` will not run" severity="error" source="gocritic"></error>
-    <error column="1" line="20" message="cyclomatic complexity 19 of func `run` is high (&gt; 12)" severity="error" source="gocyclo"></error>
-    <error column="44" line="139" message="slog: slog.Error arg &#34;err&#34; should be a string or a slog.Attr (possible missing key or value)" severity="error" source="govet"></error>
+    <error column="3" line="155" message="exitAfterDefer: os.Exit will exit, and `defer cancel()` will not run" severity="error" source="gocritic"></error>
+    <error column="1" line="21" message="cyclomatic complexity 19 of func `run` is high (&gt; 12)" severity="error" source="gocyclo"></error>
   </file>
 </checkstyle>

@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
 )
 
 templ LoginPage(login models.LoginPage) {
@@ -50,6 +51,9 @@ templ LoginPage(login models.LoginPage) {
 									<a href="/register">Need an account?</a>
 								</p>
 							</div>
+							<div class="flex items-center justify-center max-w-lg mx-auto mt-2">
+								  @components.GoogleSignin("Sign in with Google")
+								</div>
 						</form>
 					</div>
 				</div>

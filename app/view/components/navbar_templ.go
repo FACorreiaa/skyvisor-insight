@@ -14,7 +14,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 )
 
-func NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav string) templ.Component {
+func NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav, theme string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -145,7 +145,7 @@ func NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav s
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = ThemeController().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ThemeController(theme).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

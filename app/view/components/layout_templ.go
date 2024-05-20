@@ -27,24 +27,37 @@ func LayoutPage(l models.LayoutTempl) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\" data-theme=\"pastel\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\" data-theme=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(l.Title)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("light")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/layout.templ`, Line: 13, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/layout.templ`, Line: 9, Col: 39}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" - SkyVisor Insight</title><link rel=\"stylesheet\" href=\"/static/css/output.css\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&amp;display=swap\" rel=\"stylesheet\"><link href=\"https://cdn.jsdelivr.net/npm/daisyui@4.5.0/dist/full.min.css\" rel=\"stylesheet\" type=\"text/css\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js\"></script><script src=\"https://unpkg.com/@popperjs/core@2\"></script><script src=\"https://unpkg.com/tippy.js@6\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.13.7/dist/cdn.min.js\"></script><link rel=\"stylesheet\" href=\"https://unpkg.com/tippy.js@6/animations/scale.css\"></head><body hx-boost=\"true\"><div class=\"flex flex-col h-screen font-lato\" id=\"contents\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><!-- Default to light theme --><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = NavbarComponent(l.Nav, l.User, l.ActiveNav).Render(ctx, templ_7745c5c3_Buffer)
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(l.Title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/layout.templ`, Line: 13, Col: 28}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" - SkyVisor Insight</title><link rel=\"stylesheet\" href=\"/static/css/output.css\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900&amp;display=swap\" rel=\"stylesheet\"><link href=\"https://cdn.jsdelivr.net/npm/daisyui@4.5.0/dist/full.min.css\" rel=\"stylesheet\" type=\"text/css\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js\"></script><script src=\"https://unpkg.com/@popperjs/core@2\"></script><script src=\"https://unpkg.com/tippy.js@6\"></script><script defer src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.13.7/dist/cdn.min.js\"></script><link rel=\"stylesheet\" href=\"https://unpkg.com/tippy.js@6/animations/scale.css\"></head><body hx-boost=\"true\"><div class=\"flex flex-col h-screen font-lato\" id=\"contents\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = NavbarComponent(l.Nav, l.User, l.ActiveNav, l.Theme).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

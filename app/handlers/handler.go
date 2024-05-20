@@ -23,6 +23,10 @@ import (
 const ASC = "ASC"
 const DESC = "DESC"
 
+type contextKey string
+
+var themeContextKey contextKey = "theme"
+
 type Handler struct {
 	service     *services.Service
 	formDecoder *form.Decoder
@@ -87,12 +91,23 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 		}
 	}
 
+	theme := "dark" // Default to light theme
+	themeCtx := r.Context().Value(themeContextKey)
+	if themeCtx != nil {
+		if th, ok := themeCtx.(string); ok {
+			theme = th
+		}
+	}
+
+	println(theme)
+
 	l := models.LayoutTempl{
 		Title:     title,
 		Nav:       nav,
 		User:      user,
 		ActiveNav: r.URL.Path,
 		Content:   data,
+		Theme:     theme,
 	}
 
 	return components.LayoutPage(l)
@@ -100,5 +115,7 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 
 func (h *Handler) Homepage(w http.ResponseWriter, r *http.Request) error {
 	home := components.HomePage()
-	return h.CreateLayout(w, r, "Home Page", home).Render(context.Background(), w)
+	ctx := context.WithValue(context.Background(), themeContextKey, "dark")
+	println(themeContextKey)
+	return h.CreateLayout(w, r, "Home Page", home).Render(ctx, w)
 }

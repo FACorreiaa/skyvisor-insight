@@ -84,6 +84,7 @@ type LayoutTempl struct {
 	ActiveNav string
 	User      *UserSession
 	Content   templ.Component
+	Theme     string
 }
 
 type SettingsPage struct {

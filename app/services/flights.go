@@ -38,9 +38,9 @@ func (h *Service) GetAllFlightsByStatus(ctx context.Context,
 }
 
 func (h *Service) GetAllFlights(ctx context.Context,
-	page, pageSize int, orderBy, sortBy, flightNumber, airlineName, flightStatus string) ([]models.LiveFlights, error) {
+	page, pageSize int, orderBy, sortBy string) ([]models.LiveFlights, error) {
 
-	return h.flightRepo.GetAllFlights(ctx, page, pageSize, orderBy, sortBy, flightNumber, airlineName, flightStatus)
+	return h.flightRepo.GetAllFlights(ctx, page, pageSize, orderBy, sortBy)
 }
 
 func (h *Service) GetAllFlightsLocationsByStatus(ctx context.Context,

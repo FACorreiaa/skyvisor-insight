@@ -25,7 +25,7 @@ func (h *Service) GetAirportsLocation() ([]models.Airport, error) {
 
 func (h *Service) GetAllAirports() (int, error) {
 	total, err := h.airportRepo.GetSum(context.Background())
-	pageSize := 30
+	pageSize := 20
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err

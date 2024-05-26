@@ -72,9 +72,9 @@ func (h *Handler) getFlights(_ http.ResponseWriter, r *http.Request) (int, []mod
 	vars := mux.Vars(r)
 	flightStatus := vars["flight_status"]
 
-	airlineName := r.FormValue("airline_name")
+	//airlineName := r.FormValue("airline_name")
 	flightNumber := r.FormValue("flight_number")
-	flightStats := r.FormValue("flight_status")
+	//flightStats := r.FormValue("flight_status")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")
@@ -88,7 +88,7 @@ func (h *Handler) getFlights(_ http.ResponseWriter, r *http.Request) (int, []mod
 
 	if flightStatus == "" {
 		lf, err = h.service.GetAllFlights(context.Background(), page, pageSize, orderBy,
-			sortBy, flightNumber, airlineName, flightStats)
+			sortBy)
 	} else {
 		lf, err = h.service.GetAllFlightsByStatus(context.Background(),
 			page, pageSize, orderBy, sortBy, flightNumber, flightStatus)

@@ -31,7 +31,7 @@ func (h *Handler) renderAirlineSidebar() []models.SidebarItem {
 }
 
 func (h *Handler) getAirline(_ http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
-	pageSize := 30
+	pageSize := 20
 	name := r.FormValue("airline_name")
 	callSign := r.FormValue("call_sign")
 	hubCode := r.FormValue("hub_code")
@@ -378,7 +378,7 @@ func (h *Handler) AirlineAirplanePage(w http.ResponseWriter, r *http.Request) er
 // Tax
 
 func (h *Handler) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, []models.Tax, error) {
-	pageSize := 30
+	pageSize := 20
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))

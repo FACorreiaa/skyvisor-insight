@@ -15,7 +15,7 @@ import (
 )
 
 func (h *Handler) getAirports(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
-	pageSize := 30
+	pageSize := 20
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")

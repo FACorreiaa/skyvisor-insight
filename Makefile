@@ -100,5 +100,8 @@ delete-container-if-exist:
 down:
 	docker compose down
 
-tfmt:
+t-fmt:
 	templ fmt .
+
+find-go:
+	find . -name '*.go' | xargs -I {} cat {} | wc -l

@@ -40,7 +40,7 @@ func (h *Handler) renderLocationsBar() []models.SidebarItem {
 }
 
 func (h *Handler) getCities(_ http.ResponseWriter, r *http.Request) (int, []models.City, error) {
-	pageSize := 30
+	pageSize := 20
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	cityName := r.FormValue("city_name")
@@ -185,7 +185,7 @@ func (h *Handler) CityDetailsPage(w http.ResponseWriter, r *http.Request) error 
 // Country
 
 func (h *Handler) getCountries(_ http.ResponseWriter, r *http.Request) (int, []models.Country, error) {
-	pageSize := 30
+	pageSize := 20
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	countryName := r.FormValue("country_name")

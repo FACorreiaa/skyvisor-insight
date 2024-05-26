@@ -7,9 +7,10 @@ CREATE TABLE flights
                       'scheduled',
                       'active',
                       'landed',
-                      'canceled',
+                      'cancelled',
                       'incident',
-                      'diverted'
+                      'diverted',
+                      'canceled'
       )
     ),
   departure_airport          varchar(70),

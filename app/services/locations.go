@@ -22,7 +22,7 @@ func (h *Service) GetCityLocations() ([]models.City, error) {
 
 func (h *Service) GetAllCities() (int, error) {
 	total, err := h.locationRepo.GetCitySum(context.Background())
-	pageSize := 30
+	pageSize := 20
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		HandleError(err, "Error fetching sum of cities")
@@ -55,7 +55,7 @@ func (h *Service) GetCountryLocations() ([]models.Country, error) {
 
 func (h *Service) GetAllCountries() (int, error) {
 	total, err := h.locationRepo.GetCountrySum(context.Background())
-	pageSize := 30
+	pageSize := 20
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err

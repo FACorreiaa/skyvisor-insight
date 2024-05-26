@@ -19,7 +19,7 @@ func (h *Service) GetAirlinesLocation() ([]models.Airline, error) {
 
 func (h *Service) GetAllAirline() (int, error) {
 	total, err := h.airlineRepo.GetAirlineSum(context.Background())
-	pageSize := 30
+	pageSize := 20
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -81,7 +81,7 @@ func (h *Service) GetTax(ctx context.Context, page, pageSize int,
 }
 func (h *Service) GetSum() (int, error) {
 	total, err := h.airlineRepo.GetTaxSum(context.Background())
-	pageSize := 30
+	pageSize := 20
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err

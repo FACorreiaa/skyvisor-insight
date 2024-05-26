@@ -99,8 +99,6 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 		}
 	}
 
-	println(theme)
-
 	l := models.LayoutTempl{
 		Title:     title,
 		Nav:       nav,
@@ -116,6 +114,5 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 func (h *Handler) Homepage(w http.ResponseWriter, r *http.Request) error {
 	home := components.HomePage()
 	ctx := context.WithValue(context.Background(), themeContextKey, "dark")
-	println(themeContextKey)
 	return h.CreateLayout(w, r, "Home Page", home).Render(ctx, w)
 }

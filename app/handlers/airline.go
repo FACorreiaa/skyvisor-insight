@@ -240,7 +240,7 @@ func (h *Handler) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *Handler) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []models.Aircraft, error) {
-	pageSize := 25
+	pageSize := 20
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
 	aircraftName := r.FormValue("aircraft_name")
@@ -277,7 +277,7 @@ func (h *Handler) AirlineAircraftPage(w http.ResponseWriter, r *http.Request) er
 // Airplane
 
 func (h *Handler) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []models.Airplane, error) {
-	pageSize := 25
+	pageSize := 20
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")

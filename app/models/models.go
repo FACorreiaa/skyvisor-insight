@@ -344,6 +344,12 @@ type LiveFlights struct {
 	ArrivalLongitude     string     `json:"arrival_longitude"`
 }
 
+type LiveFlightsResume struct {
+	Flight      FlightStatus `json:"flight_status"`
+	AirlineName string       `json:"airline_name"`
+	NumFlights  int          `json:"num_flights"`
+}
+
 func (a *Airport) GetPhoneNumber() string {
 	if !a.PhoneNumber.Valid {
 		return "Phone not available"

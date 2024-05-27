@@ -1,0 +1,19 @@
+package flights
+
+import (
+	"fmt"
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+)
+
+templ FlightsResumeByStatus(flightStatus models.FlightStatus, airline string, count int) {
+	<div class="card card-side bg-base-100 shadow-xl h-60">
+		<figure><img src={ "/static/icons/testing-copy.jpg" } alt="Flights"/></figure>
+		<div class="card-body">
+			<h2 class="card-title">{ fmt.Sprintf("%s flights", flightStatus) }</h2>
+			<p>
+				<label class="font-bold">Number of scheduled flights:</label> { fmt.Sprintf("%d", count) }
+				<div><label class="font-bold">From: </label> { airline }</div>
+			</p>
+		</div>
+	</div>
+}

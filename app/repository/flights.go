@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -147,7 +149,7 @@ func (r *FlightsRepository) getFlightsLocationsData(ctx context.Context, query s
 
 func (r *FlightsRepository) GetAllFlights(ctx context.Context,
 	page, pageSize int, orderBy, sortBy string) ([]models.LiveFlights, error) {
-	query := `select
+	query := `SELECT DISTINCT ON (f.flight_number)
 							       f.flight_number,
 							       f.flight_date,
 							       f.flight_status,
@@ -180,6 +182,7 @@ func (r *FlightsRepository) GetAllFlights(ctx context.Context,
 -- 							AND Trim(Upper(f.flight_status)) ILIKE trim(upper('%' || $7 || '%'))
 
 							ORDER BY
+							    f.flight_number,
 							CASE
 									WHEN $3 = 'Flight Number'
 									AND      $4 = 'ASC' THEN flight_number::text
@@ -214,9 +217,8 @@ func (r *FlightsRepository) GetAllFlights(ctx context.Context,
 
 func (r *FlightsRepository) GetAllFlightsSum(ctx context.Context) (int, error) {
 	var count int
-	row := r.pgpool.QueryRow(ctx, `SELECT DISTINCT ON(flight_number) Count(flight_number)
-										FROM   flights
-										GROUP BY flight_number`)
+	row := r.pgpool.QueryRow(ctx, `SELECT Count(DISTINCT flight_number)
+										FROM   flights`)
 
 	if err := row.Scan(&count); err != nil {
 		return 0, err
@@ -375,6 +377,7 @@ func (r *FlightsRepository) GetAllFlightsLocation(ctx context.Context) ([]models
 			WHERE
 			    ad.latitude IS NOT NULL
 			  AND ad.longitude IS NOT NULL
+			  AND ((date_trunc('day', TO_DATE(f.flight_date, 'YYYY-MM-DD')) = CURRENT_DATE))
 			  ORDER BY f.flight_number`
 
 	return r.getFlightsLocationsData(ctx, query)
@@ -412,6 +415,8 @@ func (r *FlightsRepository) GetAllFlightsByStatus(ctx context.Context,
 							WHERE	Trim(Upper(f.flight_number))
 							          ILIKE trim(upper('%' || $5 || '%'))
 							          AND flight_status = $6
+									  AND ((date_trunc('day', TO_DATE(f.flight_date, 'YYYY-MM-DD')) = CURRENT_DATE))
+
 -- 							AND (
 -- 						        $6 = '' -- No status provided, include all flights
 -- 						        OR ($6 = 'active' AND f.flight_status = 'active')
@@ -502,6 +507,7 @@ func (r *FlightsRepository) GetAllFlightsLocationsByStatus(ctx context.Context, 
 			    ad.latitude IS NOT NULL
 			  AND ad.longitude IS NOT NULL
 			  AND flight_status = $1
+			  AND ((date_trunc('day', f.flight_date) = TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD')))
 			  ORDER BY f.flight_number`
 
 	return r.getFlightsLocationsData(ctx, query, flightStatus)
@@ -568,7 +574,7 @@ func (r *FlightsRepository) getLiveFlightsData(ctx context.Context, query string
 }
 
 func (r *FlightsRepository) GetLiveFlights(ctx context.Context,
-	page, pageSize int, orderBy, sortBy, flightNumber, airlineName, flightStatus string) ([]models.LiveFlights, error) {
+	page, pageSize int, orderBy, sortBy string) ([]models.LiveFlights, error) {
 	query := `select
 							       f.flight_number,
 							       f.flight_status,
@@ -598,10 +604,8 @@ func (r *FlightsRepository) GetLiveFlights(ctx context.Context,
 									f.live_longitude
 
 							from flights f
-							WHERE	Trim(Upper(f.flight_number)) ILIKE trim(upper('%' || $5 || '%'))
-							AND Trim(Upper(f.airline_name)) ILIKE trim(upper('%' || $6 || '%'))
-							AND Trim(Upper(f.flight_status)) ILIKE trim(upper('%' || $7 || '%'))
-							AND f.live_latitude != 0 AND f.live_longitude != 0
+							WHERE f.live_latitude != 0 AND f.live_longitude != 0
+							AND ((date_trunc('day', TO_DATE(f.flight_date, 'YYYY-MM-DD')) = CURRENT_DATE))
 							ORDER BY
 							CASE
 									WHEN $3 = 'Flight Number'
@@ -632,7 +636,7 @@ func (r *FlightsRepository) GetLiveFlights(ctx context.Context,
 
 	offset := (page - 1) * pageSize
 
-	return r.getLiveFlightsData(ctx, query, offset, pageSize, orderBy, sortBy, flightNumber, airlineName, flightStatus)
+	return r.getLiveFlightsData(ctx, query, offset, pageSize, orderBy, sortBy)
 }
 
 func (r *FlightsRepository) GetLiveFlightsLocations(ctx context.Context) ([]models.LiveFlights, error) {
@@ -666,7 +670,43 @@ func (r *FlightsRepository) GetLiveFlightsLocations(ctx context.Context) ([]mode
 
 							from flights f
 							WHERE f.live_latitude != 0 AND f.live_longitude != 0
-							`
+							AND ((date_trunc('day', TO_DATE(f.flight_date, 'YYYY-MM-DD')) = CURRENT_DATE))
+`
 
 	return r.getLiveFlightsData(ctx, query)
+}
+
+func (r *FlightsRepository) GetFlightResume(ctx context.Context, flightStatus string) (models.LiveFlightsResume, error) {
+	query := `
+        SELECT
+            DISTINCT f.flight_status,
+            COALESCE(f.airline_name, 'N/A') AS airline_name,
+            COUNT(*) AS num_flights
+        FROM
+            flights f
+        WHERE
+            flight_status = $1
+		AND
+            COALESCE(f.airline_name, 'N/A') != 'N/A'
+        GROUP BY
+            f.flight_status,
+            f.airline_name
+        ORDER BY
+            num_flights DESC
+        LIMIT 1;
+    `
+
+	var lfr models.LiveFlightsResume
+	err := r.pgpool.QueryRow(ctx, query, flightStatus).Scan(
+		&lfr.Flight,
+		&lfr.AirlineName,
+		&lfr.NumFlights,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.LiveFlightsResume{}, nil
+		}
+		return models.LiveFlightsResume{}, err
+	}
+	return lfr, nil
 }

@@ -23,7 +23,7 @@ func EmptyPageComponent() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><h1>Empty Page here</h1><h2>change this layout later</h2><p>Create empty pages for when there is nothing to render</p><p>Provide option to return to other features</p></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex items-center justify-center h-screen\"><div class=\"text-center\"><h1 class=\"text-2xl font-bold\">No data to show</h1><h2 class=\"text-xl mt-4\">Please check back later</h2></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

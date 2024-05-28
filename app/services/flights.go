@@ -58,6 +58,10 @@ func (h *Service) GetLiveFlightsLocations(ctx context.Context) ([]models.LiveFli
 	return h.flightRepo.GetLiveFlightsLocations(ctx)
 }
 
-func (h *Service) GetFlightResume(ctx context.Context, flightStatus string) (models.LiveFlightsResume, error) {
-	return h.flightRepo.GetFlightResume(ctx, flightStatus)
+func (h *Service) GetFlightResumeByStatus(ctx context.Context, flightStatus string) (models.LiveFlightsResume, error) {
+	return h.flightRepo.GetFlightResumeByStatus(ctx, flightStatus)
+}
+
+func (h *Service) GetFlightsResume(ctx context.Context) ([]models.LiveFlightsResume, error) {
+	return h.flightRepo.GetFlightsResume(ctx)
 }

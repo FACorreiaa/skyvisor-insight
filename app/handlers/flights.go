@@ -105,10 +105,20 @@ func (h *Handler) getFlightsResumeByStatus(_ http.ResponseWriter, r *http.Reques
 	vars := mux.Vars(r)
 	flightStatus := vars["flight_status"]
 
-	lfr, err := h.service.GetFlightResume(context.Background(), flightStatus)
+	lfr, err := h.service.GetFlightResumeByStatus(context.Background(), flightStatus)
 
 	if err != nil {
 		return models.LiveFlightsResume{}, err
+	}
+
+	return lfr, nil
+}
+
+func (h *Handler) getFlightsResume() ([]models.LiveFlightsResume, error) {
+	lfr, err := h.service.GetFlightsResume(context.Background())
+
+	if err != nil {
+		return nil, err
 	}
 
 	return lfr, nil
@@ -235,6 +245,19 @@ func (h *Handler) renderFlightsResumeByStatus(w http.ResponseWriter,
 	return flightsResume
 }
 
+func (h *Handler) renderFlightsResume() templ.Component {
+
+	resume, err := h.getFlightsResume()
+	if err != nil {
+		HandleError(err, "Error fetching total flights")
+		return components.EmptyPageComponent()
+	}
+
+	flightsResume := flights.FlightsResume(resume)
+
+	return flightsResume
+}
+
 func (h *Handler) renderLiveFlightsTable(w http.ResponseWriter,
 	r *http.Request) (templ.Component, error) {
 
@@ -336,7 +359,9 @@ func (h *Handler) AllFlightsPage(w http.ResponseWriter, r *http.Request) error {
 	}
 	s := h.renderLiveLocationsSidebar()
 
-	f := flights.AllFlightsPage(table, table, s, "Live Flights", "Check all flights going on")
+	resumeBanner := h.renderFlightsResume()
+
+	f := flights.AllFlightsPage(table, resumeBanner, s, "Live Flights", "Check all flights going on")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }
 

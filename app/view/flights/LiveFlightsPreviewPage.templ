@@ -14,7 +14,11 @@ templ LiveFlightsLocationPage(sidebar []models.SidebarItem, lf []models.LiveFlig
 			</div>
 			<div class="w-11/12 ml-10">
 				<div class="w-11/12 mr:px-6">
-					@LiveFlightsLocationMap(lf)
+					if len(lf) > 0 {
+						@LiveFlightsLocationMap(lf)
+					} else {
+						@components.EmptyPageComponent()
+					}
 				</div>
 			</div>
 		</div>

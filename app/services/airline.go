@@ -41,7 +41,7 @@ func (h *Service) GetAirlineByName(ctx context.Context, airlineName string) (mod
 
 func (h *Service) GetAllAircraft() (int, error) {
 	total, err := h.airlineRepo.GetAircraftSum(context.Background())
-	pageSize := 25
+	pageSize := 20
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err
@@ -59,7 +59,7 @@ func (h *Service) GetAircraft(ctx context.Context, page, pageSize int, aircraftN
 
 func (h *Service) GetAllAirplanes() (int, error) {
 	total, err := h.airlineRepo.GetAirplaneSum(context.Background())
-	pageSize := 25
+	pageSize := 20
 	lastPage := int(math.Ceil(float64(total) / float64(pageSize)))
 	if err != nil {
 		return 0, err

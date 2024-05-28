@@ -822,7 +822,7 @@ func (s *ServiceJob) StartAPICheckCronJob() {
 		duration := time.Since(startTime)
 		valueFromDuration := slog.DurationValue(duration)
 		slog.Info("Live flights job finished", slog.Attr{Key: "duration", Value: valueFromDuration})
-		handleError(err, "Error checking live flighst")
+		handleError(err, "Error checking live flights")
 	})
 	handleError(err, "Error running cron job")
 

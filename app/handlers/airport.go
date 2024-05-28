@@ -61,7 +61,7 @@ func (h *Handler) getAirportByName(_ http.ResponseWriter, r *http.Request) (int,
 	airportName := r.FormValue("airport_name")
 	countryName := r.FormValue("country_name")
 	gmt := r.FormValue("gmt")
-	pageSize := 25
+	pageSize := 20
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")

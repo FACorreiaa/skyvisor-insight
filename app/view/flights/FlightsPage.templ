@@ -5,7 +5,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 )
 
-templ AllFlightsPage(table templ.Component, sidebar []models.SidebarItem, title, description string) {
+templ AllFlightsPage(table templ.Component, resumeBanner templ.Component, sidebar []models.SidebarItem, title, description string) {
 	<div>
 		@components.BannerComponent(title, description)
 		<div class="flex items-center justify-center flex-grow">
@@ -14,6 +14,7 @@ templ AllFlightsPage(table templ.Component, sidebar []models.SidebarItem, title,
 					@components.SidebarComponent(sidebar)
 				</div>
 				<div class="w-10/12 pl-2">
+					@resumeBanner
 					@table
 				</div>
 			</div>

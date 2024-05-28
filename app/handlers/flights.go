@@ -25,7 +25,7 @@ func (h *Handler) renderLiveLocationsSidebar() []models.SidebarItem {
 	sidebar := []models.SidebarItem{
 		{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
 		{
-			Label: "All Flights",
+			Label: "Previous Flights",
 			Icon:  svg2.AcademicCapIcon(),
 			SubItems: []models.SidebarItem{
 				{Path: "/flights/flight", Label: "Flights", Icon: svg2.HomeIcon()},
@@ -68,13 +68,13 @@ func (h *Handler) renderLiveLocationsSidebar() []models.SidebarItem {
 }
 
 func (h *Handler) getFlights(_ http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
-	pageSize := 30
+	pageSize := 20
 	vars := mux.Vars(r)
 	flightStatus := vars["flight_status"]
 
-	//airlineName := r.FormValue("airline_name")
+	// airlineName := r.FormValue("airline_name")
 	flightNumber := r.FormValue("flight_number")
-	//flightStats := r.FormValue("flight_status")
+	// flightStats := r.FormValue("flight_status")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")
@@ -101,14 +101,37 @@ func (h *Handler) getFlights(_ http.ResponseWriter, r *http.Request) (int, []mod
 	return page, lf, nil
 }
 
+func (h *Handler) getFlightsResumeByStatus(_ http.ResponseWriter, r *http.Request) (models.LiveFlightsResume, error) {
+	vars := mux.Vars(r)
+	flightStatus := vars["flight_status"]
+
+	lfr, err := h.service.GetFlightResumeByStatus(context.Background(), flightStatus)
+
+	if err != nil {
+		return models.LiveFlightsResume{}, err
+	}
+
+	return lfr, nil
+}
+
+func (h *Handler) getFlightsResume() ([]models.LiveFlightsResume, error) {
+	lfr, err := h.service.GetFlightsResume(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return lfr, nil
+}
+
 func (h *Handler) getLiveFlights(_ http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
-	pageSize := 30
+	pageSize := 20
 	// vars := mux.Vars(r)
 	// flightStatus := vars["flight_status"]
 
-	airlineName := r.FormValue("airline_name")
-	flightNumber := r.FormValue("flight_number")
-	flightStats := r.FormValue("flight_status")
+	// airlineName := r.FormValue("airline_name")
+	// flightNumber := r.FormValue("flight_number")
+	// flightStats := r.FormValue("flight_status")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
 	sortBy := r.URL.Query().Get("sortBy")
@@ -120,8 +143,7 @@ func (h *Handler) getLiveFlights(_ http.ResponseWriter, r *http.Request) (int, [
 
 	var lf []models.LiveFlights
 
-	lf, err = h.service.GetLiveFlights(context.Background(), page, pageSize, orderBy, sortBy,
-		flightNumber, airlineName, flightStats)
+	lf, err = h.service.GetLiveFlights(context.Background(), page, pageSize, orderBy, sortBy)
 
 	if err != nil {
 		return 0, nil, err
@@ -185,10 +207,12 @@ func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 	}
 
 	lastPage, err := h.service.GetAllFlightsSum()
+
 	if err != nil {
 		HandleError(err, "Error fetching total flights")
 		return nil, err
 	}
+
 	f := models.FlightsTable{
 		Column:             columnNames,
 		Flights:            lf,
@@ -205,6 +229,33 @@ func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 	flightsTable := flights.AllFlightsTableComponent(f)
 
 	return flightsTable, nil
+}
+
+func (h *Handler) renderFlightsResumeByStatus(w http.ResponseWriter,
+	r *http.Request) templ.Component {
+
+	resume, err := h.getFlightsResumeByStatus(w, r)
+	if err != nil {
+		HandleError(err, "Error fetching total flights")
+		return components.EmptyPageComponent()
+	}
+
+	flightsResume := flights.FlightsResumeByStatus(resume.Flight, resume.AirlineName, resume.NumFlights)
+
+	return flightsResume
+}
+
+func (h *Handler) renderFlightsResume() templ.Component {
+
+	resume, err := h.getFlightsResume()
+	if err != nil {
+		HandleError(err, "Error fetching total flights")
+		return components.EmptyPageComponent()
+	}
+
+	flightsResume := flights.FlightsResume(resume)
+
+	return flightsResume
 }
 
 func (h *Handler) renderLiveFlightsTable(w http.ResponseWriter,
@@ -299,13 +350,18 @@ func (h *Handler) getFlightsDetails(_ http.ResponseWriter, r *http.Request) (mod
 
 func (h *Handler) AllFlightsPage(w http.ResponseWriter, r *http.Request) error {
 	table, err := h.renderFlightsTable(w, r)
+
+	// create something here for banner
+
 	if err != nil {
 		HandleError(err, "Error fetching flights table")
 		return err
 	}
 	s := h.renderLiveLocationsSidebar()
 
-	f := flights.AllFlightsPage(table, s, "Live Flights", "Check all flights going on")
+	resumeBanner := h.renderFlightsResume()
+
+	f := flights.AllFlightsPage(table, resumeBanner, s, "Live Flights", "Check all flights going on")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }
 
@@ -337,13 +393,16 @@ func (h *Handler) FlightsLocation(w http.ResponseWriter, r *http.Request) error 
 
 func (h *Handler) FilteredFlightsPage(w http.ResponseWriter, r *http.Request) error {
 	table, err := h.renderFlightsTable(w, r)
+
 	if err != nil {
 		HandleError(err, "Error fetching flights table")
 		return err
 	}
 	s := h.renderLiveLocationsSidebar()
 
-	f := flights.AllFlightsPage(table, s, "Live Flights", "Check all flights going on")
+	resumeBanner := h.renderFlightsResumeByStatus(w, r)
+
+	f := flights.AllFlightsPage(table, resumeBanner, s, "Live Flights", "Check all flights going on")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }
 
@@ -370,7 +429,7 @@ func (h *Handler) LiveFlightsPage(w http.ResponseWriter, r *http.Request) error 
 	}
 	s := h.renderLiveLocationsSidebar()
 
-	f := flights.AllFlightsPage(table, s, "Live Flights", "Check on air flights")
+	f := flights.AllFlightsPage(table, table, s, "Live Flights", "Check on air flights")
 	return h.CreateLayout(w, r, "Live Flights", f).Render(context.Background(), w)
 }
 

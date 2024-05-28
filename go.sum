@@ -60,10 +60,10 @@ github.com/robfig/cron/v3 v3.0.1/go.mod h1:eQICP3HwyT7UooqI/z+Ov+PtYAWygg1TEWWzG
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
-github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
-github.com/vgarvardt/pgx-google-uuid/v5 v5.0.0 h1:kIIQmW04MYKyRE2ZwREPl1NY4/Uxf5x48ABTQ+yFdFo=
-github.com/vgarvardt/pgx-google-uuid/v5 v5.0.0/go.mod h1:fskJeXpJTJCU9JvsZQRgR4OhKKpciztvx4rdXWil7E0=
+github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
+github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+github.com/vgarvardt/pgx-google-uuid/v5 v5.6.0 h1:EhPtK0mgrgaTMXpegE69hvoSOVC1Ahk8+QJ9B8b+OdU=
+github.com/vgarvardt/pgx-google-uuid/v5 v5.6.0/go.mod h1:5LtFrNEkgzxHvXPO9eOvcXsSn9/KeKYgx9kjeI2oXQI=
 golang.org/x/crypto v0.23.0 h1:dIJU/v2J8Mdglj/8rJ6UUOM3Zc9zLZxVZwwxMooUSAI=
 golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
 golang.org/x/net v0.25.0 h1:d/OCCoBEUq33pjydKrGQhw7IlUPI2Oylr+8qLx49kac=

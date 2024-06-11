@@ -105,3 +105,6 @@ t-fmt:
 
 find-go:
 	find . -name '*.go' | xargs -I {} cat {} | wc -l
+
+update:
+	go get -u

@@ -35,6 +35,7 @@ This project uses [Docker](https://www.docker.com/) to deploy and test the websi
 - [x] Fix order on flights (duplicate table?)
 - [x] Work on routes (Flights WIP)
 - [ ] Review the methods to bulk import with [Postgres](https://www.postgresql.org/docs/current/sql-copy.html)
+- [ ] Create profile page and settings page
 - [ ] Optimise Docker container
 - [ ] Deployment
 

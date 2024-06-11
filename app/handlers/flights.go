@@ -8,7 +8,7 @@ import (
 	"context"
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
-	svg2 "github.com/FACorreiaa/Aviation-tracker/app/svg"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/flights"
 	"github.com/a-h/templ"

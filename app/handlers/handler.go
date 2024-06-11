@@ -8,7 +8,7 @@ import (
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
-	svg2 "github.com/FACorreiaa/Aviation-tracker/app/svg"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
 	"github.com/a-h/templ"
 	"github.com/go-playground/form/v4"
@@ -91,13 +91,13 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 		}
 	}
 
-	theme := "dark" // Default to light theme
-	themeCtx := r.Context().Value(themeContextKey)
-	if themeCtx != nil {
-		if th, ok := themeCtx.(string); ok {
-			theme = th
-		}
-	}
+	//theme := "dark" // Default to light theme
+	//themeCtx := r.Context().Value(themeContextKey)
+	//if themeCtx != nil {
+	//	if th, ok := themeCtx.(string); ok {
+	//		theme = th
+	//	}
+	//}
 
 	l := models.LayoutTempl{
 		Title:     title,
@@ -105,7 +105,6 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 		User:      user,
 		ActiveNav: r.URL.Path,
 		Content:   data,
-		Theme:     theme,
 	}
 
 	return components.LayoutPage(l)

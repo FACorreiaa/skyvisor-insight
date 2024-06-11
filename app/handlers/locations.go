@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
-	svg2 "github.com/FACorreiaa/Aviation-tracker/app/svg"
+	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/locations"
 	"github.com/a-h/templ"
 	"github.com/gorilla/mux"

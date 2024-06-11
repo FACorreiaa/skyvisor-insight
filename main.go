@@ -18,13 +18,15 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+}
+
 func run(ctx context.Context) error {
 	//go:generate npx tailwindcss build -c tailwind.config.js -o ./controller/static/css/style.css -
 	//go:generate ./tailwindcss -i controller/static/css/main.css -o controller/static/css/output.css --minify
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	cfg, err := config.NewConfig()
 

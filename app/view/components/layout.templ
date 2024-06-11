@@ -6,8 +6,7 @@ import (
 
 templ LayoutPage(l models.LayoutTempl) {
 	<!DOCTYPE html>
-	<html lang="en" data-theme={ "nord" }>
-		<!-- Default to light theme -->
+	<html lang="en">
 		<head>
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -18,16 +17,19 @@ templ LayoutPage(l models.LayoutTempl) {
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900&display=swap" rel="stylesheet"/>
 			<link href="https://cdn.jsdelivr.net/npm/daisyui@4.5.0/dist/full.min.css" rel="stylesheet" type="text/css"/>
-			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 			<script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
 			<script src="https://unpkg.com/@popperjs/core@2"></script>
 			<script src="https://unpkg.com/tippy.js@6"></script>
-			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.7/dist/cdn.min.js"></script>
 			<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css"/>
+			<!-- Alpine Plugins -->
+			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+			<!-- HTMX -->
+			<script src="https://unpkg.com/htmx.org@1.9.9" defer></script>
 		</head>
-		<body hx-boost="true">
+		<body hx-boost="true" x-data="{theme: 'light'}" :class="theme" lang="en">
 			<div class="flex flex-col h-screen font-lato" id="contents">
-				@NavbarComponent(l.Nav, l.User, l.ActiveNav, l.Theme)
+				@NavbarComponent(l.Nav, l.User, l.ActiveNav)
 				<div class="h-full overflow-auto">
 					@l.Content
 				</div>

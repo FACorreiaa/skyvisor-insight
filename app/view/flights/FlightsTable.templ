@@ -90,10 +90,13 @@ templ AllFlightsTableComponent(live models.FlightsTable) {
 		</div>
 		<!-- paginator -->
 		@components.PaginatorComponent("/flights",
-			fmt.Sprintf("/flights?page=%d&search=%s", live.PrevPage, live.FilterFlightStatus),
+			fmt.Sprintf("/flights?page=%d&orderBy=%s&sortBy=%s", live.PrevPage, live.OrderParam, live.SortParam),
 			strconv.Itoa(live.Page),
-			fmt.Sprintf("/flights?page=%d&search=%s", live.NextPage, live.FilterFlightStatus),
-			fmt.Sprintf("/flights?page=%d&search=%s", live.LastPage, live.FilterFlightStatus),
-			strconv.Itoa(live.LastPage))
+			fmt.Sprintf("/flights?page=%d&orderBy=%s&sortBy=%s", live.NextPage, live.OrderParam, live.SortParam),
+			fmt.Sprintf("/flights?page=%d&orderBy=%s&sortBy=%s", live.LastPage, live.OrderParam, live.SortParam),
+			strconv.Itoa(live.LastPage),
+			live.OrderParam,
+			live.SortParam)
+		<div id="detailsSpace"></div>
 	</div>
 }

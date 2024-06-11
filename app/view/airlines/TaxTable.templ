@@ -56,11 +56,14 @@ templ AirlineTaxTable(tax models.TaxTable) {
 			</table>
 			<!-- paginator -->
 			@components.PaginatorComponent("/airlines/tax",
-				fmt.Sprintf("/airlines/tax?page=%d", tax.PrevPage),
-				strconv.Itoa(tax.Page),
-				fmt.Sprintf("/airlines/tax?page=%d", tax.NextPage),
-				fmt.Sprintf("/airlines/tax?page=%d", tax.LastPage),
-				strconv.Itoa(tax.LastPage))
+			fmt.Sprintf("/airlines/tax?page=%d&orderBy=%s&sortBy=%s", tax.PrevPage, tax.OrderParam, tax.SortParam),
+			strconv.Itoa(tax.Page),
+			fmt.Sprintf("/airlines/tax?page=%d&orderBy=%s&sortBy=%s", tax.NextPage, tax.OrderParam, tax.SortParam),
+			fmt.Sprintf("/airlines/tax?page=%d&orderBy=%s&sortBy=%s", tax.LastPage, tax.OrderParam, tax.SortParam),
+			strconv.Itoa(tax.LastPage),
+			tax.OrderParam,
+			tax.SortParam)
+		<div id="detailsSpace"></div>
 		</div>
 	</div>
 }

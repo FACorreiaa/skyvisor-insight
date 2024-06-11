@@ -69,11 +69,14 @@ templ CityTable(c models.CityTable) {
 			</table>
 		</div>
 		<!-- paginator -->
-		@components.PaginatorComponent("/locations/city",
-			fmt.Sprintf("/locations/city?page=%d&search=%s", c.PrevPage, c.FilterCityName),
+		@components.PaginatorComponent("/airlines/airline",
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", c.PrevPage, c.OrderParam, c.SortParam),
 			strconv.Itoa(c.Page),
-			fmt.Sprintf("/locations/city?page=%d&search=%s", c.NextPage, c.FilterCityName),
-			fmt.Sprintf("/locations/city?page=%d&search=%s", c.LastPage, c.FilterCityName),
-			strconv.Itoa(c.LastPage))
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", c.NextPage, c.OrderParam, c.SortParam),
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", c.LastPage, c.OrderParam, c.SortParam),
+			strconv.Itoa(c.LastPage),
+			c.OrderParam,
+			c.SortParam)
+		<div id="detailsSpace"></div>
 	</div>
 }

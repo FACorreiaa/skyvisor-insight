@@ -69,11 +69,14 @@ templ CountryTable(c models.CountryTable) {
 			</table>
 		</div>
 		<!-- paginator -->
-		@components.PaginatorComponent("/locations/country",
-			fmt.Sprintf("/locations/country?page=%d&search=%s", c.PrevPage, c.FilterCountry),
+		@components.PaginatorComponent("/airlines/airline",
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", c.PrevPage, c.OrderParam, c.SortParam),
 			strconv.Itoa(c.Page),
-			fmt.Sprintf("/locations/country?page=%d&search=%s", c.NextPage, c.FilterCountry),
-			fmt.Sprintf("/locations/country?page=%d&search=%s", c.LastPage, c.FilterCountry),
-			strconv.Itoa(c.LastPage))
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", c.NextPage, c.OrderParam, c.SortParam),
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", c.LastPage, c.OrderParam, c.SortParam),
+			strconv.Itoa(c.LastPage),
+			c.OrderParam,
+			c.SortParam)
+		<div id="detailsSpace"></div>
 	</div>
 }

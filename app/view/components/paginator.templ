@@ -1,25 +1,28 @@
 package components
 
-templ PaginatorComponent(firstPage, prevPage, currentPage, goToNextPage, goToLastPage, lasPage string) {
+import "fmt"
+
+templ PaginatorComponent(firstPage, prevPage, currentPage, goToNextPage, goToLastPage, lastPage, orderBy, sortBy string) {
 	<div class="flex justify-center mt-2">
 		<form class="join " hx-boost="true" method="get">
 			<a
 				class="join-item btn"
-				href={ templ.URL(firstPage) }
+				href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", firstPage, orderBy, sortBy)) }
 			>First Page</a>
 			<a
 				class="join-item btn"
-				href={ templ.URL(prevPage) }
+				href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", prevPage, orderBy, sortBy)) }
 			>«</a>
-			<button class="join-item btn disabled">{ currentPage } / { lasPage }</button>
+			<button class="join-item btn disabled">{ currentPage } / { lastPage }</button>
 			<a
 				class="join-item btn"
-				href={ templ.URL(goToNextPage) }
+				href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", goToNextPage, orderBy, sortBy)) }
 			>»</a>
 			<a
 				class="join-item btn"
-				href={ templ.URL(goToLastPage) }
+				href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", goToLastPage, orderBy, sortBy)) }
 			>Last Page</a>
 		</form>
 	</div>
 }
+

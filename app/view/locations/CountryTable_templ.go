@@ -265,16 +265,18 @@ func CountryTable(c models.CountryTable) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.PaginatorComponent("/locations/country",
-			fmt.Sprintf("/locations/country?page=%d&search=%s", c.PrevPage, c.FilterCountry),
+		templ_7745c5c3_Err = components.PaginatorComponent("/airlines/airline",
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", c.PrevPage, c.OrderParam, c.SortParam),
 			strconv.Itoa(c.Page),
-			fmt.Sprintf("/locations/country?page=%d&search=%s", c.NextPage, c.FilterCountry),
-			fmt.Sprintf("/locations/country?page=%d&search=%s", c.LastPage, c.FilterCountry),
-			strconv.Itoa(c.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", c.NextPage, c.OrderParam, c.SortParam),
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", c.LastPage, c.OrderParam, c.SortParam),
+			strconv.Itoa(c.LastPage),
+			c.OrderParam,
+			c.SortParam).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"detailsSpace\"></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

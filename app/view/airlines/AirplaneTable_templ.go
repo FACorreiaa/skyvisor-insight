@@ -404,15 +404,17 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = components.PaginatorComponent("/airlines/airplane",
-			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.PrevPage, a.FilterAirlineName),
+			fmt.Sprintf("/airlines/airplane?page=%d&orderBy=%s&sortBy=%s", a.PrevPage, a.OrderParam, a.SortParam),
 			strconv.Itoa(a.Page),
-			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.NextPage, a.FilterAirlineName),
-			fmt.Sprintf("/airlines/airplane?page=%d&search=%s", a.LastPage, a.FilterAirlineName),
-			strconv.Itoa(a.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/airlines/airplane?page=%d&orderBy=%s&sortBy=%s", a.NextPage, a.OrderParam, a.SortParam),
+			fmt.Sprintf("/airlines/airplane?page=%d&orderBy=%s&sortBy=%s", a.LastPage, a.OrderParam, a.SortParam),
+			strconv.Itoa(a.LastPage),
+			a.OrderParam,
+			a.SortParam).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"detailsSpace\"></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

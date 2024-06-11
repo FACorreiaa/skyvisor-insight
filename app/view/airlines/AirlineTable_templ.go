@@ -107,7 +107,7 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var4 templ.SafeURL = templ.URL(fmt.Sprintf("/airlines/airline?orderBy=%s&sortBy=%s", col.Title, col.SortParam))
+			var templ_7745c5c3_Var4 templ.SafeURL = templ.URL(fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", a.Page, col.Title, col.SortParam))
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var4)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -292,11 +292,13 @@ func AirlineTable(a models.AirlineTable) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = components.PaginatorComponent("/airlines/airline",
-			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.PrevPage, a.FilterName),
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", a.PrevPage, a.OrderParam, a.SortParam),
 			strconv.Itoa(a.Page),
-			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.NextPage, a.FilterName),
-			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.FilterName),
-			strconv.Itoa(a.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", a.NextPage, a.OrderParam, a.SortParam),
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", a.LastPage, a.OrderParam, a.SortParam),
+			strconv.Itoa(a.LastPage),
+			a.OrderParam,
+			a.SortParam).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

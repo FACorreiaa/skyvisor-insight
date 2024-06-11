@@ -100,9 +100,12 @@ func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (te
 		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 	}
 
-	var page int
+	page, al, err := h.getAirline(w, r)
 
-	page, al, _ := h.getAirline(w, r)
+	if err != nil {
+		HandleError(err, "Error fetching airlines")
+		return nil, err
+	}
 
 	nextPage := page + 1
 	prevPage := page - 1
@@ -116,6 +119,7 @@ func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (te
 		HandleError(err, "error fetching total airline")
 		return nil, err
 	}
+
 	a := models.AirlineTable{
 		Column:            columnNames,
 		Airline:           al,

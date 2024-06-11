@@ -78,10 +78,13 @@ templ AirlineAircraftTable(a models.AircraftTable) {
 			</table>
 		</div>
 		@components.PaginatorComponent("/airlines/aircraft",
-			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.PrevPage, a.FilterAircraft),
+			fmt.Sprintf("/airlines/aircraft?page=%d&orderBy=%s&sortBy=%s", a.PrevPage, a.OrderParam, a.SortParam),
 			strconv.Itoa(a.Page),
-			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.NextPage, a.FilterAircraft),
-			fmt.Sprintf("/airlines/aircraft?page=%d&search=%s", a.LastPage, a.FilterAircraft),
-			strconv.Itoa(a.LastPage))
+			fmt.Sprintf("/airlines/aircraft?page=%d&orderBy=%s&sortBy=%s", a.NextPage, a.OrderParam, a.SortParam),
+			fmt.Sprintf("/airlines/aircraft?page=%d&orderBy=%s&sortBy=%s", a.LastPage, a.OrderParam, a.SortParam),
+			strconv.Itoa(a.LastPage),
+			a.OrderParam,
+			a.SortParam)
+		<div id="detailsSpace"></div>
 	</div>
 }

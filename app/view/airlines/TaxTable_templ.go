@@ -172,15 +172,17 @@ func AirlineTaxTable(tax models.TaxTable) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = components.PaginatorComponent("/airlines/tax",
-			fmt.Sprintf("/airlines/tax?page=%d", tax.PrevPage),
+			fmt.Sprintf("/airlines/tax?page=%d&orderBy=%s&sortBy=%s", tax.PrevPage, tax.OrderParam, tax.SortParam),
 			strconv.Itoa(tax.Page),
-			fmt.Sprintf("/airlines/tax?page=%d", tax.NextPage),
-			fmt.Sprintf("/airlines/tax?page=%d", tax.LastPage),
-			strconv.Itoa(tax.LastPage)).Render(ctx, templ_7745c5c3_Buffer)
+			fmt.Sprintf("/airlines/tax?page=%d&orderBy=%s&sortBy=%s", tax.NextPage, tax.OrderParam, tax.SortParam),
+			fmt.Sprintf("/airlines/tax?page=%d&orderBy=%s&sortBy=%s", tax.LastPage, tax.OrderParam, tax.SortParam),
+			strconv.Itoa(tax.LastPage),
+			tax.OrderParam,
+			tax.SortParam).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"detailsSpace\"></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

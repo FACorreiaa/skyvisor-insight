@@ -34,7 +34,7 @@ templ AirlineTable(a models.AirlineTable) {
 								<form class="join" hx-boost="true" method="get">
 									<a
 										class="pl-4"
-										href={ templ.URL(fmt.Sprintf("/airlines/airline?orderBy=%s&sortBy=%s", col.Title, col.SortParam)) }
+										href={ templ.URL(fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", a.Page, col.Title, col.SortParam)) }
 									>
 										@col.Icon
 									</a>
@@ -78,11 +78,14 @@ templ AirlineTable(a models.AirlineTable) {
 		</div>
 		<!-- paginator -->
 		@components.PaginatorComponent("/airlines/airline",
-			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.PrevPage, a.FilterName),
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", a.PrevPage, a.OrderParam, a.SortParam),
 			strconv.Itoa(a.Page),
-			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.NextPage, a.FilterName),
-			fmt.Sprintf("/airlines/airline?page=%d&search=%s", a.LastPage, a.FilterName),
-			strconv.Itoa(a.LastPage))
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", a.NextPage, a.OrderParam, a.SortParam),
+			fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", a.LastPage, a.OrderParam, a.SortParam),
+			strconv.Itoa(a.LastPage),
+			a.OrderParam,
+			a.SortParam)
 		<div id="detailsSpace"></div>
 	</div>
 }
+

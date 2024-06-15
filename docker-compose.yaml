@@ -1,10 +1,8 @@
-version: "3.9"
-
 services:
   postgres:
     env_file:
       - .env
-    hostname: postgres
+    container_name: sky_postgres
     image: postgres:alpine
     environment:
       POSTGRES_HOST: postgres
@@ -22,8 +20,7 @@ services:
   redis:
     env_file:
       - .env
-    container_name: redis
-    hostname: redis
+    container_name: sky_redis
     image: redis:latest
     command: redis-server --port 6380
     ports:
@@ -43,7 +40,7 @@ services:
     env_file:
       - .env
     platform: linux/amd64
-    container_name: "skyvisor-insight-dev"
+    container_name: sky_dev
     image: "skyvisor-insight-dev"
     build:
       dockerfile: Dockerfile

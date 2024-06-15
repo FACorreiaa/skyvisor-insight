@@ -1,0 +1,46 @@
+package components
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+)
+
+templ NavbarComponentCopy(nav []models.NavItem, user *models.UserSession, activeNav string) {
+	<nav class="bg-slate-100 border-gray-200 dark:bg-gray-900">
+		<div class="flex items-center justify-between px-6 py-2">
+			<!-- Logo at the left -->
+			<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+				<img src={ "/static/icons/ticket.png" } class="h-8" alt="SkyVisor Insight"/>
+				<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">SkyVisor Insight</span>
+			</a>
+			<!-- Items aligned to the right -->
+			<div class="flex items-center space-x-2">
+				<ul class="menu menu-horizontal">
+					for _, item := range nav {
+						<li hx-boost="true">
+							<a
+								href={ templ.SafeURL(item.Path) }
+								class={ "flex items-center focus:text-purple block px-3 py-2 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500",
+			    templ.KV("text-blue", item.Path == activeNav) }
+							>
+								{ item.Label }
+							</a>
+						</li>
+					}
+					if user != nil {
+						<li>
+							<a href={ templ.SafeURL("/profile/" + user.Username) } class="font-bold nav-link">
+								if user.Image != nil {
+									<img src={ templ.EscapeString(*user.Image) } class="user-pic"/>
+								}
+								{ user.Username }
+							</a>
+						</li>
+						<li>
+							@ThemeSwitcher()
+						</li>
+					}
+				</ul>
+			</div>
+		</div>
+	</nav>
+}

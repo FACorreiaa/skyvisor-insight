@@ -35,7 +35,6 @@ run-app:
 run-tidy:
 	docker compose run --rm app go mod tidy
 
-
 ifeq ("$(wildcard .env)","")
     $(shell cp env.sample .env)
 	$(shell echo "DB_NAME=$($1)" > .env)

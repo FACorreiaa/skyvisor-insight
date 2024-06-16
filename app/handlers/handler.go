@@ -88,16 +88,9 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 			{Path: "/flights/flight", Label: "Flights", Icon: svg2.PaperAirplaneIcon()},
 			{Path: "/locations/city", Label: "Locations", Icon: svg2.LocationsIcon()},
 			{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
+			{Path: "/logout", Label: "Sign out", Icon: svg2.LogoutIcon()},
 		}
 	}
-
-	//theme := "dark" // Default to light theme
-	//themeCtx := r.Context().Value(themeContextKey)
-	//if themeCtx != nil {
-	//	if th, ok := themeCtx.(string); ok {
-	//		theme = th
-	//	}
-	//}
 
 	l := models.LayoutTempl{
 		Title:     title,

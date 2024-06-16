@@ -21,11 +21,6 @@ import (
 //go:embed static
 var staticFS embed.FS
 
-// func setEtag(name string, data []byte) string {
-//	crc := crc32.ChecksumIEEE(data)
-//	return fmt.Sprintf(`W/"%s-%d-%08X"`, name, len(data), crc)
-//}
-
 func setupBusinessComponents(pool *pgxpool.Pool, redisClient *redis.Client, validate *validator.Validate,
 	sessionSecret []byte) (*handlers.Handler, *repository.MiddlewareRepository) {
 	// Business components

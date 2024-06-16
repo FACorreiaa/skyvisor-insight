@@ -15,16 +15,24 @@ templ NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav 
 					</a>
 					<div :class="{'flex': showMenu, 'hidden md:flex': !showMenu }" class="absolute z-50 flex-col items-center justify-center w-full h-auto px-2 text-center text-gray-400 -translate-x-1/2 border-0 border-gray-700 rounded-full md:border md:w-auto md:h-10 left-1/2 md:flex-row md:items-center">
 						for _, item := range nav {
-							<span hx-boost="true">
-								<a
-									href={ templ.SafeURL(item.Path) }
-									class={ "relative inline-block w-full h-full px-4 py-5 mx-2 font-medium leading-tight text-center text-white md:py-2 group md:w-auto md:px-2 lg:mx-3 md:text-center",
+							if item.IsLogout {
+								<form method="post" action="/logout">
+									<button type="submit" class="relative inline-block w-full h-full px-4 py-5 mx-2 font-medium leading-tight text-center text-white md:py-2 group md:w-auto md:px-2 lg:mx-3 md:text-center">
+										{ item.Label }
+									</button>
+								</form>
+							} else {
+								<span hx-boost="true">
+									<a
+										href={ templ.SafeURL(item.Path) }
+										class={ "relative inline-block w-full h-full px-4 py-5 mx-2 font-medium leading-tight text-center text-white md:py-2 group md:w-auto md:px-2 lg:mx-3 md:text-center",
 			    templ.KV("text-blue", item.Path == activeNav) }
-								>
-									<span>{ item.Label }</span>
-									<span class="absolute bottom-0 left-0 w-full h-px duration-300 ease-out translate-y-px bg-gradient-to-r md:from-gray-700 md:via-gray-400 md:to-gray-700 from-gray-900 via-gray-600 to-gray-900"></span>
-								</a>
-							</span>
+									>
+										<span>{ item.Label }</span>
+										<span class="absolute bottom-0 left-0 w-full h-px duration-300 ease-out translate-y-px bg-gradient-to-r md:from-gray-700 md:via-gray-400 md:to-gray-700 from-gray-900 via-gray-600 to-gray-900"></span>
+									</a>
+								</span>
+							}
 						}
 					</div>
 					<div class="fixed top-0 left-0 z-40 items-center hidden w-full h-full p-3 text-sm bg-gray-900 bg-opacity-50 md:w-auto md:bg-transparent md:p-0 md:relative md:flex" :class="{'flex': showMenu, 'hidden': !showMenu }">

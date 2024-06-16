@@ -59,9 +59,10 @@ type FlightStatus string
 // )
 
 type NavItem struct {
-	Path  string
-	Icon  templ.Component
-	Label string
+	Path     string
+	Icon     templ.Component
+	Label    string
+	IsLogout bool
 }
 
 type TabItem struct {

@@ -11,7 +11,7 @@ case $1 in
     initdb -D "$PG_DATA_DIR"
     pg_ctl -D "$PG_DATA_DIR" -l "$DATA_DIR"/pg.log -o "--unix_socket_directories=${DATA_DIR}" start
     createuser -h "$DATA_DIR" postgres -ds
-    createdb -h "$DATA_DIR" -U postgres gollama-assistant
+    createdb -h "$DATA_DIR" -U postgres go-skyvisor
     ;;
   start)
     pg_ctl -D "$PG_DATA_DIR" -l "$DATA_DIR"/pg.log -o "--unix_socket_directories=${DATA_DIR}" start

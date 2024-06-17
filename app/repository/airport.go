@@ -48,7 +48,7 @@ func (r *AirportRepository) getAirportData(ctx context.Context, query string,
 }
 
 func (r *AirportRepository) GetAirports(ctx context.Context,
-	page, pageSize int, orderBy string, sortBy string) ([]models.Airport, error) {
+	page, pageSize int, orderBy, sortBy string) ([]models.Airport, error) {
 	query := `SELECT   id,
 			         gmt,
 			         airport_id,

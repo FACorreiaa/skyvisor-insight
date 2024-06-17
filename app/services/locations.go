@@ -32,7 +32,7 @@ func (h *Service) GetAllCities() (int, error) {
 }
 
 func (h *Service) GetCity(ctx context.Context, page, pageSize int,
-	orderBy string, sortBy string, cityName, currencyName, phonePrefix, gmt string) ([]models.City, error) {
+	orderBy, sortBy string, cityName, currencyName, phonePrefix, gmt string) ([]models.City, error) {
 
 	return h.locationRepo.GetCity(ctx, page, pageSize, orderBy, sortBy, cityName, currencyName, phonePrefix, gmt)
 }

@@ -332,7 +332,7 @@ func (r *LocationsRepository) GetCitySum(ctx context.Context) (int, error) {
 }
 
 func (r *LocationsRepository) GetCityByName(ctx context.Context, page, pageSize int,
-	name string, orderBy string, sortBy string) ([]models.City, error) {
+	name string, orderBy, sortBy string) ([]models.City, error) {
 	offset := (page - 1) * pageSize
 	query := `SELECT ct.id,
               ct.city_name, ct.timezone, ct.gmt,

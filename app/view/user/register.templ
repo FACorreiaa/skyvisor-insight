@@ -6,82 +6,97 @@ import (
 )
 
 templ RegisterPage(register models.RegisterPage) {
-	<div class="flex flex-col h-screen font-lato" id="contents">
-		<div class="h-full">
-			<div class="container mx-auto my-24 md:px-6">
-				<div class="row">
-					<div class="col-md-6 offset-md-3 col-xs-12">
-						<p class="text-center text-4xl pb-2">Register</p>
-						if register.Errors != nil {
-							<ul class="error-messages text-center">
-								for _, err := range register.Errors {
-									<li>{ err }</li>
-								}
-							</ul>
-						}
-						<form method="post">
-							<fieldset>
-								<fieldset class="max-w-lg mx-auto mt-2">
-									<label for="username" class="block text-sm font-medium text-gray-900 dark:text-white">Username</label>
-									<input
-										class="mt-1 input input-sm input-bordered bg-gray-50 border border-gray-300 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-grey-900 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-										type="text"
-										placeholder="Username"
-										required
-										name="username"
-										autocomplete="username"
-										id="username"
-										value={ register.Values["Username"] }
-									/>
-								</fieldset>
-								<fieldset class="max-w-lg mx-auto mt-2">
-									<label for="email" class="block text-sm font-medium text-gray-900 dark:text-white">Email</label>
-									<input
-										class="mt-1 input input-sm input-bordered bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-										type="email"
-										placeholder="Email"
-										required
-										name="email"
-										id="email"
-										value={ register.Values["Email"] }
-									/>
-								</fieldset>
-								<fieldset class="max-w-lg mx-auto mt-2">
-									<label for="passoword" class="block text-sm font-medium text-gray-900 dark:text-white">Password</label>
-									<input
-										class="mt-1 input input-sm input-bordered bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-										type="password"
-										placeholder="Password"
-										required
-										name="password"
-										autocomplete="new-password"
-									/>
-								</fieldset>
-								<fieldset class="max-w-lg mx-auto mt-2">
-									<label for="password" class="block text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
-									<input
-										class="mt-1 input input-sm input-bordered bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-										type="password"
-										placeholder="Confirm Password"
-										required
-										name="password_confirm"
-										autocomplete="new-password"
-									/>
-								</fieldset>
-							</fieldset>
-							<div class="flex items-center justify-center max-w-lg mx-auto mt-2">
-								<button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Signup</button>
-								<p class="text-center text-sm px-5 py-2.5 me-2 mb-2">
-									<a href="/login">Have an account?</a>
-								</p>
+	<section class="w-full bg-white">
+		<div class="mx-auto max-w-7xl">
+			<div class="flex flex-col lg:flex-row">
+				<div class="relative w-full bg-cover lg:w-6/12 xl:w-7/12 bg-gradient-to-r from-white via-white to-gray-100">
+					<div class="relative flex flex-col items-center justify-center w-full h-full px-10 my-20 lg:px-16 lg:my-0">
+						<div class="flex flex-col items-start space-y-8 tracking-tight lg:max-w-3xl">
+							<div class="relative">
+								<p class="mb-2 font-medium text-gray-700 uppercase">Work smarter</p>
+								<h2 class="text-5xl font-bold text-gray-900 xl:text-6xl">Features to help you work smarter</h2>
 							</div>
-							<div class="flex items-center justify-center max-w-lg mx-auto mt-2">
-								@components.GoogleSignin("Sign up with Google")
-							</div>
-						</form>
+							<p class="text-2xl text-gray-700">We've created a simple formula to follow in order to gain more out of your business and your application.</p>
+							<a href="#_" class="inline-block px-8 py-5 text-xl font-medium text-center text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 ease" data-primary="blue-600" data-rounded="rounded-lg">Get Started Today</a>
+						</div>
+					</div>
+				</div>
+				<div class="w-full bg-white lg:w-6/12 xl:w-5/12">
+					<div class="flex flex-col items-start justify-start w-full h-full p-10 lg:p-16 xl:p-24">
+						<h4 class="w-full text-3xl font-bold">Signup</h4>
+						<p class="text-lg text-gray-500">or, if you have an account you can <a href="#_" class="text-blue-600 underline" data-primary="blue-600">sign in</a></p>
+						<div class="relative w-full mt-10 space-y-8">
+							if register.Errors != nil {
+								<ul class="error-messages text-center">
+									for _, err := range register.Errors {
+										<li>{ err }</li>
+									}
+								</ul>
+							}
+							<form method="post">
+								<fieldset>
+									<fieldset class="max-w-lg mx-auto mt-2">
+										<label for="username" class="block text-sm font-medium text-gray-900 dark:text-white">Username</label>
+										<input
+											class="mt-1 input input-sm input-bordered bg-gray-50 border border-gray-300 text-black-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-grey-900 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+											type="text"
+											placeholder="Username"
+											required
+											name="username"
+											autocomplete="username"
+											id="username"
+											value={ register.Values["Username"] }
+										/>
+									</fieldset>
+									<fieldset class="max-w-lg mx-auto mt-2">
+										<label for="email" class="block text-sm font-medium text-gray-900 dark:text-white">Email</label>
+										<input
+											class="mt-1 input input-sm input-bordered bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+											type="email"
+											placeholder="Email"
+											required
+											name="email"
+											id="email"
+											value={ register.Values["Email"] }
+										/>
+									</fieldset>
+									<fieldset class="max-w-lg mx-auto mt-2">
+										<label for="passoword" class="block text-sm font-medium text-gray-900 dark:text-white">Password</label>
+										<input
+											class="mt-1 input input-sm input-bordered bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+											type="password"
+											placeholder="Password"
+											required
+											name="password"
+											autocomplete="new-password"
+										/>
+									</fieldset>
+									<fieldset class="max-w-lg mx-auto mt-2">
+										<label for="password" class="block text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
+										<input
+											class="mt-1 input input-sm input-bordered bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+											type="password"
+											placeholder="Confirm Password"
+											required
+											name="password_confirm"
+											autocomplete="new-password"
+										/>
+									</fieldset>
+								</fieldset>
+								<div class="flex items-center justify-center max-w-lg mx-auto mt-2">
+									<button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Signup</button>
+									<p class="text-center text-sm px-5 py-2.5 me-2 mb-2">
+										<a href="/login">Have an account?</a>
+									</p>
+								</div>
+								<div class="flex items-center justify-center max-w-lg mx-auto mt-2">
+									@components.GoogleSignin("Sign in with Google")
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 }

@@ -202,7 +202,7 @@ func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 
 	nextPage := page + 1
 	prevPage := page - 1
-	if prevPage < 1 {
+	if prevPage <= 1 {
 		prevPage = 1
 	}
 
@@ -303,7 +303,7 @@ func (h *Handler) renderLiveFlightsTable(w http.ResponseWriter,
 
 	nextPage := page + 1
 	prevPage := page - 1
-	if prevPage < 1 {
+	if prevPage <= 1 {
 		prevPage = 1
 	}
 

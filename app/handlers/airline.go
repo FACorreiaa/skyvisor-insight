@@ -109,7 +109,7 @@ func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (te
 
 	nextPage := page + 1
 	prevPage := page - 1
-	if prevPage < 1 {
+	if prevPage <= 1 {
 		prevPage = 1
 	}
 
@@ -215,7 +215,7 @@ func (h *Handler) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Requ
 	page, a, _ := h.getAircraft(w, r)
 	nextPage := page + 1
 	prevPage := page - 1
-	if prevPage < 1 {
+	if prevPage <= 1 {
 		prevPage = 1
 	}
 
@@ -341,7 +341,7 @@ func (h *Handler) renderAirlineAirplaneTable(w http.ResponseWriter, r *http.Requ
 	page, ap, _ := h.getAirplane(w, r)
 	nextPage := page + 1
 	prevPage := page - 1
-	if prevPage < 1 {
+	if prevPage <= 1 {
 		prevPage = 1
 	}
 
@@ -429,7 +429,7 @@ func (h *Handler) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request) 
 
 	nextPage := page + 1
 	prevPage := page - 1
-	if prevPage < 1 {
+	if prevPage <= 1 {
 		prevPage = 1
 	}
 

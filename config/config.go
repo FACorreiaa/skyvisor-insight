@@ -147,7 +147,7 @@ func NewDatabaseConfig() (*DatabaseConfig, error) {
 }
 
 func NewRedisConfig() (*RedisConfig, error) {
-	host := GetEnv("REDIS_HOST", "redis:6380")
+	host := GetEnv("REDIS_HOST", "redis:6381")
 	pass := GetEnv("REDIS_PASS", "qwerty")
 	// rdb := redis.NewClient(&redis.Options{
 	//	Addr:     host,

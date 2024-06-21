@@ -1,7 +1,8 @@
-package components
+package pages
 
 import (
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
 )
 
 templ LayoutPage(l models.LayoutTempl) {
@@ -37,11 +38,11 @@ templ LayoutPage(l models.LayoutTempl) {
 		</head>
 		<body hx-boost="true" x-data="{theme: 'lemonade'}" :class="theme" lang="en">
 			<div class="flex flex-col h-screen font-lato" id="contents">
-				@NavbarComponent(l.Nav, l.User, l.ActiveNav)
+				@components.NavbarComponent(l.Nav, l.User, l.ActiveNav)
 				<div class="h-full overflow-auto">
 					@l.Content
 				</div>
-				@FooterComponent()
+				@components.FooterComponent()
 			</div>
 		</body>
 	</html>

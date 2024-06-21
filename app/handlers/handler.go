@@ -10,6 +10,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/pages"
 	"github.com/a-h/templ"
 	"github.com/go-playground/form/v4"
 	"github.com/go-playground/locales/en"
@@ -100,7 +101,7 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 		Content:   data,
 	}
 
-	return components.LayoutPage(l)
+	return pages.LayoutPage(l)
 }
 
 func (h *Handler) Homepage(w http.ResponseWriter, r *http.Request) error {

@@ -22,11 +22,11 @@ services:
       - .env
     container_name: sky_redis
     image: redis:latest
-    command: redis-server --port 6380
+    command: redis-server --port 6381
     ports:
-      - "6380:6380"
+      - "6381:6381"
     expose:
-      - "6380"
+      - "6381"
     #    environment:
     #      REDIS_HOST: ${REDIS_HOST}
     #      REDIS_PASSWORD: ${REDIS_PASSWORD}
@@ -48,7 +48,7 @@ services:
       context: ./
     ports:
       - "6969:6969"
-      - "5050:5050"
+      - "5051:5051"
     volumes:
       - ./:/app
 #    environment:
@@ -103,7 +103,7 @@ services:
 #    image: rediscommander/redis-commander:latest
 #    platform: linux/amd64
 #    environment:
-#      - REDIS_HOSTS=local:redis:6380
+#      - REDIS_HOSTS=local:redis:6381
 #      - HTTP_USER=root
 #      - HTTP_PASSWORD=qwerty
 #    ports:

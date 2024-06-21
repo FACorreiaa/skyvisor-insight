@@ -32,6 +32,8 @@ templ LayoutPage(l models.LayoutTempl) {
         document.documentElement.setAttribute('data-theme', theme);
         });
       </script>
+			<script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+			<script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
 		</head>
 		<body hx-boost="true" x-data="{theme: 'lemonade'}" :class="theme" lang="en">
 			<div class="flex flex-col h-screen font-lato" id="contents">

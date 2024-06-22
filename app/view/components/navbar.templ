@@ -1,19 +1,19 @@
 package components
 
 import (
-	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"github.com/FACorreiaa/glasses-management-platform/app/models"
 )
 
 templ NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav string) {
-	<section class="w-full px-3 antialiased bg-gradient-to-br from-gray-900 via-black to-gray-800 lg:px-6">
+	<section class="w-full px-3 antialiased bg-gradient-to-br from-gray-900 via-black to-gray-800 lg:px-6 dark:bg-black">
 		<div class="mx-auto max-w-7xl">
 			<nav class="flex items-center w-full h-24 select-none" x-data="{ showMenu: false }">
 				<div class="relative flex flex-wrap items-start justify-between w-full mx-auto font-medium md:items-center md:h-24 md:justify-between">
 					<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-						<img src={ "/static/icons/ticket.png" } class="h-8" alt="SkyVisor Insight"/>
-						<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">SkyVisor Insight</span>
+						<img src={ "/static/icons/glasses.png" } class="h-8" alt="Glasses Management"/>
+						<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">GoGlasses</span>
 					</a>
-					<div :class="{'flex': showMenu, 'hidden md:flex': !showMenu }" class="absolute z-50 flex-col items-center justify-center w-full h-auto px-2 text-center text-gray-400 -translate-x-1/2 border-0 border-gray-700 rounded-full md:border md:w-auto md:h-10 left-1/2 md:flex-row md:items-center">
+					<div :class="{'flex': showMenu, 'hidden md:flex': !showMenu }" class="absolute z-50 flex-col items-center justify-center w-full h-auto px-2 text-center text-gray-400 -translate-x-1/2 md:w-auto md:h-10 left-1/2 md:flex-row md:items-center">
 						for _, item := range nav {
 							if item.IsLogout {
 								<form method="post" action="/logout">

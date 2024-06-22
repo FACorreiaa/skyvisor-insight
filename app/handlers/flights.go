@@ -7,6 +7,7 @@ import (
 
 	"context"
 
+	httperror "github.com/FACorreiaa/Aviation-tracker/app/errors"
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
@@ -67,7 +68,7 @@ func (h *Handler) renderLiveLocationsSidebar() []models.SidebarItem {
 	return sidebar
 }
 
-func (h *Handler) getFlights(_ http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
+func (h *Handler) getFlights(w http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
 	pageSize := 20
 	vars := mux.Vars(r)
 	flightStatus := vars["flight_status"]
@@ -95,19 +96,21 @@ func (h *Handler) getFlights(_ http.ResponseWriter, r *http.Request) (int, []mod
 	}
 
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		return 0, nil, err
 	}
 
 	return page, lf, nil
 }
 
-func (h *Handler) getFlightsResumeByStatus(_ http.ResponseWriter, r *http.Request) (models.LiveFlightsResume, error) {
+func (h *Handler) getFlightsResumeByStatus(w http.ResponseWriter, r *http.Request) (models.LiveFlightsResume, error) {
 	vars := mux.Vars(r)
 	flightStatus := vars["flight_status"]
 
 	lfr, err := h.service.GetFlightResumeByStatus(context.Background(), flightStatus)
 
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		return models.LiveFlightsResume{}, err
 	}
 
@@ -124,7 +127,7 @@ func (h *Handler) getFlightsResume() ([]models.LiveFlightsResume, error) {
 	return lfr, nil
 }
 
-func (h *Handler) getLiveFlights(_ http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
+func (h *Handler) getLiveFlights(w http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
 	pageSize := 20
 	// vars := mux.Vars(r)
 	// flightStatus := vars["flight_status"]
@@ -146,6 +149,7 @@ func (h *Handler) getLiveFlights(_ http.ResponseWriter, r *http.Request) (int, [
 	lf, err = h.service.GetLiveFlights(context.Background(), page, pageSize, orderBy, sortBy)
 
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		return 0, nil, err
 	}
 
@@ -190,12 +194,12 @@ func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 
 	page, lf, err := h.getFlights(w, r)
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error fetching total flights")
 		return nil, err
 	}
 
 	if len(lf) == 0 {
-		// If empty, return a message component
 		message := components.EmptyPageComponent()
 		return message, nil
 	}
@@ -209,6 +213,7 @@ func (h *Handler) renderFlightsTable(w http.ResponseWriter,
 	lastPage, err := h.service.GetAllFlightsSum()
 
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error fetching total flights")
 		return nil, err
 	}
@@ -236,6 +241,7 @@ func (h *Handler) renderFlightsResumeByStatus(w http.ResponseWriter,
 
 	resume, err := h.getFlightsResumeByStatus(w, r)
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error fetching total flights")
 		return components.EmptyPageComponent()
 	}
@@ -291,6 +297,7 @@ func (h *Handler) renderLiveFlightsTable(w http.ResponseWriter,
 
 	page, lf, err := h.getLiveFlights(w, r)
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error fetching total flights")
 		return nil, err
 	}
@@ -309,6 +316,7 @@ func (h *Handler) renderLiveFlightsTable(w http.ResponseWriter,
 
 	lastPage, err := h.service.GetAllFlightsSum()
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error fetching total flights")
 		return nil, err
 	}

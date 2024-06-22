@@ -7,6 +7,7 @@ import (
 
 	"context"
 
+	httperror "github.com/FACorreiaa/Aviation-tracker/app/errors"
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	airport "github.com/FACorreiaa/Aviation-tracker/app/view/airports"
@@ -14,7 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (h *Handler) getAirports(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
+func (h *Handler) getAirports(w http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
 	pageSize := 20
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.URL.Query().Get("orderBy")
@@ -27,18 +28,20 @@ func (h *Handler) getAirports(_ http.ResponseWriter, r *http.Request) (int, []mo
 
 	a, err := h.service.GetAirports(context.Background(), page, pageSize, orderBy, sortBy)
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		return 0, nil, err
 	}
 
 	return page, a, nil
 }
 
-func (h *Handler) getAirportDetails(_ http.ResponseWriter, r *http.Request) (models.Airport, error) {
+func (h *Handler) getAirportDetails(w http.ResponseWriter, r *http.Request) (models.Airport, error) {
 	vars := mux.Vars(r)
 	idStr, ok := vars["airport_id"]
 	if !ok {
 		err := errors.New("airport_id not found in path")
 		HandleError(err, "Error fetching airport_id")
+		httperror.ErrInternalServer.WriteError(w)
 		return models.Airport{}, err
 	}
 
@@ -51,13 +54,14 @@ func (h *Handler) getAirportDetails(_ http.ResponseWriter, r *http.Request) (mod
 	ap, err := h.service.GetAirportByID(context.Background(), id)
 	if err != nil {
 		HandleError(err, "Error fetching airport details")
+		httperror.ErrNotFound.WriteError(w)
 		return models.Airport{}, err
 	}
 
 	return ap, nil
 }
 
-func (h *Handler) getAirportByName(_ http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
+func (h *Handler) getAirportByName(w http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
 	airportName := r.FormValue("airport_name")
 	countryName := r.FormValue("country_name")
 	gmt := r.FormValue("gmt")
@@ -71,6 +75,7 @@ func (h *Handler) getAirportByName(_ http.ResponseWriter, r *http.Request) (int,
 	}
 	ap, err := h.service.GetAirportByName(context.Background(), page, pageSize, orderBy, sortBy, airportName, countryName, gmt)
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		return 0, nil, err
 	}
 	return page, ap, err
@@ -120,6 +125,7 @@ func (h *Handler) renderAirportTable(w http.ResponseWriter, r *http.Request) (te
 
 	lastPage, err := h.service.GetAllAirports()
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error fetching airports")
 		return nil, err
 	}
@@ -155,20 +161,19 @@ func (h *Handler) renderSidebar() []models.SidebarItem {
 func (h *Handler) AirportPage(w http.ResponseWriter, r *http.Request) error {
 	at, err := h.renderAirportTable(w, r)
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error fetching airport data table")
 		return err
 	}
 	al, err := h.service.GetAirportsLocation()
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error getting airport locations")
 		return err
 	}
 
 	sidebar := h.renderSidebar()
-	if err != nil {
-		HandleError(err, "Error fetching airport data table")
-		return err
-	}
+
 	a := airport.AirportPage(at, sidebar, "Airports", "Check airport locations", al)
 	return h.CreateLayout(w, r, "Airport Page", a).Render(context.Background(), w)
 }
@@ -177,6 +182,7 @@ func (h *Handler) AirportLocationPage(w http.ResponseWriter, r *http.Request) er
 	al, err := h.service.GetAirportsLocation()
 	sidebar := h.renderSidebar()
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error fetching airport location table")
 		return err
 	}
@@ -188,6 +194,7 @@ func (h *Handler) AirportDetailsPage(w http.ResponseWriter, r *http.Request) err
 	ad, err := h.getAirportDetails(w, r)
 	sidebar := h.renderSidebar()
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error fetching airport details page")
 		return err
 	}

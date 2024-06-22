@@ -7,7 +7,6 @@ import (
 
 templ FlightsResumeByStatus(flightStatus models.FlightStatus, airline string, count int) {
 	<div class="card card-side bg-base-100 shadow-xl h-60">
-		<figure><img src={ "/static/icons/testing-copy.jpg" } alt="Flights"/></figure>
 		<div class="card-body">
 			<h2 class="card-title">{ fmt.Sprintf("%s flights", flightStatus) }</h2>
 			<p>

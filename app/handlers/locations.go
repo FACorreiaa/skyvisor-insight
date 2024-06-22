@@ -3,10 +3,10 @@ package handlers
 import (
 	"context"
 	"errors"
-	"log"
 	"net/http"
 	"strconv"
 
+	httperror "github.com/FACorreiaa/Aviation-tracker/app/errors"
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/locations"
@@ -62,10 +62,9 @@ func (h *Handler) getCities(_ http.ResponseWriter, r *http.Request) (int, []mode
 	return page, c, nil
 }
 
-func (h *Handler) getCityDetails(_ http.ResponseWriter, r *http.Request) (models.City, error) {
+func (h *Handler) getCityDetails(w http.ResponseWriter, r *http.Request) (models.City, error) {
 	vars := mux.Vars(r)
 	idStr, ok := vars["city_id"]
-	log.Printf("Vars: %+v", vars)
 
 	if !ok {
 		err := errors.New("city_id not found in path")
@@ -75,12 +74,14 @@ func (h *Handler) getCityDetails(_ http.ResponseWriter, r *http.Request) (models
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error converting city_id to integer")
 		return models.City{}, err
 	}
 
 	c, err := h.service.GetCityByID(context.Background(), id)
 	if err != nil {
+		httperror.ErrInvalidID.WriteError(w)
 		HandleError(err, "Error fetching city details")
 		return models.City{}, err
 	}
@@ -104,7 +105,6 @@ func (h *Handler) renderCityTable(w http.ResponseWriter, r *http.Request) (templ
 		sortAux = ASC
 	}
 
-	//
 	columnNames := []models.ColumnItems{
 		{Title: "City Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
 		{Title: "Country Name", Icon: svg2.ArrowOrderIcon(), SortParam: sortAux},
@@ -127,6 +127,7 @@ func (h *Handler) renderCityTable(w http.ResponseWriter, r *http.Request) (templ
 
 	lastPage, err := h.service.GetAllCities()
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error fetching cities")
 		return nil, err
 	}
@@ -153,6 +154,7 @@ func (h *Handler) CityMainPage(w http.ResponseWriter, r *http.Request) error {
 	table, err := h.renderCityTable(w, r)
 	sidebar := h.renderLocationsBar()
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error rendering table")
 		return err
 	}
@@ -164,6 +166,7 @@ func (h *Handler) CityLocationsPage(w http.ResponseWriter, r *http.Request) erro
 	sidebar := h.renderLocationsBar()
 	c, err := h.service.GetCityLocations()
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error fetching locations")
 		return err
 	}
@@ -175,6 +178,7 @@ func (h *Handler) CityDetailsPage(w http.ResponseWriter, r *http.Request) error 
 	c, err := h.getCityDetails(w, r)
 	sidebar := h.renderLocationsBar()
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error fetching city details page")
 		return err
 	}
@@ -206,7 +210,7 @@ func (h *Handler) getCountries(_ http.ResponseWriter, r *http.Request) (int, []m
 	return page, c, nil
 }
 
-func (h *Handler) getCountryDetails(_ http.ResponseWriter, r *http.Request) (models.Country, error) {
+func (h *Handler) getCountryDetails(w http.ResponseWriter, r *http.Request) (models.Country, error) {
 	vars := mux.Vars(r)
 	country, ok := vars["country_name"]
 	if !ok {
@@ -217,6 +221,7 @@ func (h *Handler) getCountryDetails(_ http.ResponseWriter, r *http.Request) (mod
 
 	c, err := h.service.GetCountryByName(context.Background(), country)
 	if err != nil {
+		httperror.ErrInvalidID.WriteError(w)
 		HandleError(err, "Error fetching country details")
 		return models.Country{}, err
 	}
@@ -264,6 +269,7 @@ func (h *Handler) renderCountryTable(w http.ResponseWriter, r *http.Request) (te
 
 	lastPage, err := h.service.GetAllCountries()
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		return nil, err
 	}
 
@@ -289,15 +295,16 @@ func (h *Handler) renderCountryTable(w http.ResponseWriter, r *http.Request) (te
 func (h *Handler) CountryMainPage(w http.ResponseWriter, r *http.Request) error {
 	taxTable, err := h.renderCountryTable(w, r)
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error rendering table")
 		return err
 	}
 	country, err := h.service.GetCountryLocations()
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error rendering country locations")
 		return err
 	}
-
 	sidebar := h.renderLocationsBar()
 
 	c := locations.CountryLayoutPage("Countries", "Check countries of the world", taxTable, sidebar, country)
@@ -308,6 +315,7 @@ func (h *Handler) CountryLocationPage(w http.ResponseWriter, r *http.Request) er
 	sidebar := h.renderLocationsBar()
 	c, err := h.service.GetCountryLocations()
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error fetching countries")
 		return err
 	}
@@ -321,6 +329,7 @@ func (h *Handler) CountryDetailsPage(w http.ResponseWriter, r *http.Request) err
 	c, err := h.getCountryDetails(w, r)
 	sidebar := h.renderLocationsBar()
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		HandleError(err, "Error fetching country details page")
 		return err
 	}

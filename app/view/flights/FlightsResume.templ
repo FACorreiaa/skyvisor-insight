@@ -7,7 +7,6 @@ import (
 
 templ FlightsResume(resumes []models.LiveFlightsResume) {
 	<div class="card card-side bg-base-100 shadow-xl h-60">
-		<figure><img src={ "/static/icons/testing-copy.jpg" } alt="Flights"/></figure>
 		for _, r := range resumes {
 			<div class="card-body">
 				<h2 class="card-title">{ fmt.Sprintf("%s flights", r.Flight ) }</h2>

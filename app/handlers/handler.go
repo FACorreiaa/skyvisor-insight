@@ -60,6 +60,27 @@ func HandleError(err error, message string) {
 	}
 }
 
+//// HTTPError represents a structured HTTP error response
+// type HTTPError struct {
+//	Message    string `json:"message"`
+//	StatusCode int    `json:"-"`
+//}
+//
+//// NewHTTPError creates a new HTTPError
+// func NewHTTPError(message string, statusCode int) *HTTPError {
+//	return &HTTPError{
+//		Message:    message,
+//		StatusCode: statusCode,
+//	}
+//}
+//
+//// WriteHTTPError writes the HTTPError to the response writer
+// func WriteHTTPError(w http.ResponseWriter, err *HTTPError) {
+//	w.Header().Set("Content-Type", "application/json")
+//	w.WriteHeader(err.StatusCode)
+//	json.NewEncoder(w).Encode(err)
+//}
+
 func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title string,
 	data templ.Component) templ.Component {
 	var user *models.UserSession

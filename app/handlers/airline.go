@@ -7,6 +7,7 @@ import (
 
 	"context"
 
+	httperror "github.com/FACorreiaa/Aviation-tracker/app/errors"
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	airline "github.com/FACorreiaa/Aviation-tracker/app/view/airlines"
@@ -30,7 +31,7 @@ func (h *Handler) renderAirlineSidebar() []models.SidebarItem {
 	return sidebar
 }
 
-func (h *Handler) getAirline(_ http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
+func (h *Handler) getAirline(w http.ResponseWriter, r *http.Request) (int, []models.Airline, error) {
 	pageSize := 20
 	name := r.FormValue("airline_name")
 	callSign := r.FormValue("call_sign")
@@ -56,18 +57,20 @@ func (h *Handler) getAirline(_ http.ResponseWriter, r *http.Request) (int, []mod
 	return page, al, nil
 }
 
-func (h *Handler) getAirlineDetails(_ http.ResponseWriter, r *http.Request) (models.Airline, error) {
+func (h *Handler) getAirlineDetails(w http.ResponseWriter, r *http.Request) (models.Airline, error) {
 	vars := mux.Vars(r)
 	airlineName, ok := vars["airline_name"]
 	if !ok {
 		err := errors.New("airline_name not found in path")
 		HandleError(err, "Error fetching airline_name")
+		httperror.ErrNotFound.WriteError(w)
 		return models.Airline{}, err
 	}
 
 	c, err := h.service.GetAirlineByName(context.Background(), airlineName)
 	if err != nil {
 		HandleError(err, "Error fetching airline_name details")
+		httperror.ErrInvalidID.WriteError(w)
 		return models.Airline{}, err
 	}
 
@@ -104,6 +107,7 @@ func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (te
 
 	if err != nil {
 		HandleError(err, "Error fetching airlines")
+		httperror.ErrNotFound.WriteError(w)
 		return nil, err
 	}
 
@@ -117,6 +121,7 @@ func (h *Handler) renderAirlineTable(w http.ResponseWriter, r *http.Request) (te
 
 	if err != nil {
 		HandleError(err, "error fetching total airline")
+		httperror.ErrNotFound.WriteError(w)
 		return nil, err
 	}
 
@@ -143,12 +148,14 @@ func (h *Handler) AirlineMainPage(w http.ResponseWriter, r *http.Request) error 
 	var table, err = h.renderAirlineTable(w, r)
 	if err != nil {
 		HandleError(err, "Error rendering airline table")
+		httperror.ErrInternalServer.WriteError(w)
 		return err
 	}
 
 	al, err := h.service.GetAirlinesLocation()
 	if err != nil {
 		HandleError(err, "Error rendering airlines location")
+		httperror.ErrNotFound.WriteError(w)
 		return err
 	}
 
@@ -163,6 +170,7 @@ func (h *Handler) AirlineLocationPage(w http.ResponseWriter, r *http.Request) er
 	al, err := h.service.GetAirlinesLocation()
 	if err != nil {
 		HandleError(err, "Error rendering locations")
+		httperror.ErrInternalServer.WriteError(w)
 		return err
 	}
 	a := airline.AirlineLocationsPage(sidebar, al, "Airline", "Check airline expanded locations")
@@ -174,6 +182,7 @@ func (h *Handler) AirlineDetailsPage(w http.ResponseWriter, r *http.Request) err
 	al, err := h.getAirlineDetails(w, r)
 	if err != nil {
 		HandleError(err, "Error rendering details")
+		httperror.ErrNotFound.WriteError(w)
 		return err
 	}
 	a := airline.AirlineDetailsPage(sidebar, al, "Airline", "Check airport locations")
@@ -222,6 +231,7 @@ func (h *Handler) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Requ
 	lastPage, err := h.service.GetAllAircraft()
 	if err != nil {
 		HandleError(err, "Error fetching last page")
+		httperror.ErrNotFound.WriteError(w)
 		return nil, err
 	}
 	data := models.AircraftTable{
@@ -243,7 +253,7 @@ func (h *Handler) renderAirlineAircraftTable(w http.ResponseWriter, r *http.Requ
 	return taxTable, nil
 }
 
-func (h *Handler) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []models.Aircraft, error) {
+func (h *Handler) getAircraft(w http.ResponseWriter, r *http.Request) (int, []models.Aircraft, error) {
 	pageSize := 20
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
@@ -254,7 +264,6 @@ func (h *Handler) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []mo
 
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
-		// Handle error or set a default page number
 		page = 1
 	}
 
@@ -262,6 +271,7 @@ func (h *Handler) getAircraft(_ http.ResponseWriter, r *http.Request) (int, []mo
 		typeEngine, modelCode, planeOwner)
 	if err != nil {
 		HandleError(err, "Error fetching aircraft")
+		httperror.ErrNotFound.WriteError(w)
 		return 0, nil, err
 	}
 
@@ -272,6 +282,7 @@ func (h *Handler) AirlineAircraftPage(w http.ResponseWriter, r *http.Request) er
 	taxTable, err := h.renderAirlineAircraftTable(w, r)
 	sidebar := h.renderAirlineSidebar()
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		return err
 	}
 	a := airline.AirlineLayoutPage("Aircraft", "Check models about aircraft", taxTable, sidebar)
@@ -280,7 +291,7 @@ func (h *Handler) AirlineAircraftPage(w http.ResponseWriter, r *http.Request) er
 
 // Airplane
 
-func (h *Handler) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []models.Airplane, error) {
+func (h *Handler) getAirplane(w http.ResponseWriter, r *http.Request) (int, []models.Airplane, error) {
 	pageSize := 20
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	orderBy := r.FormValue("orderBy")
@@ -297,6 +308,7 @@ func (h *Handler) getAirplane(_ http.ResponseWriter, r *http.Request) (int, []mo
 	a, err := h.service.GetAirplanes(context.Background(), page, pageSize, orderBy, sortBy,
 		airlineName, modelName, productionLine, registrationNumber)
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		return 0, nil, err
 	}
 
@@ -348,6 +360,7 @@ func (h *Handler) renderAirlineAirplaneTable(w http.ResponseWriter, r *http.Requ
 	lastPage, err := h.service.GetAllAirplanes()
 	if err != nil {
 		HandleError(err, "Error fetching last page")
+		httperror.ErrNotFound.WriteError(w)
 		return nil, err
 	}
 	a := models.AirplaneTable{
@@ -373,6 +386,7 @@ func (h *Handler) AirlineAirplanePage(w http.ResponseWriter, r *http.Request) er
 	a, err := h.renderAirlineAirplaneTable(w, r)
 	sidebar := h.renderAirlineSidebar()
 	if err != nil {
+		httperror.ErrInternalServer.WriteError(w)
 		return err
 	}
 	al := airline.AirlineLayoutPage("Airplane", "Check models about airplanes", a, sidebar)
@@ -381,7 +395,7 @@ func (h *Handler) AirlineAirplanePage(w http.ResponseWriter, r *http.Request) er
 
 // Tax
 
-func (h *Handler) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, []models.Tax, error) {
+func (h *Handler) getAirlineTax(w http.ResponseWriter, r *http.Request) (int, []models.Tax, error) {
 	pageSize := 20
 	orderBy := r.FormValue("orderBy")
 	sortBy := r.FormValue("sortBy")
@@ -397,6 +411,7 @@ func (h *Handler) getAirlineTax(_ http.ResponseWriter, r *http.Request) (int, []
 
 	t, err := h.service.GetTax(context.Background(), page, pageSize, orderBy, sortBy, taxName, countryName, airlineName)
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		return 0, nil, err
 	}
 
@@ -436,6 +451,7 @@ func (h *Handler) renderAirlineTaxTable(w http.ResponseWriter, r *http.Request) 
 	lastPage, err := h.service.GetSum()
 	if err != nil {
 		HandleError(err, "Error fetching tax")
+		httperror.ErrNotFound.WriteError(w)
 		return nil, err
 	}
 	taxData := models.TaxTable{
@@ -460,6 +476,7 @@ func (h *Handler) AirlineTaxPage(w http.ResponseWriter, r *http.Request) error {
 	taxTable, err := h.renderAirlineTaxTable(w, r)
 	sidebar := h.renderAirlineSidebar()
 	if err != nil {
+		httperror.ErrNotFound.WriteError(w)
 		HandleError(err, "Error rendering table")
 		return err
 	}

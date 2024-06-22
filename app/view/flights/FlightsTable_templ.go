@@ -64,7 +64,7 @@ func AllFlightsTableComponent(live models.FlightsTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Flight Number", "/flights", "flight_number", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Flight Number", "/flights", "flight_number", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -72,7 +72,7 @@ func AllFlightsTableComponent(live models.FlightsTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Airline", "/flights", "airline_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Airline", "/flights", "airline_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -80,7 +80,7 @@ func AllFlightsTableComponent(live models.FlightsTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Flight Status", "/flights", "flight_status", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Flight Status", "/flights", "flight_status", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -44,7 +44,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Airline Name", "/airlines/airplane", "airline_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Airline Name", "/airlines/airplane", "airline_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -52,7 +52,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Model Name", "/airlines/airplane", "model_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Model Name", "/airlines/airplane", "model_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -60,7 +60,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Production Line", "/airlines/airplane", "production_line", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Production Line", "/airlines/airplane", "production_line", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -68,7 +68,7 @@ func AirplaneTable(a models.AirplaneTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Registration Number", "/airlines/airplane", "registration_number", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Registration Number", "/airlines/airplane", "registration_number", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

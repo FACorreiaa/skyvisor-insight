@@ -64,7 +64,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Airport Name", "/airports", "airport_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Airport Name", "/airports", "airport_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -72,7 +72,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Country Name", "/airports", "country_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Country Name", "/airports", "country_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -80,7 +80,7 @@ func AirportTableComponent(airport models.AirportTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter GMT", "/airports", "gmt", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter GMT", "/airports", "gmt", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

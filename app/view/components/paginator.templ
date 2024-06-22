@@ -3,25 +3,35 @@ package components
 import "fmt"
 
 templ PaginatorComponent(firstPage, prevPage, currentPage, goToNextPage, goToLastPage, lastPage, orderBy, sortBy string) {
-	<div class="flex justify-center mt-2">
-		<form class="join " hx-boost="true" method="get">
-			<a
-				class="join-item btn"
-				href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", firstPage, orderBy, sortBy)) }
-			>First Page</a>
-			<a
-				class="join-item btn"
-				href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", prevPage, orderBy, sortBy)) }
-			>«</a>
-			<button class="join-item btn disabled">{ currentPage } / { lastPage }</button>
-			<a
-				class="join-item btn"
-				href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", goToNextPage, orderBy, sortBy)) }
-			>»</a>
-			<a
-				class="join-item btn"
-				href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", goToLastPage, orderBy, sortBy)) }
-			>Last Page</a>
+	<div class="flex justify-center mt-4">
+		<form class="join" hx-boost="true" method="get">
+			<nav class="flex items-center space-x-1">
+				<a
+					class="btn btn-sm btn-outline btn-primary"
+					href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", firstPage, orderBy, sortBy)) }
+				>
+					First
+				</a>
+				<a
+					class="btn btn-sm btn-outline btn-primary"
+					href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", prevPage, orderBy, sortBy)) }
+				>
+					<ion-icon name="chevron-back-outline"></ion-icon>
+				</a>
+				<span class="btn btn-sm btn-disabled">{ currentPage } / { lastPage }</span>
+				<a
+					class="btn btn-sm btn-outline btn-primary"
+					href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", goToNextPage, orderBy, sortBy)) }
+				>
+					<ion-icon name="chevron-forward-outline"></ion-icon>
+				</a>
+				<a
+					class="btn btn-sm btn-outline btn-primary"
+					href={ templ.URL(fmt.Sprintf("%s&orderBy=%s&sortBy=%s", goToLastPage, orderBy, sortBy)) }
+				>
+					Last
+				</a>
+			</nav>
 		</form>
 	</div>
 }

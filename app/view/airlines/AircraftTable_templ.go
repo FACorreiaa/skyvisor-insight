@@ -44,7 +44,7 @@ func AirlineAircraftTable(a models.AircraftTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Aircraft Name", "/airlines/aircraft", "aircraft_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Aircraft Name", "/airlines/aircraft", "aircraft_name", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -52,7 +52,7 @@ func AirlineAircraftTable(a models.AircraftTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Engine Type", "/airlines/aircraft", "type_engine", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Engine Type", "/airlines/aircraft", "type_engine", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -60,7 +60,7 @@ func AirlineAircraftTable(a models.AircraftTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Mode Code", "/airlines/aircraft", "model_code", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Mode Code", "/airlines/aircraft", "model_code", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -68,7 +68,7 @@ func AirlineAircraftTable(a models.AircraftTable) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InputComponent("Filter Plane Owner", "/airlines/aircraft", "plane_owner", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InputSearch("Filter Plane Owner", "/airlines/aircraft", "plane_owner", "#searchResults").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

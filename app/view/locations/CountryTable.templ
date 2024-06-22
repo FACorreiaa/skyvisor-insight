@@ -11,16 +11,16 @@ templ CountryTable(c models.CountryTable) {
 	<div class="flex flex-col items-left" id="table-container">
 		@components.InputGroupContainer() {
 			<div class="mr-2">
-				@components.InputComponent("Filter Country Name", "/locations/country", "country_name", "#searchResults")
+				@components.InputSearch("Filter Country Name", "/locations/country", "country_name", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter Capital", "/locations/country", "capital", "#searchResults")
+				@components.InputSearch("Filter Capital", "/locations/country", "capital", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter Continent", "/locations/country", "continent", "#searchResults")
+				@components.InputSearch("Filter Continent", "/locations/country", "continent", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter Currency Code", "/locations/country", "currency_code", "#searchResults")
+				@components.InputSearch("Filter Currency Code", "/locations/country", "currency_code", "#searchResults")
 			</div>
 		}
 		<div class="overflow-x-auto">

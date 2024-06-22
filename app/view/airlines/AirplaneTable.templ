@@ -11,16 +11,16 @@ templ AirplaneTable(a models.AirplaneTable) {
 	<div class="flex flex-col items-left">
 		@components.InputGroupContainer() {
 			<div class="mr-2">
-				@components.InputComponent("Filter Airline Name", "/airlines/airplane", "airline_name", "#searchResults")
+				@components.InputSearch("Filter Airline Name", "/airlines/airplane", "airline_name", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter Model Name", "/airlines/airplane", "model_name", "#searchResults")
+				@components.InputSearch("Filter Model Name", "/airlines/airplane", "model_name", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter Production Line", "/airlines/airplane", "production_line", "#searchResults")
+				@components.InputSearch("Filter Production Line", "/airlines/airplane", "production_line", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter Registration Number", "/airlines/airplane", "registration_number", "#searchResults")
+				@components.InputSearch("Filter Registration Number", "/airlines/airplane", "registration_number", "#searchResults")
 			</div>
 		}
 		<div class="overflow-x-auto">

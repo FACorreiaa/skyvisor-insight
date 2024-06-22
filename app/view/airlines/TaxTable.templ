@@ -12,13 +12,13 @@ templ AirlineTaxTable(tax models.TaxTable) {
 	<div class="flex flex-col items-left">
 		@components.InputGroupContainer() {
 			<div class="mr-2">
-				@components.InputComponent("Filter  Tax", "/airlines/tax", "tax_name", "#searchResults")
+				@components.InputSearch("Filter  Tax", "/airlines/tax", "tax_name", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter  Airline", "/airlines/tax", "airline_name", "#searchResults")
+				@components.InputSearch("Filter  Airline", "/airlines/tax", "airline_name", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter  Country", "/airlines/tax", "country_name", "#searchResults")
+				@components.InputSearch("Filter  Country", "/airlines/tax", "country_name", "#searchResults")
 			</div>
 		}
 		<div class="overflow-x-auto">

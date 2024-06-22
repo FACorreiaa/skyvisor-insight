@@ -19,13 +19,13 @@ templ AirportTableComponent(airport models.AirportTable) {
 	<div class="flex flex-col items-left" id="table-container">
 		@components.InputGroupContainer() {
 			<div class="mr-2">
-				@components.InputComponent("Filter Airport Name", "/airports", "airport_name", "#searchResults")
+				@components.InputSearch("Filter Airport Name", "/airports", "airport_name", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter Country Name", "/airports", "country_name", "#searchResults")
+				@components.InputSearch("Filter Country Name", "/airports", "country_name", "#searchResults")
 			</div>
 			<div class="mr-2">
-				@components.InputComponent("Filter GMT", "/airports", "gmt", "#searchResults")
+				@components.InputSearch("Filter GMT", "/airports", "gmt", "#searchResults")
 			</div>
 		}
 		<div class="overflow-x-auto">

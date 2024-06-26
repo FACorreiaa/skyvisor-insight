@@ -23,15 +23,19 @@ templ AirlineTable(a models.AirlineTable) {
 				@components.InputSearch("Filter  Country", "/airlines/airline", "country_name", "#searchResults")
 			</div>
 		}
-		<div class="overflow-x-auto">
-			<table class="table table-xs" id="searchResults">
-				<!-- head -->
-				<thead class="bg-base-300">
+		<div class="flex flex-col">
+			<div class="overflow-x-auto">
+				<div class="inline-block min-w-full">
+					<div class="overflow-hidden border-b border-neutral-200 shadow sm:rounded-lg">
+						<table class="min-w-full divide-y divide-neutral-200">
+							<!-- head -->
+							<thead class="bg-neutral-100 dark:bg-neutral-800">
+							<tr>
 					for _, col := range a.Column {
-						<th class="font-extrabold text-sm p-2">
-							<div class="flex justify-start align-middle" hx-boost>
+										<th class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+											<div class="flex items-center">
 								{ col.Title }
-								<form class="join" hx-boost="true" method="get">
+												<form class="ml-2" method="get">
 									<a
 										class="pl-4"
 										href={ templ.URL(fmt.Sprintf("/airlines/airline?page=%d&orderBy=%s&sortBy=%s", a.Page, col.Title, col.SortParam)) }
@@ -42,12 +46,13 @@ templ AirlineTable(a models.AirlineTable) {
 							</div>
 						</th>
 					}
+					</tr>
 				</thead>
 				<!-- rows -->
-				<tbody>
+											<tbody class="bg-white divide-y divide-neutral-200">
 					for _, airline := range a.Airline {
-						<tr class="hover">
-							<td hx-boost="true">
+						<tr class="hover:bg-neutral-100">
+										<td class="px-6 py-4 whitespace-nowrap" hx-boost="true">
 								<a
 									hx-trigger="load delay:50ms"
 									href={ templ.URL(fmt.Sprintf("/airlines/airline/%s", airline.AirlineName)) }
@@ -58,19 +63,19 @@ templ AirlineTable(a models.AirlineTable) {
 							if airline.DateFounded == 0 {
 								<td class="italic">N/A</td>
 							} else {
-								<td>{ fmt.Sprintf("%d",airline.DateFounded) }</td>
+								<td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{ fmt.Sprintf("%d",airline.DateFounded) }</td>
 							}
 							if airline.DateFounded == 0 {
 								<td class="italic">N/A</td>
 							} else {
-								<td>{ fmt.Sprintf("%.1f",airline.FleetAverageAge) }</td>
+								<td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{ fmt.Sprintf("%.1f",airline.FleetAverageAge) }</td>
 							}
-							<td>{ fmt.Sprintf("%d",airline.FleetSize) }</td>
-							<td>{ airline.CallSign }</td>
-							<td>{ airline.HubCode }</td>
-							<td>{ airline.Status }</td>
-							<td>{ airline.Type }</td>
-							<td>{ airline.CountryName }</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{ fmt.Sprintf("%d",airline.FleetSize) }</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{ airline.CallSign }</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{ airline.HubCode }</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{ airline.Status }</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{ airline.Type }</td>
+							<td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{ airline.CountryName }</td>
 						</tr>
 					}
 				</tbody>
@@ -87,4 +92,8 @@ templ AirlineTable(a models.AirlineTable) {
 			a.SortParam)
 		<div id="detailsSpace"></div>
 	</div>
+	</div>
+	</div>
+	</div>
+
 }

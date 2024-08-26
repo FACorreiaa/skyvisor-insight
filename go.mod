@@ -3,7 +3,7 @@ module github.com/FACorreiaa/Aviation-tracker
 go 1.22.0
 
 require (
-	github.com/a-h/templ v0.2.707
+	github.com/a-h/templ v0.2.771
 	github.com/go-playground/form/v4 v4.2.1
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
@@ -17,7 +17,7 @@ require (
 	github.com/redis/go-redis/v9 v9.5.3
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/vgarvardt/pgx-google-uuid/v5 v5.6.0
-	golang.org/x/crypto v0.24.0
+	golang.org/x/crypto v0.26.0
 )
 
 require (
@@ -31,8 +31,8 @@ require (
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	golang.org/x/net v0.26.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.21.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
+	golang.org/x/text v0.17.0 // indirect
 )

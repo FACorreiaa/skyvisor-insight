@@ -63,6 +63,38 @@ func (h *Handler) TripsCreate(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+// TripsImport extracts an itinerary from pasted booking text via the API.
+func (h *Handler) TripsImport(w http.ResponseWriter, r *http.Request) error {
+	if h.service.API() == nil {
+		return h.renderTrips(w, r, "Trips are not available on this server yet.")
+	}
+	accessToken, err := h.apiAccessToken(r)
+	if err != nil {
+		http.Redirect(w, r, "/login?return_to=/trips", http.StatusSeeOther)
+		return nil
+	}
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+	text := strings.TrimSpace(r.PostFormValue("text"))
+	if text == "" {
+		return h.renderTrips(w, r, "Paste your booking confirmation text first.")
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), 60*time.Second)
+	defer cancel()
+	if _, err := h.service.API().ImportTrip(ctx, accessToken, text); err != nil {
+		if errors.Is(err, apiclient.ErrUnauthorized) {
+			http.Redirect(w, r, "/login?return_to=/trips", http.StatusSeeOther)
+			return nil
+		}
+		slog.ErrorContext(r.Context(), "import trip", "error", err)
+		return h.renderTrips(w, r, friendlyAPIError(err, "We could not import that itinerary. Check the text or add the trip manually."))
+	}
+	http.Redirect(w, r, "/trips", http.StatusSeeOther)
+	return nil
+}
+
 // TripsDelete removes one trip and redirects back to the list.
 func (h *Handler) TripsDelete(w http.ResponseWriter, r *http.Request) error {
 	if h.service.API() == nil {

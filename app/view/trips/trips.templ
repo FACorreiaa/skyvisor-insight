@@ -17,6 +17,7 @@ templ TripsPage(trips []apiclient.Trip, message string, csrfToken string) {
 		if message != "" {
 			<p class="mt-5 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">{ message }</p>
 		}
+		@importTripForm(csrfToken)
 		@createTripForm(csrfToken)
 		<div class="mt-8 grid gap-4">
 			if len(trips) == 0 {
@@ -32,6 +33,23 @@ templ TripsPage(trips []apiclient.Trip, message string, csrfToken string) {
 			}
 		</div>
 	</section>
+}
+
+templ importTripForm(csrfToken string) {
+	<form method="post" action="/trips/import" class="mt-8 rounded-xl border border-primary/25 bg-primary/[0.04] p-5 shadow-sm">
+		<input type="hidden" name="csrf_token" value={ csrfToken }/>
+		<div class="flex items-center gap-2">
+			<h2 class="text-sm font-semibold">Import a booking</h2>
+			<span class="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-primary">AI</span>
+		</div>
+		<p class="mt-1 text-sm text-muted-foreground">Paste a confirmation email or e-ticket text. We extract the flights, dates, and booking reference for you.</p>
+		<textarea name="text" rows="5" required maxlength="20000" placeholder="Paste your booking confirmation here…" class="mt-3 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"></textarea>
+		<div class="mt-3 flex justify-end">
+			@button.Button(button.Props{Type: button.TypeSubmit}) {
+				Import trip
+			}
+		</div>
+	</form>
 }
 
 templ createTripForm(csrfToken string) {

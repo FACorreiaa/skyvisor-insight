@@ -93,6 +93,14 @@ func (c *Client) CreateTrip(ctx context.Context, accessToken string, input Creat
 	return trip, err
 }
 
+// ImportTrip sends pasted booking text; the API extracts an itinerary with
+// AI and creates the trip.
+func (c *Client) ImportTrip(ctx context.Context, accessToken, text string) (Trip, error) {
+	var trip Trip
+	err := c.do(ctx, http.MethodPost, "/v1/trips/import", accessToken, map[string]string{"text": text}, &trip)
+	return trip, err
+}
+
 func (c *Client) DeleteTrip(ctx context.Context, accessToken, id string) error {
 	return c.do(ctx, http.MethodDelete, "/v1/trips/"+url.PathEscape(id), accessToken, nil, nil)
 }

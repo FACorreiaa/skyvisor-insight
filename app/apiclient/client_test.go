@@ -22,6 +22,9 @@ func TestClientCallsAPI(t *testing.T) {
 		case "POST /v1/trips":
 			w.WriteHeader(http.StatusCreated)
 			_, _ = w.Write([]byte(`{"id":"b","name":"Porto","segments":[]}`))
+		case "POST /v1/trips/import":
+			w.WriteHeader(http.StatusCreated)
+			_, _ = w.Write([]byte(`{"id":"c","name":"Imported","segments":[{"flight_number":"BA492"}]}`))
 		case "DELETE /v1/trips/missing":
 			w.WriteHeader(http.StatusNotFound)
 			_, _ = w.Write([]byte(`{"error":{"code":"trip_not_found","message":"Trip not found"}}`))
@@ -54,6 +57,14 @@ func TestClientCallsAPI(t *testing.T) {
 	}
 	if created.ID != "b" {
 		t.Fatalf("CreateTrip() = %#v", created)
+	}
+
+	imported, err := client.ImportTrip(ctx, "test-token", "Booking text")
+	if err != nil {
+		t.Fatalf("ImportTrip() error = %v", err)
+	}
+	if imported.ID != "c" || len(imported.Segments) != 1 {
+		t.Fatalf("ImportTrip() = %#v", imported)
 	}
 
 	if err := client.DeleteTrip(ctx, "test-token", "a"); err != nil {

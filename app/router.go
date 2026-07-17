@@ -127,6 +127,9 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 			trips.Post("/{id}/delete", handler(h.TripsDelete))
 		})
 
+		// Browser SSE proxy: forwards the account's live flight events.
+		auth.Get("/events", handler(h.EventsStream))
+
 		auth.Route("/watches", func(watches chi.Router) {
 			watches.Get("/", handler(h.WatchesPage))
 			watches.Post("/", handler(h.WatchesCreate))

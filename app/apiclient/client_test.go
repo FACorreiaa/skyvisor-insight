@@ -3,8 +3,10 @@ package apiclient
 import (
 	"context"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -106,6 +108,50 @@ func TestClientCallsAPI(t *testing.T) {
 	checkout, err := client.CreateCheckout(ctx, "test-token")
 	if err != nil || checkout.URL == "" {
 		t.Fatalf("CreateCheckout() = %#v, err = %v", checkout, err)
+	}
+}
+
+func TestStreamEvents(t *testing.T) {
+	t.Parallel()
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/events" {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		if r.Header.Get("Authorization") != "Bearer test-token" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("event: ready\ndata: {\"status\":\"connected\"}\n\n"))
+		if flusher, ok := w.(http.Flusher); ok {
+			flusher.Flush()
+		}
+		_, _ = w.Write([]byte("event: flight.delayed\ndata: {\"message\":\"TP1363 is delayed by 30 minutes\"}\n\n"))
+	}))
+	t.Cleanup(server.Close)
+
+	client, err := New(server.URL)
+	if err != nil {
+		t.Fatalf("New() error = %v", err)
+	}
+
+	body, err := client.StreamEvents(context.Background(), "test-token")
+	if err != nil {
+		t.Fatalf("StreamEvents() error = %v", err)
+	}
+	t.Cleanup(func() { _ = body.Close() })
+	data, err := io.ReadAll(body)
+	if err != nil {
+		t.Fatalf("read stream: %v", err)
+	}
+	if !strings.Contains(string(data), "event: ready") || !strings.Contains(string(data), "flight.delayed") {
+		t.Fatalf("stream body = %q", string(data))
+	}
+
+	if _, err := client.StreamEvents(context.Background(), "wrong"); !errors.Is(err, ErrUnauthorized) {
+		t.Fatalf("StreamEvents(bad token) error = %v, want ErrUnauthorized", err)
 	}
 }
 

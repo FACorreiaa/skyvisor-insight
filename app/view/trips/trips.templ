@@ -17,6 +17,7 @@ templ TripsPage(trips []apiclient.Trip, message string, assistantAnswer string, 
 		if message != "" {
 			<p class="mt-5 rounded-md border border-primary/25 bg-primary/5 px-3 py-2 text-sm text-foreground" role="status">{ message }</p>
 		}
+		@liveUpdates()
 		@importTripForm(csrfToken)
 		@createTripForm(csrfToken)
 		@assistantForm(trips, assistantAnswer, csrfToken)
@@ -33,7 +34,18 @@ templ TripsPage(trips []apiclient.Trip, message string, assistantAnswer string, 
 				@tripCard(trip, csrfToken)
 			}
 		</div>
+		<script src="/static/js/trips-live.js" defer></script>
 	</section>
+}
+
+templ liveUpdates() {
+	<div id="live-updates" class="mt-5 rounded-xl border border-border bg-card p-4 shadow-sm" hidden aria-live="polite">
+		<div class="flex items-center gap-2">
+			<h2 class="text-sm font-semibold">Live updates</h2>
+			<span data-live-status data-state="off" class="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-primary">Connecting…</span>
+		</div>
+		<ul data-live-list class="mt-3 grid gap-2"></ul>
+	</div>
 }
 
 templ importTripForm(csrfToken string) {

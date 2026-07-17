@@ -23,6 +23,7 @@ var ErrConflict = errors.New("resource conflict")
 type Client struct {
 	baseURL string
 	http    *http.Client
+	stream  *http.Client
 }
 
 func New(baseURL string) (*Client, error) {
@@ -33,7 +34,36 @@ func New(baseURL string) (*Client, error) {
 	return &Client{
 		baseURL: strings.TrimRight(baseURL, "/"),
 		http:    &http.Client{Timeout: 15 * time.Second},
+		// Streaming (SSE) connections are long-lived, so they use a client
+		// without a request timeout; the caller's context bounds them.
+		stream: &http.Client{},
 	}, nil
+}
+
+// StreamEvents opens the authenticated SSE stream and returns its body. The
+// caller owns closing the reader and cancels by cancelling ctx. It is meant to
+// be proxied to a browser, which cannot set the Authorization header itself.
+func (c *Client) StreamEvents(ctx context.Context, accessToken string) (io.ReadCloser, error) {
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, c.baseURL+"/v1/events", nil)
+	if err != nil {
+		return nil, fmt.Errorf("build events request: %w", err)
+	}
+	request.Header.Set("Authorization", "Bearer "+accessToken)
+	request.Header.Set("Accept", "text/event-stream")
+
+	response, err := c.stream.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf("open events stream: %w", err)
+	}
+	if response.StatusCode == http.StatusUnauthorized {
+		_ = response.Body.Close()
+		return nil, ErrUnauthorized
+	}
+	if response.StatusCode >= 400 {
+		defer response.Body.Close()
+		return nil, apiError(response)
+	}
+	return response.Body, nil
 }
 
 type Me struct {

@@ -47,4 +47,4 @@ main
 tailwindcss
 .env.docker
 report.xml
-
+web

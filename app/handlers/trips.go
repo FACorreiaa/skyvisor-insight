@@ -95,6 +95,79 @@ func (h *Handler) TripsImport(w http.ResponseWriter, r *http.Request) error {
 	return h.renderTrips(w, r, tripsview.AutoWatchMessage(created.AutoWatches), "")
 }
 
+// clientMaxPDFBytes mirrors the API's 10MB cap so oversized uploads fail fast.
+const clientMaxPDFBytes = 10 << 20
+
+// TripsImportPDF uploads a PDF e-ticket for AI extraction into a new trip.
+func (h *Handler) TripsImportPDF(w http.ResponseWriter, r *http.Request) error {
+	if h.service.API() == nil {
+		return h.renderTrips(w, r, "Trips are not available on this server yet.", "")
+	}
+	accessToken, err := h.apiAccessToken(r)
+	if err != nil {
+		http.Redirect(w, r, "/login?return_to=/trips", http.StatusSeeOther)
+		return nil
+	}
+	r.Body = http.MaxBytesReader(w, r.Body, clientMaxPDFBytes+1<<16)
+	if err := r.ParseMultipartForm(clientMaxPDFBytes); err != nil {
+		return h.renderTrips(w, r, "The PDF is too large. The limit is 10MB.", "")
+	}
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		return h.renderTrips(w, r, "Choose a PDF e-ticket to upload.", "")
+	}
+	defer func() { _ = file.Close() }()
+
+	ctx, cancel := context.WithTimeout(r.Context(), 60*time.Second)
+	defer cancel()
+	created, err := h.service.API().ImportTripPDF(ctx, accessToken, header.Filename, file)
+	if err != nil {
+		if errors.Is(err, apiclient.ErrUnauthorized) {
+			http.Redirect(w, r, "/login?return_to=/trips", http.StatusSeeOther)
+			return nil
+		}
+		slog.ErrorContext(r.Context(), "import trip pdf", "error", err)
+		return h.renderTrips(w, r, friendlyAPIError(err, "We could not read that PDF. If it is a scanned image, paste the text instead."), "")
+	}
+	return h.renderTrips(w, r, tripsview.AutoWatchMessage(created.AutoWatches), "")
+}
+
+// TripsTimeline renders every segment across trips in chronological order.
+// An optional ?tz=Area/City query renders times in that location.
+func (h *Handler) TripsTimeline(w http.ResponseWriter, r *http.Request) error {
+	loc := time.UTC
+	tzName := "UTC"
+	if tz := strings.TrimSpace(r.URL.Query().Get("tz")); tz != "" {
+		if parsed, err := time.LoadLocation(tz); err == nil {
+			loc = parsed
+			tzName = tz
+		}
+	}
+
+	var tripList []apiclient.Trip
+	if h.service.API() == nil {
+		page := tripsview.TimelinePage(tripList, tzName, loc)
+		return h.CreateLayout(w, r, "Timeline", page).Render(r.Context(), w)
+	}
+	accessToken, err := h.apiAccessToken(r)
+	if err != nil {
+		http.Redirect(w, r, "/login?return_to=/trips/timeline", http.StatusSeeOther)
+		return nil
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+	defer cancel()
+	tripList, err = h.service.API().ListTrips(ctx, accessToken)
+	if err != nil {
+		if errors.Is(err, apiclient.ErrUnauthorized) {
+			http.Redirect(w, r, "/login?return_to=/trips/timeline", http.StatusSeeOther)
+			return nil
+		}
+		slog.ErrorContext(r.Context(), "list trips for timeline", "error", err)
+	}
+	page := tripsview.TimelinePage(tripList, tzName, loc)
+	return h.CreateLayout(w, r, "Timeline", page).Render(r.Context(), w)
+}
+
 // TripsDelete removes one trip and redirects back to the list.
 func (h *Handler) TripsDelete(w http.ResponseWriter, r *http.Request) error {
 	if h.service.API() == nil {

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
@@ -271,6 +272,53 @@ func (c *Client) ImportTrip(ctx context.Context, accessToken, text string) (Trip
 	var trip Trip
 	err := c.do(ctx, http.MethodPost, "/v1/trips/import", accessToken, map[string]string{"text": text}, &trip)
 	return trip, err
+}
+
+// ImportTripPDF uploads a PDF e-ticket; the API extracts the itinerary and
+// creates the trip. filename is used only for the multipart part name.
+func (c *Client) ImportTripPDF(ctx context.Context, accessToken, filename string, pdf io.Reader) (Trip, error) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("file", filename)
+	if err != nil {
+		return Trip{}, fmt.Errorf("build upload: %w", err)
+	}
+	if _, err := io.Copy(part, pdf); err != nil {
+		return Trip{}, fmt.Errorf("copy upload: %w", err)
+	}
+	if err := writer.Close(); err != nil {
+		return Trip{}, fmt.Errorf("finalize upload: %w", err)
+	}
+
+	request, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/v1/trips/import/pdf", body)
+	if err != nil {
+		return Trip{}, fmt.Errorf("build request: %w", err)
+	}
+	request.Header.Set("Authorization", "Bearer "+accessToken)
+	request.Header.Set("Content-Type", writer.FormDataContentType())
+	request.Header.Set("Accept", "application/json")
+
+	response, err := c.http.Do(request)
+	if err != nil {
+		return Trip{}, fmt.Errorf("call skyvisor-api: %w", err)
+	}
+	defer func() {
+		_, _ = io.Copy(io.Discard, io.LimitReader(response.Body, 1<<16))
+		_ = response.Body.Close()
+	}()
+	switch {
+	case response.StatusCode == http.StatusUnauthorized:
+		return Trip{}, ErrUnauthorized
+	case response.StatusCode == http.StatusRequestEntityTooLarge:
+		return Trip{}, &APIError{Status: response.StatusCode, Code: "file_too_large", Message: "The PDF must be at most 10MB"}
+	case response.StatusCode >= 400:
+		return Trip{}, apiError(response)
+	}
+	var trip Trip
+	if err := json.NewDecoder(io.LimitReader(response.Body, 1<<20)).Decode(&trip); err != nil {
+		return Trip{}, fmt.Errorf("decode skyvisor-api response: %w", err)
+	}
+	return trip, nil
 }
 
 func (c *Client) DeleteTrip(ctx context.Context, accessToken, id string) error {

@@ -13,6 +13,7 @@ templ TripsPage(trips []apiclient.Trip, message string, assistantAnswer string, 
 			<p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">My travel</p>
 			<h1 class="mt-3 text-3xl font-semibold tracking-tight">Trips</h1>
 			<p class="mt-2 text-muted-foreground">Plan a trip, watch every segment, and get disruption guidance when connections get tight.</p>
+			<a href="/trips/timeline" class="mt-3 inline-block text-sm text-primary hover:underline">View timeline →</a>
 		</div>
 		if message != "" {
 			<p class="mt-5 rounded-md border border-primary/25 bg-primary/5 px-3 py-2 text-sm text-foreground" role="status">{ message }</p>
@@ -62,6 +63,19 @@ templ importTripForm(csrfToken string) {
 				Import trip
 			}
 		</div>
+		<div class="mt-4 border-t border-border pt-4">
+			<p class="text-xs font-medium text-muted-foreground">Or upload a PDF e-ticket</p>
+			<div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+				<input type="file" name="file" accept="application/pdf,.pdf" required form="import-pdf-form" class="text-sm file:mr-3 file:rounded-md file:border file:border-input file:bg-background file:px-3 file:py-1.5 file:text-sm"/>
+				@button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantOutline, Attributes: templ.Attributes{"form": "import-pdf-form"}}) {
+					Upload PDF
+				}
+			</div>
+			<p class="mt-1 text-xs text-muted-foreground">Text-based PDFs only (up to 10MB). Scanned images can't be read — paste the text instead.</p>
+		</div>
+	</form>
+	<form id="import-pdf-form" method="post" action="/trips/import/pdf" enctype="multipart/form-data" class="hidden">
+		<input type="hidden" name="csrf_token" value={ csrfToken }/>
 	</form>
 }
 

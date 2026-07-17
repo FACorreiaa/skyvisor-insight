@@ -18,10 +18,10 @@ func TestClientCallsAPI(t *testing.T) {
 		}
 		switch r.Method + " " + r.URL.Path {
 		case "GET /v1/trips":
-			_, _ = w.Write([]byte(`{"data":[{"id":"a","name":"Lisbon","flights":["TP1363"]}]}`))
+			_, _ = w.Write([]byte(`{"data":[{"id":"a","name":"Lisbon","segments":[{"flight_number":"TP1363","departure_iata":"LIS"}]}]}`))
 		case "POST /v1/trips":
 			w.WriteHeader(http.StatusCreated)
-			_, _ = w.Write([]byte(`{"id":"b","name":"Porto","flights":[]}`))
+			_, _ = w.Write([]byte(`{"id":"b","name":"Porto","segments":[]}`))
 		case "DELETE /v1/trips/missing":
 			w.WriteHeader(http.StatusNotFound)
 			_, _ = w.Write([]byte(`{"error":{"code":"trip_not_found","message":"Trip not found"}}`))
@@ -43,7 +43,8 @@ func TestClientCallsAPI(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ListTrips() error = %v", err)
 	}
-	if len(trips) != 1 || trips[0].Name != "Lisbon" {
+	if len(trips) != 1 || trips[0].Name != "Lisbon" ||
+		len(trips[0].Segments) != 1 || trips[0].Segments[0].FlightNumber != "TP1363" {
 		t.Fatalf("ListTrips() = %#v", trips)
 	}
 

@@ -116,6 +116,12 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 		auth.Post("/logout", handler(h.Logout))
 		auth.Get("/settings", handler(h.SettingsPage))
 
+		auth.Route("/trips", func(trips chi.Router) {
+			trips.Get("/", handler(h.TripsPage))
+			trips.Post("/", handler(h.TripsCreate))
+			trips.Post("/{id}/delete", handler(h.TripsDelete))
+		})
+
 		auth.Route("/airlines", func(airlines chi.Router) {
 			airlines.Get("/airline", handler(h.AirlineMainPage))
 			airlines.Get("/airline/location", handler(h.AirlineLocationPage))

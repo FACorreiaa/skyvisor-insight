@@ -1,0 +1,94 @@
+package trips
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/apiclient"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/badge"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/button"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
+)
+
+templ TripsPage(trips []apiclient.Trip, message string, csrfToken string) {
+	<section class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+		<div class="max-w-2xl">
+			<p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">My travel</p>
+			<h1 class="mt-3 text-3xl font-semibold tracking-tight">Trips</h1>
+			<p class="mt-2 text-muted-foreground">Plan a trip and keep every flight of it in one timeline.</p>
+		</div>
+		if message != "" {
+			<p class="mt-5 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">{ message }</p>
+		}
+		@createTripForm(csrfToken)
+		<div class="mt-8 grid gap-4">
+			if len(trips) == 0 {
+				@card.Card(card.Props{Class: "border-dashed bg-muted/35 shadow-none"}) {
+					@card.Content(card.ContentProps{Class: "p-5"}) {
+						<h2 class="text-sm font-semibold">No trips yet</h2>
+						<p class="mt-1 text-sm leading-relaxed text-muted-foreground">Create your first trip above. Add the flight numbers now or fill in the details later.</p>
+					}
+				}
+			}
+			for _, trip := range trips {
+				@tripCard(trip, csrfToken)
+			}
+		</div>
+	</section>
+}
+
+templ createTripForm(csrfToken string) {
+	<form method="post" action="/trips" class="mt-8 rounded-xl border border-border bg-card p-5 shadow-sm">
+		<input type="hidden" name="csrf_token" value={ csrfToken }/>
+		<h2 class="text-sm font-semibold">New trip</h2>
+		<div class="mt-4 grid gap-4 sm:grid-cols-2">
+			<div>
+				<label for="trip-name" class="text-xs font-medium text-muted-foreground">Trip name</label>
+				<input id="trip-name" name="name" required maxlength="120" placeholder="Lisbon to London" class="mt-1 h-11 w-full rounded-md border border-input bg-transparent px-3 text-sm"/>
+			</div>
+			<div>
+				<label for="trip-starts" class="text-xs font-medium text-muted-foreground">Start date (optional)</label>
+				<input id="trip-starts" name="starts_at" type="date" class="mt-1 h-11 w-full rounded-md border border-input bg-transparent px-3 text-sm"/>
+			</div>
+		</div>
+		<div class="mt-4">
+			<label for="trip-flights" class="text-xs font-medium text-muted-foreground">Flight numbers (optional, one per line)</label>
+			<textarea id="trip-flights" name="flights" rows="3" placeholder={ flightsPlaceholder() } class="mt-1 w-full rounded-md border border-input bg-transparent px-3 py-2 font-mono text-sm uppercase"></textarea>
+		</div>
+		<div class="mt-4 flex justify-end">
+			@button.Button(button.Props{Type: button.TypeSubmit}) {
+				Create trip
+			}
+		</div>
+	</form>
+}
+
+templ tripCard(trip apiclient.Trip, csrfToken string) {
+	@card.Card(card.Props{}) {
+		<div class="flex flex-col gap-3 border-b border-border p-5 sm:flex-row sm:items-center sm:justify-between">
+			<div>
+				<h2 class="text-lg font-semibold tracking-tight">{ trip.Name }</h2>
+				<p class="mt-0.5 text-xs text-muted-foreground">{ tripSubtitle(trip) }</p>
+			</div>
+			<form method="post" action={ tripDeleteAction(trip.ID) } onsubmit="return confirm('Delete this trip?')">
+				<input type="hidden" name="csrf_token" value={ csrfToken }/>
+				@button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantDestructive, Size: button.SizeSm}) {
+					Delete
+				}
+			</form>
+		</div>
+		if len(trip.Segments) > 0 {
+			@card.Content(card.ContentProps{Class: "grid gap-3 p-5"}) {
+				for _, segment := range trip.Segments {
+					<div class="flex flex-wrap items-center gap-3 rounded-lg bg-muted/55 p-3">
+						@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "font-mono"}) {
+							{ segment.FlightNumber }
+						}
+						<span class="font-mono text-sm font-medium">{ segmentRoute(segment) }</span>
+						<span class="text-xs text-muted-foreground">{ segmentTimes(segment) }</span>
+						if segment.BookingReference != "" {
+							<span class="ml-auto font-mono text-xs text-muted-foreground">Ref { segment.BookingReference }</span>
+						}
+					</div>
+				}
+			}
+		}
+	}
+}

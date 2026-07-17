@@ -47,18 +47,28 @@ type Me struct {
 	} `json:"identity"`
 }
 
+type TripSegment struct {
+	FlightNumber     string    `json:"flight_number"`
+	DepartureIATA    string    `json:"departure_iata,omitempty"`
+	ArrivalIATA      string    `json:"arrival_iata,omitempty"`
+	DepartsAt        time.Time `json:"departs_at,omitzero"`
+	ArrivesAt        time.Time `json:"arrives_at,omitzero"`
+	BookingReference string    `json:"booking_reference,omitempty"`
+	Notes            string    `json:"notes,omitempty"`
+}
+
 type Trip struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Flights   []string  `json:"flights"`
-	StartsAt  time.Time `json:"starts_at,omitzero"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        string        `json:"id"`
+	Name      string        `json:"name"`
+	Segments  []TripSegment `json:"segments"`
+	StartsAt  time.Time     `json:"starts_at,omitzero"`
+	CreatedAt time.Time     `json:"created_at"`
 }
 
 type CreateTrip struct {
-	Name     string    `json:"name"`
-	Flights  []string  `json:"flights,omitempty"`
-	StartsAt time.Time `json:"starts_at,omitzero"`
+	Name     string        `json:"name"`
+	Segments []TripSegment `json:"segments,omitempty"`
+	StartsAt time.Time     `json:"starts_at,omitzero"`
 }
 
 func (c *Client) Me(ctx context.Context, accessToken string) (Me, error) {

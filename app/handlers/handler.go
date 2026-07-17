@@ -109,6 +109,7 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 	} else {
 		nav = []models.NavItem{
 			{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
+			{Path: "/trips", Label: "Trips", Icon: svg2.PaperAirplaneIcon()},
 			{Path: "/airlines/airline", Label: "Airlines", Icon: svg2.TicketIcon()},
 			{Path: "/airports", Label: "Airports", Icon: svg2.BuildingOfficeIcon()},
 			{Path: "/flights/flight", Label: "Flights", Icon: svg2.PaperAirplaneIcon()},

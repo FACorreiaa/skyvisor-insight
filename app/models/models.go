@@ -85,6 +85,7 @@ type LayoutTempl struct {
 	ActiveNav string
 	User      *UserSession
 	Content   templ.Component
+	CSRFToken string
 }
 
 type SettingsPage struct {

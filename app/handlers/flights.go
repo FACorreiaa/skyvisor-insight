@@ -13,7 +13,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/flights"
 	"github.com/a-h/templ"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 // https://openlayers.org/en/latest/examples/feature-move-animation.html future feature
@@ -70,8 +70,7 @@ func (h *Handler) renderLiveLocationsSidebar() []models.SidebarItem {
 
 func (h *Handler) getFlights(w http.ResponseWriter, r *http.Request) (int, []models.LiveFlights, error) {
 	pageSize := 20
-	vars := mux.Vars(r)
-	flightStatus := vars["flight_status"]
+	flightStatus := chi.URLParam(r, "flight_status")
 
 	// airlineName := r.FormValue("airline_name")
 	flightNumber := r.FormValue("flight_number")
@@ -104,8 +103,7 @@ func (h *Handler) getFlights(w http.ResponseWriter, r *http.Request) (int, []mod
 }
 
 func (h *Handler) getFlightsResumeByStatus(w http.ResponseWriter, r *http.Request) (models.LiveFlightsResume, error) {
-	vars := mux.Vars(r)
-	flightStatus := vars["flight_status"]
+	flightStatus := chi.URLParam(r, "flight_status")
 
 	lfr, err := h.service.GetFlightResumeByStatus(context.Background(), flightStatus)
 
@@ -339,9 +337,8 @@ func (h *Handler) renderLiveFlightsTable(w http.ResponseWriter,
 }
 
 func (h *Handler) getFlightsDetails(_ http.ResponseWriter, r *http.Request) (models.LiveFlights, error) {
-	vars := mux.Vars(r)
-	flightNumber, ok := vars["flight_number"]
-	if !ok {
+	flightNumber := chi.URLParam(r, "flight_number")
+	if flightNumber == "" {
 		err := errors.New("flight_number not found in path")
 		HandleError(err, "Error fetching flight_number")
 		return models.LiveFlights{}, err
@@ -415,8 +412,7 @@ func (h *Handler) FilteredFlightsPage(w http.ResponseWriter, r *http.Request) er
 }
 
 func (h *Handler) FlightsLocationsByStatus(w http.ResponseWriter, r *http.Request) error {
-	vars := mux.Vars(r)
-	flightStatus := vars["flight_status"]
+	flightStatus := chi.URLParam(r, "flight_status")
 	s := h.renderLiveLocationsSidebar()
 	fd, err := h.service.GetAllFlightsLocationsByStatus(context.Background(), flightStatus)
 

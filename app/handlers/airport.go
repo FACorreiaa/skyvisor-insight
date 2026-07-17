@@ -12,7 +12,7 @@ import (
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	airport "github.com/FACorreiaa/Aviation-tracker/app/view/airports"
 	"github.com/a-h/templ"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 func (h *Handler) getAirports(w http.ResponseWriter, r *http.Request) (int, []models.Airport, error) {
@@ -36,9 +36,8 @@ func (h *Handler) getAirports(w http.ResponseWriter, r *http.Request) (int, []mo
 }
 
 func (h *Handler) getAirportDetails(w http.ResponseWriter, r *http.Request) (models.Airport, error) {
-	vars := mux.Vars(r)
-	idStr, ok := vars["airport_id"]
-	if !ok {
+	idStr := chi.URLParam(r, "airport_id")
+	if idStr == "" {
 		err := errors.New("airport_id not found in path")
 		HandleError(err, "Error fetching airport_id")
 		httperror.ErrInternalServer.WriteError(w)

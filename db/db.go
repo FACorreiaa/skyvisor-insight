@@ -118,20 +118,22 @@ func Migrate(conn *pgxpool.Pool) error {
 }
 
 // WaitForDB Small hack to wait for database to start inside docker.
-func WaitForDB(pgpool *pgxpool.Pool) {
-	ctx := context.Background()
-
-	for attempts := 1; ; attempts++ {
-		if attempts > retries {
-			break
-		}
-
+func WaitForDB(ctx context.Context, pgpool *pgxpool.Pool) error {
+	var lastErr error
+	for attempts := 1; attempts <= retries; attempts++ {
 		if err := pgpool.Ping(ctx); err == nil {
-			break
+			return nil
+		} else {
+			lastErr = err
 		}
 
-		time.Sleep(time.Duration(attempts) * 100 * time.Millisecond)
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(time.Duration(attempts) * 100 * time.Millisecond):
+		}
 	}
+	return fmt.Errorf("database unavailable after %d attempts: %w", retries, lastErr)
 }
 
 // func WaitForRedis(redis *redis.Client) {

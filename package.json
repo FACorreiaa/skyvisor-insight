@@ -1,34 +1,34 @@
 {
-  "name": "aviation-client-geth",
-  "version": "1.0.0",
-  "description": "sky invisor dependencies",
-  "main": "tailwind.config.js",
+  "name": "skyvisor-insight-web",
+  "version": "0.2.0",
+  "private": true,
+  "description": "SkyVisor Insight server-driven travel experience",
   "scripts": {
-    "fonts": "postcss fonts.css -d app/static/css",
-    "tailwind-watch": "postcss tailwind.css app/static/css/main.css -o app/static/css/output.css --watch",
-    "tailwind-build": "postcss tailwind.css app/static/css/main.css -o app/static/css/output.css --minify"
+    "clean": "rm -f app/static/css/app.css app/static/css/maplibre-gl.css app/static/js/app.js app/static/js/arc.js app/static/js/ol.js",
+    "build:css": "tailwindcss -i app/assets/styles.css -o app/static/css/app.css --minify",
+    "build:js": "esbuild app/assets/app.js --bundle --minify --format=iife --outfile=app/static/js/app.js && esbuild app/assets/arc.js --bundle --minify --format=iife --outfile=app/static/js/arc.js",
+    "vendor": "mkdir -p app/static/css/files && cp node_modules/@fontsource-variable/geist/files/*.woff2 app/static/css/files/ && cp node_modules/maplibre-gl/dist/maplibre-gl.css app/static/css/maplibre-gl.css && cp node_modules/ol/dist/ol.js app/static/js/ol.js && cp app/assets/theme.js app/static/js/theme.js",
+    "build": "bun run clean && bun run build:css && bun run build:js && bun run vendor",
+    "dev:css": "tailwindcss -i app/assets/styles.css -o app/static/css/app.css --watch",
+    "check": "bun run build"
   },
   "dependencies": {
-    "@fontsource/merriweather-sans": "^5.0.8",
-    "@fontsource/source-sans-pro": "^5.0.8",
-    "@fontsource/source-serif-pro": "^5.0.8",
-    "@fontsource/titillium-web": "^5.0.17",
-    "postcss-cli": "^10.1.0",
-    "postcss-import": "^15.1.0",
-    "postcss-url": "^10.1.3"
+    "@fontsource-variable/geist": "5.2.9",
+    "alpinejs": "3.15.12",
+    "arc": "1.0.0",
+    "htmx.org": "2.0.10",
+    "maplibre-gl": "5.24.0",
+    "ol": "10.9.0"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.5.7",
-    "@tailwindcss/typography": "^0.5.13",
-    "autoprefixer": "^10.4.19",
-    "daisyui": "^4.12.2",
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.4"
+    "@tailwindcss/cli": "4.3.3",
+    "@tailwindcss/forms": "0.5.11",
+    "@tailwindcss/typography": "0.5.20",
+    "esbuild": "0.28.1",
+    "tailwindcss": "4.3.3"
   },
-  "repository": {
-    "type": "git",
-    "url": "github.com/FACorreiaa/Aviation-tracker"
+  "engines": {
+    "bun": ">=1.3.0"
   },
-  "author": "FACorreiaa",
-  "license": "ISC"
+  "license": "MIT"
 }

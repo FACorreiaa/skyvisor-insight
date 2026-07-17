@@ -1,18 +1,113 @@
 package components
 
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/badge"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/button"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
+)
+
 templ HomePage() {
-	@BannerComponent("Aviation tracker", "Aviation tracker to Airline data, visualize live flights and much more.")
-	<div class="container mx-auto my-24 md:px-6">
-		<section class="mb-32 text-center">
-			<div class="px-6 py-12 md:px-12">
-				<h2 class="my-12 text-5xl font-bold tracking-tight">
-					Checkout the live flight
-					<br/>
-					<span class="text-primary dark:text-primary-400">Register for full access</span>
-				</h2>
-				<a class="mb-2 inline-block rounded bg-blue px-12 pt-4 pb-3.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] md:mr-2 md:mb-0" data-te-ripple-init data-te-ripple-color="light" href="/flights" role="button">Check live flights</a>
-				<a class="inline-block rounded px-12 pt-4 pb-3.5 text-sm font-medium uppercase leading-normal text-primary transition duration-150 ease-in-out hover:bg-neutral-500 hover:bg-opacity-10 hover:text-primary-600 focus:text-primary-600 focus:outline-none focus:ring-0 active:text-primary-700 dark:hover:bg-neutral-700 dark:hover:bg-opacity-40" data-te-ripple-init data-te-ripple-color="light" href="https://github.com/FACorreiaa" target="_blank" role="button">About me</a>
+	<div class="relative overflow-hidden">
+		<div class="sky-grid pointer-events-none absolute inset-x-0 top-0 h-[42rem] opacity-70"></div>
+		<section class="relative mx-auto grid max-w-7xl gap-12 px-4 pb-20 pt-16 sm:px-6 md:pt-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:pb-28">
+			<div class="max-w-2xl">
+				@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "mb-6 border border-primary/15 bg-primary/8 text-primary"}) {
+					<span class="size-1.5 rounded-full bg-primary"></span> Live travel intelligence
+				}
+				<h1 class="max-w-xl text-5xl font-semibold leading-[0.98] tracking-[-0.045em] text-foreground sm:text-6xl lg:text-7xl">Know the journey before it changes.</h1>
+				<p class="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">Track a flight, organize the whole trip, and get the updates that matter. SkyVisor turns fragmented aviation data into one calm travel view.</p>
+				<form
+					class="mt-9 max-w-xl rounded-xl border border-border bg-card p-2 shadow-[0_18px_55px_-28px_rgba(30,64,175,0.35)]"
+					action="/track"
+					method="get"
+					hx-get="/track"
+					hx-target="#flight-result"
+					hx-push-url="true"
+					hx-indicator="#flight-search-loading"
+					x-data="flightSearch"
+					x-on:submit="submit()"
+				>
+					<label for="hero-flight-number" class="sr-only">Flight number</label>
+					<div class="flex flex-col gap-2 sm:flex-row">
+						<div class="flex min-w-0 flex-1 items-center gap-3 px-3">
+							<svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted-foreground" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3.5 11.5 21 4l-7.5 17-2.2-7.3-7.8-2.2Z"/><path d="m11.3 13.7 3.2-3.2"/></svg>
+							<input id="hero-flight-number" name="flight" x-model="flight" autocomplete="off" spellcheck="false" placeholder="Flight number, for example TP1363" class="h-12 w-full border-0 bg-transparent px-0 font-mono text-sm uppercase shadow-none outline-none placeholder:normal-case focus:ring-0" required/>
+						</div>
+						@button.Button(button.Props{Type: button.TypeSubmit, Size: button.SizeLg, Class: "h-12 px-6"}) {
+							Track flight
+							<svg id="flight-search-loading" class="htmx-indicator size-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity=".25" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+						}
+					</div>
+				</form>
+				<p class="mt-3 text-xs text-muted-foreground">No account needed for a quick lookup.</p>
+				<div id="flight-result" class="mt-6" aria-live="polite"></div>
+			</div>
+			<div class="relative lg:pl-8">
+				<div class="absolute -inset-8 -z-10 rounded-full bg-primary/10 blur-3xl"></div>
+				<div class="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_35px_90px_-35px_rgba(15,23,42,0.45)]">
+					<div class="relative aspect-[4/3] overflow-hidden border-b border-border bg-muted">
+						<img src="/static/icons/hero-flight.jpg" alt="Aircraft above a coastal landscape" class="h-full w-full object-cover"/>
+						<div class="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-transparent"></div>
+						<div class="absolute bottom-4 left-4 flex items-center gap-2 rounded-lg border border-white/20 bg-slate-950/65 px-3 py-2 text-xs font-medium text-white backdrop-blur-md">
+							<span class="size-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,0.15)]"></span> TP1363 is on time
+						</div>
+					</div>
+					<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 p-5 sm:p-6">
+						<div><div class="font-mono text-2xl font-semibold tracking-tight">LIS</div><div class="mt-1 text-xs text-muted-foreground">Lisbon · 16:05</div></div>
+						<div class="flex min-w-28 items-center gap-2 text-primary"><span class="h-px flex-1 bg-primary/35"></span><svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true"><path d="m21.8 12-8.3-5.1v3.6L5 8 2.5 9.2l5.6 3-5.6 3L5 16.5l8.5-2.5v3.6l8.3-5.1c.3-.2.3-.4 0-.5Z"/></svg><span class="h-px flex-1 bg-primary/35"></span></div>
+						<div class="text-right"><div class="font-mono text-2xl font-semibold tracking-tight">LHR</div><div class="mt-1 text-xs text-muted-foreground">London · 18:45</div></div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="border-y border-border bg-card/55">
+			<div class="mx-auto grid max-w-7xl grid-cols-2 gap-px px-4 py-7 sm:px-6 md:grid-cols-4">
+				@homeMetric("190+", "countries covered")
+				@homeMetric("24/7", "flight updates")
+				@homeMetric("One view", "for every trip")
+				@homeMetric("Private", "by default")
+			</div>
+		</section>
+
+		<section class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:py-32">
+			<div class="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+				<div>
+					<p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">From flight to full journey</p>
+					<h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">A travel command center that stays out of your way.</h2>
+				</div>
+				<p class="max-w-2xl text-base leading-relaxed text-muted-foreground lg:justify-self-end">Save flights into trips, watch airport conditions, and receive useful alerts without juggling tabs. The interface stays focused while the server does the heavy lifting.</p>
+			</div>
+			<div class="mt-12 grid gap-5 md:grid-cols-3">
+				@featureCard("01", "Track with context", "Live status, route, terminal, gate, and delay signals presented as one readable story.")
+				@featureCard("02", "Build your trip", "Group flights and travel details into a timeline that works across web and future mobile apps.")
+				@featureCard("03", "Act on changes", "Get alerts for the moments that matter, then use an AI travel assistant for clear next steps.")
+			</div>
+		</section>
+
+		<section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:pb-32">
+			<div class="overflow-hidden rounded-2xl border border-border bg-card">
+				<div class="grid lg:grid-cols-[0.72fr_1.28fr]">
+					<div class="flex flex-col justify-between p-7 sm:p-10">
+						<div><p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Global view</p><h2 class="mt-4 text-3xl font-semibold tracking-tight">See movement, not just rows.</h2><p class="mt-4 leading-relaxed text-muted-foreground">MapLibre powers a faster, adaptable map foundation for airports, routes, and live aircraft layers.</p></div>
+						<div class="mt-10">@button.Button(button.Props{Href: "/register", Variant: button.VariantOutline}) { Create a free account }</div>
+					</div>
+					<div data-skyvisor-map data-latitude="30" data-longitude="-12" data-zoom="1.2" class="min-h-[28rem] border-t border-border bg-muted lg:border-l lg:border-t-0" aria-label="Interactive global flight map"></div>
+				</div>
 			</div>
 		</section>
 	</div>
+}
+
+templ homeMetric(value, label string) {
+	<div class="border-border px-4 py-3 md:border-l first:md:border-l-0"><div class="font-mono text-lg font-semibold text-foreground">{ value }</div><div class="mt-1 text-xs text-muted-foreground">{ label }</div></div>
+}
+
+templ featureCard(number, title, description string) {
+	@card.Card(card.Props{Class: "group min-h-64 border-border bg-card shadow-none transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"}) {
+		@card.Content(card.ContentProps{Class: "flex h-full flex-col p-6"}) {
+			<div class="font-mono text-xs font-semibold text-primary">{ number }</div>
+			<div class="mt-auto pt-16"><h3 class="text-lg font-semibold tracking-tight">{ title }</h3><p class="mt-3 text-sm leading-relaxed text-muted-foreground">{ description }</p></div>
+		}
+	}
 }

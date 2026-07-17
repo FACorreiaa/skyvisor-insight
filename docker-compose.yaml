@@ -1,61 +1,33 @@
+name: skyvisor-insight
+
 services:
   postgres:
-    env_file:
-      - .env
-    container_name: sky_postgres
-    image: postgres:alpine
+    image: postgres:17-alpine
     environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASS:?set DB_PASS in .env}
+      POSTGRES_DB: ${DB_NAME:-aviation-tracker-dev}
     ports:
-      - "5435:5432"
-    restart: on-failure
+      - "127.0.0.1:5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
     volumes:
       - ./.data/db/docker-postgres:/var/lib/postgresql/data
-    networks:
-      - aviation-client
+
   redis:
-    env_file:
-      - .env
-    container_name: sky_redis
-    image: redis:latest
-    command: redis-server --port 6381
+    image: redis:8-alpine
+    command: ["redis-server", "--port", "6381", "--save", "60", "1"]
     ports:
-      - "6381:6381"
-    expose:
-      - "6381"
-    #    environment:
-    #      REDIS_HOST: ${REDIS_HOST}
-    #      REDIS_PASSWORD: ${REDIS_PASSWORD}
-    #      REDIS_DB: ${REDIS_DB}
+      - "127.0.0.1:6381:6381"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "6381", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
     volumes:
-      - ./.data/db/docker-redis:/var/lib/redis/data
-    networks:
-      - aviation-client
-
-  app-dev:
-    env_file:
-      - .env
-    platform: linux/amd64
-    container_name: sky_dev
-    image: "skyvisor-insight-dev"
-    build:
-      dockerfile: Dockerfile
-      target: app-dev
-      context: ./
-    ports:
-      - "6969:6969"
-      - "5051:5051"
-    volumes:
-      - ./:/app
-#    environment:
-#      APP_ENV: development
-
-    networks:
-      - aviation-client
-
-networks:
-  aviation-client:
+      - ./.data/db/docker-redis:/data

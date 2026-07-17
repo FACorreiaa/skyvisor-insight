@@ -1,0 +1,7 @@
+{
+  "componentsDir": "app/components/ui",
+  "utilsDir": "app/utils",
+  "moduleName": "github.com/FACorreiaa/Aviation-tracker",
+  "jsDir": "app/static/templui/js",
+  "jsPublicPath": "/static/templui/js"
+}

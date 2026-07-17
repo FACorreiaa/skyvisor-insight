@@ -4,9 +4,9 @@ tmp_dir = "tmp"
 
 [build]
   bin = "./tmp/main"
-  cmd = "templ generate &&  go build -o ./tmp/main ."
+  cmd = "go run github.com/a-h/templ/cmd/templ@v0.3.1020 generate && go build -o ./tmp/main ./cmd/web"
   delay = 1000
-    exclude_dir = ["assets", "tmp", "vendor"]
+    exclude_dir = ["app/assets", "app/static", "node_modules", "tmp", "vendor"]
     exclude_file = []
     exclude_regex = [".*_templ.go"]
     exclude_unchanged = false

@@ -11,7 +11,7 @@ import (
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/locations"
 	"github.com/a-h/templ"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 func (h *Handler) renderLocationsBar() []models.SidebarItem {
@@ -63,10 +63,8 @@ func (h *Handler) getCities(_ http.ResponseWriter, r *http.Request) (int, []mode
 }
 
 func (h *Handler) getCityDetails(w http.ResponseWriter, r *http.Request) (models.City, error) {
-	vars := mux.Vars(r)
-	idStr, ok := vars["city_id"]
-
-	if !ok {
+	idStr := chi.URLParam(r, "city_id")
+	if idStr == "" {
 		err := errors.New("city_id not found in path")
 		HandleError(err, "Error fetching city_id")
 		return models.City{}, err
@@ -211,9 +209,8 @@ func (h *Handler) getCountries(_ http.ResponseWriter, r *http.Request) (int, []m
 }
 
 func (h *Handler) getCountryDetails(w http.ResponseWriter, r *http.Request) (models.Country, error) {
-	vars := mux.Vars(r)
-	country, ok := vars["country_name"]
-	if !ok {
+	country := chi.URLParam(r, "country_name")
+	if country == "" {
 		err := errors.New("country_name not found in path")
 		HandleError(err, "Error fetching country_name")
 		return models.Country{}, err

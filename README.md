@@ -1,49 +1,109 @@
-# SkyVisor Insight
+# SkyVisor Insight Web
 
-Scrapping API of https://aviationstack.com/
+SkyVisor Insight is a server-driven flight and travel companion. The web application combines fast, progressively enhanced pages with flight discovery, aviation reference data, interactive maps, secure accounts, and a foundation for trips, alerts, AI assistance, and native mobile clients.
 
-The main stack of this project contains:
+This repository contains the web experience. It renders accessible HTML on the server and adds focused interactivity without a client-side application framework.
 
-- [Go](https://go.dev/)
-- [HTMX](https://htmx.org/)
-- [TailwindCSS](https://tailwindui.com/)
-- [Templ](https://github.com/a-h/templ)
+## What is included
 
-[pgx](https://github.com/jackc/pgx) is the PostgresSQL Driver used to handler queries to the database.
+- Public flight lookup with HTMX fragments and graceful non-JavaScript behavior
+- Flight, airline, airport, city, and country exploration
+- Interactive MapLibre and OpenLayers maps with locally bundled browser assets
+- Cookie sessions backed by Redis, CSRF protection, and authenticated account pages
+- Responsive light and dark themes using current TemplUI components
+- Explicit migration and Aviationstack import commands
+- Production-oriented HTTP timeouts, graceful shutdown, structured logging, and a non-root container
 
-This project uses [Docker](https://www.docker.com/) to deploy and test the website
+Trips, alerts, SSE event streams, and the AI travel assistant are implemented in the companion API foundation and are the next web integration milestone.
 
-## What this repo will never handle
+## Stack
 
-- Deployment beyond simple Dockerfile
-- Testing
+- Go 1.26.5, Chi, pgx, PostgreSQL, and Redis
+- Templ and TemplUI for type-safe server-rendered components
+- HTMX 2, Alpine.js 3, Tailwind CSS 4, MapLibre GL, and OpenLayers
+- Bun for reproducible frontend asset builds
+- Docker for production packaging
 
-## Prerequisites
+Browser dependencies and fonts are compiled into `app/static`; production pages do not depend on a JavaScript CDN.
 
-- [Air](https://github.com/cosmtrek/air)
-- [Docker](https://docs.docker.com/get-started/)
+## Local development
 
-### Todo list
+Requirements:
 
-- [x] Map components
-- [x] Table components
-- [x] Navigation on tables
-- [x] Order By on tables
-- [x] Fix order on search params
-- [x] Live flights endpoint
-- [x] Fix all flighst status css pages
-- [x] Fix order on flights (duplicate table?)
-- [x] Work on routes (Flights WIP)
-- [ ] Review the methods to bulk import with [Postgres](https://www.postgresql.org/docs/current/sql-copy.html)
-- [ ] Create profile page and settings page
-- [ ] Optimise Docker container
-- [ ] Deployment
+- Go 1.26.5 or newer
+- Bun 1.3 or newer
+- Docker with Compose, or locally available PostgreSQL and Redis instances
+- An Aviationstack key only when running the importer or live flight lookups
 
-# Low Priority
+Create the local configuration:
 
-- [ ] Add search input on maps
-- [ ] Improve run functions separating logs, migrations and dependency injection
+```sh
+cp .env.sample .env
+```
 
-## Getting Started
+Set `SESSION_KEY` to at least 32 random characters and provide `DB_PASS`. The defaults expect PostgreSQL on `127.0.0.1:5435`, Redis on `127.0.0.1:6381`, and the web server on `127.0.0.1:6969`.
 
-Create `.env` file (see `env.sample`), then run `make local-setup` and `make run`. That's it :)
+Start local dependencies and prepare the application:
+
+```sh
+docker compose up -d postgres redis
+bun install --frozen-lockfile
+bun run build
+go run github.com/a-h/templ/cmd/templ@v0.3.1020 generate
+go run ./cmd/migrate
+go run ./cmd/web
+```
+
+Open `http://127.0.0.1:6969`.
+
+Database migrations and bulk imports never run as a side effect of starting the web server. Import reference and flight data explicitly:
+
+```sh
+go run ./cmd/importer
+```
+
+## Verification
+
+```sh
+bun run check
+go run github.com/a-h/templ/cmd/templ@v0.3.1020 generate
+go test -race ./...
+go vet ./...
+go build ./cmd/...
+```
+
+The same checks and a container build run in GitHub Actions.
+
+## Container
+
+```sh
+docker build -t skyvisor-insight-web .
+docker run --rm -p 6969:6969 --env-file .env skyvisor-insight-web
+```
+
+Use `ADDR=0.0.0.0:6969` and `COOKIE_SECURE=true` behind the production ingress.
+
+## Platform repositories
+
+The modernization is split into independently deployable, repo-ready foundations beside this directory:
+
+| Repository | Responsibility |
+| --- | --- |
+| `skyvisor-api` | Go API, trips, SSE events, Aviationstack adapter, and optional Google GenAI assistant |
+| `skyvisor-mcp` | Go MCP server exposing flight, trip, and assistant tools over stdio |
+| `skyvisor-infra` | Hetzner Cloud Terraform, k3s, Helm, Argo CD, and GitOps configuration |
+| `skyvisor-ios` | Native SwiftUI feature package and typed API client |
+| `skyvisor-android` | Native Kotlin and Jetpack Compose application foundation |
+
+The web application remains a deliberate server-driven frontend. Shared product data should move through `skyvisor-api`; native applications and the MCP server should not connect directly to the web database.
+
+## Security notes
+
+- Never commit `.env`, API keys, database credentials, session keys, or bearer tokens.
+- Use HTTPS for Aviationstack and all non-loopback API traffic.
+- Store production secrets with SOPS or an external secret manager and inject them at deployment time.
+- The companion API validates OIDC JWTs and scopes durable trips by the verified `sub` claim. The web application's current cookie login must complete an Authorization Code with PKCE integration before it calls those authenticated endpoints on a user's behalf.
+
+## License
+
+MIT.

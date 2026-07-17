@@ -1,34 +1,30 @@
-FROM node:latest as assets
-WORKDIR /app
-COPY package.json ./
-COPY package-lock.json ./
-COPY postcss.config.cjs ./
-COPY fonts.css ./
-RUN mkdir -p app/static/css app/static/fonts
-RUN npm install --ci
-RUN npm run fonts
-RUN npm run tailwind-build
+# syntax=docker/dockerfile:1.7
 
-# Define the "base" stage
-FROM golang:latest as base
-WORKDIR /app
-COPY go.mod ./
-COPY go.sum ./
+FROM oven/bun:1.3.14-alpine AS assets
+WORKDIR /src
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+COPY app ./app
+RUN bun run build
+
+FROM golang:1.26.5-alpine AS build
+WORKDIR /src
+RUN apk add --no-cache ca-certificates git
+COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
+COPY --from=assets /src/app/static ./app/static
+RUN go run github.com/a-h/templ/cmd/templ@v0.3.1020 generate
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/skyvisor ./cmd/web
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/migrate ./cmd/migrate
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/importer ./cmd/importer
 
-# Define the "dev" stage
-FROM base as app-dev
-RUN curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+FROM alpine:3.22 AS runtime
+RUN apk add --no-cache ca-certificates tzdata && addgroup -S skyvisor && adduser -S -G skyvisor skyvisor
 WORKDIR /app
-RUN go install github.com/a-h/templ/cmd/templ@latest
-RUN templ generate
-CMD ["air"]
-
-# Define the final stage
-FROM base as final
-COPY --from=assets /app/controller/static/css/* ./controller/static/css/
-COPY --from=assets /app/controller/static/fonts/* ./controller/static/fonts/
-RUN CGO_ENABLED=0 go build -o /app/server
+COPY --from=build /out/skyvisor /usr/local/bin/skyvisor
+COPY --from=build /out/migrate /usr/local/bin/skyvisor-migrate
+COPY --from=build /out/importer /usr/local/bin/skyvisor-importer
+USER skyvisor
 EXPOSE 6969
-ENTRYPOINT ["/app/server"]
+ENTRYPOINT ["/usr/local/bin/skyvisor"]

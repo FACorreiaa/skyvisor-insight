@@ -12,7 +12,7 @@ import (
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
 	airline "github.com/FACorreiaa/Aviation-tracker/app/view/airlines"
 	"github.com/a-h/templ"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 // Airline
@@ -58,9 +58,8 @@ func (h *Handler) getAirline(w http.ResponseWriter, r *http.Request) (int, []mod
 }
 
 func (h *Handler) getAirlineDetails(w http.ResponseWriter, r *http.Request) (models.Airline, error) {
-	vars := mux.Vars(r)
-	airlineName, ok := vars["airline_name"]
-	if !ok {
+	airlineName := chi.URLParam(r, "airline_name")
+	if airlineName == "" {
 		err := errors.New("airline_name not found in path")
 		HandleError(err, "Error fetching airline_name")
 		httperror.ErrNotFound.WriteError(w)

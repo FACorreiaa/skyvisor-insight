@@ -6,6 +6,7 @@ import (
 
 	"context"
 
+	"github.com/FACorreiaa/Aviation-tracker/app/auth"
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
 	svg2 "github.com/FACorreiaa/Aviation-tracker/app/static/svg"
@@ -16,6 +17,7 @@ import (
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
@@ -36,10 +38,11 @@ type Handler struct {
 	sessions    *sessions.CookieStore
 	pool        *pgxpool.Pool
 	redisClient *redis.Client
+	oidc        *auth.Client
 }
 
 func NewHandler(s *services.Service, sessions *sessions.CookieStore,
-	pool *pgxpool.Pool, redisClient *redis.Client) *Handler {
+	pool *pgxpool.Pool, redisClient *redis.Client, oidc *auth.Client) *Handler {
 	decoder := form.NewDecoder()
 	validate := validator.New()
 	translator, _ := ut.New(en.New(), en.New()).GetTranslator("en")
@@ -51,6 +54,7 @@ func NewHandler(s *services.Service, sessions *sessions.CookieStore,
 		sessions:    sessions,
 		pool:        pool,
 		redisClient: redisClient,
+		oidc:        oidc,
 	}
 }
 
@@ -110,7 +114,7 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 			{Path: "/flights/flight", Label: "Flights", Icon: svg2.PaperAirplaneIcon()},
 			{Path: "/locations/city", Label: "Locations", Icon: svg2.LocationsIcon()},
 			{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
-			{Path: "/logout", Label: "Sign out", Icon: svg2.LogoutIcon()},
+			{Path: "/logout", Label: "Sign out", Icon: svg2.LogoutIcon(), IsLogout: true},
 		}
 	}
 
@@ -120,6 +124,7 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 		User:      user,
 		ActiveNav: r.URL.Path,
 		Content:   data,
+		CSRFToken: csrf.Token(r),
 	}
 
 	return pages.LayoutPage(l)

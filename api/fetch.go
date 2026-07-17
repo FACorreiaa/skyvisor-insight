@@ -48,13 +48,15 @@ func getData(endpoint, queryParam, file string) ([]byte, error) {
 
 const value = 2
 
+var aviationHTTPClient = &http.Client{Timeout: 12 * time.Second}
+
 func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, error) {
 	accessKey := os.Getenv("AVIATION_STACK_API_KEY")
 	if accessKey == "" {
 		return nil, errors.New("missing API access key")
 	}
 
-	baseURL := "http://api.aviationstack.com/v1/"
+	baseURL := "https://api.aviationstack.com/v1/"
 
 	// Parse the base URL
 	parsedURL, err := url.Parse(baseURL)
@@ -85,7 +87,11 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 
 	finalURL := parsedURL.String()
 
-	response, err := http.Get(finalURL) //nolint
+	request, err := http.NewRequestWithContext(context.Background(), http.MethodGet, finalURL, nil)
+	if err != nil {
+		return nil, errors.New("failed to create request")
+	}
+	response, err := aviationHTTPClient.Do(request)
 	if err != nil {
 		return nil, errors.New("failed to make GET request")
 	}
@@ -94,13 +100,12 @@ func fetchAviationStackData(endpoint string, queryParams ...string) ([]byte, err
 		return nil, errors.New("something is not ok")
 	}
 
-	body, err := io.ReadAll(response.Body)
+	defer response.Body.Close()
+	body, err := io.ReadAll(io.LimitReader(response.Body, 16<<20))
 
 	if err != nil {
 		return nil, errors.New("failed to read response body")
 	}
-
-	defer response.Body.Close()
 
 	return body, nil
 }

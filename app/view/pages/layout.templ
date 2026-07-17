@@ -11,37 +11,22 @@ templ LayoutPage(l models.LayoutTempl) {
 		<head>
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<meta name="theme-color" content="#f7f9fc"/>
+			<meta name="description" content="Track flights, organize trips, and get useful travel alerts with SkyVisor Insight."/>
 			<title>{ l.Title } - SkyVisor Insight</title>
-			<link rel="stylesheet" href="../../static/css/fonts.css"/>
-			<link rel="stylesheet" href="../../static/css/output.css"/>
-			<link rel="stylesheet" href="../../static/css/ionicons.min.css"/>
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css"/>
-			<link rel="preconnect" href="https://fonts.googleapis.com"/>
-			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-			<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet"/>
-			<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css"/>
-			<script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
-			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
-			<script src="https://unpkg.com/@popperjs/core@2"></script>
-			<script src="https://unpkg.com/@popperjs/core@2"></script>
-			<script src="https://unpkg.com/tippy.js@6"></script>
-			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
-			<script>
-        document.addEventListener('alpine:init', () => {
-        const theme = localStorage.getItem('theme') || 'lemonade';
-        document.documentElement.setAttribute('data-theme', theme);
-        });
-      </script>
-			<script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
-			<script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+			<link rel="stylesheet" href="/static/css/maplibre-gl.css"/>
+			<link rel="stylesheet" href="/static/css/app.css"/>
+			<script src="/static/js/theme.js"></script>
+			<script src="/static/js/ol.js"></script>
+			<script src="/static/js/arc.js"></script>
+			<script defer src="/static/js/app.js"></script>
 		</head>
-		<body hx-boost="true" x-data="{theme: 'lemonade'}" :class="theme" lang="en">
-			<div class="flex flex-col h-screen font-lato" id="contents">
-				@components.NavbarComponent(l.Nav, l.User, l.ActiveNav)
-				<div class="h-full overflow-auto">
+		<body hx-boost="true" x-data="appShell" lang="en">
+			<div class="flex min-h-screen flex-col" id="contents">
+				@components.NavbarComponent(l.Nav, l.User, l.ActiveNav, l.CSRFToken)
+				<main class="flex-1" id="main-content">
 					@l.Content
-				</div>
+				</main>
 				@components.FooterComponent()
 			</div>
 		</body>

@@ -1,32 +1,46 @@
 package repository
 
 import (
+	"context"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
+	"strings"
 	"time"
 
-	"context"
-
-	"crypto/rand"
-
+	"github.com/FACorreiaa/Aviation-tracker/app/auth"
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
-	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/oauth2"
 )
 
 const (
-	RedisPrefix = "user_session:"
-	RandSize    = 32
-	MaxAge      = time.Hour * 24 * 60
+	RedisPrefix     = "user_session:"
+	OIDCTokenPrefix = "oidc_token:"
+	RandSize        = 32
+	MaxAge          = time.Hour * 24 * 60
 )
+
+const userColumns = `
+	user_id,
+	username,
+	email,
+	password_hash,
+	bio,
+	image,
+	created_at,
+	updated_at
+`
 
 type Token = string
 
@@ -50,133 +64,186 @@ func NewAccountRepository(db *pgxpool.Pool,
 	}
 }
 
-// Logout deletes the user token from the Redis store.
+// Logout deletes the session token and any stored OIDC tokens from Redis.
 func (a *AccountRepository) Logout(ctx context.Context, token Token) error {
-	// userKey := RedisPrefix + string(token)
-
-	// Check if the token exists
-	exists, err := a.redisClient.Exists(ctx, token).Result()
-	if err != nil {
-		return errors.New("error checking token existence")
-	}
-
-	if exists == 0 {
-		// Token not found, consider it already logged out
-		return nil
-	}
-
-	// Delete the token
-	if err = a.redisClient.Del(ctx, token).Err(); err != nil {
+	if err := a.redisClient.Del(ctx, token, OIDCTokenPrefix+token).Err(); err != nil {
 		return errors.New("error deleting token")
 	}
-
 	return nil
 }
 
-func (a *AccountRepository) Login(ctx context.Context, form models.LoginForm) (*Token, error) {
-	if err := a.validator.Struct(form); err != nil {
+// UpsertOIDCUser links a verified OIDC principal to a local user row. Match
+// order: existing identity, then verified email (adopting pre-OIDC accounts),
+// then a fresh row.
+func (a *AccountRepository) UpsertOIDCUser(ctx context.Context, principal auth.Principal) (*models.UserSession, error) {
+	if principal.Issuer == "" || principal.Subject == "" {
+		return nil, errors.New("identity issuer and subject are required")
+	}
+
+	rows, err := a.pgpool.Query(ctx, `
+		update "user"
+		set email = coalesce(nullif($3, ''), email),
+			image = coalesce(nullif($4, ''), image)
+		where oidc_issuer = $1 and oidc_subject = $2
+		returning `+userColumns,
+		principal.Issuer, principal.Subject, strings.ToLower(principal.Email), principal.Picture,
+	)
+	if err != nil {
+		slog.Error("look up OIDC identity", "error", err)
+		return nil, errors.New("internal server error")
+	}
+	user, err := pgx.CollectOneRow(rows, pgx.RowToStructByPos[models.UserSession])
+	if err == nil {
+		return &user, nil
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
+		slog.Error("collect OIDC identity", "error", err)
+		return nil, errors.New("internal server error")
+	}
+
+	if principal.EmailVerified && principal.Email != "" {
+		rows, err := a.pgpool.Query(ctx, `
+			update "user"
+			set oidc_issuer = $1,
+				oidc_subject = $2,
+				image = coalesce(nullif($4, ''), image)
+			where email = $3 and oidc_issuer is null
+			returning `+userColumns,
+			principal.Issuer, principal.Subject, strings.ToLower(principal.Email), principal.Picture,
+		)
+		if err != nil {
+			slog.Error("link OIDC identity by email", "error", err)
+			return nil, errors.New("internal server error")
+		}
+		user, err := pgx.CollectOneRow(rows, pgx.RowToStructByPos[models.UserSession])
+		if err == nil {
+			return &user, nil
+		}
+		if !errors.Is(err, pgx.ErrNoRows) {
+			slog.Error("collect linked identity", "error", err)
+			return nil, errors.New("internal server error")
+		}
+	}
+
+	return a.insertOIDCUser(ctx, principal)
+}
+
+func (a *AccountRepository) insertOIDCUser(ctx context.Context, principal auth.Principal) (*models.UserSession, error) {
+	if principal.Email == "" {
+		return nil, errors.New("an email address is required to sign in; grant the email permission and try again")
+	}
+	base := usernameCandidate(principal)
+	for attempt := 0; attempt < 5; attempt++ {
+		username := base
+		if attempt > 0 {
+			username = fmt.Sprintf("%s-%s", base, identitySuffix(principal, attempt))
+		}
+		rows, err := a.pgpool.Query(ctx, `
+			insert into "user" (username, email, oidc_issuer, oidc_subject, image)
+			values ($1, $2, $3, $4, nullif($5, ''))
+			returning `+userColumns,
+			username, strings.ToLower(principal.Email), principal.Issuer, principal.Subject, principal.Picture,
+		)
+		if err == nil {
+			user, collectErr := pgx.CollectOneRow(rows, pgx.RowToStructByPos[models.UserSession])
+			if collectErr == nil {
+				return &user, nil
+			}
+			err = collectErr
+		}
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
+			// Another identity already resolved concurrently, or the generated
+			// username collided; re-check the identity before retrying.
+			existing, lookupErr := a.lookupByIdentity(ctx, principal)
+			if lookupErr == nil {
+				return existing, nil
+			}
+			continue
+		}
+		slog.Error("insert OIDC user", "error", err)
+		return nil, errors.New("internal server error")
+	}
+	return nil, errors.New("unable to allocate a username")
+}
+
+func (a *AccountRepository) lookupByIdentity(ctx context.Context, principal auth.Principal) (*models.UserSession, error) {
+	rows, err := a.pgpool.Query(ctx, `
+		select `+userColumns+` from "user"
+		where oidc_issuer = $1 and oidc_subject = $2
+		limit 1
+	`, principal.Issuer, principal.Subject)
+	if err != nil {
 		return nil, err
 	}
-
-	rows, _ := a.pgpool.Query(
-		ctx,
-		`
-		select
-			user_id,
-			username,
-			email,
-			password_hash,
-			bio,
-			image,
-			created_at,
-			updated_at
-		from "user" where email = $1 limit 1
-		`,
-		form.Email,
-	)
-	user, err := pgx.CollectOneRow[models.UserSession](rows, pgx.RowToStructByPos[models.UserSession])
+	user, err := pgx.CollectOneRow(rows, pgx.RowToStructByPos[models.UserSession])
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, errors.New("invalid email or password")
-		}
-
-		slog.Error("Error querying user", "err", err)
-		return nil, errors.New("internal server error")
+		return nil, err
 	}
+	return &user, nil
+}
 
-	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(form.Password)); err != nil {
-		return nil, errors.New("invalid email or password")
-	}
-
+// CreateSession issues a random session token in Redis for the user.
+func (a *AccountRepository) CreateSession(ctx context.Context, userID uuid.UUID) (Token, error) {
 	tokenBytes := make([]byte, RandSize)
-	if _, err = rand.Read(tokenBytes); err != nil {
-		slog.Error("Error generating token", "err", err)
-		return nil, errors.New("internal server error")
+	if _, err := rand.Read(tokenBytes); err != nil {
+		slog.Error("generate session token", "error", err)
+		return "", errors.New("internal server error")
 	}
-
 	token := fmt.Sprintf("%x", tokenBytes)
-	log.Printf("Generated token: %s", token)
+	if err := a.redisClient.Set(ctx, token, userID.String(), MaxAge).Err(); err != nil {
+		slog.Error("store login session", "error", err)
+		return "", errors.New("internal server error")
+	}
+	return token, nil
+}
 
-	// if _, err := a.pgpool.Exec(
-	//	ctx,
-	//	`
-	//	insert into user_token (user_id, token, context)
-	//	values ($1, $2, $3)
-	//	`,
-	//	user.ID,
-	//	token,
-	//	"auth",
-	// ); err != nil {
-	//	slog.Error("Error inserting token", "err", err)
-	//	return nil, errors.New("internal server error")
-	//}
-
-	// Store the session token in Redis
-	// key := RedisPrefix + string(token)
-	err = a.redisClient.Set(ctx, token, (user.ID).String(), MaxAge).Err()
+// StoreOIDCToken keeps the OAuth2 token set alongside the session so API
+// calls can attach and refresh the user's access token.
+func (a *AccountRepository) StoreOIDCToken(ctx context.Context, sessionToken Token, token *oauth2.Token) error {
+	payload, err := json.Marshal(token)
 	if err != nil {
-		log.Println("Error inserting token into Redis:", err)
+		return errors.New("encode OIDC token")
+	}
+	if err := a.redisClient.Set(ctx, OIDCTokenPrefix+sessionToken, payload, MaxAge).Err(); err != nil {
+		slog.Error("store OIDC token", "error", err)
+		return errors.New("internal server error")
+	}
+	return nil
+}
+
+func (a *AccountRepository) LoadOIDCToken(ctx context.Context, sessionToken Token) (*oauth2.Token, error) {
+	payload, err := a.redisClient.Get(ctx, OIDCTokenPrefix+sessionToken).Bytes()
+	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			return nil, errors.New("auth session expired")
+		}
+		slog.Error("read OIDC token", "error", err)
 		return nil, errors.New("internal server error")
 	}
-
-	log.Println("Token successfully inserted into Redis")
+	var token oauth2.Token
+	if err := json.Unmarshal(payload, &token); err != nil {
+		return nil, errors.New("decode OIDC token")
+	}
 	return &token, nil
 }
 
 func (m *MiddlewareRepository) UserFromSessionToken(ctx context.Context, token Token) (*models.UserSession, error) {
-	// key := RedisPrefix + string(token)
-	// Retrieve user ID from Redis
-	log.Println("Retrieving user ID from Redis for token:", token)
 	userID, err := m.RedisClient.Get(ctx, token).Result()
-	log.Println("Retrieved user ID from Redis:", userID)
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			return nil, errors.New("auth session expired")
 		}
 
-		log.Println("Error querying user ID with token from Redis:", err)
+		slog.Error("read login session", "error", err)
 		return nil, errors.New("internal server error")
 	}
 
-	// Retrieve user details from your data store (PostgreSQL in this case)
-	rows, err := m.Pgpool.Query(
-		ctx,
-		`
-		select
-			user_id,
-			username,
-			email,
-			password_hash,
-			bio,
-			image,
-			created_at,
-			updated_at
-		from "user" where user_id = $1 limit 1
-		`,
-		userID,
-	)
+	rows, err := m.Pgpool.Query(ctx, `
+		select `+userColumns+` from "user" where user_id = $1 limit 1
+	`, userID)
 	if err != nil {
-		log.Println("Error querying user from PostgreSQL:", err)
+		slog.Error("load session user", "error", err)
 		return nil, errors.New("internal server error")
 	}
 
@@ -185,79 +252,41 @@ func (m *MiddlewareRepository) UserFromSessionToken(ctx context.Context, token T
 		return nil, errors.New("internal server error")
 	}
 
-	// Check if the session has expired
-	if userWithToken.CreatedAt == nil || time.Since(*userWithToken.CreatedAt) > MaxAge {
-		return nil, errors.New("auth session expired")
-	}
-
 	return &userWithToken, nil
 }
 
-func (a *AccountRepository) RegisterNewAccount(ctx context.Context, form models.RegisterForm) (*Token, error) {
-	if err := a.validator.Struct(form); err != nil {
-		slog.Warn("Validation error")
-		return nil, err
+func usernameCandidate(principal auth.Principal) string {
+	for _, candidate := range []string{principal.Name, emailLocalPart(principal.Email)} {
+		if slug := slugify(candidate); slug != "" {
+			return slug
+		}
 	}
+	return "traveler"
+}
 
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(form.Password), bcrypt.DefaultCost)
-	if err != nil {
-		slog.Error("Error hashing password", "err", err)
-		return nil, errors.New("internal server error")
+func emailLocalPart(email string) string {
+	local, _, _ := strings.Cut(email, "@")
+	return local
+}
+
+func slugify(value string) string {
+	var builder strings.Builder
+	for _, r := range strings.ToLower(strings.TrimSpace(value)) {
+		switch {
+		case r >= 'a' && r <= 'z', r >= '0' && r <= '9':
+			builder.WriteRune(r)
+		case r == ' ', r == '.', r == '-', r == '_':
+			builder.WriteRune('-')
+		}
 	}
-
-	var user models.UserSession
-	var token Token
-
-	err = pgx.BeginFunc(ctx, a.pgpool, func(tx pgx.Tx) error {
-		row, _ := tx.Query(
-			ctx,
-			`
-			insert into "user" (username, email, password_hash)
-				values ($1, $2, $3)
-			returning
-				user_id,
-				username,
-				email,
-				password_hash,
-				bio,
-				image,
-				created_at,
-				updated_at
-			`,
-			form.Username,
-			form.Email,
-			passwordHash,
-		)
-		user, err = pgx.CollectOneRow(row, pgx.RowToStructByPos[models.UserSession])
-		if err != nil {
-			return errors.New("error inserting user")
-		}
-
-		tokenBytes := make([]byte, RandSize)
-		if _, err = rand.Read(tokenBytes); err != nil {
-			return errors.New("error generating token")
-		}
-		token = fmt.Sprintf("%x", tokenBytes)
-
-		// Store the session token in Redis
-		// redisKey := fmt.Sprintf("user_session:%s", token)
-		if err := a.redisClient.Set(ctx, token, user.ID, time.Hour*24*7).Err(); err != nil {
-			return errors.New("error inserting token into Redis")
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
-			return nil, errors.New("username or email already taken")
-		}
-
-		slog.Error("Error creating account", "err", err)
-		return nil, errors.New("internal server error")
+	slug := strings.Trim(builder.String(), "-")
+	if len(slug) > 32 {
+		slug = slug[:32]
 	}
+	return slug
+}
 
-	slog.Info("Created account", "user_id", user.ID)
-	return &token, nil
+func identitySuffix(principal auth.Principal, attempt int) string {
+	sum := sha256.Sum256([]byte(fmt.Sprintf("%s|%s|%d", principal.Issuer, principal.Subject, attempt)))
+	return fmt.Sprintf("%x", sum[:3])
 }

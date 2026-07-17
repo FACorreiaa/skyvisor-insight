@@ -89,9 +89,13 @@ type LayoutTempl struct {
 }
 
 type SettingsPage struct {
-	Updated bool
-	Errors  []string
-	User    UserSession
+	Updated     bool
+	Errors      []string
+	User        UserSession
+	Email       string
+	EmailAlerts bool
+	Plan        string
+	Message     string
 }
 
 type LoginPage struct {

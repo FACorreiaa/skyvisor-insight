@@ -1,0 +1,316 @@
+package watches
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/FACorreiaa/Aviation-tracker/app/apiclient"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/badge"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/button"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
+)
+
+templ SharePage(view apiclient.PublicShare, message string) {
+	<section class="mx-auto max-w-xl px-4 py-16 sm:px-6">
+		<p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Pickup status</p>
+		if message != "" {
+			<p class="mt-4 text-sm text-muted-foreground">{ message }</p>
+		} else {
+			<h1 class="mt-3 font-mono text-3xl font-semibold tracking-tight">{ view.FlightNumber }</h1>
+			if view.Label != "" {
+				<p class="mt-1 text-sm text-muted-foreground">{ view.Label }</p>
+			}
+			if view.Flight != nil {
+				<div class="mt-8 grid gap-3">
+					@fact("Status", view.Flight.Status, routeLabel(view.Flight))
+					@fact("Arrival", gateLabel(view.Flight.ArrivalTerminal, view.Flight.ArrivalGate), timeLabel(view.Flight.EstimatedArrival, time.Time{}))
+					@fact("Baggage", baggageLabel(view.Flight.ArrivalBaggage), delayLabel(view.Flight.ArrivalDelayMinutes))
+				</div>
+				if view.Flight.Inbound != nil {
+					<div class="mt-6 rounded-lg border border-border bg-muted/40 p-4">
+						<p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Where's my plane</p>
+						<p class="mt-1 text-sm font-medium">{ inboundHeadline(view.Flight.Inbound) }</p>
+						<p class="mt-0.5 text-xs text-muted-foreground">{ view.Flight.Inbound.Message }</p>
+					</div>
+				}
+			} else {
+				<p class="mt-6 text-sm text-muted-foreground">Live details will appear once the flight is available.</p>
+			}
+			<p class="mt-8 text-xs text-muted-foreground">Link expires { view.ExpiresAt.Local().Format("Mon 15:04") }.</p>
+		}
+	</section>
+}
+
+templ WatchesPage(items []apiclient.Watch, entitlements apiclient.Entitlements, message string, csrfToken string) {
+	<section class="mx-auto max-w-4xl px-4 py-10 sm:px-6" data-skyvisor-events="true">
+		<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+			<div class="max-w-2xl">
+				<p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Live monitoring</p>
+				<h1 class="mt-3 text-3xl font-semibold tracking-tight">Watches</h1>
+				<p class="mt-2 text-muted-foreground">We keep an eye on your flights and surface delays, gate changes, and cancellations as they happen.</p>
+			</div>
+			@planBadge(entitlements)
+		</div>
+		if message != "" {
+			<p class="mt-5 rounded-md border border-primary/25 bg-primary/5 px-3 py-2 text-sm text-foreground" role="status">{ message }</p>
+		}
+		@paywallCard(entitlements, csrfToken)
+		@createWatchForm(csrfToken)
+		<div class="mt-8 grid gap-4">
+			if len(items) == 0 {
+				@card.Card(card.Props{Class: "border-dashed bg-muted/35 shadow-none"}) {
+					@card.Content(card.ContentProps{Class: "p-5"}) {
+						<h2 class="text-sm font-semibold">No flights watched yet</h2>
+						<p class="mt-1 text-sm leading-relaxed text-muted-foreground">Add a flight number above, or press Watch on any trip segment or track result.</p>
+					}
+				}
+			}
+			for _, item := range items {
+				@watchCard(item, csrfToken)
+			}
+		</div>
+	</section>
+}
+
+templ planBadge(entitlements apiclient.Entitlements) {
+	<div class="rounded-xl border border-border bg-card px-4 py-3 text-sm shadow-sm">
+		<div class="flex items-center gap-2">
+			<span class="text-muted-foreground">Plan</span>
+			@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "uppercase"}) {
+				{ planLabel(entitlements.Plan) }
+			}
+		</div>
+		<p class="mt-1 text-xs text-muted-foreground">{ watchQuota(entitlements) }</p>
+	</div>
+}
+
+templ paywallCard(entitlements apiclient.Entitlements, csrfToken string) {
+	if entitlements.Plan != "pro" {
+		<div class="mt-8 rounded-xl border border-primary/25 bg-primary/[0.04] p-5 shadow-sm">
+			<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div>
+					<h2 class="text-sm font-semibold">SkyVisor Pro</h2>
+					<p class="mt-1 text-sm text-muted-foreground">Free watches one flight at a time. Pro unlocks unlimited concurrent watches and keeps every trip segment under watch.</p>
+				</div>
+				<form method="post" action="/billing/checkout">
+					<input type="hidden" name="csrf_token" value={ csrfToken }/>
+					@button.Button(button.Props{Type: button.TypeSubmit}) {
+						Upgrade to Pro
+					}
+				</form>
+			</div>
+		</div>
+	}
+}
+
+templ createWatchForm(csrfToken string) {
+	<form method="post" action="/watches" class="mt-8 rounded-xl border border-border bg-card p-5 shadow-sm">
+		<input type="hidden" name="csrf_token" value={ csrfToken }/>
+		<input type="hidden" name="return_to" value="/watches"/>
+		<h2 class="text-sm font-semibold">Watch a flight</h2>
+		<div class="mt-4 flex flex-col gap-3 sm:flex-row">
+			<input name="flight_number" required maxlength="8" placeholder="TP1363" class="h-11 w-full rounded-md border border-input bg-transparent px-3 font-mono text-sm uppercase sm:max-w-xs"/>
+			@button.Button(button.Props{Type: button.TypeSubmit, Class: "h-11"}) {
+				Start watching
+			}
+		</div>
+	</form>
+}
+
+templ watchCard(item apiclient.Watch, csrfToken string) {
+	@card.Card(card.Props{}) {
+		<div class="flex flex-col gap-3 border-b border-border p-5 sm:flex-row sm:items-center sm:justify-between">
+			<div>
+				<div class="flex flex-wrap items-center gap-2">
+					@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "font-mono"}) {
+						{ item.FlightNumber }
+					}
+					if item.Flight != nil && item.Flight.Status != "" {
+						@badge.Badge(badge.Props{Variant: badge.VariantOutline, Class: "capitalize"}) {
+							{ item.Flight.Status }
+						}
+					}
+					if item.LastEventType != "" {
+						@badge.Badge(badge.Props{Variant: badge.VariantSecondary}) {
+							{ item.LastEventType }
+						}
+					}
+					if item.Flight != nil && item.Flight.Inbound != nil && item.Flight.Inbound.LateRisk {
+						@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "border-destructive/30 bg-destructive/10 text-destructive"}) {
+							Inbound late
+						}
+					}
+				</div>
+				<p class="mt-2 text-sm text-muted-foreground">{ watchSubtitle(item) }</p>
+			</div>
+			<div class="flex flex-wrap gap-2">
+				<form method="post" action={ watchShareAction(item.ID) }>
+					<input type="hidden" name="csrf_token" value={ csrfToken }/>
+					@button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantOutline, Size: button.SizeSm}) {
+						Share pickup link
+					}
+				</form>
+				<form method="post" action={ watchDeleteAction(item.ID) }>
+					<input type="hidden" name="csrf_token" value={ csrfToken }/>
+					@button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantOutline, Size: button.SizeSm}) {
+						Stop
+					}
+				</form>
+			</div>
+		</div>
+		if item.Share != nil {
+			<div class="border-b border-border px-5 py-3 text-sm">
+				<span class="text-muted-foreground">Pickup link: </span>
+				<a href={ item.Share.URLPath } class="font-mono text-primary underline-offset-4 hover:underline">{ item.Share.URLPath }</a>
+			</div>
+		}
+		if item.Flight != nil {
+			@card.Content(card.ContentProps{Class: "grid gap-3 p-5 sm:grid-cols-3"}) {
+				@fact("Route", routeLabel(item.Flight), delayLabel(item.Flight.DepartureDelayMinutes))
+				@fact("Departure", gateLabel(item.Flight.DepartureTerminal, item.Flight.DepartureGate), timeLabel(item.Flight.EstimatedDeparture, item.Flight.ScheduledAt))
+				@fact("Arrival", gateLabel(item.Flight.ArrivalTerminal, item.Flight.ArrivalGate), baggageLabel(item.Flight.ArrivalBaggage))
+			}
+			if item.Flight.Inbound != nil {
+				<div class="border-t border-border px-5 py-4">
+					<p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Where's my plane</p>
+					<p class="mt-1 text-sm font-medium">{ inboundHeadline(item.Flight.Inbound) }</p>
+					<p class="mt-0.5 text-xs text-muted-foreground">{ item.Flight.Inbound.Message }</p>
+				</div>
+			}
+		}
+	}
+}
+
+templ fact(label, primary, secondary string) {
+	<div class="rounded-lg bg-muted/55 p-3">
+		<div class="text-xs font-medium text-muted-foreground">{ label }</div>
+		<div class="mt-1 font-medium">{ primary }</div>
+		<div class="mt-0.5 text-xs text-muted-foreground">{ secondary }</div>
+	</div>
+}
+
+func planLabel(plan string) string {
+	if plan == "pro" {
+		return "Pro"
+	}
+	return "Free"
+}
+
+func watchQuota(entitlements apiclient.Entitlements) string {
+	if entitlements.WatchLimit < 0 {
+		return fmt.Sprintf("%d active · unlimited", entitlements.ActiveWatches)
+	}
+	return fmt.Sprintf("%d of %d active watches", entitlements.ActiveWatches, entitlements.WatchLimit)
+}
+
+func watchDeleteAction(id string) string {
+	return "/watches/" + id + "/delete"
+}
+
+func watchShareAction(id string) string {
+	return "/watches/" + id + "/share"
+}
+
+func inboundHeadline(inbound *apiclient.InboundAircraft) string {
+	if inbound == nil {
+		return ""
+	}
+	parts := make([]string, 0, 3)
+	if inbound.Registration != "" {
+		parts = append(parts, inbound.Registration)
+	}
+	if inbound.FlightNumber != "" {
+		parts = append(parts, inbound.FlightNumber)
+	}
+	if inbound.OriginIATA != "" && inbound.DestinationIATA != "" {
+		parts = append(parts, inbound.OriginIATA+" → "+inbound.DestinationIATA)
+	}
+	if len(parts) == 0 {
+		return "Inbound aircraft tracking"
+	}
+	out := parts[0]
+	for i := 1; i < len(parts); i++ {
+		out += " · " + parts[i]
+	}
+	return out
+}
+
+func watchSubtitle(item apiclient.Watch) string {
+	if item.Flight != nil && item.Flight.Airline != "" {
+		return item.Flight.Airline + " · updated " + relativeTime(item.UpdatedAt)
+	}
+	return "Watching · updated " + relativeTime(item.UpdatedAt)
+}
+
+func routeLabel(flight *apiclient.Flight) string {
+	if flight == nil {
+		return "Route pending"
+	}
+	if flight.DepartureIATA == "" && flight.ArrivalIATA == "" {
+		return "Route pending"
+	}
+	dep := flight.DepartureIATA
+	arr := flight.ArrivalIATA
+	if dep == "" {
+		dep = "???"
+	}
+	if arr == "" {
+		arr = "???"
+	}
+	return dep + " → " + arr
+}
+
+func gateLabel(terminal, gate string) string {
+	parts := make([]string, 0, 2)
+	if terminal != "" {
+		parts = append(parts, "Terminal "+terminal)
+	}
+	if gate != "" {
+		parts = append(parts, "Gate "+gate)
+	}
+	if len(parts) == 0 {
+		return "Gate pending"
+	}
+	if len(parts) == 1 {
+		return parts[0]
+	}
+	return parts[0] + " · " + parts[1]
+}
+
+func baggageLabel(baggage string) string {
+	if baggage == "" {
+		return "Baggage pending"
+	}
+	return "Baggage " + baggage
+}
+
+func delayLabel(minutes *int) string {
+	if minutes == nil || *minutes == 0 {
+		return "On time signal"
+	}
+	return fmt.Sprintf("+%d min delay", *minutes)
+}
+
+func timeLabel(preferred, fallback time.Time) string {
+	if !preferred.IsZero() {
+		return preferred.Local().Format("15:04")
+	}
+	if !fallback.IsZero() {
+		return fallback.Local().Format("15:04")
+	}
+	return "Time pending"
+}
+
+func relativeTime(value time.Time) string {
+	if value.IsZero() {
+		return "just now"
+	}
+	delta := time.Since(value)
+	if delta < time.Minute {
+		return "just now"
+	}
+	if delta < time.Hour {
+		return fmt.Sprintf("%d min ago", int(delta.Minutes()))
+	}
+	return value.Local().Format("15:04")
+}

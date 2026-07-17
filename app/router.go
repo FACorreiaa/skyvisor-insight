@@ -96,6 +96,8 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 	// Public routes, authentication is optional
 	r.With(authMiddleware.AuthMiddleware).Get("/", handler(h.Homepage))
 	r.With(authMiddleware.AuthMiddleware).Get("/track", handler(h.TrackFlight))
+	// Public pickup share pages do not require a session.
+	r.With(authMiddleware.AuthMiddleware).Get("/share/{token}", handler(h.SharePage))
 
 	// OIDC callback must stay reachable regardless of auth state.
 	r.With(authMiddleware.AuthMiddleware).Get("/auth/callback", handler(h.AuthCallback))
@@ -115,13 +117,23 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 
 		auth.Post("/logout", handler(h.Logout))
 		auth.Get("/settings", handler(h.SettingsPage))
+		auth.Post("/settings/alerts", handler(h.SettingsAlerts))
 
 		auth.Route("/trips", func(trips chi.Router) {
 			trips.Get("/", handler(h.TripsPage))
 			trips.Post("/", handler(h.TripsCreate))
 			trips.Post("/import", handler(h.TripsImport))
+			trips.Post("/assistant", handler(h.TripsAssistant))
 			trips.Post("/{id}/delete", handler(h.TripsDelete))
 		})
+
+		auth.Route("/watches", func(watches chi.Router) {
+			watches.Get("/", handler(h.WatchesPage))
+			watches.Post("/", handler(h.WatchesCreate))
+			watches.Post("/{id}/share", handler(h.WatchesShare))
+			watches.Post("/{id}/delete", handler(h.WatchesDelete))
+		})
+		auth.Post("/billing/checkout", handler(h.BillingCheckout))
 
 		auth.Route("/airlines", func(airlines chi.Router) {
 			airlines.Get("/airline", handler(h.AirlineMainPage))

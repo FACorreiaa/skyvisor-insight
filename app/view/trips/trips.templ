@@ -7,24 +7,25 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
 )
 
-templ TripsPage(trips []apiclient.Trip, message string, csrfToken string) {
+templ TripsPage(trips []apiclient.Trip, message string, assistantAnswer string, csrfToken string) {
 	<section class="mx-auto max-w-4xl px-4 py-10 sm:px-6">
 		<div class="max-w-2xl">
 			<p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">My travel</p>
 			<h1 class="mt-3 text-3xl font-semibold tracking-tight">Trips</h1>
-			<p class="mt-2 text-muted-foreground">Plan a trip and keep every flight of it in one timeline.</p>
+			<p class="mt-2 text-muted-foreground">Plan a trip, watch every segment, and get disruption guidance when connections get tight.</p>
 		</div>
 		if message != "" {
-			<p class="mt-5 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">{ message }</p>
+			<p class="mt-5 rounded-md border border-primary/25 bg-primary/5 px-3 py-2 text-sm text-foreground" role="status">{ message }</p>
 		}
 		@importTripForm(csrfToken)
 		@createTripForm(csrfToken)
+		@assistantForm(trips, assistantAnswer, csrfToken)
 		<div class="mt-8 grid gap-4">
 			if len(trips) == 0 {
 				@card.Card(card.Props{Class: "border-dashed bg-muted/35 shadow-none"}) {
 					@card.Content(card.ContentProps{Class: "p-5"}) {
 						<h2 class="text-sm font-semibold">No trips yet</h2>
-						<p class="mt-1 text-sm leading-relaxed text-muted-foreground">Create your first trip above. Add the flight numbers now or fill in the details later.</p>
+						<p class="mt-1 text-sm leading-relaxed text-muted-foreground">Create your first trip above. Flight segments are auto-watched within your plan limit.</p>
 					}
 				}
 			}
@@ -42,7 +43,7 @@ templ importTripForm(csrfToken string) {
 			<h2 class="text-sm font-semibold">Import a booking</h2>
 			<span class="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-primary">AI</span>
 		</div>
-		<p class="mt-1 text-sm text-muted-foreground">Paste a confirmation email or e-ticket text. We extract the flights, dates, and booking reference for you.</p>
+		<p class="mt-1 text-sm text-muted-foreground">Paste a confirmation email or e-ticket text. We extract the flights and start watching what your plan allows.</p>
 		<textarea name="text" rows="5" required maxlength="20000" placeholder="Paste your booking confirmation here…" class="mt-3 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"></textarea>
 		<div class="mt-3 flex justify-end">
 			@button.Button(button.Props{Type: button.TypeSubmit}) {
@@ -78,6 +79,41 @@ templ createTripForm(csrfToken string) {
 	</form>
 }
 
+templ assistantForm(trips []apiclient.Trip, answer string, csrfToken string) {
+	if len(trips) > 0 {
+		<form method="post" action="/trips/assistant" class="mt-8 rounded-xl border border-border bg-card p-5 shadow-sm">
+			<input type="hidden" name="csrf_token" value={ csrfToken }/>
+			<div class="flex items-center gap-2">
+				<h2 class="text-sm font-semibold">Disruption assistant</h2>
+				<span class="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-primary">Grounded</span>
+			</div>
+			<p class="mt-1 text-sm text-muted-foreground">Ask about a connection or delay. Answers use your live trip facts only.</p>
+			<div class="mt-4 grid gap-3 sm:grid-cols-[1fr_2fr]">
+				<div>
+					<label for="assistant-trip" class="text-xs font-medium text-muted-foreground">Trip</label>
+					<select id="assistant-trip" name="trip_id" required class="mt-1 h-11 w-full rounded-md border border-input bg-transparent px-3 text-sm">
+						for _, trip := range trips {
+							<option value={ trip.ID }>{ trip.Name }</option>
+						}
+					</select>
+				</div>
+				<div>
+					<label for="assistant-question" class="text-xs font-medium text-muted-foreground">Question</label>
+					<input id="assistant-question" name="question" required maxlength="2000" placeholder="Will I make my connection?" class="mt-1 h-11 w-full rounded-md border border-input bg-transparent px-3 text-sm"/>
+				</div>
+			</div>
+			<div class="mt-4 flex justify-end">
+				@button.Button(button.Props{Type: button.TypeSubmit}) {
+					Ask assistant
+				}
+			</div>
+			if answer != "" {
+				<div class="mt-4 rounded-lg bg-muted/55 p-4 text-sm leading-relaxed whitespace-pre-wrap">{ answer }</div>
+			}
+		</form>
+	}
+}
+
 templ tripCard(trip apiclient.Trip, csrfToken string) {
 	@card.Card(card.Props{}) {
 		<div class="flex flex-col gap-3 border-b border-border p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -92,6 +128,19 @@ templ tripCard(trip apiclient.Trip, csrfToken string) {
 				}
 			</form>
 		</div>
+		if len(trip.Connections) > 0 {
+			<div class="grid gap-2 border-b border-border px-5 py-4">
+				for _, connection := range trip.Connections {
+					<div class="flex flex-wrap items-center gap-2 text-sm">
+						@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: riskBadgeClass(connection.Risk)}) {
+							{ riskLabel(connection.Risk) }
+						}
+						<span class="font-mono text-xs">{ connection.FromFlight } → { connection.ToFlight }</span>
+						<span class="text-xs text-muted-foreground">{ connectionSummary(connection) }</span>
+					</div>
+				}
+			</div>
+		}
 		if len(trip.Segments) > 0 {
 			@card.Content(card.ContentProps{Class: "grid gap-3 p-5"}) {
 				for _, segment := range trip.Segments {
@@ -101,9 +150,33 @@ templ tripCard(trip apiclient.Trip, csrfToken string) {
 						}
 						<span class="font-mono text-sm font-medium">{ segmentRoute(segment) }</span>
 						<span class="text-xs text-muted-foreground">{ segmentTimes(segment) }</span>
-						if segment.BookingReference != "" {
-							<span class="ml-auto font-mono text-xs text-muted-foreground">Ref { segment.BookingReference }</span>
+						if segment.Live != nil && segment.Live.Status != "" {
+							@badge.Badge(badge.Props{Variant: badge.VariantOutline, Class: "capitalize"}) {
+								{ segment.Live.Status }
+							}
 						}
+						if segment.Live != nil && segment.Live.DepartureDelayMinutes != nil && *segment.Live.DepartureDelayMinutes > 0 {
+							@badge.Badge(badge.Props{Variant: badge.VariantSecondary}) {
+								{ segmentDelay(segment) }
+							}
+						}
+						if segment.ConnectionRisk != "" {
+							@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: riskBadgeClass(segment.ConnectionRisk)}) {
+								{ riskLabel(segment.ConnectionRisk) }
+							}
+						}
+						if segment.BookingReference != "" {
+							<span class="font-mono text-xs text-muted-foreground">Ref { segment.BookingReference }</span>
+						}
+						<form method="post" action="/watches" class="ml-auto">
+							<input type="hidden" name="csrf_token" value={ csrfToken }/>
+							<input type="hidden" name="flight_number" value={ segment.FlightNumber }/>
+							<input type="hidden" name="trip_id" value={ trip.ID }/>
+							<input type="hidden" name="return_to" value="/trips"/>
+							@button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantOutline, Size: button.SizeSm}) {
+								Watch
+							}
+						</form>
 					</div>
 				}
 			}

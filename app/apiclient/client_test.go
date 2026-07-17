@@ -30,6 +30,15 @@ func TestClientCallsAPI(t *testing.T) {
 			_, _ = w.Write([]byte(`{"error":{"code":"trip_not_found","message":"Trip not found"}}`))
 		case "DELETE /v1/trips/a":
 			w.WriteHeader(http.StatusNoContent)
+		case "GET /v1/watches":
+			_, _ = w.Write([]byte(`{"data":[{"id":"w1","flight_number":"TP1363","status":"active"}]}`))
+		case "POST /v1/watches":
+			w.WriteHeader(http.StatusCreated)
+			_, _ = w.Write([]byte(`{"id":"w2","flight_number":"BA492","status":"active"}`))
+		case "DELETE /v1/watches/w1":
+			w.WriteHeader(http.StatusNoContent)
+		case "POST /v1/billing/checkout":
+			_, _ = w.Write([]byte(`{"id":"cs_1","url":"https://checkout.stripe.test/session"}`))
 		default:
 			w.WriteHeader(http.StatusTeapot)
 		}
@@ -75,6 +84,28 @@ func TestClientCallsAPI(t *testing.T) {
 	}
 	if _, err := client.ListTrips(ctx, "wrong-token"); !errors.Is(err, ErrUnauthorized) {
 		t.Fatalf("ListTrips(bad token) error = %v, want ErrUnauthorized", err)
+	}
+
+	watches, err := client.ListWatches(ctx, "test-token")
+	if err != nil {
+		t.Fatalf("ListWatches() error = %v", err)
+	}
+	if len(watches) != 1 || watches[0].FlightNumber != "TP1363" {
+		t.Fatalf("ListWatches() = %#v", watches)
+	}
+	createdWatch, err := client.CreateWatch(ctx, "test-token", CreateWatch{FlightNumber: "BA492"})
+	if err != nil {
+		t.Fatalf("CreateWatch() error = %v", err)
+	}
+	if createdWatch.ID != "w2" {
+		t.Fatalf("CreateWatch() = %#v", createdWatch)
+	}
+	if err := client.DeleteWatch(ctx, "test-token", "w1"); err != nil {
+		t.Fatalf("DeleteWatch() error = %v", err)
+	}
+	checkout, err := client.CreateCheckout(ctx, "test-token")
+	if err != nil || checkout.URL == "" {
+		t.Fatalf("CreateCheckout() = %#v, err = %v", checkout, err)
 	}
 }
 

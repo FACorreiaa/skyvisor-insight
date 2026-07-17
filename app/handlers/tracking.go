@@ -11,6 +11,7 @@ import (
 
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+	"github.com/gorilla/csrf"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -47,7 +48,8 @@ func (h *Handler) TrackFlight(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
-	lookup := components.FlightLookupResult(flightNumber, result, message)
+	canWatch := r.Context().Value(models.CtxKeyAuthUser) != nil && h.service.API() != nil
+	lookup := components.FlightLookupResultAuth(flightNumber, result, message, canWatch, csrf.Token(r))
 	if strings.EqualFold(r.Header.Get("HX-Request"), "true") {
 		return lookup.Render(r.Context(), w)
 	}

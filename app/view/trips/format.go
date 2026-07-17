@@ -53,3 +53,78 @@ func segmentTimes(segment apiclient.TripSegment) string {
 	}
 	return departs + " – " + segment.ArrivesAt.Format("15:04") + " UTC"
 }
+
+func segmentDelay(segment apiclient.TripSegment) string {
+	if segment.Live == nil || segment.Live.DepartureDelayMinutes == nil {
+		return ""
+	}
+	return fmt.Sprintf("+%d min", *segment.Live.DepartureDelayMinutes)
+}
+
+func riskLabel(risk string) string {
+	switch risk {
+	case "ok":
+		return "Connection OK"
+	case "tight":
+		return "Tight"
+	case "miss_likely":
+		return "Miss likely"
+	case "unknown":
+		return "Unknown"
+	default:
+		return risk
+	}
+}
+
+func riskBadgeClass(risk string) string {
+	switch risk {
+	case "miss_likely":
+		return "border-destructive/30 bg-destructive/10 text-destructive"
+	case "tight":
+		return "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300"
+	case "ok":
+		return "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+	default:
+		return ""
+	}
+}
+
+func connectionSummary(connection apiclient.ConnectionRisk) string {
+	if connection.LayoverMinutes > 0 {
+		return fmt.Sprintf("%d min layover · %s", connection.LayoverMinutes, connection.Reason)
+	}
+	return connection.Reason
+}
+
+func AutoWatchMessage(result *apiclient.AutoWatchResult) string {
+	if result == nil {
+		return ""
+	}
+	if len(result.Started) == 0 && len(result.Skipped) == 0 {
+		return ""
+	}
+	msg := ""
+	if len(result.Started) > 0 {
+		msg = fmt.Sprintf("Watching %s.", joinFlights(result.Started))
+	}
+	for _, skipped := range result.Skipped {
+		if skipped.Reason == "watch_limit_reached" {
+			if msg != "" {
+				msg += " "
+			}
+			msg += "Free plan watches one flight — upgrade to Pro for the rest."
+			break
+		}
+	}
+	return msg
+}
+
+func joinFlights(flights []string) string {
+	if len(flights) == 0 {
+		return ""
+	}
+	if len(flights) == 1 {
+		return flights[0]
+	}
+	return fmt.Sprintf("%s and %d more", flights[0], len(flights)-1)
+}

@@ -12,8 +12,11 @@ templ SettingsPage(settings models.SettingsPage, csrfToken string) {
 		<div class="mb-10 max-w-2xl">
 			<p class="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Account</p>
 			<h1 class="text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">Your travel profile</h1>
-			<p class="mt-4 text-base leading-7 text-muted-foreground">Review the identity attached to this browser session and manage your access securely.</p>
+			<p class="mt-4 text-base leading-7 text-muted-foreground">Review the identity attached to this browser session and manage alert preferences.</p>
 		</div>
+		if settings.Message != "" {
+			<p class="mb-6 rounded-md border border-primary/25 bg-primary/5 px-3 py-2 text-sm" role="status">{ settings.Message }</p>
+		}
 		<div class="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
 			@card.Card(card.Props{Class: "overflow-hidden border-border/70 bg-card/80 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] backdrop-blur"}) {
 				@card.Header(card.HeaderProps{Class: "border-b border-border/70 pb-6"}) {
@@ -32,7 +35,11 @@ templ SettingsPage(settings models.SettingsPage, csrfToken string) {
 					</div>
 					<div>
 						<p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Email</p>
-						<p class="mt-2 break-all text-sm font-medium text-foreground">{ settings.User.Email }</p>
+						<p class="mt-2 break-all text-sm font-medium text-foreground">{ displayEmail(settings) }</p>
+					</div>
+					<div>
+						<p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Plan</p>
+						<p class="mt-2 text-sm font-medium capitalize text-foreground">{ planOrFree(settings.Plan) }</p>
 					</div>
 					if settings.User.Bio != "" {
 						<div class="sm:col-span-2">
@@ -42,18 +49,56 @@ templ SettingsPage(settings models.SettingsPage, csrfToken string) {
 					}
 				}
 			}
-			@card.Card(card.Props{Class: "h-fit border-border/70 bg-muted/30"}) {
-				@card.Header() {
-					@card.Title() { Session }
-					@card.Description() { Signing out revokes the server-side session and clears this browser cookie. }
+			<div class="grid gap-6">
+				@card.Card(card.Props{Class: "h-fit border-border/70 bg-muted/30"}) {
+					@card.Header() {
+						@card.Title() { Email alerts }
+						@card.Description() { Get delay, gate, and cancellation updates for watched flights. }
+					}
+					@card.Content(card.ContentProps{Class: "pt-6"}) {
+						<form method="post" action="/settings/alerts" class="grid gap-4">
+							@components.CSRFField(csrfToken)
+							<label class="flex items-start gap-3 text-sm">
+								<input type="checkbox" name="email_alerts" value="1" checked?={ settings.EmailAlerts } class="mt-1 size-4 rounded border-input"/>
+								<span>
+									<span class="font-medium">Send email when a watched flight changes</span>
+									<span class="mt-1 block text-muted-foreground">Uses { displayEmail(settings) }.</span>
+								</span>
+							</label>
+							@button.Button(button.Props{Type: button.TypeSubmit, FullWidth: true}) { Save preferences }
+						</form>
+					}
 				}
-				@card.Content(card.ContentProps{Class: "pt-6"}) {
-					<form method="post" action="/logout">
-						@components.CSRFField(csrfToken)
-						@button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantDestructive, FullWidth: true}) { Sign out }
-					</form>
+				@card.Card(card.Props{Class: "h-fit border-border/70 bg-muted/30"}) {
+					@card.Header() {
+						@card.Title() { Session }
+						@card.Description() { Signing out revokes the server-side session and clears this browser cookie. }
+					}
+					@card.Content(card.ContentProps{Class: "pt-6"}) {
+						<form method="post" action="/logout">
+							@components.CSRFField(csrfToken)
+							@button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantDestructive, FullWidth: true}) { Sign out }
+						</form>
+					}
 				}
-			}
+			</div>
 		</div>
 	</section>
+}
+
+func displayEmail(settings models.SettingsPage) string {
+	if settings.Email != "" {
+		return settings.Email
+	}
+	if settings.User.Email != "" {
+		return settings.User.Email
+	}
+	return "your account email"
+}
+
+func planOrFree(plan string) string {
+	if plan == "" {
+		return "free"
+	}
+	return plan
 }

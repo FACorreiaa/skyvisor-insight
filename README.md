@@ -14,7 +14,7 @@ This repository contains the web experience. It renders accessible HTML on the s
 - Explicit migration and Aviationstack import commands
 - Production-oriented HTTP timeouts, graceful shutdown, structured logging, and a non-root container
 
-Trips, alerts, SSE event streams, and the AI travel assistant are implemented in the companion API foundation and are the next web integration milestone.
+Trips, flight watches, soft Pro paywall, and AI itinerary import are integrated against the companion API. The web app exposes `/trips`, `/watches`, track-page Watch CTAs, and Stripe/dev upgrade.
 
 ## Stack
 

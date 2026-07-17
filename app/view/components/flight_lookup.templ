@@ -23,6 +23,10 @@ templ FlightLookupPage(flightNumber string, result templ.Component) {
 }
 
 templ FlightLookupResult(flightNumber string, flight *models.LiveFlights, message string) {
+	@FlightLookupResultAuth(flightNumber, flight, message, false, "")
+}
+
+templ FlightLookupResultAuth(flightNumber string, flight *models.LiveFlights, message string, canWatch bool, csrfToken string) {
 	if flight == nil {
 		@card.Card(card.Props{Class: "border-dashed bg-muted/35 shadow-none"}) {
 			@card.Content(card.ContentProps{Class: "flex items-start gap-3 p-5"}) {
@@ -34,7 +38,12 @@ templ FlightLookupResult(flightNumber string, flight *models.LiveFlights, messag
 		@card.Card(card.Props{Class: "overflow-hidden border-primary/20 shadow-[0_20px_55px_-35px_rgba(30,64,175,0.45)]"}) {
 			<div class="flex flex-col gap-4 border-b border-border bg-primary/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between">
 				<div><div class="font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ flight.Airline.Name }</div><h2 class="mt-1 font-mono text-2xl font-semibold">{ displayFlightNumber(flightNumber, flight) }</h2></div>
-				@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "capitalize"}) { string(flight.FlightStatus) }
+				<div class="flex flex-wrap items-center gap-2">
+					@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "capitalize"}) { string(flight.FlightStatus) }
+					if delayText := departureDelayText(flight); delayText != "" {
+						@badge.Badge(badge.Props{Variant: badge.VariantOutline}) { delayText }
+					}
+				</div>
 			</div>
 			@card.Content(card.ContentProps{Class: "p-5 sm:p-7"}) {
 				<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
@@ -45,8 +54,17 @@ templ FlightLookupResult(flightNumber string, flight *models.LiveFlights, messag
 				<div class="mt-7 grid gap-3 border-t border-border pt-5 text-sm sm:grid-cols-3">
 					@flightFact("Departure", "Terminal " + displayValue(flight.Departure.Terminal), "Gate " + displayValue(flight.Departure.Gate))
 					@flightFact("Arrival", "Terminal " + displayValue(flight.Arrival.Terminal), "Gate " + displayValue(flight.Arrival.Gate))
-					@flightFact("Recorded", flight.FlightDate, "Latest available data")
+					@flightFact("Extras", baggageText(flight), aircraftText(flight))
 				</div>
+				if canWatch {
+					<form method="post" action="/watches" class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
+						<input type="hidden" name="csrf_token" value={ csrfToken }/>
+						<input type="hidden" name="flight_number" value={ displayFlightNumber(flightNumber, flight) }/>
+						<input type="hidden" name="return_to" value={ "/track?flight=" + displayFlightNumber(flightNumber, flight) }/>
+						<p class="text-sm text-muted-foreground">Get delay and gate alerts for this flight.</p>
+						@button.Button(button.Props{Type: button.TypeSubmit}) { Watch this flight }
+					</form>
+				}
 			}
 		}
 	}
@@ -89,4 +107,25 @@ func fallback(value, fallbackValue string) string {
 		return fallbackValue
 	}
 	return value
+}
+
+func departureDelayText(flight *models.LiveFlights) string {
+	if flight == nil || flight.Departure.Delay == nil || *flight.Departure.Delay == 0 {
+		return ""
+	}
+	return fmt.Sprintf("+%d min", *flight.Departure.Delay)
+}
+
+func baggageText(flight *models.LiveFlights) string {
+	if flight == nil {
+		return "Baggage N/A"
+	}
+	return "Baggage " + displayValue(flight.Arrival.Baggage)
+}
+
+func aircraftText(flight *models.LiveFlights) string {
+	if flight == nil || flight.Aircraft.AircraftRegistration == "" {
+		return "Aircraft pending"
+	}
+	return flight.Aircraft.AircraftRegistration
 }

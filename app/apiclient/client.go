@@ -314,6 +314,12 @@ func (c *Client) CreateCheckout(ctx context.Context, accessToken string) (Checko
 	return session, err
 }
 
+func (c *Client) CreateBillingPortal(ctx context.Context, accessToken string) (CheckoutSession, error) {
+	var session CheckoutSession
+	err := c.do(ctx, http.MethodPost, "/v1/billing/portal", accessToken, map[string]any{}, &session)
+	return session, err
+}
+
 func (c *Client) DevActivatePro(ctx context.Context, accessToken string) error {
 	return c.do(ctx, http.MethodPost, "/v1/billing/dev-activate-pro", accessToken, nil, &map[string]any{})
 }

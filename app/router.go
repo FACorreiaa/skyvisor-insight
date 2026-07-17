@@ -134,6 +134,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 			watches.Post("/{id}/delete", handler(h.WatchesDelete))
 		})
 		auth.Post("/billing/checkout", handler(h.BillingCheckout))
+		auth.Post("/billing/portal", handler(h.BillingPortal))
 
 		auth.Route("/airlines", func(airlines chi.Router) {
 			airlines.Get("/airline", handler(h.AirlineMainPage))

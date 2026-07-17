@@ -166,6 +166,32 @@ func (h *Handler) BillingCheckout(w http.ResponseWriter, r *http.Request) error 
 	return nil
 }
 
+// BillingPortal redirects to the Stripe Customer Portal for Pro management.
+func (h *Handler) BillingPortal(w http.ResponseWriter, r *http.Request) error {
+	if h.service.API() == nil {
+		return h.renderWatches(w, r, "Billing is not available on this server yet.")
+	}
+	accessToken, err := h.apiAccessToken(r)
+	if err != nil {
+		http.Redirect(w, r, "/login?return_to=/settings", http.StatusSeeOther)
+		return nil
+	}
+	ctx, cancel := context.WithTimeout(r.Context(), 20*time.Second)
+	defer cancel()
+	session, err := h.service.API().CreateBillingPortal(ctx, accessToken)
+	if err != nil {
+		if errors.Is(err, apiclient.ErrUnauthorized) {
+			http.Redirect(w, r, "/login?return_to=/settings", http.StatusSeeOther)
+			return nil
+		}
+		slog.ErrorContext(r.Context(), "billing portal", "error", err)
+		http.Redirect(w, r, "/settings", http.StatusSeeOther)
+		return nil
+	}
+	http.Redirect(w, r, session.URL, http.StatusSeeOther)
+	return nil
+}
+
 func (h *Handler) renderWatches(w http.ResponseWriter, r *http.Request, message string) error {
 	var watchList []apiclient.Watch
 	var entitlements apiclient.Entitlements

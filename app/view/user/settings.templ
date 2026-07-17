@@ -50,6 +50,20 @@ templ SettingsPage(settings models.SettingsPage, csrfToken string) {
 				}
 			}
 			<div class="grid gap-6">
+				if settings.Plan == "pro" {
+					@card.Card(card.Props{Class: "h-fit border-border/70 bg-muted/30"}) {
+						@card.Header() {
+							@card.Title() { Billing }
+							@card.Description() { Manage your SkyVisor Pro subscription in Stripe. }
+						}
+						@card.Content(card.ContentProps{Class: "pt-6"}) {
+							<form method="post" action="/billing/portal">
+								@components.CSRFField(csrfToken)
+								@button.Button(button.Props{Type: button.TypeSubmit, FullWidth: true}) { Open billing portal }
+							</form>
+						}
+					}
+				}
 				@card.Card(card.Props{Class: "h-fit border-border/70 bg-muted/30"}) {
 					@card.Header() {
 						@card.Title() { Email alerts }

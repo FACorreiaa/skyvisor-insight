@@ -1,0 +1,101 @@
+package logistics
+
+import "github.com/FACorreiaa/Aviation-tracker/app/apiclient"
+
+templ LogisticsPage(overview apiclient.LogisticsOverview, team *apiclient.Team, q apiclient.LogisticsQuery, message string, csrfToken string) {
+	<section class="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8">
+		<div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+		<div class="max-w-2xl">
+			<p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Business</p>
+			<h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">Cargo operations</h1>
+			<p class="mt-3 text-sm leading-6 text-muted-foreground">Monitor cargo capacity, disrupted flights, inbound-aircraft risk, and shared team watches from one operational view.</p>
+		</div>
+		<a href="/dashboard" class="text-sm font-medium text-primary hover:underline">Back to command center</a>
+		</div>
+		if message != "" {
+			<p class="mb-6 rounded-md border border-primary/25 bg-primary/5 px-3 py-2 text-sm" role="status">{ message }</p>
+		}
+		@teamPanel(team, csrfToken)
+		<form class="mb-8 grid gap-3 sm:grid-cols-3" method="get" action="/logistics">
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground">
+				Cargo airline IATA
+				<input class="rounded-md border border-border bg-background px-3 py-2 text-sm uppercase" name="airline" value={ q.Airline } placeholder="FX"/>
+			</label>
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground">
+				Hub airport
+				<input class="rounded-md border border-border bg-background px-3 py-2 text-sm uppercase" name="airport" value={ q.Airport } placeholder="MEM"/>
+			</label>
+			<div class="flex items-end">
+				<button type="submit" class="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Refresh</button>
+			</div>
+		</form>
+		<div class="mb-8 overflow-hidden rounded-xl border border-border bg-card"><div class="grid grid-cols-2 divide-x divide-y divide-border lg:grid-cols-4 lg:divide-y-0">
+			@opsMetric("Cargo flights", flightCount(overview.CargoFlights), "Current provider sample")
+			@opsMetric("Disruptions", disruptionCount(overview.Disruptions), "Needs review")
+			@opsMetric("Cancelled", disruptionKindCount(overview.Disruptions, "cancelled"), "Capacity unavailable")
+			@opsMetric("Late inbound", disruptionKindCount(overview.Disruptions, "late_inbound"), "Rotation risk")
+		</div></div>
+		<div class="grid gap-8 lg:grid-cols-2">
+			<section class="overflow-hidden rounded-xl border border-border bg-card lg:col-span-2">
+				<div class="flex items-center justify-between border-b border-border px-5 py-4"><div><h2 class="text-sm font-semibold">Cargo flight board</h2><p class="mt-1 text-xs text-muted-foreground">Route, status, delay, gate, and source freshness</p></div><span class="font-mono text-xs text-muted-foreground">{ flightCount(overview.CargoFlights) } records</span></div>
+				<div class="overflow-x-auto"><table class="w-full min-w-[44rem] text-left text-sm"><thead class="bg-muted/45 text-[11px] uppercase tracking-wider text-muted-foreground"><tr><th class="px-5 py-3">Flight</th><th class="px-3 py-3">Route</th><th class="px-3 py-3">Status</th><th class="px-3 py-3">Delay</th><th class="px-3 py-3">Gates</th><th class="px-5 py-3 text-right">Updated</th></tr></thead><tbody class="divide-y divide-border">
+					if len(overview.CargoFlights) == 0 {
+						<tr><td colspan="6" class="px-5 py-8 text-center text-sm text-muted-foreground">No cargo flights in this sample.</td></tr>
+					}
+					for _, f := range overview.CargoFlights {
+						<tr class="hover:bg-muted/35"><td class="px-5 py-3.5"><a href={ "/track?flight=" + f.Number } class="font-mono font-semibold hover:text-primary">{ f.Number }</a></td><td class="px-3 py-3.5 font-mono text-xs">{ f.DepartureIATA } → { f.ArrivalIATA }</td><td class="px-3 py-3.5 capitalize text-muted-foreground">{ f.Status }</td><td class="px-3 py-3.5 font-mono text-xs">{ flightDelay(f) }</td><td class="px-3 py-3.5 font-mono text-xs">{ flightGates(f) }</td><td class="px-5 py-3.5 text-right font-mono text-xs text-muted-foreground">{ flightUpdated(f) }</td></tr>
+					}
+				</tbody></table></div>
+			</section>
+			<section class="lg:col-span-2">
+				<div class="mb-3 flex items-center justify-between"><h2 class="text-sm font-semibold">Disruption signals</h2><span class="text-xs text-muted-foreground">Actionable provider rules</span></div>
+				<ul class="grid gap-3 md:grid-cols-2">
+					if len(overview.Disruptions) == 0 {
+						<li class="text-sm text-muted-foreground">No disruption signals right now.</li>
+					}
+					for _, d := range overview.Disruptions {
+						<li class="rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-4 text-sm">
+							<span class="font-mono text-xs uppercase tracking-wider text-amber-700 dark:text-amber-400">{ d.Kind }</span>
+							<p class="mt-1">{ d.Message }</p>
+						</li>
+					}
+				</ul>
+			</section>
+		</div>
+	</section>
+}
+
+templ opsMetric(label, value, hint string) {
+	<div class="min-h-24 px-5 py-4"><p class="text-xs font-medium text-muted-foreground">{ label }</p><p class="mt-2 font-mono text-2xl font-semibold tabular-nums">{ value }</p><p class="mt-1 text-[11px] text-muted-foreground">{ hint }</p></div>
+}
+
+templ teamPanel(team *apiclient.Team, csrfToken string) {
+	<div class="mb-8 rounded-xl border border-border bg-card p-5">
+		<h2 class="text-sm font-semibold">Team watches</h2>
+		<p class="mt-1 text-sm text-muted-foreground">Business workspaces share watches across up to 5 seats. Create a team, share the invite code, then create watches with share_with_team.</p>
+		if team != nil {
+			<div class="mt-4 grid gap-2 text-sm">
+				<p><span class="text-muted-foreground">Name</span> { team.Name }</p>
+				<p><span class="text-muted-foreground">Invite code</span> <span class="font-mono font-semibold">{ team.InviteCode }</span></p>
+				<p><span class="text-muted-foreground">Seats</span> { seatLabel(team) }</p>
+			</div>
+		} else {
+			<form method="post" action="/logistics/team" class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
+				<input type="hidden" name="csrf_token" value={ csrfToken }/>
+				<label class="grid flex-1 gap-1 text-xs font-medium text-muted-foreground">
+					Team name
+					<input class="rounded-md border border-border bg-background px-3 py-2 text-sm" name="name" placeholder="Ops desk" maxlength="80"/>
+				</label>
+				<button type="submit" class="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Create team</button>
+			</form>
+			<form method="post" action="/logistics/team/join" class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
+				<input type="hidden" name="csrf_token" value={ csrfToken }/>
+				<label class="grid flex-1 gap-1 text-xs font-medium text-muted-foreground">
+					Invite code
+					<input class="rounded-md border border-border bg-background px-3 py-2 text-sm uppercase" name="invite_code" required maxlength="16"/>
+				</label>
+				<button type="submit" class="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm font-medium">Join team</button>
+			</form>
+		}
+	</div>
+}

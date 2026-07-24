@@ -1,16 +1,22 @@
 package app
 
 import (
+	"context"
 	"crypto/sha256"
 	"embed"
+	"io/fs"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/app/apiclient"
 	"github.com/FACorreiaa/Aviation-tracker/app/auth"
 	"github.com/FACorreiaa/Aviation-tracker/app/handlers"
 	"github.com/FACorreiaa/Aviation-tracker/app/repository"
 	"github.com/FACorreiaa/Aviation-tracker/app/services"
+	thinkingorbs "github.com/FACorreiaa/Thinking-orbs-go/components"
+	"github.com/getsentry/sentry-go"
+	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-playground/locales/en"
@@ -21,6 +27,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
+	"github.com/riandyrn/otelchi"
 )
 
 //go:embed static
@@ -71,12 +78,43 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 
 	r := chi.NewRouter()
 	r.Use(chimiddleware.RequestID)
+	r.Use(otelchi.Middleware("skyvisor-web", otelchi.WithChiRoutes(r)))
+	if sentry.CurrentHub().Client() != nil {
+		// Repanic so Recoverer (below) still converts the panic into a 500.
+		r.Use(sentryhttp.New(sentryhttp.Options{Repanic: true}).Handle)
+	}
 	r.Use(chimiddleware.Recoverer)
 	r.Use(chimiddleware.RedirectSlashes)
 	r.Use(securityHeaders)
 
+	r.Get("/healthz", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"status":"ok"}`))
+	})
+	r.Get("/readyz", func(w http.ResponseWriter, req *http.Request) {
+		ctx, cancel := context.WithTimeout(req.Context(), 2*time.Second)
+		defer cancel()
+		if err := pool.Ping(ctx); err != nil {
+			slog.WarnContext(ctx, "readiness check failed", "dependency", "postgres", "error", err)
+			http.Error(w, "postgres unavailable", http.StatusServiceUnavailable)
+			return
+		}
+		if err := redisClient.Ping(ctx).Err(); err != nil {
+			slog.WarnContext(ctx, "readiness check failed", "dependency", "redis", "error", err)
+			http.Error(w, "redis unavailable", http.StatusServiceUnavailable)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"status":"ready"}`))
+	})
+
 	// Static files
 	r.Handle("/static/*", http.FileServer(http.FS(staticFS)))
+	if scriptFS, err := fs.Sub(thinkingorbs.ScriptFS, "orb"); err != nil {
+		slog.Error("thinking orbs script fs", "error", err)
+	} else {
+		r.Handle("/thinking-orbs/js/*", http.StripPrefix("/thinking-orbs/js/", http.FileServer(http.FS(scriptFS))))
+	}
 	r.Get("/favicon.ico", func(w http.ResponseWriter, _ *http.Request) {
 		file, err := staticFS.ReadFile("static/favicon.ico")
 		if err != nil {
@@ -96,6 +134,9 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 	// Public routes, authentication is optional
 	r.With(authMiddleware.AuthMiddleware).Get("/", handler(h.Homepage))
 	r.With(authMiddleware.AuthMiddleware).Get("/track", handler(h.TrackFlight))
+	r.With(authMiddleware.AuthMiddleware).Get("/terms", handler(h.TermsPage))
+	r.With(authMiddleware.AuthMiddleware).Get("/privacy", handler(h.PrivacyPage))
+	r.With(authMiddleware.AuthMiddleware).Get("/pricing", handler(h.PricingPage))
 	// Public pickup share pages do not require a session.
 	r.With(authMiddleware.AuthMiddleware).Get("/share/{token}", handler(h.SharePage))
 
@@ -116,8 +157,12 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 		auth.Use(authMiddleware.RequireAuth)
 
 		auth.Post("/logout", handler(h.Logout))
+		auth.Get("/welcome", handler(h.WelcomePage))
+		auth.Get("/dashboard", handler(h.DashboardPage))
 		auth.Get("/settings", handler(h.SettingsPage))
 		auth.Post("/settings/alerts", handler(h.SettingsAlerts))
+		auth.Post("/settings/tokens", handler(h.SettingsTokensCreate))
+		auth.Post("/settings/tokens/{id}/delete", handler(h.SettingsTokensRevoke))
 
 		auth.Route("/trips", func(trips chi.Router) {
 			trips.Get("/", handler(h.TripsPage))
@@ -126,6 +171,7 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 			trips.Post("/import", handler(h.TripsImport))
 			trips.Post("/import/pdf", handler(h.TripsImportPDF))
 			trips.Post("/assistant", handler(h.TripsAssistant))
+			trips.Post("/what-if", handler(h.TripsWhatIf))
 			trips.Post("/{id}/delete", handler(h.TripsDelete))
 		})
 
@@ -140,6 +186,20 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 		})
 		auth.Post("/billing/checkout", handler(h.BillingCheckout))
 		auth.Post("/billing/portal", handler(h.BillingPortal))
+		auth.Get("/analytics", handler(h.AnalyticsPage))
+		auth.Get("/analytics/export", handler(h.AnalyticsExport))
+		auth.Get("/logistics", handler(h.LogisticsPage))
+		auth.Post("/logistics/team", handler(h.LogisticsCreateTeam))
+		auth.Post("/logistics/team/join", handler(h.LogisticsJoinTeam))
+		auth.Get("/mcp", handler(h.MCPPlaygroundPage))
+		auth.Route("/operations/cases", func(operations chi.Router) {
+			operations.Get("/", handler(h.OperationalCasesPage))
+			operations.Post("/", handler(h.OperationalCasesCreate))
+			operations.Get("/{id}", handler(h.OperationalCasePage))
+			operations.Post("/{id}/decisions", handler(h.OperationalDecisionCreate))
+			operations.Post("/{id}/decisions/{decisionID}/action", handler(h.OperationalDecisionAction))
+			operations.Post("/{id}/decisions/{decisionID}/outcome", handler(h.OperationalDecisionOutcome))
+		})
 
 		auth.Route("/airlines", func(airlines chi.Router) {
 			airlines.Get("/airline", handler(h.AirlineMainPage))
@@ -161,11 +221,14 @@ func Router(pool *pgxpool.Pool, sessionSecret []byte, cookieSecure bool, redisCl
 
 		auth.Route("/airports", func(airports chi.Router) {
 			airports.Get("/", handler(h.AirportPage))
+			airports.Get("/board", handler(h.AirportBoardPage))
+			airports.Get("/{iata}/board", handler(h.AirportBoardPage))
 			airports.Get("/locations", handler(h.AirportLocationPage))
 			airports.Get("/details/{airport_id}", handler(h.AirportDetailsPage))
 		})
 
 		auth.Route("/flights", func(flights chi.Router) {
+			flights.Get("/tracker", handler(h.LiveTrackerPage))
 			flights.Get("/flight/live", handler(h.LiveFlightsPage))
 			flights.Get("/flight/location/air/live", handler(h.LiveFlightsLocationsPage))
 			flights.Get("/flight/location", handler(h.FlightsLocation))

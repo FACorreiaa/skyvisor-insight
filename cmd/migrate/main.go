@@ -31,7 +31,7 @@ func run(ctx context.Context) error {
 	if err := db.WaitForDB(waitCtx, pool); err != nil {
 		return err
 	}
-	if err := db.Migrate(pool); err != nil {
+	if err := db.Migrate(waitCtx, pool); err != nil {
 		return fmt.Errorf("run migrations: %w", err)
 	}
 	return nil

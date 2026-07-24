@@ -1,0 +1,111 @@
+package airport
+
+import "github.com/FACorreiaa/Aviation-tracker/app/apiclient"
+
+templ AirportBoardPage(board apiclient.AirportBoard, q apiclient.AirportBoardQuery, message string) {
+	<section class="relative mx-auto w-full max-w-7xl px-5 py-10 sm:px-8">
+		<div class="sky-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 opacity-35"></div>
+		<div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+		<div class="max-w-2xl">
+			<p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Airport ops</p>
+			<h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
+				if board.IATA != "" {
+					{ board.IATA } board
+				} else {
+					Airport board
+				}
+			</h1>
+			<p class="mt-3 text-sm leading-6 text-muted-foreground">Live arrivals and departures with delay, gate, terminal, baggage, and freshness evidence. Refreshes every 30 seconds.</p>
+		</div>
+		<a href="/dashboard" class="text-sm font-medium text-primary hover:underline">Back to command center</a>
+		</div>
+		<form
+			class="mb-6 grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-2 lg:grid-cols-4"
+			method="get"
+			action="/airports/board"
+			hx-get={ boardHXURL(board.IATA) }
+			hx-target="#airport-board-results"
+			hx-swap="outerHTML"
+			hx-trigger="change delay:200ms from:select, change delay:300ms from:input[name='iata'], every 30s"
+		>
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground">
+				Airport IATA
+				<input class="rounded-md border border-border bg-background px-3 py-2 text-sm uppercase text-foreground" name="iata" maxlength="3" value={ board.IATA } placeholder="LIS" required/>
+			</label>
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground">
+				Direction
+				<select class="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground" name="direction">
+					<option value="both" selected?={ q.Direction == "both" || q.Direction == "" }>both</option>
+					<option value="arrivals" selected?={ q.Direction == "arrivals" }>arrivals</option>
+					<option value="departures" selected?={ q.Direction == "departures" }>departures</option>
+				</select>
+			</label>
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground">
+				Status
+				<select class="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground" name="status">
+					<option value="" selected?={ q.Status == "" }>any</option>
+					<option value="scheduled" selected?={ q.Status == "scheduled" }>scheduled</option>
+					<option value="active" selected?={ q.Status == "active" }>active</option>
+					<option value="landed" selected?={ q.Status == "landed" }>landed</option>
+					<option value="cancelled" selected?={ q.Status == "cancelled" }>cancelled</option>
+				</select>
+			</label>
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground">
+				Limit / side
+				<input class="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground" name="limit" type="number" min="1" max="100" value={ boardLimit(q.Limit) }/>
+			</label>
+			<input type="hidden" name="partial" value="board"/>
+		</form>
+		@AirportBoardResults(board, message)
+	</section>
+}
+
+templ AirportBoardResults(board apiclient.AirportBoard, message string) {
+	<div id="airport-board-results" class="space-y-6">
+		if message != "" {
+			<p class="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive" role="alert">{ message }</p>
+		}
+		if len(board.Arrivals) > 0 || len(board.Departures) > 0 {
+			<div class="overflow-hidden rounded-xl border border-border bg-card"><div class="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-3 lg:grid-cols-6 lg:divide-y-0">
+				@boardMetric("Arrivals", flightCount(board.Arrivals), "Inbound movements")
+				@boardMetric("Departures", flightCount(board.Departures), "Outbound movements")
+				@boardMetric("Delayed", boardDelayedCount(board), "15+ minutes")
+				@boardMetric("Cancelled", boardStatusCount(board, "cancelled"), "Unavailable")
+				@boardMetric("Gate assigned", boardGateCount(board), "Operational detail")
+				@boardMetric("Fresh", boardFreshCount(board), "Current evidence")
+			</div></div>
+		}
+		<div class="grid gap-6 xl:grid-cols-2">
+			<section class="overflow-hidden rounded-xl border border-border bg-card">
+				<div class="flex items-center justify-between border-b border-border px-5 py-4"><div><h2 class="text-sm font-semibold">Arrivals</h2><p class="mt-1 text-xs text-muted-foreground">Estimated arrival, stand, and baggage</p></div><span class="font-mono text-xs text-muted-foreground">{ flightCount(board.Arrivals) }</span></div>
+				@boardFlightList(board.Arrivals, "arrival", "No arrivals for these filters.")
+			</section>
+			<section class="overflow-hidden rounded-xl border border-border bg-card">
+				<div class="flex items-center justify-between border-b border-border px-5 py-4"><div><h2 class="text-sm font-semibold">Departures</h2><p class="mt-1 text-xs text-muted-foreground">Estimated departure, terminal, and gate</p></div><span class="font-mono text-xs text-muted-foreground">{ flightCount(board.Departures) }</span></div>
+				@boardFlightList(board.Departures, "departure", "No departures for these filters.")
+			</section>
+		</div>
+		if !board.GeneratedAt.IsZero() {
+			<p class="text-right font-mono text-[11px] text-muted-foreground">Board generated { boardGenerated(board.GeneratedAt) }</p>
+		}
+	</div>
+}
+
+templ boardFlightList(items []apiclient.Flight, direction, empty string) {
+	<div class="overflow-x-auto">
+		if len(items) == 0 {
+			<p class="px-5 py-8 text-center text-sm text-muted-foreground">{ empty }</p>
+		}
+		if len(items) > 0 {
+			<table class="w-full min-w-[42rem] text-left text-sm"><thead class="bg-muted/45 text-[11px] uppercase tracking-wider text-muted-foreground"><tr><th class="px-5 py-3">Time</th><th class="px-3 py-3">Flight</th><th class="px-3 py-3">Route</th><th class="px-3 py-3">Status</th><th class="px-3 py-3">Delay</th><th class="px-5 py-3 text-right">Position</th></tr></thead><tbody class="divide-y divide-border">
+				for _, item := range items {
+					<tr class="transition-colors hover:bg-muted/35"><td class="px-5 py-3.5 font-mono font-semibold">{ boardTime(item, direction) }</td><td class="px-3 py-3.5"><a class="font-mono font-semibold hover:text-primary" href={ "/track?flight=" + item.Number }>{ item.Number }</a><div class="mt-0.5 max-w-28 truncate text-[10px] text-muted-foreground">{ item.Airline }</div></td><td class="px-3 py-3.5 font-mono text-xs">{ boardRoute(item) }</td><td class="px-3 py-3.5"><span class={ "rounded px-1.5 py-1 text-[10px] font-semibold uppercase tracking-wider", boardStatusClass(item.Status) }>{ item.Status }</span></td><td class="px-3 py-3.5 font-mono text-xs">{ boardDelay(item, direction) }</td><td class="px-5 py-3.5 text-right font-mono text-xs">{ boardPosition(item, direction) }<div class="mt-1 text-[10px] text-muted-foreground">{ boardEvidence(item) }</div></td></tr>
+				}
+			</tbody></table>
+		}
+	</div>
+}
+
+templ boardMetric(label, value, hint string) {
+	<div class="min-h-24 px-4 py-4"><p class="text-xs font-medium text-muted-foreground">{ label }</p><p class="mt-2 font-mono text-xl font-semibold tabular-nums">{ value }</p><p class="mt-1 text-[11px] text-muted-foreground">{ hint }</p></div>
+}

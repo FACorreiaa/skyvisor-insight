@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -49,7 +50,7 @@ func (h *Handler) WatchesCreate(w http.ResponseWriter, r *http.Request) error {
 			return nil
 		}
 		if errors.Is(err, apiclient.ErrPaymentRequired) {
-			return h.renderWatches(w, r, "Free accounts can watch one flight at a time. Upgrade to Pro for unlimited watches.")
+			return h.renderWatches(w, r, "Free accounts can watch up to 5 flights at a time. Upgrade to Pro for unlimited watches.")
 		}
 		if errors.Is(err, apiclient.ErrConflict) {
 			http.Redirect(w, r, "/watches", http.StatusSeeOther)
@@ -83,6 +84,11 @@ func (h *Handler) WatchesShare(w http.ResponseWriter, r *http.Request) error {
 		}
 		slog.ErrorContext(r.Context(), "create share", "error", err)
 		return h.renderWatches(w, r, "Unable to create a share link.")
+	}
+	returnTo := strings.TrimSpace(r.PostFormValue("return_to"))
+	if returnTo != "" {
+		http.Redirect(w, r, appendShareQuery(returnTo, link.URLPath), http.StatusSeeOther)
+		return nil
 	}
 	return h.renderWatches(w, r, "Pickup link ready: "+link.URLPath)
 }
@@ -240,4 +246,15 @@ func flashFromQuery(r *http.Request) string {
 	default:
 		return ""
 	}
+}
+
+func appendShareQuery(returnTo, sharePath string) string {
+	if returnTo == "" || sharePath == "" {
+		return returnTo
+	}
+	sep := "?"
+	if strings.Contains(returnTo, "?") {
+		sep = "&"
+	}
+	return returnTo + sep + "share=" + url.QueryEscape(sharePath)
 }

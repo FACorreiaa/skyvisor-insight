@@ -1,0 +1,97 @@
+package onboarding
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/button"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/icon"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+)
+
+// WelcomePage greets a fresh account and drives the first watch. plan is the
+// pricing intent carried through signup ("pro", "business", or empty).
+templ WelcomePage(name, plan, csrfToken string) {
+	<div class="relative overflow-hidden">
+		<div class="sky-grid pointer-events-none absolute inset-x-0 top-0 h-[32rem] opacity-60"></div>
+		<section class="relative mx-auto max-w-3xl px-4 pb-24 pt-16 sm:px-6 md:pt-20">
+			<div x-data="{ shown: false }" x-init="requestAnimationFrame(() => shown = true)">
+				<div
+					x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'"
+					class="transition-all duration-500 ease-out motion-reduce:transition-none"
+				>
+					<h1 class="text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">
+						if name != "" {
+							Welcome aboard, { name }.
+						} else {
+							Welcome aboard.
+						}
+					</h1>
+					<p class="mt-4 max-w-xl text-lg leading-relaxed text-muted-foreground">Watch your first flight and SkyVisor starts tracking gates, delays, and cancellations the moment they change.</p>
+				</div>
+				if plan == "pro" || plan == "business" {
+					<div
+						x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'"
+						class="mt-8 transition-all delay-100 duration-500 ease-out motion-reduce:transition-none"
+					>
+						@card.Card(card.Props{Class: "border-primary/40 bg-primary/5"}) {
+							@card.Content(card.ContentProps{Class: "flex flex-wrap items-center justify-between gap-4 p-5"}) {
+								<div class="flex items-center gap-3">
+									@icon.Sparkles(icon.Props{Class: "size-5 text-primary"})
+									<p class="text-sm">
+										if plan == "pro" {
+											<span class="font-medium text-foreground">You picked Pro.</span>
+											<span class="text-muted-foreground"> Finish checkout whenever you are ready; the free plan is active until then.</span>
+										} else {
+											<span class="font-medium text-foreground">You picked Business.</span>
+											<span class="text-muted-foreground"> Finish checkout whenever you are ready; the free plan is active until then.</span>
+										}
+									</p>
+								</div>
+								<form method="post" action="/billing/checkout">
+									@components.CSRFField(csrfToken)
+									@button.Button(button.Props{Type: button.TypeSubmit, Size: button.SizeSm}) { Continue to checkout }
+								</form>
+							}
+						}
+					</div>
+				}
+				<div
+					x-bind:class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'"
+					class="mt-8 transition-all delay-150 duration-500 ease-out motion-reduce:transition-none"
+				>
+					@card.Card(card.Props{Class: "border-border/70 bg-card/80"}) {
+						@card.Header() {
+							@card.Title() { Watch your first flight }
+							@card.Description() { Enter a flight number for today or the days ahead. You can add it to a trip later. }
+						}
+						@card.Content(card.ContentProps{Class: "pt-2"}) {
+							<form method="post" action="/watches" class="flex flex-col gap-2 sm:flex-row">
+								@components.CSRFField(csrfToken)
+								<input type="hidden" name="return_to" value="/watches?welcome=1"/>
+								<label for="welcome-flight-number" class="sr-only">Flight number</label>
+								<input
+									id="welcome-flight-number"
+									name="flight_number"
+									required
+									autocomplete="off"
+									spellcheck="false"
+									placeholder="Flight number, for example TP1363"
+									class="h-11 min-w-0 flex-1 rounded-md border border-input bg-background px-3 font-mono text-sm uppercase placeholder:normal-case"
+								/>
+								@button.Button(button.Props{Type: button.TypeSubmit, Class: "h-11 px-6"}) {
+									Start watching
+									@icon.Plane(icon.Props{Class: "size-4"})
+								}
+							</form>
+						}
+					}
+				</div>
+				<div
+					x-bind:class="shown ? 'opacity-100' : 'opacity-0'"
+					class="mt-6 transition-opacity delay-300 duration-500 ease-out motion-reduce:transition-none"
+				>
+					<p class="text-sm text-muted-foreground">No flight yet? <a href="/dashboard" class="font-medium text-primary underline-offset-4 hover:underline">Skip to your dashboard</a> or <a href="/trips" class="font-medium text-primary underline-offset-4 hover:underline">import a booking PDF</a>.</p>
+				</div>
+			</div>
+		</section>
+	</div>
+}

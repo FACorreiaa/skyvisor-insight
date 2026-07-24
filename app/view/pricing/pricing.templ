@@ -1,0 +1,149 @@
+package pricing
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/badge"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/button"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/icon"
+)
+
+type tier struct {
+	Name        string
+	Monthly     string
+	Yearly      string
+	YearlyNote  string
+	Tagline     string
+	Features    []string
+	CTALabel    string
+	CTAHref     string
+	Highlighted bool
+}
+
+var tiers = []tier{
+	{
+		Name:     "Free",
+		Monthly:  "$0",
+		Yearly:   "$0",
+		Tagline:  "For travelers who want a calmer view of their next flight.",
+		Features: []string{"Live global map and flight search", "Up to 5 watched flights", "7-day flight history", "Basic itinerary explorer", "AI assistant with a daily limit", "Read-only MCP access"},
+		CTALabel: "Start free",
+		CTAHref:  "/register",
+	},
+	{
+		Name:        "Pro",
+		Monthly:     "$19",
+		Yearly:      "$180",
+		YearlyNote:  "$15/mo billed yearly",
+		Tagline:     "For frequent flyers who want every change surfaced early.",
+		Features:    []string{"Unlimited watches with email and push alerts", "Full history with exports", "What-if delay simulations with AI recommendations", "Near-unlimited AI assistant", "MCP action tools for AI clients", "Limited API access"},
+		CTALabel:    "Get Pro",
+		CTAHref:     "/register?plan=pro",
+		Highlighted: true,
+	},
+	{
+		Name:       "Business",
+		Monthly:    "$49",
+		Yearly:     "$490",
+		YearlyNote: "$41/mo billed yearly",
+		Tagline:    "For small ops and logistics teams working the same flights.",
+		Features:   []string{"Everything in Pro", "Team workspace for up to 5 people", "Shared watches and team alerts", "Operational cases and decision records", "Workflow webhooks", "Priority support"},
+		CTALabel:   "Start Business",
+		CTAHref:    "/register?plan=business",
+	},
+	{
+		Name:     "Enterprise",
+		Monthly:  "Custom",
+		Yearly:   "Custom",
+		Tagline:  "For large organizations with heavy agent and API usage.",
+		Features: []string{"Unlimited team members and SSO", "Dedicated AI and MCP quotas", "Full API with webhooks", "Custom reports and scenarios", "Dedicated support with SLA"},
+		CTALabel: "Talk to us",
+		CTAHref:  "mailto:fernandocorreia316@gmail.com?subject=SkyVisor%20Enterprise",
+	},
+}
+
+templ PricingPage() {
+	<div class="relative overflow-hidden">
+		<div class="sky-grid pointer-events-none absolute inset-x-0 top-0 h-[36rem] opacity-60"></div>
+		<section class="relative mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 md:pt-20" x-data="{ yearly: true }">
+			<div class="max-w-2xl">
+				<h1 class="text-4xl font-semibold tracking-[-0.04em] text-foreground sm:text-5xl">Watch one flight free. Watch them all on Pro.</h1>
+				<p class="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">Every plan includes the live map and flight search. Paid plans add unlimited watches, alerts, and AI tools.</p>
+			</div>
+			<div class="mt-10 flex items-center gap-3">
+				<div class="inline-flex items-center gap-1 rounded-lg border border-border bg-card p-1">
+					<button
+						type="button"
+						class="rounded-md px-4 py-1.5 text-sm font-medium transition-colors"
+						x-bind:class="yearly ? 'text-muted-foreground hover:text-foreground' : 'bg-primary text-primary-foreground shadow-sm'"
+						x-on:click="yearly = false"
+					>Monthly</button>
+					<button
+						type="button"
+						class="rounded-md px-4 py-1.5 text-sm font-medium transition-colors"
+						x-bind:class="yearly ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'"
+						x-on:click="yearly = true"
+					>Yearly</button>
+				</div>
+				<span class="text-xs text-muted-foreground" x-show="yearly" x-transition.opacity.duration.200ms x-cloak>save up to 21%</span>
+			</div>
+			<div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+				for _, t := range tiers {
+					@tierCard(t)
+				}
+			</div>
+			<p class="mt-10 max-w-2xl text-sm leading-relaxed text-muted-foreground">Prices in USD. Subscriptions are handled by Stripe and renew until cancelled from the billing portal. Cancel anytime; access runs to the end of the paid period. Full details in the <a href="/terms" class="font-medium text-primary underline-offset-4 hover:underline">terms</a>.</p>
+		</section>
+	</div>
+}
+
+templ tierCard(t tier) {
+	if t.Highlighted {
+		@card.Card(card.Props{Class: "relative flex flex-col border-primary/50 bg-card shadow-[0_24px_70px_-40px_rgba(37,99,235,0.45)]"}) {
+			@tierCardBody(t)
+		}
+	} else {
+		@card.Card(card.Props{Class: "flex flex-col border-border/70 bg-card/70"}) {
+			@tierCardBody(t)
+		}
+	}
+}
+
+templ tierCardBody(t tier) {
+	@card.Header(card.HeaderProps{Class: "pb-4"}) {
+		<div class="flex items-center justify-between">
+			@card.Title(card.TitleProps{Class: "text-lg"}) { { t.Name } }
+			if t.Highlighted {
+				@badge.Badge(badge.Props{Class: "border border-primary/25 bg-primary/10 text-primary"}) { Most popular }
+			}
+		</div>
+		<div class="mt-3 flex items-baseline gap-1.5">
+			if t.Monthly == "Custom" {
+				<span class="text-3xl font-semibold tracking-tight">Custom</span>
+			} else {
+				<span class="text-3xl font-semibold tracking-tight" x-text={ "yearly ? '" + t.Yearly + "' : '" + t.Monthly + "'" }>{ t.Monthly }</span>
+				<span class="text-sm text-muted-foreground" x-text={ "yearly ? '/year' : '/month'" }>/month</span>
+			}
+		</div>
+		if t.YearlyNote != "" {
+			<p class="mt-1 h-4 text-xs text-muted-foreground" x-show="yearly" x-transition.opacity.duration.200ms>{ t.YearlyNote }</p>
+		} else {
+			<p class="mt-1 h-4 text-xs text-muted-foreground"></p>
+		}
+		@card.Description(card.DescriptionProps{Class: "mt-3 min-h-12"}) { { t.Tagline } }
+	}
+	@card.Content(card.ContentProps{Class: "flex flex-1 flex-col justify-between gap-6 pt-0"}) {
+		<ul class="grid gap-2.5 text-sm">
+			for _, feature := range t.Features {
+				<li class="flex items-start gap-2.5">
+					@icon.Check(icon.Props{Class: "mt-0.5 size-4 shrink-0 text-primary"})
+					<span class="text-muted-foreground">{ feature }</span>
+				</li>
+			}
+		</ul>
+		if t.Highlighted {
+			@button.Button(button.Props{Href: t.CTAHref, FullWidth: true, Attributes: templ.Attributes{"hx-boost": "false"}}) { { t.CTALabel } }
+		} else {
+			@button.Button(button.Props{Href: t.CTAHref, Variant: button.VariantOutline, FullWidth: true, Attributes: templ.Attributes{"hx-boost": "false"}}) { { t.CTALabel } }
+		}
+	}
+}

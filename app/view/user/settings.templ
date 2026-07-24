@@ -85,6 +85,55 @@ templ SettingsPage(settings models.SettingsPage, csrfToken string) {
 				}
 				@card.Card(card.Props{Class: "h-fit border-border/70 bg-muted/30"}) {
 					@card.Header() {
+						@card.Title() { MCP connector tokens }
+						@card.Description() { Long-lived tokens for connecting Claude, Cursor, or other AI clients to the SkyVisor MCP server. }
+					}
+					@card.Content(card.ContentProps{Class: "grid gap-4 pt-6"}) {
+						if settings.NewToken != "" {
+							<div class="rounded-md border border-primary/40 bg-primary/5 p-3">
+								<p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Copy this token now</p>
+								<code class="mt-2 block select-all break-all rounded bg-background px-2 py-1.5 font-mono text-xs" x-data x-on:click="navigator.clipboard?.writeText($el.textContent.trim())" title="Click to copy">{ settings.NewToken }</code>
+								<p class="mt-2 text-xs text-muted-foreground">It is shown only once. Paste it as the Bearer token in your MCP client.</p>
+							</div>
+						}
+						if len(settings.Tokens) > 0 {
+							<ul class="grid gap-2">
+								for _, token := range settings.Tokens {
+									<li class="flex items-center justify-between gap-3 rounded-md border border-border/70 bg-background/60 px-3 py-2">
+										<div class="min-w-0">
+											<p class="truncate text-sm font-medium text-foreground">{ token.Name }</p>
+											<p class="text-xs text-muted-foreground">
+												Created { token.CreatedAt.Format("2 Jan 2006") }
+												if token.RevokedAt != nil {
+													· revoked
+												} else if token.LastUsedAt != nil {
+													· last used { token.LastUsedAt.Format("2 Jan 2006") }
+												} else {
+													· never used
+												}
+											</p>
+										</div>
+										if token.RevokedAt == nil {
+											<form method="post" action={ templ.SafeURL("/settings/tokens/" + token.ID + "/delete") }>
+												@components.CSRFField(csrfToken)
+												@button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantOutline, Size: button.SizeSm}) { Revoke }
+											</form>
+										}
+									</li>
+								}
+							</ul>
+						} else {
+							<p class="text-sm text-muted-foreground">No tokens yet.</p>
+						}
+						<form method="post" action="/settings/tokens" class="flex gap-2">
+							@components.CSRFField(csrfToken)
+							<input name="token_name" required maxlength="80" placeholder="Token name, for example Claude" class="h-9 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm"/>
+							@button.Button(button.Props{Type: button.TypeSubmit, Size: button.SizeSm, Class: "h-9"}) { Create }
+						</form>
+					}
+				}
+				@card.Card(card.Props{Class: "h-fit border-border/70 bg-muted/30"}) {
+					@card.Header() {
 						@card.Title() { Session }
 						@card.Description() { Signing out revokes the server-side session and clears this browser cookie. }
 					}

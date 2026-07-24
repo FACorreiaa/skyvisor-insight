@@ -92,7 +92,9 @@ body { min-height: 100dvh; background: var(--background); color: var(--foregroun
 }
 
 .flight-route { stroke-dasharray: 5 7; animation: route-drift 16s linear infinite; }
-.htmx-indicator { opacity: 0; transition: opacity 160ms ease; }
+.flight-progress-bar { transition: width 0.01ms linear; }
+.sky-fog { background: color-mix(in oklab, var(--card) 88%, transparent); backdrop-filter: blur(12px); }
+.htmx-indicator { opacity: 0; transition: opacity 160ms ease; pointer-events: none; }
 .htmx-request .htmx-indicator, .htmx-request.htmx-indicator { opacity: 1; }
 
 @keyframes route-drift { to { stroke-dashoffset: -120; } }

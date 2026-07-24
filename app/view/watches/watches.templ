@@ -8,37 +8,63 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/badge"
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/button"
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components/flightui"
 )
 
 templ SharePage(view apiclient.PublicShare, message string) {
-	<section class="mx-auto max-w-xl px-4 py-16 sm:px-6">
-		<p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Pickup status</p>
-		if message != "" {
-			<p class="mt-4 text-sm text-muted-foreground">{ message }</p>
-		} else {
-			<h1 class="mt-3 font-mono text-3xl font-semibold tracking-tight">{ view.FlightNumber }</h1>
-			if view.Label != "" {
-				<p class="mt-1 text-sm text-muted-foreground">{ view.Label }</p>
-			}
-			if view.Flight != nil {
-				<div class="mt-8 grid gap-3">
-					@fact("Status", view.Flight.Status, routeLabel(view.Flight))
-					@fact("Arrival", gateLabel(view.Flight.ArrivalTerminal, view.Flight.ArrivalGate), timeLabel(view.Flight.EstimatedArrival, time.Time{}))
-					@fact("Baggage", baggageLabel(view.Flight.ArrivalBaggage), delayLabel(view.Flight.ArrivalDelayMinutes))
-				</div>
-				if view.Flight.Inbound != nil {
-					<div class="mt-6 rounded-lg border border-border bg-muted/40 p-4">
-						<p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Where's my plane</p>
-						<p class="mt-1 text-sm font-medium">{ inboundHeadline(view.Flight.Inbound) }</p>
-						<p class="mt-0.5 text-xs text-muted-foreground">{ view.Flight.Inbound.Message }</p>
-					</div>
-				}
-			} else {
-				<p class="mt-6 text-sm text-muted-foreground">Live details will appear once the flight is available.</p>
-			}
-			<p class="mt-8 text-xs text-muted-foreground">Link expires { view.ExpiresAt.Local().Format("Mon 15:04") }.</p>
+	<section class="relative min-h-[calc(100dvh-4rem)] overflow-hidden bg-[oklch(0.18_0.025_255)]">
+		if view.Flight != nil {
+			@flightui.TrackMap(flightui.MapAttrsFromAPIFlight(view.FlightNumber, view.Flight))
 		}
+		<div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/55 via-transparent to-background/90"></div>
+		<div class="relative z-10 mx-auto max-w-xl px-4 py-10 sm:px-6">
+			<p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Pickup status</p>
+			if message != "" {
+				<p class="mt-4 text-sm text-muted-foreground">{ message }</p>
+			} else {
+				if view.Flight != nil {
+					<div class="mt-6 overflow-hidden rounded-2xl border border-border/80 bg-card/92 shadow-[0_28px_70px_-36px_rgba(15,23,42,0.75)] backdrop-blur-md" data-motion-enter>
+						<div class="border-b border-border/70 p-5 sm:p-6">
+							@flightui.StatusHero(view.FlightNumber, shareLiveFlight(view))
+						</div>
+						<div class="space-y-5 p-5 sm:p-6">
+							@flightui.ProgressStrip(shareLiveFlight(view))
+							@flightui.InboundRail(shareLiveFlight(view))
+							<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+								@flightui.StatChip("Delay", flightui.DelayStory(shareLiveFlight(view)))
+								@flightui.StatChip("Dep gate", shareGate(view.Flight.DepartureGate))
+								@flightui.StatChip("Arr gate", shareGate(view.Flight.ArrivalGate))
+								@flightui.StatChip("Baggage", view.Flight.ArrivalBaggage)
+							</div>
+						</div>
+					</div>
+				} else {
+					<h1 class="mt-3 font-mono text-3xl font-semibold tracking-tight">{ view.FlightNumber }</h1>
+					<p class="mt-6 text-sm text-muted-foreground">Live details will appear once the flight is available.</p>
+				}
+				if view.Label != "" {
+					<p class="mt-3 text-sm text-muted-foreground">{ view.Label }</p>
+				}
+				<p class="mt-6 text-xs text-muted-foreground">Link expires { view.ExpiresAt.Local().Format("Mon 15:04") }.</p>
+			}
+		</div>
 	</section>
+}
+
+func shareLiveFlight(view apiclient.PublicShare) *models.LiveFlights {
+	if view.Flight == nil {
+		return nil
+	}
+	live := flightui.LiveFlightFromAPI(*view.Flight)
+	return &live
+}
+
+func shareGate(value string) string {
+	if value == "" {
+		return ""
+	}
+	return value
 }
 
 templ WatchesPage(items []apiclient.Watch, entitlements apiclient.Entitlements, message string, csrfToken string) {
@@ -77,7 +103,7 @@ templ planBadge(entitlements apiclient.Entitlements) {
 		<div class="flex items-center gap-2">
 			<span class="text-muted-foreground">Plan</span>
 			@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "uppercase"}) {
-				{ planLabel(entitlements.Plan) }
+				{ planLabel(entitlements) }
 			}
 		</div>
 		<p class="mt-1 text-xs text-muted-foreground">{ watchQuota(entitlements) }</p>
@@ -90,7 +116,7 @@ templ paywallCard(entitlements apiclient.Entitlements, csrfToken string) {
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<h2 class="text-sm font-semibold">SkyVisor Pro</h2>
-					<p class="mt-1 text-sm text-muted-foreground">Free watches one flight at a time. Pro unlocks unlimited concurrent watches and keeps every trip segment under watch.</p>
+					<p class="mt-1 text-sm text-muted-foreground">Free watches up to 5 flights at a time. Pro unlocks unlimited concurrent watches and keeps every trip segment under watch.</p>
 				</div>
 				<form method="post" action="/billing/checkout">
 					<input type="hidden" name="csrf_token" value={ csrfToken }/>
@@ -189,8 +215,8 @@ templ fact(label, primary, secondary string) {
 	</div>
 }
 
-func planLabel(plan string) string {
-	if plan == "pro" {
+func planLabel(plan apiclient.Entitlements) string {
+	if string(plan.Plan) == "pro" {
 		return "Pro"
 	}
 	return "Free"

@@ -103,19 +103,34 @@ func (h *Handler) CreateLayout(_ http.ResponseWriter, r *http.Request, title str
 	if user == nil {
 		nav = []models.NavItem{
 			{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
+			{Path: "/pricing", Label: "Pricing", Icon: svg2.TicketIcon()},
 			{Path: "/login", Label: "Sign in", Icon: svg2.HomeIcon()},
 			{Path: "/register", Label: "Sign up", Icon: svg2.HomeIcon()},
 		}
 	} else {
 		nav = []models.NavItem{
-			{Path: "/", Label: "Home", Icon: svg2.HomeIcon()},
-			{Path: "/track", Label: "Track", Icon: svg2.PaperAirplaneIcon()},
+			{Path: "/dashboard", Label: "Dashboard", Icon: svg2.HomeIcon()},
 			{Path: "/trips", Label: "Trips", Icon: svg2.PaperAirplaneIcon()},
-			{Path: "/watches", Label: "Watches", Icon: svg2.PaperAirplaneIcon()},
-			{Path: "/airlines/airline", Label: "Airlines", Icon: svg2.TicketIcon()},
-			{Path: "/airports", Label: "Airports", Icon: svg2.BuildingOfficeIcon()},
-			{Path: "/flights/flight", Label: "Flights", Icon: svg2.PaperAirplaneIcon()},
-			{Path: "/locations/city", Label: "Locations", Icon: svg2.LocationsIcon()},
+			{Label: "Monitor", Icon: svg2.PaperAirplaneIcon(), SubItems: []models.NavItem{
+				{Path: "/track", Label: "Flight lookup"},
+				{Path: "/watches", Label: "Watches"},
+				{Path: "/flights/tracker", Label: "Live flights"},
+				{Path: "/airports/board", Label: "Airport board"},
+			}},
+			{Label: "Intelligence", Icon: svg2.TicketIcon(), SubItems: []models.NavItem{
+				{Path: "/analytics", Label: "Analytics"},
+				{Path: "/logistics", Label: "Cargo operations"},
+				{Path: "/operations/cases", Label: "Operational cases"},
+			}},
+			{Label: "Automation", Icon: svg2.SettingsIcon(), SubItems: []models.NavItem{
+				{Path: "/mcp", Label: "MCP and agents"},
+			}},
+			{Label: "Reference", Icon: svg2.BuildingOfficeIcon(), SubItems: []models.NavItem{
+				{Path: "/airlines/airline", Label: "Airlines"},
+				{Path: "/airports", Label: "Airports"},
+				{Path: "/flights/flight", Label: "Flights"},
+				{Path: "/locations/city", Label: "Locations"},
+			}},
 			{Path: "/settings", Label: "Settings", Icon: svg2.SettingsIcon()},
 			{Path: "/logout", Label: "Sign out", Icon: svg2.LogoutIcon(), IsLogout: true},
 		}

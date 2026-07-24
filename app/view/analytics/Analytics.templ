@@ -1,0 +1,107 @@
+package analytics
+
+import "github.com/FACorreiaa/Aviation-tracker/app/apiclient"
+
+templ AnalyticsPage(report apiclient.AnalyticsReport, q apiclient.AnalyticsQuery, message string) {
+	<section class="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8">
+		<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+			<div class="max-w-2xl">
+				<p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Performance</p>
+				<h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">Flight analytics</h1>
+				<p class="mt-3 text-sm leading-6 text-muted-foreground">On-time rates, delay patterns, and busiest routes from skyvisor-api. Free window 7 days; Pro unlocks longer windows and CSV export.</p>
+			</div>
+			if report.CanExport && (q.Airline != "" || q.Airport != "") {
+				<a
+					class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+					href={ exportURL(q) }
+				>Export CSV</a>
+			}
+		</div>
+		<form
+			class="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+			method="get"
+			action="/analytics"
+			hx-get="/analytics"
+			hx-target="#analytics-results"
+			hx-swap="outerHTML"
+			hx-trigger="change delay:200ms from:select, change delay:400ms from:input, every 60s"
+		>
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground">
+				Airline IATA
+				<input class="rounded-md border border-border bg-background px-3 py-2 text-sm uppercase text-foreground" name="airline" value={ q.Airline } placeholder="TP"/>
+			</label>
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground">
+				Airport IATA
+				<input class="rounded-md border border-border bg-background px-3 py-2 text-sm uppercase text-foreground" name="airport" value={ q.Airport } placeholder="LIS"/>
+			</label>
+			<label class="grid gap-1 text-xs font-medium text-muted-foreground">
+				Window (days)
+				<input class="rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground" name="window_days" type="number" min="1" max="90" value={ windowValue(q.WindowDays, report.WindowDays) }/>
+			</label>
+			<input type="hidden" name="partial" value="report"/>
+			<button type="submit" class="self-end rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground">Run</button>
+		</form>
+		@AnalyticsResults(report, message)
+	</section>
+}
+
+templ AnalyticsResults(report apiclient.AnalyticsReport, message string) {
+	<div id="analytics-results" class="space-y-8">
+		if message != "" {
+			<p class="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive" role="alert">{ message }</p>
+		}
+		if report.SampleSize == 0 && message == "" {
+			<p class="text-sm text-muted-foreground">No sample yet. Enter filters and run.</p>
+		}
+		if report.SampleSize > 0 {
+			<div class="overflow-hidden rounded-xl border border-border bg-card"><div class="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-3 lg:grid-cols-6 lg:divide-y-0">
+				@statCard("On-time", pct(report.Summary.OnTimePercent))
+				@statCard("Delayed", itoa(report.Summary.DelayedCount))
+				@statCard("Cancelled", itoa(report.Summary.CancelledCount))
+				@statCard("Avg dep delay", num(report.Summary.AvgDepartureDelayMinutes)+"m")
+				@statCard("Avg arr delay", num(report.Summary.AvgArrivalDelayMinutes)+"m")
+				@statCard("Flights", itoa(report.SampleSize))
+			</div></div>
+			<p class="text-xs text-muted-foreground">
+				Window { itoa(report.WindowDays) }d · plan { string(report.Plan) }
+				if report.WindowCapped {
+					· capped to plan limit
+				}
+				if !report.CanExport {
+					· CSV export requires Pro
+				}
+			</p>
+			<div class="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+			<section class="overflow-hidden rounded-xl border border-border bg-card">
+				<div class="border-b border-border px-5 py-4"><h2 class="text-sm font-semibold">Route performance</h2><p class="mt-1 text-xs text-muted-foreground">Volume, reliability, and delay exposure</p></div>
+				<div class="overflow-x-auto"><table class="w-full min-w-[34rem] text-left text-sm"><thead class="bg-muted/45 text-[11px] uppercase tracking-wider text-muted-foreground"><tr><th class="px-5 py-3">Route</th><th class="px-3 py-3 text-right">Flights</th><th class="px-3 py-3 text-right">On time</th><th class="px-5 py-3 text-right">Avg delay</th></tr></thead><tbody class="divide-y divide-border">
+					for _, route := range report.Routes {
+						<tr class="hover:bg-muted/35"><td class="px-5 py-3.5 font-mono font-semibold">{ route.DepartureIATA } → { route.ArrivalIATA }</td><td class="px-3 py-3.5 text-right font-mono">{ itoa(route.Flights) }</td><td class="px-3 py-3.5 text-right font-mono">{ pct(route.OnTimePercent) }</td><td class="px-5 py-3.5 text-right font-mono">{ num(route.AvgDelayMinutes) }m</td></tr>
+					}
+				</tbody></table></div>
+			</section>
+			<section class="overflow-hidden rounded-xl border border-border bg-card">
+				<div class="border-b border-border px-5 py-4"><h2 class="text-sm font-semibold">Airport load</h2><p class="mt-1 text-xs text-muted-foreground">Traffic represented in this window</p></div>
+				<div class="divide-y divide-border">
+					for _, ap := range report.Airports {
+						<article class="px-5 py-3.5 text-sm hover:bg-muted/35">
+							<div class="flex justify-between gap-2">
+								<span class="font-mono font-semibold text-foreground">{ ap.IATA }</span>
+								<span class="font-mono text-xs text-muted-foreground">{ itoa(ap.Departures) } dep · { itoa(ap.Arrivals) } arr</span>
+							</div>
+							<p class="mt-1 text-xs text-muted-foreground">Average delay { num(ap.AvgDelayMinutes) } minutes</p>
+						</article>
+					}
+				</div>
+			</section>
+			</div>
+		}
+	</div>
+}
+
+templ statCard(label, value string) {
+	<div class="min-h-24 px-4 py-4">
+		<p class="text-xs font-medium text-muted-foreground">{ label }</p>
+		<p class="mt-2 font-mono text-xl font-semibold tabular-nums tracking-tight text-foreground">{ value }</p>
+	</div>
+}

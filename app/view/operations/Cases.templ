@@ -1,0 +1,97 @@
+package operations
+
+import (
+	"fmt"
+	"github.com/FACorreiaa/Aviation-tracker/app/apiclient"
+)
+
+templ CasesPage(items []apiclient.OperationalCase, trust apiclient.DecisionTrustMetrics, status, message, csrfToken string) {
+	<section class="relative mx-auto w-full max-w-7xl px-5 py-10 sm:px-8">
+		<div class="sky-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 opacity-35"></div>
+		<div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+			<div class="max-w-2xl">
+				<p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Operations intelligence</p>
+				<h1 class="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">Cases, decisions, outcomes</h1>
+				<p class="mt-3 text-sm leading-6 text-muted-foreground">Connect each shipment or passenger dependency to its flights, SLA exposure, owner, recommendation, action, and measured result.</p>
+			</div>
+			<a href="/dashboard" class="text-sm font-medium text-primary hover:underline">Back to command center</a>
+		</div>
+		if message != "" {
+			<p class="mb-6 rounded-md border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-800 dark:text-amber-300" role="status">{ message }</p>
+		}
+		<div class="mb-6 overflow-hidden rounded-xl border border-border bg-card">
+			<div class="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-3 lg:grid-cols-6 sm:divide-y-0">
+				@metric("Cases", fmt.Sprint(len(items)), "Current filter")
+				@metric("Needs action", fmt.Sprint(caseCount(items, "action_required")), "Escalated")
+				@metric("Precision", percent(trust.Precision), fmt.Sprintf("%d evaluated", trust.EvaluatedPredictions))
+				@metric("False positive", percent(trust.FalsePositiveRate), "Measured only")
+				@metric("Median lead", fmt.Sprintf("%.0f min", trust.MedianLeadTimeMinutes), "Signal → outcome")
+				@metric("Action success", percent(trust.ActionSuccessRate), fmt.Sprintf("%d executed", trust.ExecutedActions))
+			</div>
+		</div>
+		<div class="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+			<section class="overflow-hidden rounded-xl border border-border bg-card">
+				<div class="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+					<div><h2 class="text-sm font-semibold">Operational queue</h2><p class="mt-1 text-xs text-muted-foreground">Customer-owned context, ordered by latest activity.</p></div>
+					<form method="get" action="/operations/cases">
+						<select name="status" class="h-9 rounded-md border border-input bg-background px-3 text-xs" onchange="this.form.submit()">
+							<option value="">All statuses</option>
+							<option value="open" selected?={ status == "open" }>Open</option>
+							<option value="monitoring" selected?={ status == "monitoring" }>Monitoring</option>
+							<option value="action_required" selected?={ status == "action_required" }>Action required</option>
+							<option value="resolved" selected?={ status == "resolved" }>Resolved</option>
+							<option value="closed" selected?={ status == "closed" }>Closed</option>
+						</select>
+					</form>
+				</div>
+				if len(items) == 0 {
+					<div class="px-5 py-14 text-center"><p class="text-sm font-medium">No cases in this view</p><p class="mt-2 text-xs text-muted-foreground">Create the first case to begin accumulating operational history.</p></div>
+				} else {
+					<div class="overflow-x-auto">
+						<table class="w-full min-w-[50rem] text-left text-sm">
+							<thead class="bg-muted/45 text-[11px] uppercase tracking-wider text-muted-foreground"><tr><th class="px-5 py-3">Case</th><th class="px-3 py-3">Dependency</th><th class="px-3 py-3">Owner</th><th class="px-3 py-3">SLA exposure</th><th class="px-5 py-3">State</th></tr></thead>
+							<tbody class="divide-y divide-border">
+								for _, item := range items {
+									<tr class="hover:bg-muted/35">
+										<td class="px-5 py-4"><a href={ templ.SafeURL("/operations/cases/" + item.ID) } class="font-semibold hover:text-primary">{ item.Title }</a><p class="mt-1 font-mono text-[11px] text-muted-foreground">{ item.Reference }</p></td>
+										<td class="px-3 py-4"><p class="text-xs font-medium uppercase tracking-wide">{ item.Kind }</p><p class="mt-1 text-xs text-muted-foreground">{ flightList(item.FlightNumbers) }</p></td>
+										<td class="px-3 py-4 text-xs">
+											if item.Owner != "" {
+												{ item.Owner }
+											} else {
+												<span class="text-muted-foreground">Unassigned</span>
+											}
+										</td>
+										<td class="px-3 py-4 font-mono text-xs">{ money(item.FailureCostMinor, item.SLACurrency) }<p class="mt-1 font-sans text-[11px] text-muted-foreground">Deadline { relativeDeadline(item.SLADeadline) }</p></td>
+										<td class="px-5 py-4"><span class={ "rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider", stateClass(item.Status) }>{ item.Status }</span><span class={ "ml-2 rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider", severityClass(item.Severity) }>{ item.Severity }</span></td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</section>
+			<details class="h-fit rounded-xl border border-border bg-card p-5" open>
+				<summary class="cursor-pointer text-sm font-semibold">Create operational case</summary>
+				<form method="post" action="/operations/cases" class="mt-5 space-y-4">
+					<input type="hidden" name="csrf_token" value={ csrfToken }/>
+					<div class="grid grid-cols-2 gap-3">
+						<label class="text-xs font-medium">Kind<select name="kind" class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3"><option value="shipment">Shipment</option><option value="passenger">Passenger</option><option value="crew">Crew</option><option value="aircraft">Aircraft</option><option value="other">Other</option></select></label>
+						<label class="text-xs font-medium">Severity<select name="severity" class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3"><option value="medium">Medium</option><option value="high">High</option><option value="critical">Critical</option><option value="low">Low</option></select></label>
+					</div>
+					<label class="block text-xs font-medium">Reference<input name="reference" required placeholder="AWB, PNR, rotation…" class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3"/></label>
+					<label class="block text-xs font-medium">Title<input name="title" required class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3"/></label>
+					<label class="block text-xs font-medium">Flight numbers<input name="flight_numbers" placeholder="TP1363, BA492" class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3"/></label>
+					<div class="grid grid-cols-2 gap-3"><label class="text-xs font-medium">Owner<input name="owner" class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3"/></label><label class="text-xs font-medium">Currency<input name="sla_currency" maxlength="3" placeholder="EUR" class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 uppercase"/></label></div>
+					<div class="grid grid-cols-2 gap-3"><label class="text-xs font-medium">SLA value, minor<input name="sla_value_minor" type="number" min="0" class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3"/></label><label class="text-xs font-medium">Failure cost, minor<input name="failure_cost_minor" type="number" min="0" class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3"/></label></div>
+					<label class="block text-xs font-medium">Escalation policy<input name="escalation_policy" placeholder="Notify duty manager after 15 min" class="mt-1 h-10 w-full rounded-md border border-input bg-background px-3"/></label>
+					<button class="h-10 w-full rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Create case</button>
+				</form>
+			</details>
+		</div>
+	</section>
+}
+
+templ metric(label, value, hint string) {
+	<div class="min-h-24 px-5 py-4"><p class="text-xs font-medium text-muted-foreground">{ label }</p><p class="mt-2 font-mono text-xl font-semibold tabular-nums">{ value }</p><p class="mt-1 text-[11px] text-muted-foreground">{ hint }</p></div>
+}

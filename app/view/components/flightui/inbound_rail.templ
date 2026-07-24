@@ -1,0 +1,32 @@
+package flightui
+
+import "github.com/FACorreiaa/Aviation-tracker/app/models"
+
+templ InboundRail(flight *models.LiveFlights) {
+	if flight != nil && flight.Inbound != nil && (flight.Inbound.LateRisk || flight.Inbound.Message != "") {
+		<div class={ "rounded-lg border px-3 py-2.5 text-sm", inboundRailClass(flight.Inbound.LateRisk) }>
+			<p class="font-mono text-[10px] font-semibold uppercase tracking-wider opacity-80">Where's my plane</p>
+			<p class="mt-1 font-medium">{ InboundHeadline(flight) }</p>
+			if flight.Inbound.Message != "" {
+				<p class="mt-0.5 text-xs opacity-80">{ flight.Inbound.Message }</p>
+			}
+		</div>
+	}
+}
+
+func inboundRailClass(lateRisk bool) string {
+	if lateRisk {
+		return "border-destructive/35 bg-destructive/8 text-destructive"
+	}
+	return "border-border/80 bg-muted/45 text-foreground"
+}
+
+func InboundHeadline(flight *models.LiveFlights) string {
+	if flight == nil || flight.Inbound == nil {
+		return ""
+	}
+	if flight.Inbound.FlightNumber != "" {
+		return flight.Inbound.FlightNumber
+	}
+	return "Inbound aircraft"
+}

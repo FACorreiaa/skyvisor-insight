@@ -1,0 +1,65 @@
+package mcpdocs
+
+import "github.com/FACorreiaa/Aviation-tracker/app/apiclient"
+
+templ PlaygroundPage(usage apiclient.UsageSnapshot, usageAvailable bool, message string) {
+	<section class="relative mx-auto w-full max-w-7xl px-5 py-10 sm:px-8">
+		<div class="sky-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 opacity-35"></div>
+		<div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+		<div class="max-w-2xl">
+			<p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Agents</p>
+			<h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">MCP and agent operations</h1>
+			<p class="mt-3 text-sm leading-6 text-muted-foreground">Connect an MCP host, inspect current quotas, and understand exactly which tools read data or mutate operational state.</p>
+		</div>
+		<div class="flex items-center gap-2"><span class={ "size-2 rounded-full", connectionDot(usageAvailable) }></span><span class="text-xs font-medium text-muted-foreground">{ connectionLabel(usageAvailable) }</span><a href="/dashboard" class="ml-3 text-sm font-medium text-primary hover:underline">Command center</a></div>
+		</div>
+
+		if message != "" {
+			<p class="mb-6 rounded-md border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-800 dark:text-amber-300" role="status">{ message }</p>
+		}
+		if usageAvailable {
+			<div class="mb-6 overflow-hidden rounded-xl border border-border bg-card"><div class="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-4 sm:divide-y-0">
+				@quotaMetric("Plan", planLabel(usage), "Current entitlements")
+				@quotaMetric("MCP reads", usageLabel(usage.MCPReads, usage.MCPDailyReadLimit), remainingLabel(usage.MCPReads, usage.MCPDailyReadLimit))
+				@quotaMetric("MCP actions", usageLabel(usage.MCPActions, usage.MCPDailyActionLimit), remainingLabel(usage.MCPActions, usage.MCPDailyActionLimit))
+				@quotaMetric("Assistant", usageLabel(usage.AssistantCalls, usage.AssistantDailyLimit), remainingLabel(usage.AssistantCalls, usage.AssistantDailyLimit))
+			</div></div>
+		}
+
+		<div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+			<section class="overflow-hidden rounded-xl border border-border bg-card">
+				<div class="border-b border-border px-5 py-4"><h2 class="text-sm font-semibold">Agent tool surface</h2><p class="mt-1 text-xs text-muted-foreground">Read tools inspect state. Action tools mutate state and consume the action quota.</p></div>
+				<div class="overflow-x-auto"><table class="w-full min-w-[36rem] text-left text-sm"><thead class="bg-muted/45 text-[11px] uppercase tracking-wider text-muted-foreground"><tr><th class="px-5 py-3">Tool</th><th class="px-3 py-3">Mode</th><th class="px-5 py-3">Purpose</th></tr></thead><tbody class="divide-y divide-border">
+					@toolRow("get_operations_dashboard", "read", "Priority queue, watched-flight risk, connections, and freshness")
+					@toolRow("get_flight", "read", "Current provider-backed flight record")
+					@toolRow("get_airport_board", "read", "Live airport arrivals and departures")
+					@toolRow("run_analytics", "read", "Delay and on-time performance")
+					@toolRow("get_logistics_overview", "read", "Business cargo disruption snapshot")
+					@toolRow("list_trips / list_watches", "read", "Account-owned operational context")
+					@toolRow("list/get_operational_case", "read", "Case context, decisions, outcomes, and audit history")
+					@toolRow("get_decision_trust", "read", "Measured precision, false positives, lead time, and action success")
+					@toolRow("create_trip / create_watch", "action", "Persist a trip or start monitoring")
+					@toolRow("create_operational_case", "action", "Bind shipment/passenger dependencies, SLA exposure, and owners")
+					@toolRow("create_decision_record", "action", "Persist prediction, confidence, recommendation, and approval policy")
+					@toolRow("record_decision_action/outcome", "action", "Approve or execute work and close the measured result loop")
+					@toolRow("list/create/test_webhook", "action", "Configure signed workflow events and verify delivery")
+					@toolRow("trip_what_if", "action", "Evaluate a delay scenario without persisting it")
+					@toolRow("ask_travel_assistant", "assistant", "Grounded guidance using available trip context")
+				</tbody></table></div>
+			</section>
+
+			<div class="space-y-6">
+				<section class="rounded-xl border border-border bg-card p-5"><div class="flex items-center justify-between"><h2 class="text-sm font-semibold">Governance</h2><span class={ "rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider", actionClass(usage) }>{ actionLabel(usage) }</span></div><p class="mt-3 text-sm leading-6 text-muted-foreground">Credentials remain outside tool arguments. The API enforces identity, tenant scope, plan gates, and daily quotas. Approval-gated external actions will appear here when the decision loop ships.</p></section>
+				<details class="rounded-xl border border-border bg-card p-5"><summary class="cursor-pointer text-sm font-semibold">Connection setup</summary><div class="mt-5 space-y-5"><div><h3 class="text-xs font-semibold text-muted-foreground">Run the server</h3><pre class="mt-2 overflow-x-auto rounded-md bg-muted/60 p-3 font-mono text-[11px] leading-5">{ runSnippet() }</pre></div><div><h3 class="text-xs font-semibold text-muted-foreground">Cursor / Claude config</h3><pre class="mt-2 overflow-x-auto rounded-md bg-muted/60 p-3 font-mono text-[11px] leading-5">{ configSnippet() }</pre></div><div><h3 class="text-xs font-semibold text-muted-foreground">Remote HTTP</h3><pre class="mt-2 overflow-x-auto rounded-md bg-muted/60 p-3 font-mono text-[11px] leading-5">{ remoteSnippet() }</pre></div></div></details>
+			</div>
+		</div>
+	</section>
+}
+
+templ quotaMetric(label, value, hint string) {
+	<div class="min-h-24 px-5 py-4"><p class="text-xs font-medium text-muted-foreground">{ label }</p><p class="mt-2 font-mono text-xl font-semibold tabular-nums">{ value }</p><p class="mt-1 text-[11px] text-muted-foreground">{ hint }</p></div>
+}
+
+templ toolRow(name, mode, purpose string) {
+	<tr class="hover:bg-muted/35"><td class="px-5 py-3.5 font-mono text-xs font-semibold">{ name }</td><td class="px-3 py-3.5"><span class={ "rounded px-1.5 py-1 text-[10px] font-semibold uppercase tracking-wider", modeClass(mode) }>{ mode }</span></td><td class="px-5 py-3.5 text-xs leading-5 text-muted-foreground">{ purpose }</td></tr>
+}

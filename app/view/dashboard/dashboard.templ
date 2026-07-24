@@ -1,0 +1,185 @@
+package dashboard
+
+import (
+	"github.com/FACorreiaa/Aviation-tracker/app/apiclient"
+)
+
+templ Page(d apiclient.OperationsDashboard, message string) {
+	<section id="operations-dashboard" class="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-7 sm:px-6 lg:pt-9" data-live-refresh-url="/dashboard?partial=dashboard" data-live-refresh-target="#operations-dashboard">
+		<div class="sky-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 opacity-45"></div>
+		<header class="flex flex-col gap-5 border-b border-border/80 pb-7 lg:flex-row lg:items-end lg:justify-between">
+			<div class="max-w-3xl">
+				<div class="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+					<span class={ "size-1.5 rounded-full", freshnessDot(d.Freshness.Status) }></span>
+					Operations intelligence
+				</div>
+				<h1 class="mt-3 text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">What needs attention now</h1>
+				<p class="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">A live view of watched flights, disrupted journeys, connection risk, and the evidence behind each signal.</p>
+			</div>
+			<div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+				<span class={ "rounded-md border px-2.5 py-1.5 font-medium", freshnessBadge(d.Freshness.Status) }>{ freshnessLabel(d.Freshness.Status) }</span>
+				<span class="rounded-md border border-border bg-card px-2.5 py-1.5 font-mono">Generated { relativeTime(d.GeneratedAt) }</span>
+			</div>
+		</header>
+
+		if message != "" {
+			<div class="mt-6 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive" role="alert">{ message }</div>
+		}
+
+		<div class="mt-6 overflow-hidden rounded-xl border border-border bg-card/90 shadow-[0_22px_60px_-42px_rgba(15,23,42,0.5)]" data-motion-enter>
+			<div class="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-3 lg:grid-cols-6 lg:divide-y-0">
+				@metric("Active watches", count(d.Summary.ActiveWatches), "Flights monitored", false)
+				@metric("Flights at risk", count(d.Summary.FlightsAtRisk), riskHint(d.Summary.FlightsAtRisk), d.Summary.FlightsAtRisk > 0)
+				@metric("Connections", count(d.Summary.AtRiskConnections), "Tight or likely missed", d.Summary.AtRiskConnections > 0)
+				@metric("Cancelled", count(d.Summary.CancelledFlights), "Watched flights", d.Summary.CancelledFlights > 0)
+				@metric("Late inbound", count(d.Summary.LateInboundFlights), "Aircraft rotation risk", d.Summary.LateInboundFlights > 0)
+				@metric("Trips", count(d.Summary.Trips), "Journeys in context", false)
+			</div>
+		</div>
+
+		if len(d.Watches) > 0 {
+			<div class="mt-6 overflow-hidden rounded-xl border border-border bg-card/90" data-motion-enter>
+				<div class="flex items-center justify-between border-b border-border px-5 py-4">
+					<div>
+						<h2 class="text-sm font-semibold">Live fleet</h2>
+						<p class="mt-1 text-xs text-muted-foreground">Tap a watch to focus the map</p>
+					</div>
+					<span class="font-mono text-xs text-muted-foreground">{ count(len(d.Watches)) } tracked</span>
+				</div>
+				<div class="flex gap-2 overflow-x-auto border-b border-border px-4 py-3" data-fleet-filmstrip>
+					for _, watch := range d.Watches {
+						<button
+							type="button"
+							class="min-w-[9.5rem] shrink-0 rounded-lg border border-border/80 bg-background/80 px-3 py-2 text-left transition-colors hover:border-primary/40 hover:bg-muted/40"
+							data-fleet-focus={ watch.FlightNumber }
+							data-fleet-iata={ fleetOriginIATA(watch) }
+						>
+							<div class="font-mono text-sm font-semibold">{ watch.FlightNumber }</div>
+							<div class="mt-0.5 font-mono text-[11px] text-muted-foreground">{ watch.Route }</div>
+							<div class="mt-1 text-[11px] text-muted-foreground">{ delayLabel(watch) } · { gatesLabel(watch) }</div>
+						</button>
+					}
+				</div>
+				<div
+					id="fleet-map"
+					data-skyvisor-map
+					data-map-mode="fleet"
+					data-markers={ watchMarkersJSON(d.Watches) }
+					data-latitude="30"
+					data-longitude="-20"
+					data-zoom="1.4"
+					class="min-h-[14rem] bg-[oklch(0.22_0.03_255)]"
+					aria-label="Watched flights map"
+				></div>
+			</div>
+		}
+
+		<div class="mt-6 grid gap-6 lg:grid-cols-12">
+			<section class="overflow-hidden rounded-xl border border-border bg-card lg:col-span-8" aria-labelledby="attention-heading">
+				<div class="flex items-center justify-between border-b border-border px-5 py-4">
+					<div><h2 id="attention-heading" class="text-sm font-semibold">Priority queue</h2><p class="mt-1 text-xs text-muted-foreground">Highest-impact signals first</p></div>
+					<span class="font-mono text-xs text-muted-foreground">{ count(len(d.Attention)) } open</span>
+				</div>
+				if len(d.Attention) == 0 {
+					<div>@emptyState("No operational risks detected", "Add watches or trips to build a live priority queue. Skyvisor will surface material changes here.", "/watches", "Add a watch")</div>
+				} else {
+					<div class="divide-y divide-border">
+						for _, item := range d.Attention {
+							<article class={ "group grid gap-3 border-l-2 px-5 py-4 transition-colors hover:bg-muted/35 sm:grid-cols-[1fr_auto] sm:items-start", severityRail(item.Severity) }>
+								<div class="min-w-0 pl-3">
+									<div class="flex flex-wrap items-center gap-2"><h3 class="text-sm font-semibold text-foreground">{ item.Title }</h3></div>
+									<p class="mt-1 text-sm leading-5 text-muted-foreground">{ item.Reason }</p>
+									<div class="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] tracking-wide text-muted-foreground">
+										if item.FlightNumber != "" {
+											<span>{ item.FlightNumber }</span>
+										}
+										if item.Route != "" {
+											<span>{ item.Route }</span>
+										}
+										if item.Status != "" {
+											<span class="capitalize">{ item.Status }</span>
+										}
+									</div>
+								</div>
+								if item.FlightNumber != "" {
+									<a href={ "/track?flight=" + item.FlightNumber } class="text-xs font-medium text-primary underline-offset-4 hover:underline">Inspect</a>
+								}
+							</article>
+						}
+					</div>
+				}
+			</section>
+
+			<aside class="rounded-xl border border-border bg-card lg:col-span-4" aria-labelledby="health-heading">
+				<div class="border-b border-border px-5 py-4"><h2 id="health-heading" class="text-sm font-semibold">Data health</h2><p class="mt-1 text-xs text-muted-foreground">Evidence quality for this view</p></div>
+				<div class="space-y-5 p-5">
+					<div class="flex items-center justify-between"><span class="text-sm text-muted-foreground">Provider</span><span class="font-mono text-sm font-semibold">{ providerLabel(d.Freshness.Provider) }</span></div>
+					<div class="grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-border bg-border text-center">
+						@healthMetric("Fresh", d.Freshness.FreshRecords, "text-emerald-600 dark:text-emerald-400")
+						@healthMetric("Stale", d.Freshness.StaleRecords, "text-amber-600 dark:text-amber-400")
+						@healthMetric("Unknown", d.Freshness.UnknownRecords, "text-muted-foreground")
+					</div>
+					<dl class="space-y-3 border-t border-border pt-4 text-xs">
+						<div class="flex items-center justify-between gap-3"><dt class="text-muted-foreground">Latest observation</dt><dd class="font-mono text-right">{ timeLabel(d.Freshness.LatestObservationAt) }</dd></div>
+						<div class="flex items-center justify-between gap-3"><dt class="text-muted-foreground">Stale threshold</dt><dd class="font-mono">{ secondsLabel(d.Freshness.StaleAfterSeconds) }</dd></div>
+					</dl>
+					<p class="rounded-lg bg-muted/55 p-3 text-xs leading-5 text-muted-foreground">Historical accuracy and source-by-source provenance will appear as licensed event history accumulates. Missing evidence is shown as unknown, never as zero.</p>
+				</div>
+			</aside>
+
+			<section class="overflow-hidden rounded-xl border border-border bg-card lg:col-span-7" aria-labelledby="watch-heading">
+				<div class="flex items-center justify-between border-b border-border px-5 py-4"><div><h2 id="watch-heading" class="text-sm font-semibold">Monitored flights</h2><p class="mt-1 text-xs text-muted-foreground">Status, route, delay, gate, and freshness</p></div><a href="/watches" class="text-xs font-medium text-primary hover:underline">Manage watches</a></div>
+				if len(d.Watches) == 0 {
+					<div>@emptyState("Nothing monitored yet", "Start with a flight that matters to an active trip or handoff.", "/watches", "Watch a flight")</div>
+				} else {
+					<div class="overflow-x-auto"><table class="w-full min-w-[38rem] text-left text-sm"><thead class="bg-muted/45 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"><tr><th class="px-5 py-3">Flight</th><th class="px-3 py-3">Route</th><th class="px-3 py-3">Status</th><th class="px-3 py-3">Delay</th><th class="px-3 py-3">Gates</th><th class="px-5 py-3 text-right">Data</th></tr></thead><tbody class="divide-y divide-border">
+						for _, watch := range d.Watches {
+							<tr class="transition-colors hover:bg-muted/35"><td class="px-5 py-3.5"><a href={ "/track?flight=" + watch.FlightNumber } class="font-mono font-semibold text-foreground hover:text-primary">{ watch.FlightNumber }</a></td><td class="px-3 py-3.5 font-mono text-xs">{ valueOr(watch.Route, "Pending") }</td><td class="px-3 py-3.5 capitalize text-muted-foreground">{ valueOr(watch.Status, "unknown") }</td><td class="px-3 py-3.5 font-mono text-xs">{ delayLabel(watch) }</td><td class="px-3 py-3.5 font-mono text-xs">{ gatesLabel(watch) }</td><td class="px-5 py-3.5 text-right"><span class={ "rounded px-1.5 py-1 text-[10px] font-semibold uppercase tracking-wider", freshnessBadge(watch.FreshnessStatus) }>{ watch.FreshnessStatus }</span></td></tr>
+						}
+					</tbody></table></div>
+				}
+			</section>
+
+			<section class="overflow-hidden rounded-xl border border-border bg-card lg:col-span-5" aria-labelledby="connection-heading">
+				<div class="flex items-center justify-between border-b border-border px-5 py-4"><div><h2 id="connection-heading" class="text-sm font-semibold">Connection risk</h2><p class="mt-1 text-xs text-muted-foreground">Upcoming transfer pressure</p></div><a href="/trips" class="text-xs font-medium text-primary hover:underline">Open trips</a></div>
+				if len(d.Connections) == 0 {
+					<div class="p-5 text-sm text-muted-foreground">No connection risks to evaluate yet.</div>
+				} else {
+					<div class="divide-y divide-border">
+						for _, connection := range d.Connections {
+							<article class="px-5 py-4"><div class="flex items-center justify-between gap-3"><div class="font-mono text-sm font-semibold">{ connection.FromFlight } <span class="text-primary">→</span> { connection.ToFlight }</div><span class={ "rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider", riskBadge(connection.Risk) }>{ riskLabel(connection.Risk) }</span></div><p class="mt-1 text-xs font-medium">{ connection.TripName }</p><p class="mt-2 text-xs leading-5 text-muted-foreground">{ connection.Reason }</p><div class="mt-2 flex gap-3 font-mono text-[11px] text-muted-foreground">
+								if connection.Airport != "" {
+									<span>{ connection.Airport }</span>
+								}
+								if connection.LayoverMinutes != 0 {
+									<span>{ count(connection.LayoverMinutes) } min</span>
+								}
+							</div></article>
+						}
+					</div>
+				}
+			</section>
+		</div>
+	</section>
+}
+
+templ metric(label, value, hint string, pulse bool) {
+	<div
+		class="min-h-28 bg-card px-4 py-4 sm:px-5"
+		if pulse {
+			data-motion-pulse="true"
+		}
+	>
+		<p class="text-xs font-medium text-muted-foreground">{ label }</p>
+		<p class="mt-2 font-mono text-2xl font-semibold tabular-nums tracking-tight text-foreground" data-motion-counter={ value }>{ value }</p>
+		<p class="mt-1 text-[11px] text-muted-foreground">{ hint }</p>
+	</div>
+}
+
+templ healthMetric(label string, value int, class string) {
+	<div class="bg-card px-2 py-3"><div class={ "font-mono text-lg font-semibold tabular-nums", class }>{ count(value) }</div><div class="mt-0.5 text-[10px] text-muted-foreground">{ label }</div></div>
+}
+
+templ emptyState(title, description, href, action string) {
+	<div class="p-7"><div class="max-w-md"><div class="grid size-9 place-items-center rounded-lg bg-secondary text-primary" aria-hidden="true">↗</div><h3 class="mt-4 text-sm font-semibold">{ title }</h3><p class="mt-1 text-sm leading-6 text-muted-foreground">{ description }</p><a href={ templ.SafeURL(href) } class="mt-4 inline-flex rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground transition-transform active:translate-y-px">{ action }</a></div></div>
+}

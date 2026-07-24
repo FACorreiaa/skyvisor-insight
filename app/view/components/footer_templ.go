@@ -29,7 +29,7 @@ func FooterComponent() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"border-t border-border bg-card/60\"><div class=\"mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6\"><div><span class=\"font-semibold text-foreground\">SkyVisor Insight</span> · Travel intelligence without the noise.</div><div class=\"flex gap-5\"><a href=\"/\" class=\"hover:text-foreground\">Flight tracker</a><a href=\"https://github.com/FACorreiaa\" target=\"_blank\" rel=\"noreferrer\" class=\"hover:text-foreground\">GitHub</a></div></div></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"border-t border-border bg-card/60\"><div class=\"mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6\"><div><span class=\"font-semibold text-foreground\">SkyVisor Insight</span> · Travel intelligence without the noise.</div><nav aria-label=\"Legal and product links\" class=\"flex flex-wrap gap-x-5 gap-y-2\"><a href=\"/\" class=\"hover:text-foreground\">Flight tracker</a> <a href=\"/pricing\" class=\"hover:text-foreground\">Pricing</a> <a href=\"/terms\" class=\"hover:text-foreground\">Terms</a> <a href=\"/privacy\" class=\"hover:text-foreground\">Privacy</a> <a href=\"mailto:fernandocorreia316@gmail.com\" class=\"hover:text-foreground\">Contact</a></nav></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

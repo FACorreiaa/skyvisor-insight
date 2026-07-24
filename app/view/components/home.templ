@@ -4,6 +4,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/badge"
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/button"
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
+	"github.com/FACorreiaa/Thinking-orbs-go/components/orb"
 )
 
 templ HomePage() {
@@ -33,9 +34,9 @@ templ HomePage() {
 							<svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted-foreground" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3.5 11.5 21 4l-7.5 17-2.2-7.3-7.8-2.2Z"/><path d="m11.3 13.7 3.2-3.2"/></svg>
 							<input id="hero-flight-number" name="flight" x-model="flight" autocomplete="off" spellcheck="false" placeholder="Flight number, for example TP1363" class="h-12 w-full border-0 bg-transparent px-0 font-mono text-sm uppercase shadow-none outline-none placeholder:normal-case focus:ring-0" required/>
 						</div>
-						@button.Button(button.Props{Type: button.TypeSubmit, Size: button.SizeLg, Class: "h-12 px-6"}) {
+						@button.Button(button.Props{Type: button.TypeSubmit, Size: button.SizeLg, Class: "h-12 px-6 gap-2"}) {
 							Track flight
-							<svg id="flight-search-loading" class="htmx-indicator size-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity=".25" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+							@HTMXLoadingOrb("flight-search-loading", orb.StateSearching, "Searching flight")
 						}
 					</div>
 				</form>
@@ -89,10 +90,10 @@ templ HomePage() {
 			<div class="overflow-hidden rounded-2xl border border-border bg-card">
 				<div class="grid lg:grid-cols-[0.72fr_1.28fr]">
 					<div class="flex flex-col justify-between p-7 sm:p-10">
-						<div><p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Global view</p><h2 class="mt-4 text-3xl font-semibold tracking-tight">See movement, not just rows.</h2><p class="mt-4 leading-relaxed text-muted-foreground">MapLibre powers a faster, adaptable map foundation for airports, routes, and live aircraft layers.</p></div>
-						<div class="mt-10">@button.Button(button.Props{Href: "/register", Variant: button.VariantOutline}) { Create a free account }</div>
+						<div><p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Global view</p><h2 class="mt-4 text-3xl font-semibold tracking-tight">One planet, every route.</h2><p class="mt-4 leading-relaxed text-muted-foreground">A living globe with great-circle routes, airports, and live aircraft layers. Drag it, zoom into a hub, and follow the movement.</p></div>
+						<div class="mt-10">@button.Button(button.Props{Href: "/register", Variant: button.VariantOutline, Attributes: templ.Attributes{"hx-boost": "false"}}) { Create a free account }</div>
 					</div>
-					<div data-skyvisor-map data-latitude="30" data-longitude="-12" data-zoom="1.2" class="min-h-[28rem] border-t border-border bg-muted lg:border-l lg:border-t-0" aria-label="Interactive global flight map"></div>
+					<div data-skyvisor-map data-map-mode="globe" data-latitude="28" data-longitude="-20" data-zoom="1.6" class="min-h-[28rem] border-t border-border bg-[oklch(0.22_0.03_255)] lg:border-l lg:border-t-0" aria-label="Interactive 3D globe with flight routes"></div>
 				</div>
 			</div>
 		</section>

@@ -3,6 +3,7 @@ package pages
 import (
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
 	"github.com/FACorreiaa/Aviation-tracker/app/view/components"
+	"github.com/FACorreiaa/Thinking-orbs-go/components/orb"
 )
 
 templ LayoutPage(l models.LayoutTempl) {
@@ -20,8 +21,11 @@ templ LayoutPage(l models.LayoutTempl) {
 			<script src="/static/js/ol.js"></script>
 			<script src="/static/js/arc.js"></script>
 			<script defer src="/static/js/app.js"></script>
+			@orb.Script()
+			@components.PostHogSnippet()
 		</head>
 		<body hx-boost="true" x-data="appShell" lang="en">
+			<a href="#main-content" class="sr-only z-[60] rounded-md bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to content</a>
 			<div class="flex min-h-screen flex-col" id="contents">
 				@components.NavbarComponent(l.Nav, l.User, l.ActiveNav, l.CSRFToken)
 				<main class="flex-1" id="main-content">

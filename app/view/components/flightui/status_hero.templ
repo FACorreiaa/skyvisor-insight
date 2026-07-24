@@ -1,0 +1,27 @@
+package flightui
+
+import (
+	"fmt"
+
+	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/badge"
+	"github.com/FACorreiaa/Aviation-tracker/app/models"
+)
+
+templ StatusHero(flightNumber string, flight *models.LiveFlights) {
+	if flight != nil {
+		<div class="space-y-1" data-motion-enter>
+			<div class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{ AirlineName(flight) }</div>
+			<div class="flex flex-wrap items-center gap-3">
+				<h2 class="font-mono text-3xl font-semibold tracking-tight sm:text-4xl">{ DisplayFlightNumber(flightNumber, flight) }</h2>
+				@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "capitalize"}) {
+					{ StatusLabel(flight) }
+				}
+				if DelayMinutes(flight) > 0 {
+					@badge.Badge(badge.Props{Variant: badge.VariantOutline}) {
+						{ fmt.Sprintf("+%d min", DelayMinutes(flight)) }
+					}
+				}
+			</div>
+		</div>
+	}
+}

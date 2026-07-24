@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"github.com/FACorreiaa/Aviation-tracker/app/apiclient"
 	"log"
 	"time"
 
@@ -63,6 +64,7 @@ type NavItem struct {
 	Icon     templ.Component
 	Label    string
 	IsLogout bool
+	SubItems []NavItem
 }
 
 type TabItem struct {
@@ -96,6 +98,10 @@ type SettingsPage struct {
 	EmailAlerts bool
 	Plan        string
 	Message     string
+	// Tokens lists MCP connector tokens; NewToken carries a just-created
+	// plaintext exactly once, on the response to the create form.
+	Tokens   []apiclient.PAT
+	NewToken string
 }
 
 type LoginPage struct {
@@ -340,13 +346,28 @@ type LiveFlights struct {
 		LiveSpeedVertical   float32 `json:"speed_vertical"`
 		LiveIsGround        bool    `json:"is_ground"`
 	} `json:"live,omitempty"`
-	CreatedAt            CustomTime `json:"created_at"`
-	DepartureAirportName string     `json:"departure_airport"`
-	DepartureLatitude    string     `json:"departure_latitude"`
-	DepartureLongitude   string     `json:"departure_longitude"`
-	ArrivalAirportName   string     `json:"arrival_airport"`
-	ArrivalLatitude      string     `json:"arrival_latitude"`
-	ArrivalLongitude     string     `json:"arrival_longitude"`
+	Inbound              *TrackInbound   `json:"inbound,omitempty"`
+	Freshness            *TrackFreshness `json:"freshness,omitempty"`
+	CreatedAt            CustomTime      `json:"created_at"`
+	DepartureAirportName string          `json:"departure_airport"`
+	DepartureLatitude    string          `json:"departure_latitude"`
+	DepartureLongitude   string          `json:"departure_longitude"`
+	ArrivalAirportName   string          `json:"arrival_airport"`
+	ArrivalLatitude      string          `json:"arrival_latitude"`
+	ArrivalLongitude     string          `json:"arrival_longitude"`
+}
+
+// TrackInbound mirrors provider inbound aircraft facts for track UI chips.
+type TrackInbound struct {
+	FlightNumber string `json:"flight_number,omitempty"`
+	LateRisk     bool   `json:"late_risk"`
+	Message      string `json:"message,omitempty"`
+}
+
+// TrackFreshness exposes data age on the track sheet.
+type TrackFreshness struct {
+	Status     string `json:"status"`
+	AgeSeconds int    `json:"age_seconds,omitempty"`
 }
 
 type LiveFlightsResume struct {

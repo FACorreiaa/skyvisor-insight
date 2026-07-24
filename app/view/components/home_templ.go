@@ -12,6 +12,7 @@ import (
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/badge"
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/button"
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
+	"github.com/FACorreiaa/Thinking-orbs-go/components/orb"
 )
 
 func HomePage() templ.Component {
@@ -77,13 +78,17 @@ func HomePage() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "Track flight <svg id=\"flight-search-loading\" class=\"htmx-indicator size-4 animate-spin\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\" stroke=\"currentColor\" stroke-opacity=\".25\" stroke-width=\"3\"></circle><path d=\"M21 12a9 9 0 0 0-9-9\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\"></path></svg>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "Track flight")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = HTMXLoadingOrb("flight-search-loading", orb.StateSearching, "Searching flight").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Props{Type: button.TypeSubmit, Size: button.SizeLg, Class: "h-12 px-6"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.Props{Type: button.TypeSubmit, Size: button.SizeLg, Class: "h-12 px-6 gap-2"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -123,7 +128,7 @@ func HomePage() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></section><section class=\"mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:pb-32\"><div class=\"overflow-hidden rounded-2xl border border-border bg-card\"><div class=\"grid lg:grid-cols-[0.72fr_1.28fr]\"><div class=\"flex flex-col justify-between p-7 sm:p-10\"><div><p class=\"font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary\">Global view</p><h2 class=\"mt-4 text-3xl font-semibold tracking-tight\">See movement, not just rows.</h2><p class=\"mt-4 leading-relaxed text-muted-foreground\">MapLibre powers a faster, adaptable map foundation for airports, routes, and live aircraft layers.</p></div><div class=\"mt-10\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></section><section class=\"mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:pb-32\"><div class=\"overflow-hidden rounded-2xl border border-border bg-card\"><div class=\"grid lg:grid-cols-[0.72fr_1.28fr]\"><div class=\"flex flex-col justify-between p-7 sm:p-10\"><div><p class=\"font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary\">Global view</p><h2 class=\"mt-4 text-3xl font-semibold tracking-tight\">One planet, every route.</h2><p class=\"mt-4 leading-relaxed text-muted-foreground\">A living globe with great-circle routes, airports, and live aircraft layers. Drag it, zoom into a hub, and follow the movement.</p></div><div class=\"mt-10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -145,11 +150,11 @@ func HomePage() templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = button.Button(button.Props{Href: "/register", Variant: button.VariantOutline}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = button.Button(button.Props{Href: "/register", Variant: button.VariantOutline, Attributes: templ.Attributes{"hx-boost": "false"}}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div><div data-skyvisor-map data-latitude=\"30\" data-longitude=\"-12\" data-zoom=\"1.2\" class=\"min-h-[28rem] border-t border-border bg-muted lg:border-l lg:border-t-0\" aria-label=\"Interactive global flight map\"></div></div></div></section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div></div><div data-skyvisor-map data-map-mode=\"globe\" data-latitude=\"28\" data-longitude=\"-20\" data-zoom=\"1.6\" class=\"min-h-[28rem] border-t border-border bg-[oklch(0.22_0.03_255)] lg:border-l lg:border-t-0\" aria-label=\"Interactive 3D globe with flight routes\"></div></div></div></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -185,7 +190,7 @@ func homeMetric(value, label string) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 103, Col: 138}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 104, Col: 138}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -198,7 +203,7 @@ func homeMetric(value, label string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 103, Col: 201}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 104, Col: 201}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -264,7 +269,7 @@ func featureCard(number, title, description string) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(number)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 109, Col: 69}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 110, Col: 69}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -277,7 +282,7 @@ func featureCard(number, title, description string) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 110, Col: 86}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 111, Col: 86}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -290,7 +295,7 @@ func featureCard(number, title, description string) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 110, Col: 168}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/view/components/home.templ`, Line: 111, Col: 168}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {

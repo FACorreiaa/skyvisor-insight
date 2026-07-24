@@ -1,0 +1,110 @@
+package operations
+
+import (
+	"fmt"
+	"github.com/FACorreiaa/Aviation-tracker/app/apiclient"
+)
+
+templ CaseDetailPage(detail apiclient.OperationalCaseDetail, message, csrfToken string) {
+	<section class="relative mx-auto w-full max-w-7xl px-5 py-10 sm:px-8">
+		<div class="sky-grid pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 opacity-35"></div>
+		<a href="/operations/cases" class="text-xs font-medium text-primary hover:underline">← Operational cases</a>
+		<div class="mt-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+			<div><div class="mb-3 flex items-center gap-2"><span class={ "rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider", stateClass(detail.Case.Status) }>{ detail.Case.Status }</span><span class={ "rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider", severityClass(detail.Case.Severity) }>{ detail.Case.Severity }</span></div><h1 class="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">{ detail.Case.Title }</h1><p class="mt-2 font-mono text-xs text-muted-foreground">{ detail.Case.Reference } · { flightList(detail.Case.FlightNumbers) }</p></div>
+			<div class="text-left lg:text-right"><p class="text-xs text-muted-foreground">Estimated failure exposure</p><p class="mt-1 font-mono text-2xl font-semibold">{ money(detail.Case.FailureCostMinor, detail.Case.SLACurrency) }</p></div>
+		</div>
+		if message != "" {
+			<p class="mt-6 rounded-md border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-800 dark:text-amber-300" role="status">{ message }</p>
+		}
+		<div class="mt-7 grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
+			<div class="space-y-6">
+				<section class="rounded-xl border border-border bg-card p-5">
+					<div class="grid grid-cols-2 gap-5 sm:grid-cols-4">
+						<div><p class="text-xs text-muted-foreground">Owner</p><p class="mt-1 text-sm font-semibold">
+							if detail.Case.Owner != "" {
+								{ detail.Case.Owner }
+							} else {
+								<span>Unassigned</span>
+							}
+						</p></div>
+						<div><p class="text-xs text-muted-foreground">Handoff</p><p class="mt-1 text-sm font-semibold">{ relativeDeadline(detail.Case.HandoffDeadline) }</p></div>
+						<div><p class="text-xs text-muted-foreground">SLA deadline</p><p class="mt-1 text-sm font-semibold">{ relativeDeadline(detail.Case.SLADeadline) }</p></div>
+						<div><p class="text-xs text-muted-foreground">Approved alternatives</p><p class="mt-1 font-mono text-sm font-semibold">{ fmt.Sprint(len(detail.Case.ApprovedAlternates)) }</p></div>
+					</div>
+					if detail.Case.EscalationPolicy != "" {
+						<div class="mt-5 border-t border-border pt-4"><p class="text-xs text-muted-foreground">Escalation policy</p><p class="mt-1 text-sm">{ detail.Case.EscalationPolicy }</p></div>
+					}
+				</section>
+				<section class="overflow-hidden rounded-xl border border-border bg-card">
+					<div class="border-b border-border px-5 py-4"><h2 class="text-sm font-semibold">Prediction → decision → outcome</h2><p class="mt-1 text-xs text-muted-foreground">Every row remains attributable to its signal, model, approval, action, and result.</p></div>
+					if len(detail.Decisions) == 0 {
+						<div class="px-5 py-12 text-center text-sm text-muted-foreground">No predictions have been recorded for this case.</div>
+					} else {
+						<div class="divide-y divide-border">
+							for _, item := range detail.Decisions {
+								@decisionCard(detail.Case, item, csrfToken)
+							}
+						</div>
+					}
+				</section>
+			</div>
+			<div class="space-y-6">
+				@decisionForm(detail.Case.ID, csrfToken)
+				<section class="rounded-xl border border-border bg-card p-5">
+					<h2 class="text-sm font-semibold">Audit history</h2>
+					<div class="mt-4 space-y-4">
+						if len(detail.Audit) == 0 {
+							<p class="text-xs text-muted-foreground">No audit events.</p>
+						} else {
+							for _, event := range detail.Audit {
+								<div class="border-l border-border pl-3"><p class="text-xs font-semibold">{ event.Type }</p><p class="mt-1 text-[11px] text-muted-foreground">{ actorLabel(event.ActorType) } · { event.CreatedAt.Local().Format("02 Jan 15:04") }</p></div>
+							}
+						}
+					</div>
+				</section>
+			</div>
+		</div>
+	</section>
+}
+
+templ decisionCard(caseItem apiclient.OperationalCase, item apiclient.DecisionRecord, csrfToken string) {
+	<article class="p-5">
+		<div class="flex flex-wrap items-start justify-between gap-3"><div><p class="text-[10px] font-semibold uppercase tracking-wider text-primary">{ item.SignalType } · { item.SignalSource }</p><h3 class="mt-1 text-base font-semibold">{ item.PredictionType }</h3><p class="mt-1 text-xs text-muted-foreground">Probability { probability(item.PredictedProbability) } · Confidence { probability(item.Confidence) } · Horizon { fmt.Sprint(item.HorizonMinutes) } min</p></div><span class={ "rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider", stateClass(item.State) }>{ item.State }</span></div>
+		<div class="mt-4 rounded-lg bg-muted/45 p-4"><p class="text-xs font-semibold">Recommendation</p><p class="mt-1 text-sm">{ item.Recommendation }</p>
+			if item.Rationale != "" {
+				<p class="mt-2 text-xs leading-5 text-muted-foreground">{ item.Rationale }</p>
+			}
+		</div>
+		if canApprove(item) {
+			<form method="post" action={ templ.SafeURL("/operations/cases/" + caseItem.ID + "/decisions/" + item.ID + "/action") } class="mt-4 flex gap-2"><input type="hidden" name="csrf_token" value={ csrfToken }/><button name="decision" value="approved" class="h-9 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground">Approve</button><button name="decision" value="rejected" class="h-9 rounded-md border border-border px-3 text-xs font-semibold">Reject</button></form>
+		}
+		if canExecute(item) {
+			<form method="post" action={ templ.SafeURL("/operations/cases/" + caseItem.ID + "/decisions/" + item.ID + "/action") } class="mt-4 grid gap-2 sm:grid-cols-[1fr_1fr_auto]"><input type="hidden" name="csrf_token" value={ csrfToken }/><input type="hidden" name="decision" value="executed"/><input name="action_taken" required placeholder="Action taken" class="h-9 rounded-md border border-input bg-background px-3 text-xs"/><input name="external_ref" placeholder="External reference" class="h-9 rounded-md border border-input bg-background px-3 text-xs"/><button class="h-9 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground">Record execution</button></form>
+		}
+		if canEvaluate(item) {
+			<form method="post" action={ templ.SafeURL("/operations/cases/" + caseItem.ID + "/decisions/" + item.ID + "/outcome") } class="mt-4 grid gap-2 rounded-lg border border-border p-3 sm:grid-cols-2"><input type="hidden" name="csrf_token" value={ csrfToken }/><select name="prediction_result" class="h-9 rounded-md border border-input bg-background px-3 text-xs"><option value="occurred">Prediction occurred</option><option value="not_occurred">Did not occur</option><option value="unknown">Unknown</option></select><select name="action_result" class="h-9 rounded-md border border-input bg-background px-3 text-xs"><option value="succeeded">Action succeeded</option><option value="failed">Action failed</option><option value="no_action">No action</option><option value="unknown">Unknown</option></select><input name="avoided_cost_minor" type="number" min="0" placeholder="Avoided cost, minor" class="h-9 rounded-md border border-input bg-background px-3 text-xs"/><button class="h-9 rounded-md border border-primary px-3 text-xs font-semibold text-primary">Close outcome loop</button></form>
+		}
+		if item.Outcome != nil {
+			<div class="mt-4 flex flex-wrap gap-4 border-t border-border pt-3 text-xs"><span>Prediction: <strong>{ item.Outcome.PredictionResult }</strong></span><span>Action: <strong>{ item.Outcome.ActionResult }</strong></span><span>Avoided: <strong>{ money(item.Outcome.AvoidedCostMinor, caseItem.SLACurrency) }</strong></span></div>
+		}
+	</article>
+}
+
+templ decisionForm(caseID, csrfToken string) {
+	<details class="rounded-xl border border-border bg-card p-5" open>
+		<summary class="cursor-pointer text-sm font-semibold">Record signal and recommendation</summary>
+		<form method="post" action={ templ.SafeURL("/operations/cases/" + caseID + "/decisions") } class="mt-5 space-y-3">
+			<input type="hidden" name="csrf_token" value={ csrfToken }/>
+			<div class="grid grid-cols-2 gap-2"><input name="signal_type" required placeholder="Signal type" class="h-9 rounded-md border border-input bg-background px-3 text-xs"/><input name="signal_source" required placeholder="Source" class="h-9 rounded-md border border-input bg-background px-3 text-xs"/></div>
+			<input name="prediction_type" required placeholder="Prediction type" class="h-9 w-full rounded-md border border-input bg-background px-3 text-xs"/>
+			<div class="grid grid-cols-3 gap-2"><input name="predicted_probability" type="number" min="0" max="1" step="0.01" placeholder="Probability" class="h-9 rounded-md border border-input bg-background px-3 text-xs"/><input name="confidence" type="number" min="0" max="1" step="0.01" placeholder="Confidence" class="h-9 rounded-md border border-input bg-background px-3 text-xs"/><input name="horizon_minutes" type="number" min="0" placeholder="Horizon" class="h-9 rounded-md border border-input bg-background px-3 text-xs"/></div>
+			<div class="grid grid-cols-3 gap-2"><input name="scope_airport" maxlength="3" placeholder="Airport" class="h-9 rounded-md border border-input bg-background px-3 text-xs uppercase"/><input name="scope_airline" placeholder="Airline" class="h-9 rounded-md border border-input bg-background px-3 text-xs uppercase"/><input name="scope_route" placeholder="Route" class="h-9 rounded-md border border-input bg-background px-3 text-xs uppercase"/></div>
+			<input name="recommendation_type" required placeholder="Recommendation type" class="h-9 w-full rounded-md border border-input bg-background px-3 text-xs"/>
+			<textarea name="recommendation" required rows="3" placeholder="Recommended response" class="w-full rounded-md border border-input bg-background px-3 py-2 text-xs"></textarea>
+			<textarea name="rationale" rows="2" placeholder="Evidence-based rationale" class="w-full rounded-md border border-input bg-background px-3 py-2 text-xs"></textarea>
+			<input name="proposed_action" placeholder="Proposed action" class="h-9 w-full rounded-md border border-input bg-background px-3 text-xs"/>
+			<label class="flex items-center gap-2 text-xs"><input type="checkbox" name="approval_required" checked/> Human approval required</label>
+			<button class="h-10 w-full rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground">Record recommendation</button>
+		</form>
+	</details>
+}

@@ -2,130 +2,149 @@ package components
 
 import (
 	"fmt"
-	"time"
+	"net/url"
 
-	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/badge"
 	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/button"
-	"github.com/FACorreiaa/Aviation-tracker/app/components/ui/card"
 	"github.com/FACorreiaa/Aviation-tracker/app/models"
+	"github.com/FACorreiaa/Aviation-tracker/app/view/components/flightui"
+	"github.com/FACorreiaa/Thinking-orbs-go/components/orb"
 )
 
-templ FlightLookupPage(flightNumber string, result templ.Component) {
-	<section class="mx-auto min-h-[70vh] max-w-4xl px-4 py-16 sm:px-6 lg:py-24">
-		<div class="max-w-2xl"><p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Public flight tracker</p><h1 class="mt-3 text-4xl font-semibold tracking-tight">Track a flight</h1><p class="mt-3 text-muted-foreground">Check the latest flight record without creating an account.</p></div>
-		<form action="/track" method="get" hx-get="/track" hx-target="#flight-result" hx-push-url="true" class="mt-8 flex flex-col gap-2 rounded-xl border border-border bg-card p-2 shadow-sm sm:flex-row">
-			<label for="lookup-flight-number" class="sr-only">Flight number</label>
-			<input id="lookup-flight-number" name="flight" value={ flightNumber } placeholder="Flight number, for example TP1363" class="h-12 min-w-0 flex-1 border-0 bg-transparent px-3 font-mono uppercase shadow-none focus:ring-0" required/>
-			@button.Button(button.Props{Type: button.TypeSubmit, Size: button.SizeLg, Class: "h-12 px-6"}) { Track flight }
-		</form>
-		<div id="flight-result" class="mt-8" aria-live="polite">@result</div>
+templ FlightLookupResultContainer(result templ.Component) {
+	<div id="flight-result" class="mt-auto px-4 pb-6 sm:px-6 sm:pb-8 pointer-events-auto" aria-live="polite">
+		@result
+	</div>
+}
+
+templ FlightLookupPage(flightNumber string, flight *models.LiveFlights, result templ.Component, isAuthenticated bool) {
+	<section
+		class="relative min-h-[calc(100dvh-4rem)] overflow-hidden bg-[oklch(0.18_0.025_255)]"
+		if isAuthenticated && flight != nil {
+			data-live-refresh-url={ trackRefreshURL(flightNumber, flight) }
+			data-live-refresh-target="#flight-result"
+		}
+	>
+		@flightui.TrackMap(flightui.MapAttrsFromFlight(flightNumber, flight))
+		<div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/55 via-transparent to-background/90"></div>
+		<div class="relative z-10 flex min-h-[calc(100dvh-4rem)] flex-col">
+			<div class="p-4 sm:p-6">
+				<div class="mx-auto max-w-xl pointer-events-auto" data-motion-enter>
+					<p class="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Live flight tracker</p>
+					<form
+						action="/track"
+						method="get"
+						hx-get="/track"
+						hx-target="#flight-result"
+						hx-push-url="true"
+						hx-indicator="#track-search-loading"
+						class="mt-3 flex flex-col gap-2 rounded-xl border border-border/80 bg-card/90 p-2 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.65)] backdrop-blur-md sm:flex-row"
+					>
+						<label for="lookup-flight-number" class="sr-only">Flight number</label>
+						<input
+							id="lookup-flight-number"
+							name="flight"
+							value={ flightNumber }
+							placeholder="Flight number, for example TP1363"
+							class="h-12 min-w-0 flex-1 border-0 bg-transparent px-3 font-mono uppercase shadow-none focus:ring-0"
+							required
+						/>
+						@button.Button(button.Props{Type: button.TypeSubmit, Size: button.SizeLg, Class: "h-12 px-6 gap-2"}) {
+							Track flight
+							@HTMXLoadingOrb("track-search-loading", orb.StateSearching, "Searching flight")
+						}
+					</form>
+				</div>
+			</div>
+			@FlightLookupResultContainer(result)
+		</div>
 	</section>
 }
 
 templ FlightLookupResult(flightNumber string, flight *models.LiveFlights, message string) {
-	@FlightLookupResultAuth(flightNumber, flight, message, false, "")
+	@FlightLookupResultAuth(flightNumber, flight, message, false, "", false, "", "", "")
 }
 
-templ FlightLookupResultAuth(flightNumber string, flight *models.LiveFlights, message string, canWatch bool, csrfToken string) {
+templ FlightLookupResultAuth(flightNumber string, flight *models.LiveFlights, message string, canWatch bool, csrfToken string, isAuthenticated bool, watchID string, shareURL string, shareFlash string) {
+	@flightui.TrackMapOOB(flightui.MapAttrsFromFlight(flightNumber, flight))
 	if flight == nil {
-		@card.Card(card.Props{Class: "border-dashed bg-muted/35 shadow-none"}) {
-			@card.Content(card.ContentProps{Class: "flex items-start gap-3 p-5"}) {
-				<div class="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-secondary text-muted-foreground"><svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></div>
-				<div><h2 class="text-sm font-semibold">No flight to show</h2><p class="mt-1 text-sm leading-relaxed text-muted-foreground">{ message }</p></div>
-			}
-		}
+		<div class="mx-auto max-w-xl rounded-xl border border-dashed border-border/80 bg-card/85 p-5 backdrop-blur-md" data-motion-enter>
+			<h2 class="text-sm font-semibold">No flight to show</h2>
+			<p class="mt-1 text-sm leading-relaxed text-muted-foreground">{ message }</p>
+		</div>
 	} else {
-		@card.Card(card.Props{Class: "overflow-hidden border-primary/20 shadow-[0_20px_55px_-35px_rgba(30,64,175,0.45)]"}) {
-			<div class="flex flex-col gap-4 border-b border-border bg-primary/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between">
-				<div><div class="font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ flight.Airline.Name }</div><h2 class="mt-1 font-mono text-2xl font-semibold">{ displayFlightNumber(flightNumber, flight) }</h2></div>
-				<div class="flex flex-wrap items-center gap-2">
-					@badge.Badge(badge.Props{Variant: badge.VariantSecondary, Class: "capitalize"}) { string(flight.FlightStatus) }
-					if delayText := departureDelayText(flight); delayText != "" {
-						@badge.Badge(badge.Props{Variant: badge.VariantOutline}) { delayText }
-					}
+		<div
+			class="mx-auto max-w-xl overflow-hidden rounded-2xl border border-border/80 bg-card/92 shadow-[0_28px_70px_-36px_rgba(15,23,42,0.75)] backdrop-blur-md"
+			data-motion-enter
+			if !isAuthenticated {
+				hx-get={ trackRefreshURL(flightNumber, flight) }
+				hx-trigger="every 30s"
+				hx-swap="outerHTML"
+			}
+		>
+			if shareFlash != "" {
+				<div class="border-b border-primary/25 bg-primary/5 px-5 py-3 text-sm">
+					<span class="text-muted-foreground">Pickup link ready: </span>
+					<a href={ shareFlash } class="font-mono text-primary underline-offset-4 hover:underline">{ shareFlash }</a>
 				</div>
+			}
+			<div class="border-b border-border/70 p-5 sm:p-6">
+				@flightui.StatusHero(flightNumber, flight)
 			</div>
-			@card.Content(card.ContentProps{Class: "p-5 sm:p-7"}) {
-				<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-					@airportSummary(flight.Departure.CityCode, flight.Departure.CountryCode, flight.Departure.Airport, displayTime(flight.Departure.Estimated, flight.Departure.Scheduled), false)
-					<div class="flex min-w-20 items-center gap-2 text-primary sm:min-w-36"><span class="h-px flex-1 bg-primary/30"></span><svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true"><path d="m21.8 12-8.3-5.1v3.6L5 8 2.5 9.2l5.6 3-5.6 3L5 16.5l8.5-2.5v3.6l8.3-5.1c.3-.2.3-.4 0-.5Z"/></svg><span class="h-px flex-1 bg-primary/30"></span></div>
-					@airportSummary(flight.Arrival.CityCode, flight.Arrival.CountryCode, flight.Arrival.Airport, displayTime(flight.Arrival.Estimated, flight.Arrival.Scheduled), true)
-				</div>
-				<div class="mt-7 grid gap-3 border-t border-border pt-5 text-sm sm:grid-cols-3">
-					@flightFact("Departure", "Terminal " + displayValue(flight.Departure.Terminal), "Gate " + displayValue(flight.Departure.Gate))
-					@flightFact("Arrival", "Terminal " + displayValue(flight.Arrival.Terminal), "Gate " + displayValue(flight.Arrival.Gate))
-					@flightFact("Extras", baggageText(flight), aircraftText(flight))
+			<div class="space-y-5 p-5 sm:p-6">
+				@flightui.ProgressStrip(flight)
+				@flightui.InboundRail(flight)
+				<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+					@flightui.StatChip("Delay", flightui.DelayStory(flight))
+					@flightui.StatChip("Dep terminal", flightui.TerminalText(flight, "dep"))
+					@flightui.StatChip("Arr terminal", flightui.TerminalText(flight, "arr"))
+					@flightui.StatChip("Dep gate", gateValue(flight.Departure.Gate))
+					@flightui.StatChip("Arr gate", gateValue(flight.Arrival.Gate))
+					@flightui.StatChip("Baggage", flightui.BaggageText(flight))
+					@flightui.StatChip("Aircraft", flightui.AircraftText(flight))
+					@flightui.StatChip("Data", flightui.StaleChipText(flight))
 				</div>
 				if canWatch {
-					<form method="post" action="/watches" class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
-						<input type="hidden" name="csrf_token" value={ csrfToken }/>
-						<input type="hidden" name="flight_number" value={ displayFlightNumber(flightNumber, flight) }/>
-						<input type="hidden" name="return_to" value={ "/track?flight=" + displayFlightNumber(flightNumber, flight) }/>
-						<p class="text-sm text-muted-foreground">Get delay and gate alerts for this flight.</p>
-						@button.Button(button.Props{Type: button.TypeSubmit}) { Watch this flight }
-					</form>
+					<div class="flex flex-wrap items-center justify-between gap-3 border-t border-border/70 pt-4">
+						<form method="post" action="/watches" class="flex flex-wrap items-center gap-3">
+							<input type="hidden" name="csrf_token" value={ csrfToken }/>
+							<input type="hidden" name="flight_number" value={ flightui.DisplayFlightNumber(flightNumber, flight) }/>
+							<input type="hidden" name="return_to" value={ "/track?flight=" + flightui.DisplayFlightNumber(flightNumber, flight) }/>
+							<p class="text-sm text-muted-foreground">Get delay and gate alerts for this flight.</p>
+							@button.Button(button.Props{Type: button.TypeSubmit}) { Watch this flight }
+						</form>
+						if watchID != "" {
+							<div class="flex flex-wrap items-center gap-2">
+								if shareURL != "" {
+									<a href={ shareURL } class="font-mono text-sm text-primary underline-offset-4 hover:underline">{ shareURL }</a>
+								}
+								<form method="post" action={ "/watches/" + watchID + "/share" }>
+									<input type="hidden" name="csrf_token" value={ csrfToken }/>
+									<input type="hidden" name="return_to" value={ "/track?flight=" + flightui.DisplayFlightNumber(flightNumber, flight) }/>
+									@button.Button(button.Props{Type: button.TypeSubmit, Variant: button.VariantOutline, Size: button.SizeSm}) {
+										Share pickup link
+									}
+								</form>
+							</div>
+						}
+					</div>
 				}
-			}
-		}
+			</div>
+		</div>
 	}
 }
 
-templ airportSummary(city, country, airport, timestamp string, alignRight bool) {
-	<div class={ templ.KV("text-right", alignRight) }><div class="font-mono text-2xl font-semibold tracking-tight sm:text-3xl">{ fallback(city, "N/A") }</div><div class="mt-1 text-xs font-medium text-muted-foreground">{ fallback(country, "") } · { timestamp }</div><div class="mt-2 hidden max-w-52 text-xs leading-relaxed text-muted-foreground sm:block">{ fallback(airport, "Airport unavailable") }</div></div>
-}
-
-templ flightFact(label, primary, secondary string) {
-	<div class="rounded-lg bg-muted/55 p-3"><div class="text-xs font-medium text-muted-foreground">{ label }</div><div class="mt-1 font-medium">{ fallback(primary, "Not available") }</div><div class="mt-0.5 text-xs text-muted-foreground">{ fallback(secondary, "Not available") }</div></div>
-}
-
-func displayFlightNumber(query string, flight *models.LiveFlights) string {
-	if flight != nil && flight.Flight.Number != "" {
-		return flight.Flight.Number
-	}
-	return query
-}
-
-func displayTime(preferred, fallbackTime time.Time) string {
-	if !preferred.IsZero() {
-		return preferred.Format("15:04")
-	}
-	if !fallbackTime.IsZero() {
-		return fallbackTime.Format("15:04")
-	}
-	return "Time pending"
-}
-
-func displayValue(value any) string {
-	if value == nil || fmt.Sprint(value) == "" {
-		return "N/A"
-	}
-	return fmt.Sprint(value)
-}
-
-func fallback(value, fallbackValue string) string {
-	if value == "" {
-		return fallbackValue
-	}
-	return value
-}
-
-func departureDelayText(flight *models.LiveFlights) string {
-	if flight == nil || flight.Departure.Delay == nil || *flight.Departure.Delay == 0 {
+func gateValue(value interface{}) string {
+	if value == nil {
 		return ""
 	}
-	return fmt.Sprintf("+%d min", *flight.Departure.Delay)
+	text := fmt.Sprint(value)
+	if text == "" || text == "<nil>" {
+		return ""
+	}
+	return text
 }
 
-func baggageText(flight *models.LiveFlights) string {
-	if flight == nil {
-		return "Baggage N/A"
-	}
-	return "Baggage " + displayValue(flight.Arrival.Baggage)
-}
-
-func aircraftText(flight *models.LiveFlights) string {
-	if flight == nil || flight.Aircraft.AircraftRegistration == "" {
-		return "Aircraft pending"
-	}
-	return flight.Aircraft.AircraftRegistration
+func trackRefreshURL(flightNumber string, flight *models.LiveFlights) string {
+	number := flightui.DisplayFlightNumber(flightNumber, flight)
+	return "/track?partial=flight&flight=" + url.QueryEscape(number)
 }

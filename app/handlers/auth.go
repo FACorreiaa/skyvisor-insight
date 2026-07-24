@@ -17,6 +17,7 @@ const (
 	sessionKeyOIDCNonce    = "oidc_nonce"
 	sessionKeyOIDCVerifier = "oidc_verifier"
 	sessionKeyOIDCReturnTo = "oidc_return_to"
+	sessionKeyOIDCPlan     = "oidc_plan"
 )
 
 // LoginStart redirects the browser to the identity provider using the
@@ -51,11 +52,24 @@ func (h *Handler) startAuthFlow(w http.ResponseWriter, r *http.Request, extra ..
 	s.Values[sessionKeyOIDCNonce] = nonce
 	s.Values[sessionKeyOIDCVerifier] = verifier
 	s.Values[sessionKeyOIDCReturnTo] = safeReturnPath(r.URL.Query().Get("return_to"))
+	// Carry the pricing intent (/register?plan=pro) through the IdP round-trip.
+	if plan := r.URL.Query().Get("plan"); plan == "pro" || plan == "business" {
+		s.Values[sessionKeyOIDCPlan] = plan
+	}
 	if err := s.Save(r, w); err != nil {
 		return errors.New("error saving session")
 	}
 
-	http.Redirect(w, r, h.oidc.AuthCodeURL(state, nonce, verifier, extra...), http.StatusSeeOther)
+	// Auth0 /authorize is not CORS-enabled. hx-boost turns /login into XHR and
+	// then tries to follow the IdP redirect via preflight — that fails with
+	// 404/CORS. Force a top-level navigation for HTMX requests.
+	authURL := h.oidc.AuthCodeURL(state, nonce, verifier, extra...)
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", authURL)
+		w.WriteHeader(http.StatusNoContent)
+		return nil
+	}
+	http.Redirect(w, r, authURL, http.StatusSeeOther)
 	return nil
 }
 
@@ -71,6 +85,8 @@ func (h *Handler) AuthCallback(w http.ResponseWriter, r *http.Request) error {
 	nonce, _ := s.Values[sessionKeyOIDCNonce].(string)
 	verifier, _ := s.Values[sessionKeyOIDCVerifier].(string)
 	returnTo, _ := s.Values[sessionKeyOIDCReturnTo].(string)
+	pendingPlan, _ := s.Values[sessionKeyOIDCPlan].(string)
+	delete(s.Values, sessionKeyOIDCPlan)
 	delete(s.Values, sessionKeyOIDCState)
 	delete(s.Values, sessionKeyOIDCNonce)
 	delete(s.Values, sessionKeyOIDCVerifier)
@@ -112,8 +128,19 @@ func (h *Handler) AuthCallback(w http.ResponseWriter, r *http.Request) error {
 		return errors.New("error saving session")
 	}
 
-	if returnTo == "" {
-		returnTo = "/"
+	switch {
+	case pendingPlan != "":
+		// Signup started from the pricing page: greet, then offer checkout.
+		returnTo = "/welcome?plan=" + pendingPlan
+	case returnTo == "":
+		returnTo = "/dashboard"
+		if h.service.API() != nil {
+			if accessToken, tokenErr := h.service.APIAccessToken(r.Context(), string(*sessionToken)); tokenErr == nil {
+				if watches, watchErr := h.service.API().ListWatches(r.Context(), accessToken); watchErr == nil && len(watches) == 0 {
+					returnTo = "/welcome"
+				}
+			}
+		}
 	}
 	http.Redirect(w, r, returnTo, http.StatusSeeOther)
 	return nil
@@ -135,6 +162,11 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) error {
 		slog.Error("failed to clear auth session", "err", err)
 	}
 
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", "/")
+		w.WriteHeader(http.StatusNoContent)
+		return nil
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 	return nil
 }

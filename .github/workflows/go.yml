@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -26,6 +26,17 @@ jobs:
       - run: go run github.com/a-h/templ/cmd/templ@v0.3.1020 generate
       - name: Check generated templates
         run: git diff --exit-code -- '**/*_templ.go'
+      - name: Checkout API spec
+        uses: actions/checkout@v6
+        with:
+          repository: FACorreiaa/skyvisor-api
+          path: .skyvisor-api
+          sparse-checkout: api/openapi.yaml
+          sparse-checkout-cone-mode: false
+      - name: Check generated API client
+        run: |
+          make api-client OPENAPI_SPEC=.skyvisor-api/api/openapi.yaml
+          git diff --exit-code -- app/apiclient/gen
       - run: go test -race ./...
       - run: go vet ./...
       - run: go build ./cmd/...
@@ -34,9 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v6
+      - uses: actions/checkout@v6
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
         with:
           context: .
           push: false

@@ -8,12 +8,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/FACorreiaa/Aviation-tracker/app"
 	"github.com/FACorreiaa/Aviation-tracker/app/apiclient"
 	"github.com/FACorreiaa/Aviation-tracker/app/auth"
+	"github.com/FACorreiaa/Aviation-tracker/app/telemetry"
 	"github.com/FACorreiaa/Aviation-tracker/config"
 	"github.com/FACorreiaa/Aviation-tracker/db"
 )
@@ -23,6 +25,24 @@ func run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	shutdownTracing, err := telemetry.SetupTracing(ctx, "skyvisor-web")
+	if err != nil {
+		return fmt.Errorf("setup tracing: %w", err)
+	}
+	defer func() {
+		flushCtx, flushCancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer flushCancel()
+		if err := shutdownTracing(flushCtx); err != nil {
+			slog.Error("shutdown tracing", "error", err)
+		}
+	}()
+
+	flushSentry, err := telemetry.SetupSentry("skyvisor-web")
+	if err != nil {
+		return fmt.Errorf("setup sentry: %w", err)
+	}
+	defer flushSentry()
 
 	logOptions := slog.HandlerOptions{Level: cfg.Log.Level}
 	var logHandler slog.Handler
@@ -43,6 +63,18 @@ func run(ctx context.Context) error {
 	defer startupCancel()
 	if err := db.WaitForDB(startupCtx, pool); err != nil {
 		return err
+	}
+
+	// Schema changes land in db/migrations/*.sql and apply on every start
+	// unless AUTO_MIGRATE=false (use the Helm migrate Job alone in that case).
+	if autoMigrateEnabled() {
+		migrateCtx, migrateCancel := context.WithTimeout(ctx, 60*time.Second)
+		defer migrateCancel()
+		if err := db.Migrate(migrateCtx, pool); err != nil {
+			return fmt.Errorf("run migrations: %w", err)
+		}
+	} else {
+		slog.Info("AUTO_MIGRATE disabled; skipping schema migrations on startup")
 	}
 
 	redisClient, err := db.InitRedis(cfg.Redis.Host, cfg.Redis.Password, cfg.Redis.DB)
@@ -126,5 +158,16 @@ func main() {
 	if err := run(ctx); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
+	}
+}
+
+// autoMigrateEnabled defaults to true. Set AUTO_MIGRATE=false|0|no|off to rely
+// on the standalone migrate Job/binary only.
+func autoMigrateEnabled() bool {
+	switch strings.ToLower(strings.TrimSpace(os.Getenv("AUTO_MIGRATE"))) {
+	case "0", "false", "no", "off":
+		return false
+	default:
+		return true
 	}
 }

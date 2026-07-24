@@ -1,0 +1,16 @@
+package components
+
+import "github.com/FACorreiaa/Thinking-orbs-go/components/orb"
+
+// HTMXLoadingOrb is a 20px thinking orb shown while an HTMX request is in flight.
+templ HTMXLoadingOrb(id string, state orb.State, label string) {
+	<span id={ id } class="htmx-indicator inline-flex shrink-0 items-center justify-center" aria-hidden="true">
+		@orb.Orb(orb.Props{
+			ID:        id + "-orb",
+			State:     state,
+			Size:      orb.Size20,
+			AriaLabel: label,
+			Class:     "pointer-events-none",
+		})
+	</span>
+}

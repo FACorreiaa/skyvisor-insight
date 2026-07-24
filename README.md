@@ -38,7 +38,7 @@ Requirements:
 Create the local configuration:
 
 ```sh
-cp .env.sample .env
+cp .env.example .env
 ```
 
 Set `SESSION_KEY` to at least 32 random characters and provide `DB_PASS`. The defaults expect PostgreSQL on `127.0.0.1:5435`, Redis on `127.0.0.1:6381`, and the web server on `127.0.0.1:6969`.
@@ -50,13 +50,15 @@ docker compose up -d postgres redis
 bun install --frozen-lockfile
 bun run build
 go run github.com/a-h/templ/cmd/templ@v0.3.1020 generate
-go run ./cmd/migrate
 go run ./cmd/web
+# or: make dev
 ```
 
 Open `http://127.0.0.1:6969`.
 
-Database migrations and bulk imports never run as a side effect of starting the web server. Import reference and flight data explicitly:
+**Schema migrations** under `db/migrations/*.sql` run automatically on web startup (`AUTO_MIGRATE` defaults to on). You can still run them alone with `make migrate` / `go run ./cmd/migrate`. Set `AUTO_MIGRATE=false` to leave schema to the Helm Job only.
+
+Bulk **data** import is still separate (not schema):
 
 ```sh
 go run ./cmd/importer
@@ -106,4 +108,5 @@ The web application remains a deliberate server-driven frontend. Shared product 
 
 ## License
 
-MIT.
+Proprietary. Copyright (c) 2026 Fernando Correia. All rights reserved.
+See `LICENSE` for the commercial licensing terms.

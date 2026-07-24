@@ -1,0 +1,3 @@
+# False positive in the committed, minified OpenLayers browser bundle.
+2836bd5c9fc0197824391e24efbc97bc12270804:app/static/js/ol.js:generic-api-key:1
+app/static/js/ol.js:generic-api-key:1

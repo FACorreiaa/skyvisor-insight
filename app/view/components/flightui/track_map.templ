@@ -1,0 +1,38 @@
+package flightui
+
+import "strconv"
+templ trackMapElement(attrs MapAttrs, oob bool) {
+	<div
+		id="track-map"
+		if oob {
+			hx-swap-oob="true"
+		}
+		data-skyvisor-map
+		data-map-mode="flight"
+		data-latitude={ FormatCoord(attrs.Latitude) }
+		data-longitude={ FormatCoord(attrs.Longitude) }
+		data-zoom={ FormatZoom(attrs.Zoom) }
+		data-flight-number={ attrs.FlightNumber }
+		data-progress={ strconv.Itoa(attrs.ProgressPct) }
+		if attrs.HasRoute {
+			data-dep-lat={ FormatCoord(attrs.DepLat) }
+			data-dep-lon={ FormatCoord(attrs.DepLon) }
+			data-arr-lat={ FormatCoord(attrs.ArrLat) }
+			data-arr-lon={ FormatCoord(attrs.ArrLon) }
+		}
+		if attrs.HasLive {
+			data-live-lat={ FormatCoord(attrs.LiveLat) }
+			data-live-lon={ FormatCoord(attrs.LiveLon) }
+		}
+		class="absolute inset-0 bg-[oklch(0.22_0.03_255)]"
+		aria-label="Flight route map"
+	></div>
+}
+
+templ TrackMap(attrs MapAttrs) {
+	@trackMapElement(attrs, false)
+}
+
+templ TrackMapOOB(attrs MapAttrs) {
+	@trackMapElement(attrs, true)
+}

@@ -14,10 +14,18 @@ templ NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav,
 			<div class="hidden items-center gap-1 md:flex">
 				for _, item := range nav {
 					if !item.IsLogout {
-						<a
-							href={ templ.SafeURL(item.Path) }
-							class={ "rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground", templ.KV("bg-accent text-foreground", item.Path == activeNav) }
-						>{ item.Label }</a>
+						if len(item.SubItems) > 0 {
+							<details class="group relative">
+								<summary class={ "cursor-pointer list-none rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground", templ.KV("bg-accent text-foreground", navActive(item, activeNav)) }>{ item.Label } <span class="ml-1 text-[10px] transition-transform group-open:inline-block group-open:rotate-180">⌄</span></summary>
+								<div class="absolute left-0 top-[calc(100%+0.55rem)] z-50 min-w-48 rounded-lg border border-border bg-popover p-1.5 shadow-[0_20px_55px_-30px_rgba(15,23,42,0.6)]">
+									for _, sub := range item.SubItems {
+										<a href={ templ.SafeURL(sub.Path) } class={ "block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground", templ.KV("bg-accent text-foreground", navPathActive(sub.Path, activeNav)) }>{ sub.Label }</a>
+									}
+								</div>
+							</details>
+						} else {
+							<a href={ templ.SafeURL(item.Path) } if item.Path == "/login" || item.Path == "/register" { hx-boost="false" } class={ "rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground", templ.KV("bg-accent text-foreground", navPathActive(item.Path, activeNav)) }>{ item.Label }</a>
+						}
 					}
 				}
 			</div>
@@ -28,7 +36,7 @@ templ NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav,
 					<svg x-show="theme === 'dark'" x-cloak viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20.5 14.4A8.8 8.8 0 0 1 9.6 3.5 9 9 0 1 0 20.5 14.4Z"/></svg>
 				</button>
 				if user != nil {
-					<form method="post" action="/logout" class="hidden sm:block">
+					<form method="post" action="/logout" class="hidden sm:block" hx-boost="false">
 						@CSRFField(csrfToken)
 						<button type="submit" class="rounded-md border border-border bg-card px-3 py-2 text-sm font-medium shadow-xs transition-colors hover:bg-accent">Sign out</button>
 					</form>
@@ -42,9 +50,20 @@ templ NavbarComponent(nav []models.NavItem, user *models.UserSession, activeNav,
 			<div class="mx-auto grid max-w-7xl gap-1">
 				for _, item := range nav {
 					if item.IsLogout {
-						<form method="post" action="/logout">@CSRFField(csrfToken)<button type="submit" class="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground">{ item.Label }</button></form>
+						<form method="post" action="/logout" hx-boost="false">@CSRFField(csrfToken)<button type="submit" class="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground">{ item.Label }</button></form>
+					} else if len(item.SubItems) > 0 {
+						<div class="mt-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{ item.Label }</div>
+						for _, sub := range item.SubItems {
+							<a href={ templ.SafeURL(sub.Path) } class={ "rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground", templ.KV("bg-accent text-foreground", navPathActive(sub.Path, activeNav)) }>{ sub.Label }</a>
+						}
 					} else {
-						<a href={ templ.SafeURL(item.Path) } class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground">{ item.Label }</a>
+						<a
+							href={ templ.SafeURL(item.Path) }
+							if item.Path == "/login" || item.Path == "/register" {
+								hx-boost="false"
+							}
+							class="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+						>{ item.Label }</a>
 					}
 				}
 			</div>

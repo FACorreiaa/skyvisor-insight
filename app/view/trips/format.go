@@ -112,7 +112,7 @@ func AutoWatchMessage(result *apiclient.AutoWatchResult) string {
 			if msg != "" {
 				msg += " "
 			}
-			msg += "Free plan watches one flight — upgrade to Pro for the rest."
+			msg += "Free plan watches up to 5 flights — upgrade to Pro for the rest."
 			break
 		}
 	}
